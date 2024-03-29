@@ -1,87 +1,63 @@
 //import logo from './logo.svg';
 import { useEffect, useState } from 'react';
 import './App.css';
-import { getAccessToken, getRefreshToken, redirectToAuthCodeFlow } from './AuthHandler';
-import { fetchProfile, Profile } from './LoadProfile';
+import {getAccessToken, getData} from './authentication/AuthHandler';
+import {fetchProfile} from './authentication/LoadProfile';
 import * as React from 'react';
+import LoginPage from './ui_components/login';
 
 
 
 function App() {
-  // var accessToken = window.localStorage.getItem("access_token");
-  // const refreshToken = localStorage.getItem('refresh_token');
     const clientId = "002130106d174cc495fc8443cac019f2";
-    // const currentUser : UserProfile;
-    // const authorizing = window.localStorage.getItem("authorizing");
-    // var accessToken = window.localStorage.getItem('access_token');
+    let token = getData("access_token");
 
-    let params = new URLSearchParams(window.location.search)
-    let code : string = params.get("code");
- 
     const [isLoading, setLoading] = useState(false);
-    // const [isAuthorizing, setAuthorizing] = useState<boolean>(authorizing==='true');
     const [user, setUser] = useState<UserProfile|null>(null);
-    // let user: UserProfile | null;
-    // const userPromise = ;
-    
 
-    // if(isAuthorizing === 'true'){
-    //   const params = new URLSearchParams(window.location.search)
-    //   const code : string | null = params.get("code");
-    //   setLoading(true);
-    //   getAccessToken(clientId, code).then((token)=>{
-    //   fetchProfile(token).then((newUser) => {
-    //     if(newUser){
-    //       setUser(newUser)
-    //     }})
-    //       setLoading(false);
-    //   })
-    // }
-    
-    function intialLogin (){
-      console.log("getting access token")
-      window.localStorage.setItem('authorizing', 'true');
-      redirectToAuthCodeFlow(clientId);
-    }
-    
+
+    /**Fetches user profile data from spotify and sets state of UserProfile Object*/
     async function loadUser(token){
       setLoading(true);
       try{
-
         await fetchProfile(token).then((newUser) => {
-          if(newUser){
+          if(newUser && newUser!==undefined){
             setUser(newUser)
             console.log(newUser)
-        }
+          }
           setLoading(false)
-    })
-
+        })
         }catch(e){
-          console.log(e+"::loadUser");
-        }
+          console.log("Failed to load user : " + e); //current token is invalid and fetch profile failed to refresh tokens
+          window.localStorage.clear();
+          window.sessionStorage.clear();
 
+        }
     }
 
     useEffect(()=>{
+      let params = new URLSearchParams(window.location.search)
+      let code : string = params.get("code");
 
-      let token = window.localStorage.getItem('access_token')
-
-      if(token){
+      console.log("Use effect block running")
+      //If a token is found in the browser storage try loading the user
+      console.log(token);
+      if(token && token !== 'undefined'){
         console.log("loading user from saved token")
-        window.localStorage.removeItem('authorizing');
         loadUser(token)
-
       }
+
+      //if the browser storage has the authorizing key with a value of true, retrieve the access token and load user
       if(window.localStorage.getItem('authorizing')==='true'){
         getAccessToken(clientId, code).then((token)=>{
           console.log("retrieving user using token" + {token})
           loadUser(token);
         })
-        window.localStorage.removeItem('authorizing');
-      }
 
+      window.localStorage.removeItem('authorizing');
+    }
 
-  }, [code]);
+  }, [token]); //Anytime the token is changed the use effect block will run
 
     if(isLoading){
       return(
@@ -90,16 +66,7 @@ function App() {
     }else if(user){
       return(<div><h1>{user.display_name}</h1></div>)
     }else{
-      return (
-              <div className="App">
-                <header className="App-header">
-                  <p>
-                    MixMaster: Playlist Builder
-                  </p>
-                  <button onClick={() => {intialLogin()}}>Login</button>
-                </header>
-              </div>
-            );
+      return <LoginPage></LoginPage>
           }
 
 }

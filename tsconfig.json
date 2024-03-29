@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
-      "target": "es5",
-      "module": "ESNext",
+      "target": "es2017",
+      "module": "NodeNext",
       "jsx": "react",
       "outDir": "./dist",
       "downlevelIteration": true
