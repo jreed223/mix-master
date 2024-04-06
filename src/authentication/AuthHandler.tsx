@@ -16,6 +16,37 @@ export function getData(key : string){
     }
 }
 
+export async function refreshTokensThenFetch(clientId:string, refreshToken:string, endpoint:string){
+        try{
+            //get new access token using the stored refresh token and load the user
+            await getRefreshToken(clientId, refreshToken).then(async (newAccessToken)=>{
+
+                if(newAccessToken){
+                    const result = await fetch(endpoint, {
+        method: "GET", headers: { Authorization: `Bearer ${newAccessToken}` }});
+
+        if(!result){
+                window.localStorage.clear();
+                window.sessionStorage.clear();
+                // return null
+            }else{
+                const resultObject = await result.json();
+                return resultObject;
+
+            }
+
+        }})
+
+        }catch(e){
+            console.log(e)
+            window.localStorage.clear();
+            window.sessionStorage.clear();
+            return null
+        }
+
+
+}
+
 /** Directs user to authorize this app to connect with their spotify account */
 export async function redirectToAuthCodeFlow(clientId: string) {
     const verifier = generateCodeVerifier(128);
@@ -26,7 +57,7 @@ export async function redirectToAuthCodeFlow(clientId: string) {
         params.append("client_id", clientId);
         params.append("response_type", "code");
         params.append("redirect_uri", "http://localhost:3000/callback");
-        params.append("scope", "user-read-private user-read-email playlist-read-private playlist-read-collaborative playlist-modify-private playlist-modify-public user-top-read");
+        params.append("scope", "user-read-private user-read-email playlist-read-private playlist-read-collaborative playlist-modify-private playlist-modify-public user-top-read user-library-read");
         params.append("code_challenge_method", "S256");
         params.append("code_challenge", challenge);
         document.location = `https://accounts.spotify.com/authorize?${params.toString()}`;

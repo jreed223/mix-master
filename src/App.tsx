@@ -5,6 +5,7 @@ import {getAccessToken, getData} from './authentication/AuthHandler';
 import {fetchProfile} from './authentication/LoadProfile';
 import * as React from 'react';
 import LoginPage from './ui_components/login';
+import UserLibrary from './getData/library';
 
 
 
@@ -64,7 +65,10 @@ function App() {
         <div><h1>Loading...</h1></div>
       )
     }else if(user){
-      return(<div><h1>{user.display_name}</h1></div>)
+      return(<div>
+        <h1>Welcome {user.display_name}, {user.id}!</h1>
+        <UserLibrary accessToken={token}></UserLibrary>
+      </div>)
     }else{
       return <LoginPage></LoginPage>
           }

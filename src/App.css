@@ -36,3 +36,31 @@
     transform: rotate(360deg);
   }
 }
+
+.library-container{
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.playlist-card{
+  min-width: 23%;
+  padding:.5%;
+  margin:1%;
+  flex: 1;
+  flex-grow: 1;
+  flex-shrink: 1;
+
+}
+
+.playlist-card > span{
+  display: inline-flex;
+  width: 100%;
+}
+
+.playlist-img{
+  width: 18vw;
+  height: 18vw;
+  object-fit: cover;
+}
