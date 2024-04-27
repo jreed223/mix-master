@@ -48,7 +48,6 @@
   font-size: 20px;
 }
 
-/* TODO: Troubleshoot playlist card height to fix sizes of the last row items */
 .playlist-card{
   min-width: 27.3%;
   margin:2% 3%;
@@ -63,6 +62,22 @@
   height: 100%;
 }
 
+.navbar{
+  width: 100%;
+  height: 50px;
+  display: inline-flex;
+  background-color:#61dafb;
+}
+.navbar .create-buttons{
+  width: 12%;
+  height: 45%;
+  margin: auto 2% auto 2%;
+}
+
+.navbar > p{
+  margin: auto 2% auto auto;
+
+}
 
 
 .playlist-img{
