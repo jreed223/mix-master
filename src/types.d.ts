@@ -30,7 +30,7 @@ interface Playlist {
     id: string;
     images: Image[];
     name: string;
-    owner: {displayname: string; external_urls: {spotify: string;}; href: string; id: string; type: string; uri: string;}
+    owner: {display_name: string; external_urls: {spotify: string;}; href: string; id: string; type: string; uri: string;}
     primary_color: string|null;
     public: boolean;
     snapshot_id: string;

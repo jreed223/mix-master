@@ -39,28 +39,53 @@
 
 .library-container{
   display: flex;
-  width: 100%;
+  flex-flow: row wrap;
+  max-width: 100%;
   flex-wrap: wrap;
-  justify-content: space-between;
+  justify-content: flex-start;
+}
+.playlist-name{
+  font-size: 20px;
 }
 
+/* TODO: Troubleshoot playlist card height to fix sizes of the last row items */
 .playlist-card{
-  min-width: 23%;
-  padding:.5%;
-  margin:1%;
+  min-width: 27.3%;
+  margin:2% 3%;
   flex: 1;
-  flex-grow: 1;
-  flex-shrink: 1;
+  max-width: min-content;
 
 }
 
 .playlist-card > span{
   display: inline-flex;
   width: 100%;
+  height: 100%;
 }
 
+
+
 .playlist-img{
-  width: 18vw;
-  height: 18vw;
+  aspect-ratio: 1/1;
+  padding: 1%;
+  width:50%;
+  height:max-content;
   object-fit: cover;
+}
+
+@media (700px < width <= 1200px) {
+.playlist-card{
+  min-width: 44%;
+
+}
+
+}
+
+@media (width <= 700px ) {
+  .playlist-card{
+    min-width: 88%;
+    margin:2% 8%;
+  
+  }
+
 }

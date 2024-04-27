@@ -13,26 +13,21 @@ function App() {
     const clientId = "002130106d174cc495fc8443cac019f2";
     let token = getData("access_token");
 
-    const [isLoading, setLoading] = useState(false);
+    //const [isLoading, setLoading] = useState(false);
     const [user, setUser] = useState<UserProfile|null>(null);
-
+    //const [token, setToken] = useState<String|null>(null);
+    //setToken(getData("access_token"));
 
     /**Fetches user profile data from spotify and sets state of UserProfile Object*/
     async function loadUser(token){
-      setLoading(true);
       try{
-        await fetchProfile(token).then((newUser) => {
-          if(newUser && newUser!==undefined){
-            setUser(newUser)
-            console.log(newUser)
-          }
-          setLoading(false)
-        })
+        await fetchProfile(token, setUser)
+
         }catch(e){
           console.log("Failed to load user : " + e); //current token is invalid and fetch profile failed to refresh tokens
           window.localStorage.clear();
           window.sessionStorage.clear();
-
+          //setToken(null);
         }
     }
 
@@ -42,7 +37,6 @@ function App() {
 
       console.log("Use effect block running")
       //If a token is found in the browser storage try loading the user
-      console.log(token);
       if(token && token !== 'undefined'){
         console.log("loading user from saved token")
         loadUser(token)
@@ -60,18 +54,22 @@ function App() {
 
   }, [token]); //Anytime the token is changed the use effect block will run
 
-    if(isLoading){
-      return(
-        <div><h1>Loading...</h1></div>
-      )
-    }else if(user){
-      return(<div>
-        <h1>Welcome {user.display_name}, {user.id}!</h1>
-        <UserLibrary accessToken={token}></UserLibrary>
-      </div>)
-    }else{
-      return <LoginPage></LoginPage>
-          }
+
+  console.log(token);
+  //If a user is set display user info
+  if(user){
+    return(<div>
+      <h1>Welcome {user.display_name}, {user.id}!</h1>
+      <UserLibrary accessToken={token}></UserLibrary>
+    </div>)
+  }else if(token && token !== 'undefined'){   //If a token is found in the browser storage, direct to loading screen until user is set
+    return(
+      <div><h1>Loading...</h1></div>
+    )
+  }else{ //If no token or user found, direct to authetentication flow
+    return <LoginPage></LoginPage>
+        }
+
 
 }
 

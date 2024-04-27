@@ -22,18 +22,23 @@ export async function refreshTokensThenFetch(clientId:string, refreshToken:strin
             await getRefreshToken(clientId, refreshToken).then(async (newAccessToken)=>{
 
                 if(newAccessToken){
-                    const result = await fetch(endpoint, {
-        method: "GET", headers: { Authorization: `Bearer ${newAccessToken}` }});
+                    console.log('New access token fetched')
+                    await fetch(endpoint, {
+        method: "GET", headers: { Authorization: `Bearer ${newAccessToken}` }}).then(async (result)=>{
+            if(result.ok){
+                console.log("new access token returned data", result)
+                const resultObject = await result.json();
+                console.log("resultObject", resultObject)
+                return resultObject;
 
-        if(!result){
+            }else{
                 window.localStorage.clear();
                 window.sessionStorage.clear();
                 // return null
-            }else{
-                const resultObject = await result.json();
-                return resultObject;
 
             }
+
+        });
 
         }})
 
