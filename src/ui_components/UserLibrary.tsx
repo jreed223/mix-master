@@ -29,7 +29,7 @@ export default function UserLibrary({accessToken, stagingState}){
 
                     </div >
                     <div className="library-container" id="library-container">
-                    <h2 className="library-heading">Library</h2>
+                    <p className="library-heading">Library</p>
                     <div className='library-content'>{playlists}</div>
                     </div>
                 </div>)
@@ -40,7 +40,7 @@ export default function UserLibrary({accessToken, stagingState}){
 
                         </div >
                             <div className="library-container-new" id="library-container">
-                                <h2 className="library-heading">Library</h2>
+                                <p className="library-heading">Library</p>
                                 <div className='library-content'>{playlists}</div>
                             </div>
                     </div>)
