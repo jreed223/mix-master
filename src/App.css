@@ -146,11 +146,14 @@
   container-name: new-playlist-view;
   margin-left: auto;
   width: 50%;
+  transition: margin-top 1s;
+  /* transition: height 1s; */
+
 }
 
 @keyframes grow-staging {
   0%{
-    width: 0%;
+    width: 0%; 
   }
   100%{
     width: 50%;
@@ -271,9 +274,9 @@
     .library-container-new{
       container-type: inline-size;
       container-name: new-playlist-view;
-      margin-top: 0;
+      margin-top: 52vh;
       position: fixed;
-      top: 52%;
+      /* top: 52%; */
       height:46%;
       width: 100%;
     }
@@ -310,10 +313,10 @@
     @keyframes shrink-library{
       0%{
         height: 100%;
-        top: 4%;
+        margin-top: 4vh;
       }
       100%{
-        top: 52%;
+        margin-top: 52vh;
         height: 48%;
       }
     }

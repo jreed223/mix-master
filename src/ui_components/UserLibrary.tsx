@@ -26,7 +26,6 @@ export default function UserLibrary({accessToken, stagingState}){
             return (
                 <div className="main-content-area">
                     <div className="playlist-creation-container-hidden" id="creation-container">
-
                     </div >
                     <div className="library-container" id="library-container">
                     <p className="library-heading">Library</p>
