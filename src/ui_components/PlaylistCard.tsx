@@ -10,9 +10,9 @@ export default function PlaylistCard({playlist}: PlaylistCardProps){
             <span>
             <img className="playlist-img" src={playlist.images[0].url} alt = "playlist cover" ></img>
                 <div>
-                    <p className="playlist-name">{playlist.name!==""?playlist.name:"Untititled"}</p>
-                    <p>{playlist.owner.display_name}</p>
-                    <p>{playlist.tracks.total} tracks</p>
+                    <p className="playlist-name playlist-card-text">{playlist.name!==""?playlist.name:"Untititled"}</p>
+                    <p className = "playlist-card-text">{playlist.owner.display_name}</p>
+                    <p className = "playlist-card-text">{playlist.tracks.total} tracks</p>
                 </div>
 
             </span>

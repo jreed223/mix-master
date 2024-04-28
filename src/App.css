@@ -37,12 +37,20 @@
   }
 }
 
-.library-container{
+.library-content{
   display: flex;
   flex-flow: row wrap;
   max-width: 100%;
   flex-wrap: wrap;
   justify-content: flex-start;
+}
+.library-content2{
+  display: flex;
+  flex-flow: row wrap;
+  max-width: 100%;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  /* TODO:Testing */
 }
 .playlist-name{
   font-size: 20px;
@@ -55,6 +63,10 @@
   max-width: min-content;
 
 }
+.playlist-card-text{
+  margin: none;
+  margin: 2%;
+}
 
 .playlist-card > span{
   display: inline-flex;
@@ -62,21 +74,30 @@
   height: 100%;
 }
 
+
+
 .navbar{
+  position:fixed;
+  top: 0;
   width: 100%;
   height: 50px;
   display: inline-flex;
   background-color:#61dafb;
+  z-index: 1;
 }
-.navbar .create-buttons{
+.create-buttons{
   width: 12%;
-  height: 45%;
   margin: auto 2% auto 2%;
 }
 
 .navbar > p{
   margin: auto 2% auto auto;
 
+}
+
+.library-heading{
+  margin-top: 75px;
+  margin-left: 2%;
 }
 
 
@@ -88,7 +109,80 @@
   object-fit: cover;
 }
 
-@media (700px < width <= 1200px) {
+.playlist-creation-container-new{
+  position: fixed;
+  top:50px;
+  bottom: 0;
+  width: 50%;
+  background-color: aquamarine;
+  transition: width 1s;
+
+  /* animation: grow-staging 1s; */
+
+}
+.playlist-creation-container-hidden{
+  position: fixed;
+  top:50px;
+  bottom: 0;
+  width: 0%;
+  background-color: aquamarine;
+
+  /* animation: shrink-staging 1s;  */
+
+}
+.library-container{
+  width: 100%;
+  margin-left: auto;
+  container-type: inline-size;
+  container-name: playlist-view;
+}
+.library-container-new{
+  container-type: inline-size;
+  container-name: new-playlist-view;
+  margin-left: auto;
+  width: 50%;
+}
+
+@keyframes grow-staging {
+  0%{
+    width: 0%;
+  }
+  100%{
+    width: 50%;
+  }
+}
+
+@keyframes shrink-staging{
+  0%{
+    width: 50%;
+  }
+  100%{
+    width: 0%;
+  }
+}
+
+@keyframes grow-library {
+  0%{
+    width: 50%;
+  }
+  100%{
+    width: 100%;
+  }
+}
+
+@keyframes shrink-library{
+  0%{
+    width: 100%;
+  }
+  100%{
+    width: 50%;
+  }
+}
+.main-content-area{
+  display: inline-block;
+  width: 100%;
+}
+@container new-playlist-view (700px < width <= 1200px) {
 .playlist-card{
   min-width: 44%;
 
@@ -96,7 +190,7 @@
 
 }
 
-@media (width <= 700px ) {
+@container new-playlist-view (width <= 700px ) {
   .playlist-card{
     min-width: 88%;
     margin:2% 8%;
@@ -104,3 +198,20 @@
   }
 
 }
+
+@container playlist-view (700px < width <= 1200px) {
+  .playlist-card{
+    min-width: 44%;
+  
+  }
+  
+  }
+  
+  @container playlist-view (width <= 700px ) {
+    .playlist-card{
+      min-width: 88%;
+      margin:2% 8%;
+    
+    }
+  
+  }
