@@ -15,15 +15,25 @@ export default function NavBar({currentUser, token}:navProps){
             setStatgingState(null)
             let creationContainer = document.getElementById("creation-container")
             let libraryContainer = document.getElementById("library-container")
+            let draftingDiv = document.getElementById("drafting-div")
+            let searchFilterDiv = document.getElementById("search-filter-div")
             creationContainer.style.animation = "shrink-staging 1s"
             libraryContainer.style.animation = "grow-library 1s"
+            // draftingDiv.style.animation = "shrink-staging 1s"
+            // searchFilterDiv.style.animation = "shrink-staging 1s"
+
 
         }else{
             setStatgingState("new")
             let creationContainer = document.getElementById("creation-container")
             let libraryContainer = document.getElementById("library-container")
+            let draftingDiv = document.getElementById("drafting-div")
+            let searchFilterDiv = document.getElementById("search-filter-div")
             creationContainer.style.animation = "grow-staging 1s"
             libraryContainer.style.animation = "shrink-library 1s"
+            // draftingDiv.style.animation = "grow-staging 1s"
+            // searchFilterDiv.style.animation = "grow-staging 1s"
+
         }
     }
     function toggleStagingEdit(){

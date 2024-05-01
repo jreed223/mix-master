@@ -26,6 +26,8 @@ export default function UserLibrary({accessToken, stagingState}){
             return (
                 <div className="main-content-area">
                     <div className="playlist-creation-container-hidden" id="creation-container">
+                    <div className="playlist-draft-container new-playlist" id="drafting-div"></div>
+                            <div className="search-filter-container new-playlist" id="search-filter-div"></div>
                     </div >
                     <div className="library-container" id="library-container">
                     <p className="library-heading">Library</p>
@@ -36,8 +38,10 @@ export default function UserLibrary({accessToken, stagingState}){
                 return (
                     <div className="main-content-area">
                         <div className="playlist-creation-container-new" id="creation-container">
-
+                            <div className="playlist-draft-container new-playlist" id="drafting-div"></div>
+                            <div className="search-filter-container new-playlist" id="search-filter-div"></div>
                         </div >
+                        
                             <div className="library-container-new" id="library-container">
                                 <p className="library-heading">Library</p>
                                 <div className='library-content'>{playlists}</div>
