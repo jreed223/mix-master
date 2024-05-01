@@ -33,29 +33,29 @@ export async function fetchPlaylists(token: string): Promise<Playlist[]|null> {
 }
 
 
-export default function UserLibrary({accessToken}){
-    const [isLoading, setLoading] = useState(false);
-    const [playlistList, setPlaylistList] = useState<Playlist[]|null>(null)
+// export default function UserLibrary({accessToken}){
+//     const [isLoading, setLoading] = useState(false);
+//     const [playlistList, setPlaylistList] = useState<Playlist[]|null>(null)
 
-    useEffect(()=>{
+//     useEffect(()=>{
 
-        setLoading(true);
-        fetchPlaylists(accessToken).then((result)=>{
-            setPlaylistList(result);
-            console.log(result)
-        setLoading(false)});
-    }
-    ,[accessToken])
+//         setLoading(true);
+//         fetchPlaylists(accessToken).then((result)=>{
+//             setPlaylistList(result);
+//             console.log(result)
+//         setLoading(false)});
+//     }
+//     ,[accessToken])
 
-    if(playlistList){
-        const playlists = playlistList.map(singlePlaylist =>
-            <PlaylistCard playlist={singlePlaylist}></PlaylistCard>
-            );
-        return <div className='library-container'>{playlists}</div>
-    }else if(isLoading){
-        return<p>Loading...</p>
-    }else{
-        return<p>No playlists found. Plese try again.</p>
-    }
+//     if(playlistList){
+//         const playlists = playlistList.map(singlePlaylist =>
+//             <PlaylistCard playlist={singlePlaylist}></PlaylistCard>
+//             );
+//         return <div className='library-container'>{playlists}</div>
+//     }else if(isLoading){
+//         return<p>Loading...</p>
+//     }else{
+//         return<p>No playlists found. Plese try again.</p>
+//     }
 
-}
+// }

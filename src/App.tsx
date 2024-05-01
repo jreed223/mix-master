@@ -4,8 +4,10 @@ import './App.css';
 import {getAccessToken, getData} from './authentication/AuthHandler';
 import {fetchProfile} from './authentication/LoadProfile';
 import * as React from 'react';
-import LoginPage from './ui_components/login';
-import UserLibrary from './getData/library';
+import LoginPage from './ui_components/LoginPage';
+
+import NavBar from './ui_components/NavBar';
+import UserLibrary from './ui_components/UserLibrary';
 
 
 
@@ -59,8 +61,7 @@ function App() {
   //If a user is set display user info
   if(user){
     return(<div>
-      <h1>Welcome {user.display_name}, {user.id}!</h1>
-      <UserLibrary accessToken={token}></UserLibrary>
+      <NavBar currentUser={user} token={token}></NavBar>
     </div>)
   }else if(token && token !== 'undefined'){   //If a token is found in the browser storage, direct to loading screen until user is set
     return(
