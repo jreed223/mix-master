@@ -13,7 +13,7 @@ import UserLibrary from './ui_components/UserLibrary';
 
 function App() {
     const clientId = "002130106d174cc495fc8443cac019f2";
-    let token = getData("access_token");
+    let token = null
 
     //const [isLoading, setLoading] = useState(false);
     const [user, setUser] = useState<UserProfile|null>(null);
@@ -21,37 +21,40 @@ function App() {
     //setToken(getData("access_token"));
 
     /**Fetches user profile data from spotify and sets state of UserProfile Object*/
-    async function loadUser(token){
-      try{
-        await fetchProfile(token, setUser)
+    // async function loadUser(token){
+  
+    //   try{
+    //     await fetchProfile(token, setUser)
 
-        }catch(e){
-          console.log("Failed to load user : " + e); //current token is invalid and fetch profile failed to refresh tokens
-          window.localStorage.clear();
-          window.sessionStorage.clear();
-          //setToken(null);
-        }
-    }
+    //     }catch(e){
+    //       console.log("Failed to load user : " + e); //current token is invalid and fetch profile failed to refresh tokens
+    //       window.localStorage.clear();
+    //       window.sessionStorage.clear();
+    //       //setToken(null);
+    //     }
+    // }
 
     useEffect(()=>{
-      let params = new URLSearchParams(window.location.search)
-      let code : string = params.get("code");
+      // let params = new URLSearchParams(window.location.search)
+      // let code : string = params.get("code");
 
       console.log("Use effect block running")
       //If a token is found in the browser storage try loading the user
-      if(token && token !== 'undefined'){
+      if((token && (token !== 'undefined'||null))){
         console.log("loading user from saved token")
-        loadUser(token)
+        fetch("/spotify-api/user",{
+        }).then(res=>res.json())
+        .then(newUser=>setUser(newUser))
       }
 
       //if the browser storage has the authorizing key with a value of true, retrieve the access token and load user
       if(window.localStorage.getItem('authorizing')==='true'){
-        getAccessToken(clientId, code).then((token)=>{
-          console.log("retrieving user using token" + {token})
-          loadUser(token);
-        })
+        fetch("/spotify-data/init-login")
+        .then( res=>
+          res.json()
+        ).then((newUser)=>setUser(newUser))
 
-      window.localStorage.removeItem('authorizing');
+      // window.localStorage.removeItem('authorizing');
     }
 
   }, [token]); //Anytime the token is changed the use effect block will run

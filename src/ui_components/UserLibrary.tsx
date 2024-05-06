@@ -11,11 +11,12 @@ export default function UserLibrary({accessToken, stagingState}){
     useEffect(()=>{
 
         setLoading(true);
-        fetchPlaylists(accessToken).then((result)=>{
-            setPlaylistList(result);
-            console.log(result)
-        setLoading(false)});
-    }
+        fetch("/spotify-data/playlists")
+        .then(res=>res.json())
+        .then(result=>setPlaylistList(result))
+        setLoading(false);
+
+        }
     ,[accessToken])
 
     if(playlistList){

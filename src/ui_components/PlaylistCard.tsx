@@ -5,13 +5,15 @@ import { getData } from "../authentication/AuthHandler";
 interface PlaylistCardProps{
     playlist : Playlist;
 }
+
+
 export default function PlaylistCard({playlist}: PlaylistCardProps){
     const token = getData("access_token")
     // console.log(playlist);
     return(
         <div className="playlist-card">
             <span>
-            <img className="playlist-img" src={playlist.images[0].url} alt = "playlist cover" onClick={()=>{fetchPlaylistsItems(token, playlist)}} ></img>
+            <img className="playlist-img" src={playlist.images[0].url} alt = "playlist cover" onClick={()=>{getTracks(playlist)}} ></img>
                 <div>
                     <p className="playlist-name playlist-card-text">{playlist.name!==""?playlist.name:"Untititled"}</p>
                     <p className = "playlist-card-text">{playlist.owner.display_name}</p>
@@ -23,3 +25,9 @@ export default function PlaylistCard({playlist}: PlaylistCardProps){
     )
 
 }
+
+async function getTracks(playlistObject){
+    await fetch("/spotify-api/playlist-items", {
+        method: "POST",
+        body: playlistObject
+    })}

@@ -1,8 +1,9 @@
 import { getData, refreshTokensThenFetch } from "../authentication/AuthHandler";
 
-export async function fetchPlaylistsItems(token: string, playlist:Playlist): Promise<PlaylistItems[]|null> {
+export async function fetchPlaylistsItems(playlist:Playlist): Promise<PlaylistItems[]|null> {
     const clientId = "002130106d174cc495fc8443cac019f2";
 
+    const token = getData("access_token");
     const refreshToken = getData("refresh_token");
     const playlistItemEndpoint = "https://api.spotify.com/v1/playlists/" + playlist.id + "/tracks"
 
