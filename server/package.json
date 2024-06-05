@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "@types/node": "^20.12.8",
+    "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "express": "^4.19.2"
   },
@@ -11,7 +12,8 @@
     "cookie-parser": "^1.4.6",
     "nodemon": "^3.1.0",
     "ts-node": "^10.9.2",
-    "typescript": "^5.4.5"
+    "typescript": "^5.4.5",
+    "window": "^4.2.7"
   },
   "main": "app.ts",
   "scripts": {

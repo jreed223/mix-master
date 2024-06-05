@@ -16,9 +16,10 @@ export async function fetchPlaylists(accessToken:string, refreshToken:string): P
 
     if(!result.ok){ //If unable to fetch profile (access token expired)
         if(refreshToken && refreshToken !== 'undefined'){
-            const playlistsObject = await refreshTokensThenFetch(clientId, refreshToken, "https://api.spotify.com/v1/me/playlists");
-            if(playlistsObject){
-                const playlistList: Playlist[] = playlistsObject["items"];
+            const res = await refreshTokensThenFetch(clientId, refreshToken, "https://api.spotify.com/v1/me/playlists");
+            if(res){
+                const playlistObject = await res.json()
+                const playlistList: Playlist[] = playlistObject["items"];
                 return playlistList;
             }
     }

@@ -7,33 +7,28 @@
 //     }
 // }
 
+import { createHash } from "crypto";
 
 
-export async function refreshTokensThenFetch(clientId:string, refreshToken:string, endpoint:string){
+
+export async function refreshTokensThenFetch(clientId:string, refreshToken:string, endpoint:string):Promise<Response|null>{
         try{
             //get new access token using the stored refresh token and load the user
-            await getRefreshToken(clientId, refreshToken).then(async (newAccessToken)=>{
+            const newAccessToken = await getRefreshToken(clientId, refreshToken)
 
                 if(newAccessToken){
                     console.log('New access token fetched')
-                    await fetch(endpoint, {
-        method: "GET", headers: { Authorization: `Bearer ${newAccessToken}` }}).then(async (result)=>{
-            if(result.ok){
-                console.log("new access token returned data", result)
-                const resultObject = await result.json();
-                console.log("resultObject", resultObject)
-                return resultObject;
+                    const res = await fetch(endpoint, {
+        method: "GET", headers: { Authorization: `Bearer ${newAccessToken}` }})
+                    if(res.ok){
+                console.log("new access token returned data", res)
+                    }
+                    return res
 
             }else{
-                // localStorage.clear();
-                // sessionStorage.clear();
-                // return null
+                return null
 
             }
-
-        });
-
-        }})
 
         }catch(e){
             console.log(e)
@@ -49,9 +44,10 @@ export async function refreshTokensThenFetch(clientId:string, refreshToken:strin
 export async function redirectToAuthCodeFlow(clientId: string) {
     const verifier = generateCodeVerifier(128);
 
-    await generateCodeChallenge(verifier).then((challenge)=>{
-        fetch("/set-cookie",{
-            body: "verifierKey:" + verifier
+    const authLink = generateCodeChallenge(verifier).then((challenge)=>{
+        fetch("http://localhost:8080//set-cookie",{
+            headers: { "cookieName": "verifierKey", "cookieVal": `${verifier}` }
+            // body: "verifierKey:" + verifier
         }
         )
         // storeData("verifier", verifier);
@@ -62,9 +58,13 @@ export async function redirectToAuthCodeFlow(clientId: string) {
         params.append("scope", "user-read-private user-read-email playlist-read-private playlist-read-collaborative playlist-modify-private playlist-modify-public user-top-read user-library-read");
         params.append("code_challenge_method", "S256");
         params.append("code_challenge", challenge);
-        document.location = `https://accounts.spotify.com/authorize?${params.toString()}`;
+        const newLink = `https://accounts.spotify.com/authorize?${params.toString()}`
+        return newLink
+        // document.location = `https://accounts.spotify.com/authorize?${params.toString()}`;
 
     });
+    return authLink
+
 
 }
 
@@ -137,7 +137,7 @@ return null
 }
 
 
-function generateCodeVerifier(length: number) {
+export function generateCodeVerifier(length: number) {
     let text = '';    
     let possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
@@ -147,11 +147,15 @@ function generateCodeVerifier(length: number) {
     return text;
 }
 
-async function generateCodeChallenge(codeVerifier: string) {
-    const data = new TextEncoder().encode(codeVerifier);
-    const digest = await window.crypto.subtle.digest('SHA-256', data);
-    return btoa(String.fromCharCode.apply(null, [...new Uint8Array(digest)]))
-        .replace(/\+/g, '-')
+export async function generateCodeChallenge(codeVerifier: string) {
+    const hash = createHash('sha256').update(codeVerifier).digest('base64')
+    // const data = new TextEncoder().encode(codeVerifier);
+    // const digest = await window.crypto.subtle.digest('SHA-256', data);
+    return hash.replace(/\+/g, '-')
         .replace(/\//g, '_')
         .replace(/=+$/, '');
+    // return btoa(String.fromCharCode.apply(null, [...new Uint8Array(hash)]))
+    //     .replace(/\+/g, '-')
+    //     .replace(/\//g, '_')
+    //     .replace(/=+$/, '');
 }

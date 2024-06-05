@@ -13,7 +13,17 @@ import UserLibrary from './ui_components/UserLibrary';
 
 function App() {
     const clientId = "002130106d174cc495fc8443cac019f2";
-    let token = null
+    const cookies = document.cookie
+    const getClientSideCookie = (name: string): string | undefined => {
+      const cookieValue = document.cookie
+          .split('; ')
+          .find((row) => row.startsWith(`${name}=`))
+          ?.split('=')[1];
+  
+     return cookieValue;
+  };
+    console.log(cookies)
+    let token = getClientSideCookie("access_token")
 
     //const [isLoading, setLoading] = useState(false);
     const [user, setUser] = useState<UserProfile|null>(null);
@@ -40,21 +50,17 @@ function App() {
 
       console.log("Use effect block running")
       //If a token is found in the browser storage try loading the user
-      if((token && (token !== 'undefined'||null))){
-        console.log("loading user from saved token")
-        fetch("/spotify-api/user",{
-        }).then(res=>res.json())
-        .then(newUser=>setUser(newUser))
-      }
+        console.log("attempting to load user")
+        fetch("/spotify-data/user",{
+        }).then(async user=>setUser(await user.json()))
+      
 
       //if the browser storage has the authorizing key with a value of true, retrieve the access token and load user
       if(window.localStorage.getItem('authorizing')==='true'){
-        fetch("/spotify-data/init-login")
-        .then( res=>
-          res.json()
-        ).then((newUser)=>setUser(newUser))
+        fetch("/spotify-data/init-login").then(()=>{
+                window.localStorage.removeItem('authorizing');
 
-      // window.localStorage.removeItem('authorizing');
+        })
     }
 
   }, [token]); //Anytime the token is changed the use effect block will run

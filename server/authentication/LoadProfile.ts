@@ -11,32 +11,32 @@ export async function fetchProfile(accessToken:string, refreshToken:string): Pro
     // const token = getData("access_token")
 
     try{
-    await fetch("https://api.spotify.com/v1/me", {
+    const res = await fetch("https://api.spotify.com/v1/me", {
         method: "GET", headers: { Authorization: `Bearer ${accessToken}` }
-    }).then(async (result)=>{
-        if(result.ok){
-            console.log('response found fetching profile:', result)
-            await result.json().then((user : UserProfile)=>{
-                console.log("fetched user:", user)
-                // userStateCB(user);
-                return user
-            });
+    })
+    if(res.ok){
+        console.log('response found fetching profile:', res)
+        const user = await res.json()
+        return user
+        
 
-        }else{ //If unable to fetch profile (access token expired)
+
+    }else{ //If unable to fetch profile (access token expired)
             if(refreshToken && refreshToken !== 'undefined'){
                 console.log('AccessToken expired: using refresh token to fetch user')
-                await refreshTokensThenFetch(clientId, refreshToken, "https://api.spotify.com/v1/me").then((user)=>{
+                const res = await refreshTokensThenFetch(clientId, refreshToken, "https://api.spotify.com/v1/me")
+                if(res){
+                    const user = await res.json()
                     console.log("fetched user after token refreshed:", user)
-                    // userStateCB(user)
-                    return user;
-                })
+                    return user
+                }
+                    // userStateCB(user)                
             }else{
                 console.log('access token expired, no refresh token found')
                 // userStateCB(null)
                 return null
             }
         }
-    });
 
 }catch(e){
 

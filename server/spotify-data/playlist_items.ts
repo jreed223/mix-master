@@ -9,25 +9,26 @@ export async function fetchPlaylistsItems(playlist:Playlist, accessToken:string,
     const playlistItemEndpoint = "https://api.spotify.com/v1/playlists/" + playlist.id + "/tracks"
 
     try{
-    const result = await fetch(playlistItemEndpoint, {
+    const res = await fetch(playlistItemEndpoint, {
         method: "GET", headers: { Authorization: `Bearer ${accessToken}` }
     });
 
-    if(!result.ok){ //If unable to fetch profile (access token expired)
+    if(!res.ok){ //If unable to fetch profile (access token expired)
         if(refreshToken && refreshToken !== 'undefined'){
-            await refreshTokensThenFetch(clientId, refreshToken, playlistItemEndpoint).then((playlistObject)=>{
-                if(playlistObject){
-                    const playlistItems: PlaylistItems[] = playlistObject["items"];
+            const playlistRes = await refreshTokensThenFetch(clientId, refreshToken, playlistItemEndpoint)
+            if(playlistRes){
+                const playlistObject = await playlistRes.json()
+                const playlistItems: PlaylistItems[] = playlistObject["items"];
                     console.log(playlistItems)
                     return playlistItems;
-                }else{
-                    return null
-                }
-            })
+            }else{
+                return null
+            }
+
     }
     }
 
-    const playlistObject = await result.json();
+    const playlistObject = await res.json();
     const playlistItems: PlaylistItems[] = playlistObject["items"];
     console.log(playlistItems)
     return playlistItems;
