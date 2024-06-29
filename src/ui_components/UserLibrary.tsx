@@ -3,21 +3,23 @@ import { fetchPlaylists } from "../getData/library";
 import PlaylistCard from "./PlaylistCard";
 import React from "react";
 
-export default function UserLibrary({accessToken, stagingState}){
-    const [isLoading, setLoading] = useState(false);
+export default function UserLibrary({stagingState}){
+    const [isLoading, setLoading] = useState(true);
     const [playlistList, setPlaylistList] = useState<Playlist[]|null>(null)
     // const [stagingState, setStatgingState] = useState<String|null>(null)
 
     useEffect(()=>{
 
-        setLoading(true);
+        //setLoading(true);
         fetch("/spotify-data/playlists")
         .then(res=>res.json())
-        .then(result=>setPlaylistList(result))
-        setLoading(false);
+        .then(playlists=>{
+            setPlaylistList(playlists)
+            setLoading(false);
+        })
 
         }
-    ,[accessToken])
+    ,[])
 
     if(playlistList){
         const playlists = playlistList.map(singlePlaylist =>

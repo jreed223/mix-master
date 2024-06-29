@@ -1,75 +1,73 @@
-/** Stores data either in local storage or session storage based on user preferences */
-// export function storeData(key : string, value : string){
-//     if(localStorage.getItem("save_user")==="true"){
-//         localStorage.setItem(key, value);
-//     }else{
-//         sessionStorage.setItem(key, value);
-//     }
-// }
 
 import { createHash } from "crypto";
 
 
 
-export async function refreshTokensThenFetch(clientId:string, refreshToken:string, endpoint:string):Promise<Response|null>{
-        try{
-            //get new access token using the stored refresh token and load the user
-            const newAccessToken = await getRefreshToken(clientId, refreshToken)
+// export async function refreshTokensThenFetch(clientId:string, refreshToken:string, endpoint:string):Promise<Record<string, Response|string>>{
+//         // try{
+//             //get new access token using the stored refresh token and load the user
+//             // const refreshRes = await getRefreshToken(clientId, refreshToken)
+//             const refreshRes = await getRefreshToken(clientId, refreshToken)
+            
 
-                if(newAccessToken){
-                    console.log('New access token fetched')
-                    const res = await fetch(endpoint, {
-        method: "GET", headers: { Authorization: `Bearer ${newAccessToken}` }})
-                    if(res.ok){
-                console.log("new access token returned data", res)
-                    }
-                    return res
+//             if(refreshRes.ok){
+//                 const tokens = await refreshRes.json()//If tokens are retrieved successfully, store them
+//                 const access_token = tokens.access_token
+//                 const refresh_token = tokens.refresh_token
 
-            }else{
-                return null
+//                 // const { access_token, refresh_token } = await refreshRes.json()//If tokens are retrieved successfully, store them
 
-            }
+//                 console.log('Access token refreshed: ', access_token)
+//                 const response = await fetch(endpoint, {
+//         method: "GET", headers: { Authorization: `Bearer ${access_token}` }})
+//                     if(response.ok){
+//                         console.log("new access token returned data", response)
+//                         return {'response' : response, "refresh_token": refresh_token, "access_token": access_token}
 
-        }catch(e){
-            console.log(e)
-            // localStorage.clear();
-            // sessionStorage.clear();
-            return null
-        }
+//                     }else{
+//                         console.log("new access token failed to return data", response)
+//                         return {'response' : response, "refresh_token": refresh_token, "access_token": access_token}
+
+//                     }
+
+//             }else{
+//                 console.log('Failed to refresh access token')
+//                 return {'response' : refreshRes, "refresh_token": refreshToken, "access_token": "undefined"}
+
+//             }
 
 
-}
+// }
 
 /** Directs user to authorize this app to connect with their spotify account */
-export async function redirectToAuthCodeFlow(clientId: string) {
-    const verifier = generateCodeVerifier(128);
+// export async function redirectToAuthCodeFlow(clientId: string) {
+//     const verifier = generateCodeVerifier(128);
 
-    const authLink = generateCodeChallenge(verifier).then((challenge)=>{
-        fetch("http://localhost:8080//set-cookie",{
-            headers: { "cookieName": "verifierKey", "cookieVal": `${verifier}` }
-            // body: "verifierKey:" + verifier
-        }
-        )
-        // storeData("verifier", verifier);
-        const params = new URLSearchParams();
-        params.append("client_id", clientId);
-        params.append("response_type", "code");
-        params.append("redirect_uri", "http://localhost:8080/callback");
-        params.append("scope", "user-read-private user-read-email playlist-read-private playlist-read-collaborative playlist-modify-private playlist-modify-public user-top-read user-library-read");
-        params.append("code_challenge_method", "S256");
-        params.append("code_challenge", challenge);
-        const newLink = `https://accounts.spotify.com/authorize?${params.toString()}`
-        return newLink
-        // document.location = `https://accounts.spotify.com/authorize?${params.toString()}`;
+//     const authLink = generateCodeChallenge(verifier).then((challenge)=>{
+//         fetch("http://localhost:8080//set-cookie",{
+//             headers: { "cookieName": "verifierKey", "cookieVal": `${verifier}` }
+//             // body: "verifierKey:" + verifier
+//         }
+//         )
+//         // storeData("verifier", verifier);
+//         const params = new URLSearchParams();
+//         params.append("client_id", clientId);
+//         params.append("response_type", "code");
+//         params.append("redirect_uri", "http://localhost:8080/callback");
+//         params.append("scope", "user-read-private user-read-email playlist-read-private playlist-read-collaborative playlist-modify-private playlist-modify-public user-top-read user-library-read");
+//         params.append("code_challenge_method", "S256");
+//         params.append("code_challenge", challenge);
+//         const newLink = `https://accounts.spotify.com/authorize?${params.toString()}`
+//         return newLink
 
-    });
-    return authLink
+//     });
+//     return authLink
 
 
-}
+// }
 
 /** Send POST request to Spotify API authorize access and to retreive access token. */
-export async function getAccessToken(code: string, verifier:string):Promise<Record<string, string>|null> {
+export async function getAccessToken(code: string, verifier:string):Promise<Response> {
     const clientId = "002130106d174cc495fc8443cac019f2";
 
     // let verifier = getData("verifier");
@@ -81,59 +79,35 @@ export async function getAccessToken(code: string, verifier:string):Promise<Reco
     params.append("code_verifier", verifier!);
 
     //Grabs token after user verifies access
-    try{
-    const result = await fetch("https://accounts.spotify.com/api/token", {
+    const res = await fetch("https://accounts.spotify.com/api/token", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: params
     });
-    const { access_token, refresh_token } = await result.json(); //Stores token if valid response is recieved
-    if((access_token && access_token!=="undefined")&&(refresh_token && refresh_token !== "undefined")){
-        console.log("User verified successfully. Tokens stored");
+    console.log('response from getAccessToken:',res)
+    return res
 
-        // storeData("refresh_token", refresh_token);
-        // storeData("access_token", access_token);
-        const tokens = {"access_token": access_token, "refresh_token": refresh_token}
-        return tokens;
-
-    }
-}catch(e){
-    console.log("authorization code not accepted. Failed to retrieve access token : " + e);
-    return null
-}
-    return null
 }
 
 /** Send POST request to Spotify API to retrieve new tokens. Should only run if access token has expired. */
-export async function getRefreshToken(clientId: string, refreshToken: string) : Promise<Record<string, string>|null> {
-    console.log("refreshing tokens")
+export async function getRefreshToken(clientId: string, refreshToken: string) : Promise<Response> {
+    console.log("refreshing tokens with: ", refreshToken)
     const params = new URLSearchParams();
     params.append("client_id", clientId);
     params.append("refresh_token", refreshToken);
     params.append("grant_type", "refresh_token");
 
-try{
+// try{
     //Grabs token after account has been verified
-    const newTokens = await fetch("https://accounts.spotify.com/api/token", {
+    const res = await fetch("https://accounts.spotify.com/api/token", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: params
     });
+    console.log( "response from getRefreshToken: ", res)
 
-    const { access_token, refresh_token } = await newTokens.json()//If tokens are retrieved successfully, store them
-    console.log(access_token, refresh_token)
-    if((access_token && access_token!=="undefined")&&(refresh_token && refresh_token !== "undefined"))
-        console.log("Tokens successfully refreshed");
+    return res
 
-    const tokens = {"access_token": access_token, "refresh_token": refresh_token}
-
-        return tokens;
-}catch(e){
-    console.log("Failed to refresh tokens : " + e);
-    // localStorage.clear();
-    // sessionStorage.clear();
-}
-return null
 }
 
 
@@ -149,13 +123,9 @@ export function generateCodeVerifier(length: number) {
 
 export async function generateCodeChallenge(codeVerifier: string) {
     const hash = createHash('sha256').update(codeVerifier).digest('base64')
-    // const data = new TextEncoder().encode(codeVerifier);
-    // const digest = await window.crypto.subtle.digest('SHA-256', data);
+
     return hash.replace(/\+/g, '-')
         .replace(/\//g, '_')
         .replace(/=+$/, '');
-    // return btoa(String.fromCharCode.apply(null, [...new Uint8Array(hash)]))
-    //     .replace(/\+/g, '-')
-    //     .replace(/\//g, '_')
-    //     .replace(/=+$/, '');
+
 }

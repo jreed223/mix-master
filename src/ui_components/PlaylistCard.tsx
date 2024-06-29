@@ -6,9 +6,13 @@ interface PlaylistCardProps{
     playlist : Playlist;
 }
 
+async function getTracks(playlistObject:Playlist){
+    await fetch("/spotify-data/playlist-items", {
+        method: "GET",
+        headers: {"id" : `${playlistObject.id}` }
+    })}
 
 export default function PlaylistCard({playlist}: PlaylistCardProps){
-    const token = getData("access_token")
     // console.log(playlist);
     return(
         <div className="playlist-card">
@@ -26,8 +30,3 @@ export default function PlaylistCard({playlist}: PlaylistCardProps){
 
 }
 
-async function getTracks(playlistObject){
-    await fetch("/spotify-api/playlist-items", {
-        method: "POST",
-        body: playlistObject
-    })}

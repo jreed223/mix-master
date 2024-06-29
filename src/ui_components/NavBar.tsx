@@ -4,10 +4,9 @@ import UserLibrary from "./UserLibrary";
 
 interface navProps{
     currentUser: UserProfile
-    token: String
 }
 
-export default function NavBar({currentUser, token}:navProps){
+export default function NavBar({currentUser}:navProps){
     const [stagingState, setStatgingState] = useState<String|null>(null)
 
     function toggleStagingNew(){
@@ -51,7 +50,7 @@ export default function NavBar({currentUser, token}:navProps){
                 <button className="create-buttons" onClick={toggleStagingEdit}>Edit</button>
                 <p>Welcome, {currentUser.display_name}</p>
             </span>
-            <UserLibrary accessToken={token} stagingState={stagingState}></UserLibrary>
+            <UserLibrary stagingState={stagingState}></UserLibrary>
         </div>
     )
 }

@@ -1,41 +1,25 @@
 import React, { useEffect, useState } from 'react';
-import {getRefreshToken, refreshTokensThenFetch } from '../authentication/AuthHandler';
+import {getRefreshToken } from '../authentication/AuthHandler';
 import type { Playlist } from '../types.d.ts';
 // import PlaylistCard from '../ui_components/PlaylistCard';
 
-export async function fetchPlaylists(accessToken:string, refreshToken:string): Promise<Playlist[]|null> {
+export async function fetchPlaylists(accessToken:string, refreshToken:string): Promise<Response> {
     const clientId = "002130106d174cc495fc8443cac019f2";
     // const token = getData("token")
     // const refreshToken = getData("refresh_token");
 
 
-    try{
-    const result = await fetch("https://api.spotify.com/v1/me/playlists", {
+    
+    const res = await fetch("https://api.spotify.com/v1/me/playlists", {
         method: "GET", headers: { Authorization: `Bearer ${accessToken}` }
     });
 
-    if(!result.ok){ //If unable to fetch profile (access token expired)
-        if(refreshToken && refreshToken !== 'undefined'){
-            const res = await refreshTokensThenFetch(clientId, refreshToken, "https://api.spotify.com/v1/me/playlists");
-            if(res){
-                const playlistObject = await res.json()
-                const playlistList: Playlist[] = playlistObject["items"];
-                return playlistList;
-            }
-    }
-    }
+    
 
-    const playlistsObject = await result.json();
-    const playlistList: Playlist[] = playlistsObject["items"];
-    return playlistList;
-}catch(e){
-
-    console.log(e);
-    return null
-
+    return res;
 }
 
-}
+
 
 
 // export default function UserLibrary({accessToken}){
