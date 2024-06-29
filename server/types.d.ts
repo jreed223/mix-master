@@ -88,9 +88,18 @@ export interface Song {
     is_local: boolean
 
 }
-export interface PlaylistItems {
+
+export interface PlaylistItem {
     added_at: Date
     added_by: UserProfile
     track:Song
-
+}
+export interface Tracklist {
+    href: string,
+    limit: number,
+    next: string|null,
+    offset: number,
+    pevious: string|null,
+    total: number,
+    items: PlaylistItem[]
 }

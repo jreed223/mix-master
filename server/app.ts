@@ -5,12 +5,12 @@ import express, { Request, Response, NextFunction } from 'express';
 import { fetchPlaylistsItems } from './spotify-data/playlist_items';
 import { getAccessToken, generateCodeChallenge, generateCodeVerifier, getRefreshToken } from './authentication/AuthHandler';
 import { fetchProfile } from './authentication/LoadProfile';
-import { fetchPlaylists } from './spotify-data/library';
-import type { Playlist, PlaylistItems, UserProfile } from './types.d.ts';
+import { fetchPlaylists } from './spotify-data/playlists';
+import type { Playlist, PlaylistItem, Tracklist, UserProfile } from './types.d.ts';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import { error } from 'console';
-import bodyParser from 'body-parser';
+import { fetchLikedTracks } from './spotify-data/saved-songs';
+
 
 // Initialize the express engine
 const app: express.Application = express();
@@ -73,6 +73,8 @@ app.listen(PORT, () => {
 	console.log(`TypeScript with Express
 		http://localhost:${PORT}/`);
 });
+
+app.use(express.static("build"))
 
 // Handling '/' Request
 app.get('/', (_req, _res) => {
@@ -236,9 +238,8 @@ app.get("/spotify-data/user", refreshTokens, async(req, res)=>{
 
 app.get("/spotify-data/playlists", async (req, res)=>{
     let accessToken = req.cookies? req.cookies["access_token"]:null
-    let refreshToken = req.cookies? req.cookies["refresh_token"]:null
     console.log(req.cookies)
-    fetchPlaylists(accessToken, refreshToken).then(async (response)=>{
+    fetchPlaylists(accessToken).then(async (response)=>{
         if(response.ok){
             console.log("OK response from spotify-data/playlists: ",response)
             const playlistsObject = await response.json();
@@ -260,18 +261,17 @@ app.get("/spotify-data/playlists", async (req, res)=>{
 
 app.get("/spotify-data/playlist-items", async (req, res)=>{
     let accessToken = req.cookies? req.cookies["access_token"]:null
-    let refreshToken = req.cookies? req.cookies["refresh_token"]:null
     console.log(req.headers)
     
     if(typeof req.headers['id'] === "string"){
         const playlistId = req.headers['id']
 
         console.log(playlistId)
-        fetchPlaylistsItems(playlistId, accessToken, refreshToken).then(async (response)=>{
+        fetchPlaylistsItems(playlistId, accessToken).then(async (response)=>{
             if(response.ok){
                 console.log("OK response from spotify-data/playlist-items: ",response)
-                const playlistObject = await response.json();
-                const playlistItems: PlaylistItems[] = playlistObject["items"];
+                const playlistObject:Tracklist = await response.json();
+                const playlistItems: PlaylistItem[] = playlistObject.items;
                 console.log(playlistItems)
                 res.send(playlistItems)
             }else{
@@ -292,6 +292,28 @@ app.get("/spotify-data/playlist-items", async (req, res)=>{
   
     
     
+})
+
+app.get("/spotify-data/liked-songs", async (req, res)=>{
+    let accessToken = req.cookies? req.cookies["access_token"]:null
+    console.log(req.cookies)
+    fetchLikedTracks(accessToken).then(async (response)=>{
+        if(response.ok){
+            console.log("OK response from spotify-data/liked-songs: ",response)
+            const playlistsObject: Tracklist = await response.json();
+            const playlistList: PlaylistItem[] = playlistsObject.items;
+            res.send(playlistList)
+        }else{
+            const error = await response.json()
+            console.error("issue fetching liked songs:", error)
+        }
+    })
+    .catch(e=>{
+        // res.clearCookie('authorizing')
+        // res.clearCookie('access_token')
+        // res.clearCookie('refresh_token')
+        console.log("Issue fetching liked songs: ", e)
+    })
 })
 
 
