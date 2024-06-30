@@ -68,7 +68,7 @@ export interface Artist{
 
 }
 
-export interface Song {
+export interface Track {
     album: Album
     artists: Artist[]
     available_markets: string[]
@@ -78,7 +78,7 @@ export interface Song {
     external_ids: {isrc: string, ean: string, upc:string}
     external_urls: {spotify:string }
     href:string
-    id:string
+    id:string|null
     is_playable:boolean
     name:string
     popularity:number
@@ -86,20 +86,36 @@ export interface Song {
     type: string
     uri: string
     is_local: boolean
+    audio_features: Features|null
 
 }
 
 export interface PlaylistItem {
     added_at: Date
     added_by: UserProfile
-    track:Song
+    track:Track
 }
 export interface Tracklist {
-    href: string,
-    limit: number,
-    next: string|null,
-    offset: number,
-    pevious: string|null,
-    total: number,
+    href: string
+    limit: number
+    next: string|null
+    offset: number
+    pevious: string|null
+    total: number
     items: PlaylistItem[]
+}
+
+export interface Features {
+    analysis_url: string
+    acousticness: number
+    danceability: number
+    energy: number
+    instrumentalness: number
+    key: number
+    liveness: number
+    loudness: number
+    mode: number
+    tempo: number
+    time_signature: number
+    valence: number
 }

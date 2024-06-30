@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { fetchPlaylists } from "../getData/library";
 import PlaylistCard from "./PlaylistCard";
 import React from "react";
 

@@ -1,13 +1,10 @@
 //import logo from './logo.svg';
 import { useEffect, useState } from 'react';
 import './App.css';
-import {getAccessToken, getData} from './authentication/AuthHandler';
-import {fetchProfile} from './authentication/LoadProfile';
 import * as React from 'react';
 import LoginPage from './ui_components/LoginPage';
 
 import NavBar from './ui_components/NavBar';
-import UserLibrary from './ui_components/UserLibrary';
 
 
 
