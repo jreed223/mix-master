@@ -7,15 +7,21 @@ export async function fetchPlaylists(accessToken:string): Promise<Response> {
     // const token = getData("token")
     // const refreshToken = getData("refresh_token");
 
-
+try{
     
     const res = await fetch("https://api.spotify.com/v1/me/playlists", {
         method: "GET", headers: { Authorization: `Bearer ${accessToken}` }
     });
+    console.log(res.headers)
+    return res;
 
+}catch(e){
+
+    console.error("Error in fetchPlaylist(): ", e)
+    return(Response.error())
+}
     
 
-    return res;
 }
 
 

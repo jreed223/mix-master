@@ -39,6 +39,19 @@ export interface Playlist {
     uri: string;
 }
 
+export interface CategorizedPlaylist {
+    id: string;
+    image: Image;
+    name: string;
+    owner: {display_name: string; external_urls: {spotify: string;}; href: string; id: string; type: string; uri: string;}
+    snapshot_id: string;
+    uri: string;
+    totalTracks: number;
+    categories?: {tag_list: Tag[] | null, top_tags: Record<string, Track[]>|null}|null
+    tracks?: PlaylistItem[]
+}
+
+
 export interface Album {
     album_type: string
     total_tracks: number
@@ -87,7 +100,6 @@ export interface Track {
     uri: string
     is_local: boolean
     audio_features: Features|null
-
 }
 
 export interface PlaylistItem {
@@ -118,4 +130,10 @@ export interface Features {
     tempo: number
     time_signature: number
     valence: number
+}
+
+export interface Tag {
+    count: number
+    name: string
+    url: string
 }

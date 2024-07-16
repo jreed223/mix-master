@@ -6,13 +6,14 @@ import { fetchPlaylistsItems } from './spotify-data/playlist_items';
 import { getAccessToken, generateCodeChallenge, generateCodeVerifier, getRefreshToken } from './authentication/AuthHandler';
 import { fetchProfile } from './authentication/LoadProfile';
 import { fetchPlaylists } from './spotify-data/playlists';
-import type { Features, Playlist, PlaylistItem, Tracklist, UserProfile } from './types.d.ts';
+import type { Features, Playlist, PlaylistItem, Tag, Tracklist, UserProfile } from './types.d.ts';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import { fetchLikedTracks } from './spotify-data/saved-songs';
 import { error } from 'console';
 import { fetchAudioFeatures } from './spotify-data/audio-features';
 import { access } from 'fs';
+import { fetchTopTags } from './lastFM-data/track-tags';
 // import { Tracklist, Playlist } from './types';
 
 
@@ -204,6 +205,7 @@ app.get("/spotify-data/playlists", refreshTokens, async (req, res)=>{
             if(response.ok){
                 console.log("OK response from spotify-data/playlists")
                 const playlistsObject = await response.json();
+                
                 const playlistList: Playlist[] = playlistsObject["items"];
                 res.send(playlistList)
             }else{
@@ -232,6 +234,7 @@ app.get("/spotify-data/playlist-items", refreshTokens, async (req, res)=>{
     if(typeof req.headers['id'] === "string" && typeof accessToken !== "undefined"){
         const playlistId = req.headers['id']
         let allPlaylistItems : PlaylistItem[] = []
+        //let allNamesAndArtists : string[] = []
         let offset = 0
         // console.log(playlistId)
         while(true){
@@ -265,12 +268,17 @@ app.get("/spotify-data/playlist-items", refreshTokens, async (req, res)=>{
                     }
                 }
                 allPlaylistItems = allPlaylistItems.concat(playlistItems)
+                //TODO: Remove below for-loop after testing
+                // for(let item of playlistItems){
+                //     allNamesAndArtists.push(` ${item.track.name} by ${item.track.artists[0].name}`)
+                // }
                 //console.log(`Playlist items batch #${offset}: `, playlistItems)
                 if(playlistObject.next){
                     offset+=1
                     console.log("offset: ",offset)
                 }else{
                     //console.log("All Playlist Items: ",allPlaylistItems)
+                    //console.log(allNamesAndArtists)
                     console.log("Total playlist items found: ", allPlaylistItems.length)
                     res.send(allPlaylistItems)
 
@@ -349,7 +357,61 @@ app.post("/spotify-data/audio-features", refreshTokens, async (req, res)=>{
     }
 })
 
+app.get("/lastFM-data/track-tags", async (req, res)=>{
+    if(typeof req.headers.artist == "string" && typeof req.headers.track == 'string'){
+        const artist = decodeURIComponent(req.headers.artist)
+        const track = decodeURIComponent(req.headers.track)
+    
 
+    
+    
+        if(typeof artist == "string" && typeof track == "string"){
+            let top4Tags:Tag[] = []
+
+            fetchTopTags(artist, track ).then(async response=>{
+                //console.log(`${artist}: `, track)
+                if(response.ok){
+                    const tagsObject = await response.json()
+                    console.log(tagsObject)
+                    if(tagsObject.toptags){
+                        const tagsList:Tag[] = tagsObject.toptags.tag
+                        let i = 0;
+                        if(tagsList.length === 0){
+                            top4Tags.push({count: 0, name:"Uncategorized", url: "http://localhost:8080/"})
+                            // res.status(400).send()
+                        }else{
+                            while(i<=10&& i < tagsList.length){
+                                top4Tags.push(tagsList[i])
+                                i++
+                            }
+                            // res.send(top4Tags)
+                        }
+                       
+                    }else{
+                        top4Tags.push({count: 0, name:"Uncategorized", url: "http://localhost:8080/"})
+                        // res.status(400).send()
+                        //res.send(top4Tags)
+                    }
+                }else{
+                    top4Tags.push({count: 0, name:"Uncategorized", url: "http://localhost:8080/"})
+                    //res.send(top4Tags)
+                    // res.status(400).send()
+                }
+                res.send(top4Tags)
+
+            }).catch((e:Error)=>{
+                // res.clearCookie('authorizing')
+                // res.clearCookie('access_token')
+                // res.clearCookie('refresh_token')
+                console.error("Fetch operation failed (/lastFM-data/track-tags)): ", e)
+            })
+        }
+    }else{
+        console.error("No artist||track found (/spotify-data/audio-features)")
+
+    }
+    
+})
 
 
 app.get("/spotify-data/liked-songs", async (req, res)=>{

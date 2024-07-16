@@ -5,6 +5,7 @@ import * as React from 'react';
 import LoginPage from './ui_components/LoginPage';
 
 import NavBar from './ui_components/NavBar';
+import { UserProfile } from '../server/types';
 
 
 

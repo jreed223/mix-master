@@ -1,4 +1,4 @@
-interface UserProfile {
+export interface UserProfile {
     country: string;
     display_name: string;
     email: string;
@@ -16,13 +16,13 @@ interface UserProfile {
     uri: string;
 }
 
-interface Image {
+export interface Image {
     url: string;
     height: number;
     width: number;
 }
 
-interface Playlist {
+export interface Playlist {
     collaborative: boolean;
     description: string;
     external_urls: {spotify: string;};
@@ -39,7 +39,7 @@ interface Playlist {
     uri: string;
 }
 
-interface Album {
+export interface Album {
     album_type: string
     total_tracks: number
     available_markets: string[]
@@ -55,7 +55,7 @@ interface Album {
     artists:Artist[]
 }
 
-interface Artist{
+export interface Artist{
     external_urls:{spotify:string}
     genres: string[]
     href:string
@@ -68,7 +68,7 @@ interface Artist{
 
 }
 
-interface Song {
+export interface Track {
     album: Album
     artists: Artist[]
     available_markets: string[]
@@ -78,7 +78,7 @@ interface Song {
     external_ids: {isrc: string, ean: string, upc:string}
     external_urls: {spotify:string }
     href:string
-    id:string
+    id:string|null
     is_playable:boolean
     name:string
     popularity:number
@@ -86,11 +86,36 @@ interface Song {
     type: string
     uri: string
     is_local: boolean
+    audio_features: Features|null
 
 }
-interface PlaylistItems {
+
+export interface PlaylistItem {
     added_at: Date
     added_by: UserProfile
-    track:Song
+    track:Track
+}
+export interface Tracklist {
+    href: string
+    limit: number
+    next: string|null
+    offset: number
+    pevious: string|null
+    total: number
+    items: PlaylistItem[]
+}
 
+export interface Features {
+    analysis_url: string
+    acousticness: number
+    danceability: number
+    energy: number
+    instrumentalness: number
+    key: number
+    liveness: number
+    loudness: number
+    mode: number
+    tempo: number
+    time_signature: number
+    valence: number
 }
