@@ -31,6 +31,10 @@ const UserLibrary:React.FC=()=>{
         display:"none"
     }
 
+    const shrinkmenu = {
+        height: 0,
+    }
+
     useEffect(()=>{
         const displayTracks = (playlistSelection: PlaylistClass)=>{
             setStagingState("open")
@@ -39,7 +43,6 @@ const UserLibrary:React.FC=()=>{
         }
         if (playlistList){
         const playlists = playlistList.map(singlePlaylist =>
-            <PlaylistCard key={singlePlaylist.id} onSelectedPlaylist={displayTracks} playlist={singlePlaylist} ></PlaylistCard>
             <PlaylistCard key={singlePlaylist.id} onSelectedPlaylist={displayTracks} playlist={singlePlaylist} ></PlaylistCard>
             );
         setPlaylistCards(playlists)
@@ -80,7 +83,7 @@ const UserLibrary:React.FC=()=>{
                 <div className="main-content-area">
                     <div className="playlist-creation-container-hidden" id="creation-container">
                         <div className="playlist-creation-menu-bar">
-                            <button onClick={toggleCreation} style={hidebutton}></button>
+                            <button onClick={()=>setStagingState("closed")} style={hidebutton}></button>
                         </div>
                         <div className="playlist-items-containers">
 
@@ -109,7 +112,7 @@ const UserLibrary:React.FC=()=>{
                         
                             <div className="playlist-creation-container-new grow-staging" id="creation-container">
                                 <div className="playlist-creation-menu-bar">
-                                    <button onClick={toggleCreation}></button>
+                                    <button onClick={()=>setStagingState("closed")}></button>
                                 </div>
                                 <div className="playlist-items-containers">
                                     <SelectedPlaylistContainer playlist={selectedPlaylist}></SelectedPlaylistContainer>
@@ -125,8 +128,8 @@ const UserLibrary:React.FC=()=>{
                             <div className="library-container-new shrink-library" id="library-container">
                                 <p className="library-heading">Library</p>
                                 <div className='library-content'>
-                                    <div className="playlist-content">{playlists}</div>
-                                    <div className="album-content">{playlists}</div>
+                                    <div className="playlist-content">{playlistCards}</div>
+                                    <div className="album-content">{playlistCards}</div>
                                 </div>
                             </div>
                     </div>)
@@ -139,9 +142,9 @@ const UserLibrary:React.FC=()=>{
                 return (
                     <div className="main-content-area">
                         
-                            <div className="playlist-creation-container-new grow-staging" id="creation-container">
+                            <div className="playlist-creation-container-hidden shrink-staging" id="creation-container">
                                 <div className="playlist-creation-menu-bar">
-                                    <button onClick={toggleCreation}></button>
+                                    <button onClick={toggleCreation} style={hidebutton}></button>
                                 </div>
                                 <div className="playlist-items-containers">
                                     <SelectedPlaylistContainer playlist={selectedPlaylist}></SelectedPlaylistContainer>
@@ -154,7 +157,7 @@ const UserLibrary:React.FC=()=>{
                                 </div >
                             </div>
                         
-                            <div className="library-container-new shrink-library" id="library-container">
+                            <div className="library-container grow-library" id="library-container">
                                 <p className="library-heading">Library</p>
                                 <div className='library-content'>
                                     <div className="playlist-content">{playlistCards}</div>
