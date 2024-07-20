@@ -14,7 +14,12 @@ export default function LoginPage(){
         <div className="App">
             <header className="App-header">
                 <p>MixMaster: Playlist Builder</p>
-                <button className="login-button" onClick={() => {intialLogin()}}>Login</button>
+                <button className="login-button" onClick={() => {
+                    fetch("/spotify-data/authentication-flow").then(async (res)=>{
+                    const authLink = await res.text()
+                    window.location.href = authLink
+                    return authLink
+                    })}}>Login</button>
                 <p><input type="checkbox" id="save-sign-in"
                 onChange={(e)=>{e.target.checked?window.localStorage.setItem('save_user', 'true'):window.localStorage.removeItem('save_user')}}>
                     </input>Stay signed in?</p>
