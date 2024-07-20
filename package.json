@@ -42,5 +42,6 @@
   "description": "An application that streamlines the playlist creation experience by offering intuitive tools to filter, group, and organize your existing Spotify playlists. ",
   "main": "index.js",
   "author": "Jonathan Reed",
-  "license": "ISC"
+  "license": "ISC",
+  "proxy": "http://localhost:8080"
 }

@@ -71,8 +71,11 @@ export async function redirectToAuthCodeFlow(clientId: string) {
 
 }
 
+//TODO: Method is returning null
 /** Send POST request to Spotify API authorize access and to retreive access token. */
-export async function getAccessToken(clientId: string, code: string):Promise<string> {
+export async function getAccessToken(clientId: string):Promise<string> {
+    let respomseParams = new URLSearchParams(window.location.search)
+      let code : string = respomseParams.get("code");
     let verifier = getData("verifier");
     let params = new URLSearchParams();
     params.append("client_id", clientId);
@@ -83,24 +86,31 @@ export async function getAccessToken(clientId: string, code: string):Promise<str
 
     //Grabs token after user verifies access
     try{
-    const result = await fetch("https://accounts.spotify.com/api/token", {
+    await fetch("https://accounts.spotify.com/api/token", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: params
-    });
-    const { access_token, refresh_token } = await result.json(); //Stores token if valid response is recieved
-    if((access_token && access_token!=="undefined")&&(refresh_token && refresh_token !== "undefined")){
-        console.log("User verified successfully. Tokens stored");
+    }).then(async (result)=>{
+        console.log("result: ", result);
+        const { access_token, refresh_token } = await result.json().then(()=>{
+            if((access_token && access_token!=="undefined")&&(refresh_token && refresh_token !== "undefined")){
+                console.log("User verified successfully. Tokens stored");
+        
+                storeData("refresh_token", refresh_token);
+                storeData("access_token", access_token);
+                return access_token;
+        }})
+        }
 
-        storeData("refresh_token", refresh_token);
-        storeData("access_token", access_token);
-        return access_token;
-
-    }
+        );      //Stores token if valid response is recieved
+        
+    
+    return null
+    
 }catch(e){
     console.log("authorization code not accepted. Failed to retrieve access token : " + e);
-    window.localStorage.clear();
-    window.sessionStorage.clear();
+    // window.localStorage.clear();
+    // window.sessionStorage.clear();
 }
 
 }
@@ -135,7 +145,7 @@ try{
 }
 
 
-function generateCodeVerifier(length: number) {
+export function generateCodeVerifier(length: number) {
     let text = '';
     let possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
@@ -145,7 +155,7 @@ function generateCodeVerifier(length: number) {
     return text;
 }
 
-async function generateCodeChallenge(codeVerifier: string) {
+export async function generateCodeChallenge(codeVerifier: string) {
     const data = new TextEncoder().encode(codeVerifier);
     const digest = await window.crypto.subtle.digest('SHA-256', data);
     return btoa(String.fromCharCode.apply(null, [...new Uint8Array(digest)]))

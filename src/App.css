@@ -44,6 +44,25 @@
   flex-wrap: wrap;
   justify-content: flex-start;
 }
+
+.playlist-content{
+  display: flex;
+  flex-flow: row wrap;
+  max-width: 100%;
+  justify-content: flex-start;
+
+  /* overflow-x: scroll; */
+  /* flex: 0 0 auto; */
+  
+}
+
+.album-content{
+  display: flex;
+  flex-flow: row wrap;
+  max-width: 100%;
+  justify-content: flex-start;
+  /* flex: 0 0 auto; */
+}
 .library-content2{
   display: flex;
   flex-flow: row wrap;
@@ -80,7 +99,7 @@
   position:fixed;
   top: 0;
   width: 100%;
-  height: 4%;
+  height: 50px;
   display: inline-flex;
   background-color:#61dafb;
   z-index: 1;
@@ -113,8 +132,8 @@
 
 .playlist-creation-container-new{
   position: fixed;
-  display: inline-flex;
-  top:4%;
+  /* display: inline-flex; */
+  top:50px;
   bottom: 0;
   width: 50%;
   background-color: aquamarine;
@@ -125,8 +144,8 @@
 }
 .playlist-creation-container-hidden{
   position: fixed;
-  display: inline-flex;
-  top:4%;
+  /* display: inline-flex; */
+  top:50px;
   bottom: 0;
   width: 0%;
   background-color: aquamarine;
@@ -136,28 +155,56 @@
 
 }
 .library-container{
-  margin-top: 4vh;
-  padding-top: 2%;
+  /* margin-top: 40px; */
+  /* padding-top: 2%; */
   width: 100%;
   margin-left: auto;
   container-type: inline-size;
   container-name: playlist-view;
+  transition: width 1s;
+
+}
+
+.playlist-creation-menu-bar{
+  background-color: chocolate;
+  top:50px;
+  width : 100%;
+  height: 40px;
+  transition: width 1s;
+
+}
+
+.playlist-items-containers{
+  width: 100%;
+  height: 100%;
+  display: inline-flex;
+
 }
 .library-container-new{
-  margin-top: 4vh;
-  padding-top: 2%;
+  /* margin-top: 40px; */
+  padding-top: 2px;
   container-type: inline-size;
   container-name: new-playlist-view;
   margin-left: auto;
   width: 50%;
-  transition: margin-top 1s;
-  /* transition: height 1s; */
+  
+  /* transition: margin-top 1s; */
+  transition: width 1s;
+
 
 }
 
 .new-playlist{
+  overflow-y:auto;
   width: 50%;
   height: 100%;
+  /* transition: width 1s; */
+}
+
+.new-playlist-inactive{
+  width: 0%;
+  height: 100%;
+  transition: width 1s;
 }
 .playlist-draft-container{
   background-color: #282c34;
@@ -167,6 +214,21 @@
 
 }
 
+.grow-staging {
+  animation: grow-staging 1s;
+}
+
+.shrink-staging {
+  animation: shrink-staging 1s;
+}
+
+.grow-library {
+  animation: grow-library 1s;
+}
+
+.shrink-library {
+  animation: shrink-library 1s;
+}
 @keyframes grow-staging {
   0%{
     width: 0%; 
@@ -203,6 +265,7 @@
   }
 }
 .main-content-area{
+  margin-top: 50px;
   display: inline-block;
   width: 100%;
 }
@@ -242,9 +305,13 @@
   @media (width<900px){
     .new-playlist{
       width: 100%;
-      height: 50%;
+      height: 100%;
     }
 
+    .playlist-items-containers{
+      position: relative;
+      height: calc(100% - 40px)
+    }
     .new-playlist-inactive{
       position: relative;
       width: 50%;
@@ -264,28 +331,51 @@
       font-size:23px;
     }
     .main-content-area{
-      display: inline-block;
+      display: block;
       width: 100%;
-      height: 100vh;
+      height: calc(100vh - 50px);
+      margin-top: 50px;
     }
     .library-content{
       height: 100%;
-      display: flex;
-      flex-flow: column wrap;
+      display: unset;
+      flex-flow: row;
       max-width: none;
       /* flex-wrap: wrap; */
-      overflow-x: auto;
-      justify-content: flex-start;
+      overflow-x: scroll;
+      /* justify-content: flex-start; */
+    }
+
+    .playlist-content{
+      display: flex;
+      /* flex-direction: row; */
+      overflow-x: scroll;
+      flex-flow: unset;
+      /* flex: 0 0 auto; */
+      
+    }
+
+    .album-content{
+      display: flex;
+      flex-direction: row;
+      overflow-x: scroll;
+      /* flex-flow: unset; */
+
+      /* flex: 0 0 auto; */
+    }
+
+    .playlist-creation-menu-bar{
+      
     }
     .playlist-creation-container-new{
       display: block;
       position: fixed;
-      top:4%;
+      top:50px;
       height: 48%;
       width: 100%;
       background-color: aquamarine;
       
-      /* transition: width 1s; */
+      transition: height 1s;
     
       /* animation: grow-staging 1s; */
     
@@ -293,28 +383,37 @@
     .playlist-creation-container-hidden{
       display: block;
       position: fixed;
-      top:4%;
+      /* top:4%; */
       height: 0;
       width: 100%;
       background-color: aquamarine;
-    
+      transition: height 1s;
+
       /* animation: shrink-staging 1s;  */
     
     }
     .library-container{
+      position: fixed;
+      top: 50px;
       width: 100%;
       margin-left: auto;
       container-type: inline-size;
       container-name: playlist-view;
+      transition: margin-top 1s;
+
     }
     .library-container-new{
       container-type: inline-size;
       container-name: new-playlist-view;
-      margin-top: 52vh;
+      /* margin-top: 50%; */
       position: fixed;
-      /* top: 52%; */
-      height:46%;
+      top: calc(50% + 40px);
+      height: calc(50% - 44px);
       width: 100%;
+      transition: margin-top 1s;
+      overflow-y: scroll;
+
+
     }
     
     @keyframes grow-staging {
@@ -338,21 +437,21 @@
     @keyframes grow-library {
       0%{
         height: 48%;
-        margin-top: 52vh;
+        top: calc(50% + 40px);
       }
       100%{
         height: 100%;
-        margin-top: 4vh;
+        top: 50px;
       }
     }
     
     @keyframes shrink-library{
       0%{
         height: 100%;
-        margin-top: 4vh;
+        top: 50px;
       }
       100%{
-        margin-top: 52vh;
+        top: calc(50% + 40px);
         height: 48%;
       }
     }

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getData, getRefreshToken, refreshTokensThenFetch } from '../authentication/AuthHandler';
 import PlaylistCard from '../ui_components/PlaylistCard';
+import { Playlist } from '../../server/types';
 
 export async function fetchPlaylists(token: string): Promise<Playlist[]|null> {
     const clientId = "002130106d174cc495fc8443cac019f2";
