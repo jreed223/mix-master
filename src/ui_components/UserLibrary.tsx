@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import PlaylistCard, { PlaylistCardProps } from "./PlaylistCard";
 import React from "react";
-import { CategorizedPlaylist, Playlist } from "../../server/types";
+import { CategorizedPlaylist, Playlist, PlaylistItem } from '../../server/types';
 import PlaylistClass from "../models/playlistClass";
 import TrackCard from "./TrackCard";
 import SelectedPlaylistContainer from "./SelectedPlaylistArea";
+import DraftPlaylistContainer from "./StagingArea";
 
 // interface UserLibraryProps{
 //     stagingState: String
@@ -15,6 +16,8 @@ const UserLibrary:React.FC=()=>{
     const [playlistList, setPlaylistList] = useState<PlaylistClass[]|null>(null)
     const [selectedPlaylist, setSelectedPlaylist] = useState<PlaylistClass|null>(null)
     const [playlistCards, setPlaylistCards] = useState<React.JSX.Element[]|null>(null)
+    const [stagedPlaylist, setStagedPlaylist] = useState<PlaylistItem[]>([])
+
     // const [selectedPlaylistTracks, setSelectedPlaylistTracks] = useState<PlaylistClass[`tracks`]|null>(null)
 
     const [stagingState, setStagingState] = useState<String|null>(null)
@@ -25,6 +28,30 @@ const UserLibrary:React.FC=()=>{
             console.log(stagingState)
         }
 
+        // const editSelectedItemList = (e: React.ChangeEvent<HTMLInputElement>,selectedItem: PlaylistItem)=>{
+        //     if(e.target.checked){
+        //         setSelectedPlaylistItems(selectedPlaylistItems.concat([selectedItem]))
+        
+        //     }else{
+        //         setSelectedPlaylistItems(selectedPlaylistItems.filter(item=>item!== selectedItem))
+        //     }
+        //     console.log(selectedPlaylistItems)
+        // }
+
+        const addStagedItems =(items:PlaylistItem[])=>{
+            const newStagedPlaylist = stagedPlaylist.concat(items)
+            setStagedPlaylist(newStagedPlaylist)
+            console.log("Added items: ",items)
+            console.log("new Staged Playlist: ",newStagedPlaylist)
+
+        }
+
+        const removeStagedItems = (items:PlaylistItem[])=>{
+            const newStagedPlaylist = stagedPlaylist.filter(stagedItem=>!items.some(removedItem => removedItem.track.id === stagedItem.track.id))
+            setStagedPlaylist(newStagedPlaylist)
+            console.log("Removed items: ",items)
+            console.log("new Staged Playlist: ",newStagedPlaylist)
+        }
  
 
     const hidebutton = {
@@ -87,9 +114,10 @@ const UserLibrary:React.FC=()=>{
                         </div>
                         <div className="playlist-items-containers">
 
-                            <SelectedPlaylistContainer playlist={selectedPlaylist}></SelectedPlaylistContainer>
+                            <SelectedPlaylistContainer onSelectedItems={addStagedItems} playlist={selectedPlaylist} stagedPlaylistItems={stagedPlaylist}></SelectedPlaylistContainer>
                             {/* <div className="search-filter-container new-playlist" id="search-filter-div"></div> */}
-                            <div className="playlist-draft-container new-playlist" id="drafting-div"></div>
+                            <DraftPlaylistContainer onSelectedItems={removeStagedItems} selectedTracks={stagedPlaylist}></DraftPlaylistContainer>
+                            {/* <div className="playlist-draft-container new-playlist" id="drafting-div"></div> */}
                         </div>
                     </div >
                     <div className="library-container" id="library-container">
@@ -115,13 +143,15 @@ const UserLibrary:React.FC=()=>{
                                     <button onClick={()=>setStagingState("closed")}></button>
                                 </div>
                                 <div className="playlist-items-containers">
-                                    <SelectedPlaylistContainer playlist={selectedPlaylist}></SelectedPlaylistContainer>
+                                    <SelectedPlaylistContainer onSelectedItems={addStagedItems} playlist={selectedPlaylist} stagedPlaylistItems={stagedPlaylist}></SelectedPlaylistContainer>
 
                                     {/* <div className="search-filter-container new-playlist" id="search-filter-div" >
                                         <button onClick={toggleCreation}></button>
                                         {tracks}
                                     </div> */}
-                                    <div className="playlist-draft-container new-playlist" id="drafting-div"></div>
+                                    <DraftPlaylistContainer onSelectedItems={removeStagedItems} selectedTracks={stagedPlaylist}></DraftPlaylistContainer>
+
+                                    {/* <div className="playlist-draft-container new-playlist" id="drafting-div"></div> */}
                                 </div >
                             </div>
                         
@@ -147,13 +177,14 @@ const UserLibrary:React.FC=()=>{
                                     <button onClick={toggleCreation} style={hidebutton}></button>
                                 </div>
                                 <div className="playlist-items-containers">
-                                    <SelectedPlaylistContainer playlist={selectedPlaylist}></SelectedPlaylistContainer>
+                                    <SelectedPlaylistContainer onSelectedItems={addStagedItems} playlist={selectedPlaylist} stagedPlaylistItems={stagedPlaylist}></SelectedPlaylistContainer>
 
                                     {/* <div className="search-filter-container new-playlist" id="search-filter-div" >
                                         <button onClick={toggleCreation}></button>
                                         {tracks}
                                     </div> */}
-                                    <div className="playlist-draft-container new-playlist" id="drafting-div"></div>
+                                    <DraftPlaylistContainer onSelectedItems={removeStagedItems} selectedTracks={stagedPlaylist}></DraftPlaylistContainer>
+                                    {/* <div className="playlist-draft-container new-playlist" id="drafting-div"></div> */}
                                 </div >
                             </div>
                         
@@ -179,13 +210,15 @@ const UserLibrary:React.FC=()=>{
                             </div>
                             <div className="playlist-items-containers">
 
-                                <SelectedPlaylistContainer playlist={selectedPlaylist}></SelectedPlaylistContainer>
+                                <SelectedPlaylistContainer onSelectedItems={addStagedItems} playlist={selectedPlaylist} stagedPlaylistItems={stagedPlaylist}></SelectedPlaylistContainer>
 
                                 {/* <div className="search-filter-container new-playlist" id="search-filter-div" >
                                     <button onClick={toggleCreation}></button>
                                     {tracks}
                                 </div> */}
-                                <div className="playlist-draft-container new-playlist" id="drafting-div"></div>
+                                <DraftPlaylistContainer onSelectedItems={removeStagedItems} selectedTracks={stagedPlaylist}></DraftPlaylistContainer>
+
+                                {/* <div className="playlist-draft-container new-playlist" id="drafting-div"></div> */}
                             </div>
                         </div >
                         

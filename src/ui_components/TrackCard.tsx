@@ -1,8 +1,9 @@
 import React from "react";
 import { PlaylistItem, Track } from "../../server/types";
+import { Checkbox } from "@mui/material";
 
 export interface TrackCardProps{
-    //onSelectedTrack: (track: Track) => void
+    onSelectedTrack: (event: React.ChangeEvent<HTMLInputElement>,selectedItem: PlaylistItem) => void
     playlistItem : PlaylistItem;
 }
 
@@ -19,8 +20,10 @@ const TrackCard: React.FC<TrackCardProps> = (props: TrackCardProps)=>{
 
     // console.log(playlist);
     return(
-        <div className="track-card">
-            <p>{props.playlistItem.track.name} by {props.playlistItem.track.artists[0].name}</p>
+        <div className="track-card" id={props.playlistItem.track.id} style={{display:"flex", textOverflow: "ellipsis"}}>
+            <input key={`checkbox-${props.playlistItem.track.id}`} type="checkbox" onChange={(e)=>props.onSelectedTrack(e, props.playlistItem )}/>
+            <label>{props.playlistItem.track.name} - {props.playlistItem.track.artists[0].name}</label>
+            {/* <p>{props.playlistItem.track.name} by {props.playlistItem.track.artists[0].name}</p> */}
         </div>
     )
 
