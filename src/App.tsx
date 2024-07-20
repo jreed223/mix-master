@@ -12,10 +12,8 @@ import UserLibrary from './ui_components/UserLibrary';
 
 
 function App() {
-    const clientId = "002130106d174cc495fc8443cac019f2";
-    let token = getData("access_token");
+   
 
-    //const [isLoading, setLoading] = useState(false);
     const [user, setUser] = useState<UserProfile|null>(null);
     //const [token, setToken] = useState<String|null>(null);
     //setToken(getData("access_token"));
@@ -38,36 +36,38 @@ function App() {
       let code : string = params.get("code");
 
       console.log("Use effect block running")
-      //If a token is found in the browser storage try loading the user
-      if(token && token !== 'undefined'){
-        console.log("loading user from saved token")
-        loadUser(token)
-      }
+        console.log("attempting to load user")
+      fetch("/spotify-data/user").then(async user=>{
+        setUser(await user.json())
+        setLoading(false)
+      }).catch(()=>{
+        setUser(null)
+        setLoading(false)
+      }) //fetch and set user
 
       //if the browser storage has the authorizing key with a value of true, retrieve the access token and load user
       if(window.localStorage.getItem('authorizing')==='true'){
-        getAccessToken(clientId, code).then((token)=>{
-          console.log("retrieving user using token" + {token})
-          loadUser(token);
-        })
+        setLoading(true)
+        fetch("/spotify-data/init-login").then(()=>{
+                window.localStorage.removeItem('authorizing');
+                setLoading(false)
 
-      window.localStorage.removeItem('authorizing');
-    }
+        })
+      }
 
   }, [token]); //Anytime the token is changed the use effect block will run
 
 
-  console.log(token);
-  //If a user is set display user info
-  if(user){
-    return(<div>
-      <NavBar currentUser={user} token={token}></NavBar>
-    </div>)
-  }else if(token && token !== 'undefined'){   //If a token is found in the browser storage, direct to loading screen until user is set
+  
+  if(isLoading === true){   //If authorizing user, direct to loading screen until user is set
     return(
       <div><h1>Loading...</h1></div>
     )
-  }else{ //If no token or user found, direct to authetentication flow
+  }else if(user){
+    return(<div>
+      <NavBar currentUser={user} token={token}></NavBar>
+    </div>)
+  }else{ //If no user found and not authorizing user
     return <LoginPage></LoginPage>
         }
 
@@ -75,5 +75,4 @@ function App() {
 }
 
 export default App;
-
 
