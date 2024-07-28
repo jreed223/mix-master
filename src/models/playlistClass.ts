@@ -1,4 +1,4 @@
-import { CategorizedPlaylist, PlaylistItem, Tag, Track, Image } from "../../server/types";
+import { CategorizedPlaylist, PlaylistItem, Tag, Track, Image, Features } from "../../server/types";
 
 export default class PlaylistClass implements CategorizedPlaylist{
     id: string;
@@ -9,7 +9,8 @@ export default class PlaylistClass implements CategorizedPlaylist{
     uri: string;
     totalTracks: number;
     categories?: {tag_list: Tag[] | null, top_tags: Record<string, Track[]>|null}|null
-    tracks?: PlaylistItem[]
+    tracks: PlaylistItem[]
+    audioFeaturesSet: boolean
 
 
     constructor(id: string,
@@ -31,6 +32,7 @@ export default class PlaylistClass implements CategorizedPlaylist{
             this.totalTracks = totalTracks;
             this.categories = categories?categories:{tag_list:[], top_tags:{}};
             this.tracks = tracks?tracks:[];
+            this.audioFeaturesSet = false;
     }
 
     async setTracks(){
@@ -106,4 +108,19 @@ export default class PlaylistClass implements CategorizedPlaylist{
         }
     }
 
+    async setAudioFeatures(){
+        if(this.tracks&&this.tracks.length>0){
+
+            const response = await fetch("/spotify-data/audio-features", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                  },
+                body: JSON.stringify(this.tracks)
+            })
+            const tracksAndFeatures = await response.json()
+            this.tracks = tracksAndFeatures
+        }
+        this.audioFeaturesSet=true
+    }
 }

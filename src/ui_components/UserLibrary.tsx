@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import PlaylistCard, { PlaylistCardProps } from "./PlaylistCard";
 import React from "react";
-import { CategorizedPlaylist, Playlist, PlaylistItem } from '../../server/types';
+import { CategorizedPlaylist, Features, Playlist, PlaylistItem } from '../../server/types';
 import PlaylistClass from "../models/playlistClass";
 import TrackCard from "./TrackCard";
 import SelectedPlaylistContainer from "./SelectedPlaylistArea";
 import DraftPlaylistContainer from "./StagingArea";
+import PlaylistMenuBar from "./PlaylistMenu";
 
 // interface UserLibraryProps{
 //     stagingState: String
@@ -17,6 +18,8 @@ const UserLibrary:React.FC=()=>{
     const [selectedPlaylist, setSelectedPlaylist] = useState<PlaylistClass|null>(null)
     const [playlistCards, setPlaylistCards] = useState<React.JSX.Element[]|null>(null)
     const [stagedPlaylist, setStagedPlaylist] = useState<PlaylistItem[]>([])
+    const[featureFilter, setFeatureFilter] = useState<Features[]>([])
+
 
     // const [selectedPlaylistTracks, setSelectedPlaylistTracks] = useState<PlaylistClass[`tracks`]|null>(null)
 
@@ -26,6 +29,12 @@ const UserLibrary:React.FC=()=>{
         const toggleCreation = ()=>{
             setStagingState("closed")
             console.log(stagingState)
+        }
+
+        const setFeatureFilterState = (featureList:Features[])=>{
+            
+            setFeatureFilter(featureList)
+            console.log("new features set for filter")
         }
 
         // const editSelectedItemList = (e: React.ChangeEvent<HTMLInputElement>,selectedItem: PlaylistItem)=>{
@@ -91,7 +100,7 @@ const UserLibrary:React.FC=()=>{
                     playlistObject.owner,
                     playlistObject.snapshot_id,
                     playlistObject.uri,
-                    playlistObject.tracks.total)
+                    playlistObject.tracks.total,)
             })
             // console.log(playlistClassList)
             console.log("playlistList set for user library")
@@ -111,10 +120,11 @@ const UserLibrary:React.FC=()=>{
                     <div className="playlist-creation-container-hidden" id="creation-container">
                         <div className="playlist-creation-menu-bar">
                             <button onClick={()=>setStagingState("closed")} style={hidebutton}></button>
+
                         </div>
                         <div className="playlist-items-containers">
 
-                            <SelectedPlaylistContainer onSelectedItems={addStagedItems} playlist={selectedPlaylist} stagedPlaylistItems={stagedPlaylist}></SelectedPlaylistContainer>
+                            <SelectedPlaylistContainer onSelectedItems={addStagedItems} playlist={selectedPlaylist} stagedPlaylistItems={stagedPlaylist} audioFeatureFilters={featureFilter}></SelectedPlaylistContainer>
                             {/* <div className="search-filter-container new-playlist" id="search-filter-div"></div> */}
                             <DraftPlaylistContainer onSelectedItems={removeStagedItems} selectedTracks={stagedPlaylist}></DraftPlaylistContainer>
                             {/* <div className="playlist-draft-container new-playlist" id="drafting-div"></div> */}
@@ -139,11 +149,32 @@ const UserLibrary:React.FC=()=>{
                     <div className="main-content-area">
                         
                             <div className="playlist-creation-container-new grow-staging" id="creation-container">
-                                <div className="playlist-creation-menu-bar">
-                                    <button onClick={()=>setStagingState("closed")}></button>
-                                </div>
+                            <PlaylistMenuBar onExit={setStagingState} onFilteredItems={setFeatureFilterState }></PlaylistMenuBar>
+
+                                {/* <div className="playlist-creation-menu-bar">
+                                    <button onClick={()=>setStagingState("closed")}>Close</button>
+                                    <button>Audio Features</button> */}
+
+{/* <select name="cars" id="cars"> */}
+{/* <option value="volvo"> */}
+{/* <div>
+<div>  <label>feature 1</label><input type="checkbox"/><input type="range" min="1" max="100" value="50" className="slider" />
+</div>
+<div>  <label>feature 1</label><input type="checkbox"/><input type="range" min="1" max="100" value="50" className="slider" />
+</div>
+<div>  <label>feature 1</label><input type="checkbox"/><input type="range" min="1" max="100" value="50" className="slider"/>
+</div>
+<div>  <label>feature 1</label><input type="checkbox"/><input type="range" min="1" max="100" value="50" className="slider"/>
+</div>
+</div> */}
+
+{/* <input type="range" min="1" max="100" value="50"  id="myRange"></input> */}
+{/* </option> */}
+
+{/* </select> */}
+                                {/* </div> */}
                                 <div className="playlist-items-containers">
-                                    <SelectedPlaylistContainer onSelectedItems={addStagedItems} playlist={selectedPlaylist} stagedPlaylistItems={stagedPlaylist}></SelectedPlaylistContainer>
+                                    <SelectedPlaylistContainer onSelectedItems={addStagedItems} playlist={selectedPlaylist} stagedPlaylistItems={stagedPlaylist} audioFeatureFilters={featureFilter}></SelectedPlaylistContainer>
 
                                     {/* <div className="search-filter-container new-playlist" id="search-filter-div" >
                                         <button onClick={toggleCreation}></button>
@@ -177,7 +208,7 @@ const UserLibrary:React.FC=()=>{
                                     <button onClick={toggleCreation} style={hidebutton}></button>
                                 </div>
                                 <div className="playlist-items-containers">
-                                    <SelectedPlaylistContainer onSelectedItems={addStagedItems} playlist={selectedPlaylist} stagedPlaylistItems={stagedPlaylist}></SelectedPlaylistContainer>
+                                    <SelectedPlaylistContainer onSelectedItems={addStagedItems} playlist={selectedPlaylist} stagedPlaylistItems={stagedPlaylist} audioFeatureFilters={featureFilter}></SelectedPlaylistContainer>
 
                                     {/* <div className="search-filter-container new-playlist" id="search-filter-div" >
                                         <button onClick={toggleCreation}></button>
@@ -210,7 +241,7 @@ const UserLibrary:React.FC=()=>{
                             </div>
                             <div className="playlist-items-containers">
 
-                                <SelectedPlaylistContainer onSelectedItems={addStagedItems} playlist={selectedPlaylist} stagedPlaylistItems={stagedPlaylist}></SelectedPlaylistContainer>
+                                <SelectedPlaylistContainer onSelectedItems={addStagedItems} playlist={selectedPlaylist} stagedPlaylistItems={stagedPlaylist} audioFeatureFilters={featureFilter}></SelectedPlaylistContainer>
 
                                 {/* <div className="search-filter-container new-playlist" id="search-filter-div" >
                                     <button onClick={toggleCreation}></button>

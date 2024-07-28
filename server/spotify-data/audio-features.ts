@@ -3,6 +3,7 @@ export async function fetchAudioFeatures(playlistItems:PlaylistItem[], accessTok
     let trackIdList = []
 
     for(let item of  playlistItems){
+        console.log(item.track.id)
         trackIdList.push(item.track.id)
     }
 

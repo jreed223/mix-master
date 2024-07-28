@@ -42,7 +42,7 @@ const DraftPlaylistContainer:React.FC<DraftPlaylistContainerProps>=(props: Draft
         if(draftedPlaylist&& draftedPlaylist.length>0){
 
             const tracks = draftedPlaylist.map(singleTrack=>
-                <TrackCard playlistItem={singleTrack} onSelectedTrack={editSelectedItemList}></TrackCard>
+                <TrackCard playlistItem={singleTrack} onSelectedTrack={editSelectedItemList} displayHidden={false} checked={null}></TrackCard>
             )
             setTrackCards(tracks)
     

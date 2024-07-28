@@ -118,18 +118,18 @@ export interface Tracklist {
 }
 
 export interface Features {
-    analysis_url: string
-    acousticness: number
-    danceability: number
-    energy: number
-    instrumentalness: number
-    key: number
-    liveness: number
-    loudness: number
-    mode: number
-    tempo: number
-    time_signature: number
-    valence: number
+    analysis_url: string|null
+    acousticness: number|null
+    danceability: number|null
+    energy: number|null
+    instrumentalness: number|null
+    key: number|null
+    liveness: number|null
+    loudness: number|null
+    mode: number|null
+    tempo: number|null
+    time_signature: number|null
+    valence: number|null
 }
 
 export interface Tag {

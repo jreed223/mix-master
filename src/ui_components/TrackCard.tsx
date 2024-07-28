@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useRef } from "react";
 import { PlaylistItem, Track } from "../../server/types";
 import { Checkbox } from "@mui/material";
 
 export interface TrackCardProps{
     onSelectedTrack: (event: React.ChangeEvent<HTMLInputElement>,selectedItem: PlaylistItem) => void
     playlistItem : PlaylistItem;
+    displayHidden : boolean;
+    checked: boolean|null;
 }
 
 const TrackCard: React.FC<TrackCardProps> = (props: TrackCardProps)=>{
@@ -19,11 +21,27 @@ const TrackCard: React.FC<TrackCardProps> = (props: TrackCardProps)=>{
     // };
 
     // console.log(playlist);
+        
+    const displayStyle = props.displayHidden?
+        {display: 'none',
+        textOverflow: 'ellipsis'}:
+            {display: 'flex',
+            textOverflow: 'ellipsis'}
+    
+    if(props.displayHidden){
+
+    }
+    // console.log("checkbox checked? ", props.checked)
     return(
-        <div className="track-card" id={props.playlistItem.track.id} style={{display:"flex", textOverflow: "ellipsis"}}>
-            <input key={`checkbox-${props.playlistItem.track.id}`} type="checkbox" onChange={(e)=>props.onSelectedTrack(e, props.playlistItem )}/>
+        <div className="track-card" id={props.playlistItem.track.id} style={displayStyle}>
+            {props.checked === true?
+                (<input checked={props.checked} key={`checkbox-${props.playlistItem.track.id}`} type="checkbox" onChange={(e)=>props.onSelectedTrack(e, props.playlistItem )}/>
+            ):props.checked === false?
+                (<input checked={props.checked} key={`checkbox-${props.playlistItem.track.id}`} type="checkbox" onChange={(e)=>props.onSelectedTrack(e, props.playlistItem )}/>
+            ):
+                (<input key={`checkbox-${props.playlistItem.track.id}`} type="checkbox" onChange={(e)=>props.onSelectedTrack(e, props.playlistItem )}/>)
+            }
             <label>{props.playlistItem.track.name} - {props.playlistItem.track.artists[0].name}</label>
-            {/* <p>{props.playlistItem.track.name} by {props.playlistItem.track.artists[0].name}</p> */}
         </div>
     )
 
