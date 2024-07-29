@@ -109,18 +109,49 @@ export default class PlaylistClass implements CategorizedPlaylist{
     }
 
     async setAudioFeatures(){
-        if(this.tracks&&this.tracks.length>0){
+            if(this.tracks.length>100){
+                let startIdx = 0
+                let endIdx = 99
 
-            const response = await fetch("/spotify-data/audio-features", {
-                method: "POST",
-                headers: {
-                    'Content-Type': 'application/json'
-                  },
-                body: JSON.stringify(this.tracks)
-            })
-            const tracksAndFeatures = await response.json()
-            this.tracks = tracksAndFeatures
-        }
+                while(startIdx<this.tracks.length){
+                    let playlistItemsSubset:PlaylistItem[] = this.tracks.slice(startIdx, endIdx+1)
+                    const response = await fetch("/spotify-data/audio-features", {
+                        method: "POST",
+                        headers: {
+                            'Content-Type': 'application/json'
+                          },
+                        body: JSON.stringify(playlistItemsSubset)
+                    })
+
+                    const features = await response.json() 
+                    console.log("subset: ", playlistItemsSubset)
+
+                    for(let feature of features){
+                        this.tracks[startIdx].track.audio_features = feature
+                        startIdx+=1
+                        // console.log(`${this.tracks[startIdx]}, Features: ${feature}`)
+                        // console.log(`${this.tracks[startIdx].track.name}, Features: ${feature}`)
+                    }
+                    startIdx=endIdx
+                    endIdx+= 100
+
+                }
+            }else{
+                const response = await fetch("/spotify-data/audio-features", {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json'
+                      },
+                    body: JSON.stringify(this.tracks)
+                })
+
+                const features:Features[] = await response.json() 
+
+                features.map((feature, index)=>{
+                    return this.tracks[index].track.audio_features = feature
+                })
+
+            }
         this.audioFeaturesSet=true
     }
 }

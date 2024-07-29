@@ -27,7 +27,7 @@ const PlaylistMenuBar:React.FC<PlaylistMenuProps>=(props: PlaylistMenuProps)=>{
     const inputControls = [
         { checkboxRef: useRef(null), sliderRef: useRef(null), audioFeature: "dancability" },
         { checkboxRef: useRef(null), sliderRef: useRef(null),  audioFeature: "energy"},
-        { checkboxRef: useRef(null), sliderRef: useRef(null), audioFeature:  "tempo"},
+        // { checkboxRef: useRef(null), sliderRef: useRef(null), audioFeature:  "tempo"},
         { checkboxRef: useRef(null), sliderRef: useRef(null), audioFeature:  "instramentalness"},
         { checkboxRef: useRef(null), sliderRef: useRef(null), audioFeature:  "acousticness"},
         { checkboxRef: useRef(null), sliderRef: useRef(null), audioFeature:  "valence"}

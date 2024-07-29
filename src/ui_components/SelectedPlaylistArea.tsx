@@ -48,7 +48,7 @@ const editSelectedItemList = (e: React.ChangeEvent<HTMLInputElement>,selectedIte
 useEffect(()=>{
     setHasAudioFeatures(false)
     setFilteredTracks([])
-    console.log("filtered tracks reset: ", filteredTracks)
+    // console.log("filtered tracks reset: ", filteredTracks)
     if(props.playlist?.tracks){
         if(!props.playlist.audioFeaturesSet){
             props.playlist.setAudioFeatures().then(()=>{
@@ -78,9 +78,16 @@ useEffect(()=>{
                     console.log("feature: ",feature)
                     const featureVal = newFilters[feature]/100
                     console.log("feature-val: ",featureVal)
-
-                filterPlaylist = filterPlaylist.filter(item=> item.track.audio_features[feature]>=featureVal-.1&&item.track.audio_features[feature]>=featureVal+.1)
-                console.log("filtered playlist set: ", filterPlaylist)
+                    console.log("playlist to be filtered: " ,props.playlist)
+                filterPlaylist = filterPlaylist.filter(item=> {
+                    // console.log(item)
+                    // if(!item?.track?.audio_features[feature]){
+                    //     console.log("dislikedItem: ",item)
+                    // }
+                    // return console.log(item.track.audio_features)
+                   return item.track.audio_features[feature]>=featureVal-.1&&item.track?.audio_features[feature]<=featureVal+.1
+                })
+                // console.log("filtered playlist set: ", filterPlaylist)
                 }
                 
             }
@@ -118,6 +125,7 @@ const hasSetFilters = fetaureValues.some(featureval=>typeof featureval==="number
 console.log("tracks:", props.playlist?.tracks )
     if(props.playlist?.tracks.length>0){
         console.log(props.audioFeatureFilters)
+        // console.log("props playlist tracks: ",props.playlist.tracks[134])
         const unStagedItems = props.playlist.tracks.filter(unStagedItem=>!props.stagedPlaylistItems.some(stagedItem => stagedItem.track.id === unStagedItem.track.id))
         console.log("display block 2")
         return(
@@ -135,7 +143,7 @@ console.log("tracks:", props.playlist?.tracks )
                                     )
                             }else{
                                 console.log("unstaged Item rendered")
-                                console.log(`single track: ${JSON.stringify(singleTrack)} in filtered Track? ${filteredTracks.includes(singleTrack)}`)
+                                // console.log(`single track: ${JSON.stringify(singleTrack)} in filtered Track? ${filteredTracks.includes(singleTrack)}`)
                                 return(
                                     <TrackCard playlistItem={singleTrack} onSelectedTrack={editSelectedItemList} displayHidden={hiddenTracks} checked={null}></TrackCard>
                                     )
