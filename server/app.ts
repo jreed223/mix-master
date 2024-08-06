@@ -6,7 +6,7 @@ import { fetchPlaylistsItems } from './spotify-data/playlist_items';
 import { getAccessToken, generateCodeChallenge, generateCodeVerifier, getRefreshToken } from './authentication/AuthHandler';
 import { fetchProfile } from './authentication/LoadProfile';
 import { fetchPlaylists } from './spotify-data/playlists';
-import type { Features, Playlist, PlaylistItem, Tag, Tracklist, UserProfile } from './types.d.ts';
+import type { Album, AlbumList, Features, Playlist, PlaylistItem, Tag, Tracklist, UserProfile } from './types.d.ts';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import { fetchLikedTracks } from './spotify-data/saved-songs';
@@ -14,6 +14,8 @@ import { error } from 'console';
 import { fetchAudioFeatures } from './spotify-data/audio-features';
 import { access } from 'fs';
 import { fetchTopTags } from './lastFM-data/track-tags';
+import { fetchAlbums } from './spotify-data/saved-albums';
+import { Albums } from '@spotify/web-api-ts-sdk';
 // import { Tracklist, Playlist } from './types';
 
 
@@ -164,6 +166,36 @@ app.get("/callback", (req, res)=>{
         console.error("Code||Verifier not found (callback)")
     }
 
+})
+
+app.get("/spotify-data/albums", (req, res)=>{
+    const accessToken = req.cookies.access_token? req.cookies.access_token:res.locals.access_token
+    //console.log(req.cookies)
+    if(accessToken){
+        fetchAlbums(accessToken).then(async (response)=>{
+            if(response.ok){
+                console.log("OK response from spotify-data/albums")
+                const albumssObject:AlbumList = await response.json();
+                console.log("albums Object", albumssObject)
+
+                const albumList: Album[] = albumssObject["items"];
+                console.log("albums list", albumList)
+
+                res.send(albumList)
+            }else{
+                const error = await response.json()
+                console.error("Failed to retrieve playlists (/spotify-data/playlists): ", error)
+            }
+        })
+        .catch(e=>{
+            // res.clearCookie('authorizing')
+            // res.clearCookie('access_token')
+            // res.clearCookie('refresh_token')
+            console.error("Fetch operation failed (/spotify-data/playlists)): ", e)
+        })
+    }else{
+        console.error("No access token found (/spotify-data/playlists)")
+    }
 })
 
 

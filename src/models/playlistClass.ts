@@ -1,6 +1,7 @@
 import { CategorizedPlaylist, PlaylistItem, Tag, Track, Image, Features } from "../../server/types";
 
 export default class PlaylistClass implements CategorizedPlaylist{
+    type: string;
     id: string;
     image: Image;
     name: string;
@@ -133,9 +134,10 @@ export default class PlaylistClass implements CategorizedPlaylist{
                         // console.log(`${this.tracks[startIdx].track.name}, Features: ${feature}`)
                     }
                     startIdx=endIdx
-                    endIdx+= 100
-
+                    endIdx+= 99
+                    
                 }
+                // this.audioFeaturesSet=true
             }else{
                 const response = await fetch("/spotify-data/audio-features", {
                     method: "POST",
@@ -150,8 +152,11 @@ export default class PlaylistClass implements CategorizedPlaylist{
                 features.map((feature, index)=>{
                     return this.tracks[index].track.audio_features = feature
                 })
+                // this.audioFeaturesSet=true
 
             }
-        this.audioFeaturesSet=true
+            this.audioFeaturesSet=true
+            return
+
     }
 }

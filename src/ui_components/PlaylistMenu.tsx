@@ -1,34 +1,25 @@
-import React, { ChangeEvent, useRef, useState } from "react"
-import { Features } from "../../server/types";
+import React, { ChangeEvent, useCallback, useEffect, useRef, useState } from "react"
+import { Features, PlaylistItem } from "../../server/types";
+import PlaylistClass from "../models/playlistClass";
 interface PlaylistMenuProps{
     onExit:(stagingState:React.SetStateAction<String>) => void;
-    onFilteredItems: (newFilter:Features[]) => void;
+    onFilterSet: (newFilter:React.SetStateAction<Record<string, number>>) => void;
+    selectedPlaylist: PlaylistClass;
+
+    currentTracks: PlaylistItem[]|null
+
 }
 const PlaylistMenuBar:React.FC<PlaylistMenuProps>=(props: PlaylistMenuProps)=>{
-
     const[featureDisplayState, setFeatureDisplayState] = useState<boolean>(false)
-    const[featureRecords, setFeatureRecords] = useState<Features[]>([
-        {
-            analysis_url: null,
-            acousticness: null,
-            danceability: null,
-            energy: null,
-            instrumentalness: null,
-            key: null,
-            liveness: null,
-            loudness: null,
-            mode: null,
-            tempo: null,
-            time_signature: null,
-            valence: null
-        }
-    ])
+
+
+    const [selectedFeatures, setSelecetedFeatures] = useState<Record<string, number>>({})
 
     const inputControls = [
-        { checkboxRef: useRef(null), sliderRef: useRef(null), audioFeature: "dancability" },
+        { checkboxRef: useRef(null), sliderRef: useRef(null), audioFeature: "danceability" },
         { checkboxRef: useRef(null), sliderRef: useRef(null),  audioFeature: "energy"},
         // { checkboxRef: useRef(null), sliderRef: useRef(null), audioFeature:  "tempo"},
-        { checkboxRef: useRef(null), sliderRef: useRef(null), audioFeature:  "instramentalness"},
+        { checkboxRef: useRef(null), sliderRef: useRef(null), audioFeature:  "instrumentalness"},
         { checkboxRef: useRef(null), sliderRef: useRef(null), audioFeature:  "acousticness"},
         { checkboxRef: useRef(null), sliderRef: useRef(null), audioFeature:  "valence"}
       ];
@@ -37,29 +28,32 @@ const PlaylistMenuBar:React.FC<PlaylistMenuProps>=(props: PlaylistMenuProps)=>{
 const handleInput = (index)=>{
     const { checkboxRef, sliderRef, audioFeature } = inputControls[index];
     sliderRef.current.disabled = checkboxRef.current.checked;
-    const currentRecord = featureRecords.at(-1)
-    if(checkboxRef.current.checked && currentRecord[audioFeature]){
+    const currentSelection = {...selectedFeatures}
+
+    if(checkboxRef.current.checked && selectedFeatures[audioFeature]){
         sliderRef.current.disabled = true
-        delete currentRecord[audioFeature]
-        const newRecord = featureRecords.concat(currentRecord)
-        props.onFilteredItems(newRecord)
-        setFeatureRecords(newRecord)
-        console.log(featureRecords)
+        delete currentSelection[audioFeature]
+
+        setSelecetedFeatures(currentSelection)
+        props.onFilterSet(currentSelection)
+
+        console.log(selectedFeatures)
+
     }else{
         sliderRef.current.disabled = false
-        console.log(currentRecord)
-        //const newFeature = {[audioFeature]: parseInt(sliderRef.current.value)}
-        currentRecord[audioFeature] = parseInt(sliderRef.current.value)
-        const newRecord = featureRecords.concat(currentRecord)
-        props.onFilteredItems((newRecord))
+  
+        currentSelection[audioFeature] = parseInt(sliderRef.current.value)
+
+        setSelecetedFeatures(currentSelection)
+        console.log(selectedFeatures)
+        props.onFilterSet(currentSelection)
 
     }
 
 
 }
-// const filterFeatures = (feature:) =>{
-//     for()
-// }
+
+
 
 
 
