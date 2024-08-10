@@ -4,7 +4,7 @@ import PlaylistClass from "../models/playlistClass";
 interface PlaylistMenuProps{
     onExit:(stagingState:React.SetStateAction<String>) => void;
     onFilterSet: (newFilter:React.SetStateAction<Record<string, number>>) => void;
-    selectedPlaylist: PlaylistClass;
+    // selectedPlaylist: PlaylistClass;
 
     currentTracks: PlaylistItem[]|null
 

@@ -1,12 +1,13 @@
 import React from "react";
 import { Album } from "../../server/types";
+import Library from "../models/libraryItems";
 
 export interface AlbumCardProps{
-    onSelectedAlbum: (album: Album) => void
-    album: Album;
+    onSelectedAlbum: (album: Library) => void
+    libraryItem: Library;
 }
 
-const PlaylistCard: React.FC<AlbumCardProps> = (props: AlbumCardProps)=>{
+const AlbumCard: React.FC<AlbumCardProps> = (props: AlbumCardProps)=>{
 
     // const [playlistObject, setPlaylistObject] = useState<PlaylistClass|null>(props.playlist)
 
@@ -14,11 +15,14 @@ const PlaylistCard: React.FC<AlbumCardProps> = (props: AlbumCardProps)=>{
     return(
         <div className="playlist-card">
             <span>
-            <img className="playlist-img" src={props.album.album.images[0].url} alt = "playlist cover" onClick={()=>props.onSelectedAlbum(props.album)} ></img>
+            <img className="playlist-img" src={props.libraryItem.image.url} alt = "playlist cover" onClick={()=>props.onSelectedAlbum(props.libraryItem)} ></img>
                 <div>
-                    <p className="playlist-name playlist-card-text">{props.album.album.name!==""?props.album.album.name:"Untitled"}</p>
-                    <p className = "playlist-card-text">{props.album.album.artists[0].name}</p>
-                    <p className = "playlist-card-text">{props.album.album.total_tracks} tracks</p>
+                    <p className="playlist-name playlist-card-text">{props.libraryItem.name!==""?props.libraryItem.name:"Untitled"}</p>
+                    {props.libraryItem.type ==="album" ? 
+                        <p className = "playlist-card-text">{props.libraryItem.artists[0].name}</p>: props.libraryItem.type ==="playlist"? 
+                            <p className = "playlist-card-text">{props.libraryItem.owner.display_name}</p> :  
+                                <p className = "playlist-card-text">unknown type</p>}
+                    <p className = "playlist-card-text">{props.libraryItem.totalTracks} tracks</p>
                 </div>
 
             </span>
@@ -27,4 +31,4 @@ const PlaylistCard: React.FC<AlbumCardProps> = (props: AlbumCardProps)=>{
 
 }
 
-export default PlaylistCard
+export default AlbumCard

@@ -1,27 +1,28 @@
 import React, { useEffect, useState } from "react"
-import { Features, PlaylistItem } from "../../server/types"
+import { Features, PlaylistItem, Track } from "../../server/types"
 import TrackCard from "./TrackCard"
 import PlaylistClass from "../models/playlistClass"
+import Library from "../models/libraryItems"
 interface SelectedPlaylistContainerProps{
-    playlist: PlaylistClass|null
-    stagedPlaylistItems: PlaylistItem[]|null
-    onSelectedItems: (selectedItems: PlaylistItem[]) => void
-    filteredTracks: PlaylistItem[]
+    libraryItem: Library|null
+    stagedPlaylistItems: Track[]|null
+    onSelectedItems: (selectedItems: Track[]) => void
+    filteredTracks: Track[]
 
 }
 
 const SelectedPlaylistContainer:React.FC<SelectedPlaylistContainerProps>=(props: SelectedPlaylistContainerProps)=>{
 
 
-const [selectedPlaylistItems, setSelectedPlaylistItems] = useState<PlaylistItem[]>([])
+const [selectedLibraryItems, setSelectedLibraryItems] = useState<Track[]>([])
 
 
-const editSelectedItemList = (e: React.ChangeEvent<HTMLInputElement>,selectedItem: PlaylistItem)=>{
+const editSelectedItemList = (e: React.ChangeEvent<HTMLInputElement>,selectedItem: Track)=>{
     if(e.target.checked){
-        setSelectedPlaylistItems(selectedPlaylistItems.concat([selectedItem]))
+        setSelectedLibraryItems(selectedLibraryItems.concat([selectedItem]))
 
     }else{
-        setSelectedPlaylistItems(selectedPlaylistItems.filter(item=>item!== selectedItem))
+        setSelectedLibraryItems(selectedLibraryItems.filter(item=>item!== selectedItem))
     }
     // console.log(selectedPlaylistItems)
 }
@@ -29,46 +30,46 @@ const editSelectedItemList = (e: React.ChangeEvent<HTMLInputElement>,selectedIte
 
 const stageSelectedDisplayedTracks = () =>{
     if(props.filteredTracks.length>0){
-    const selectedDisplayed = (selectedPlaylistItems.filter(selectedItem=>props.filteredTracks.some(filteredItem=>selectedItem.track.id === filteredItem.track.id)))
+    const selectedDisplayed = (selectedLibraryItems.filter(selectedItem=>props.filteredTracks.some(filteredItem=>selectedItem.id === filteredItem.id)))
     // console.log("selected displayed tracks: ", selectedDisplayed)
     props.onSelectedItems(selectedDisplayed);
-    const selectedHidden = (selectedPlaylistItems.filter(selectedItem=>!props.filteredTracks.some(filteredItem=>selectedItem.track.id === filteredItem.track.id)))
+    const selectedHidden = (selectedLibraryItems.filter(selectedItem=>!props.filteredTracks.some(filteredItem=>selectedItem.id === filteredItem.id)))
     // console.log("selected hidden tracks: ", selectedHidden)
-    setSelectedPlaylistItems(selectedHidden)
+    setSelectedLibraryItems(selectedHidden)
     }else{
-    props.onSelectedItems(selectedPlaylistItems);
-    setSelectedPlaylistItems([])
+    props.onSelectedItems(selectedLibraryItems);
+    setSelectedLibraryItems([])
     }
     
 }
 
 
 // console.log("tracks:", props.playlist?.tracks )
-    if(props.playlist?.tracks.length>0){
+    if(props.libraryItem?.tracks){
         // console.log(props.audioFeatureFilters)
         // console.log("props playlist tracks: ",props.playlist.tracks[134])
-        const unStagedItems = props.playlist.tracks.filter(unStagedItem=>!props.stagedPlaylistItems.some(stagedItem => stagedItem.track.id === unStagedItem.track.id))
+        const unStagedItems = props.libraryItem.tracks.filter(unStagedItem=>!props.stagedPlaylistItems.some(stagedItem => stagedItem.id === unStagedItem.id))
         console.log("display block 2")
         return(
             <div className="search-filter-container new-playlist" id="search-filter-div" >
                 <button onClick={()=>{stageSelectedDisplayedTracks();}}>Add Items</button>
                 {props.filteredTracks?
                     // hasAudioFeatures?
-                        props.playlist.tracks.map(singleTrack=>{
+                        props.libraryItem.tracks.map(singleTrack=>{
                             
                             const staged = !unStagedItems.includes(singleTrack)
-                            const filtered = !props.filteredTracks.some(filteredTrack => filteredTrack.track.id === singleTrack.track.id)
+                            const filtered = !props.filteredTracks.some(filteredTrack => filteredTrack.id === singleTrack.id)
                             //const stagedOrFiltered = staged||filtered
                             if(staged){
                                 console.log("stagedItem rendered")
                                 return(
-                                    <TrackCard playlistItem={singleTrack} onSelectedTrack={editSelectedItemList} displayHidden={true} checked={false}></TrackCard>
+                                    <TrackCard track={singleTrack} onSelectedTrack={editSelectedItemList} displayHidden={true} checked={false}></TrackCard>
                                     )
                             }else{
                                 console.log("unstaged Item rendered")
                                 // console.log(`single track: ${JSON.stringify(singleTrack)} in filtered Track? ${filteredTracks.includes(singleTrack)}`)
                                 return(
-                                    <TrackCard playlistItem={singleTrack} onSelectedTrack={editSelectedItemList} displayHidden={filtered} checked={null}></TrackCard>
+                                    <TrackCard track={singleTrack} onSelectedTrack={editSelectedItemList} displayHidden={filtered} checked={null}></TrackCard>
                                     )
                             }
                             
@@ -76,6 +77,26 @@ const stageSelectedDisplayedTracks = () =>{
                         (
                         <p>Filtering Tracks...</p>
                         )
+                    //     :
+                    // props.playlist.tracks.map(singleTrack=>{
+                    //     const staged = !unStagedItems.includes(singleTrack)
+                    //         if(staged){
+                    //             console.log("staged no audio feature item")
+                    //             return(
+                    //                 <TrackCard playlistItem={singleTrack} onSelectedTrack={editSelectedItemList} displayHidden={unStagedItems.includes(singleTrack)?false:true} checked={false}></TrackCard>
+                    //                 )
+                    //         }else{
+                    //             console.log("unstaged no audio feature item")
+
+                    //             return(
+                                    
+                    //                 <TrackCard playlistItem={singleTrack} onSelectedTrack={editSelectedItemList} displayHidden={unStagedItems.includes(singleTrack)?false:true} checked={null}></TrackCard>
+                    //                 )
+                    //         }
+
+
+                    //     }
+                    //         )
                 }
                 
             </div>

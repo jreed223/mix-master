@@ -1,13 +1,14 @@
 import { useCallback, useEffect, useState } from "react";
-import PlaylistCard, { PlaylistCardProps } from "./PlaylistCard";
+// import PlaylistCard, { PlaylistCardProps } from "./PlaylistCard";
 import React from "react";
-import { Album, CategorizedPlaylist, Features, Playlist, PlaylistItem } from '../../server/types';
+import { Album, CategorizedPlaylist, Features, Playlist, PlaylistItem, Track } from '../../server/types';
 import PlaylistClass from "../models/playlistClass";
 import TrackCard from "./TrackCard";
 import SelectedPlaylistContainer from "./SelectedPlaylistArea";
 import DraftPlaylistContainer from "./StagingArea";
 import PlaylistMenuBar from "./PlaylistMenu";
 import AlbumCard from "./AlbumCard";
+import Library, { LibraryItem } from "../models/libraryItems";
 
 // interface UserLibraryProps{
 //     stagingState: String
@@ -15,20 +16,23 @@ import AlbumCard from "./AlbumCard";
 
 const UserLibrary:React.FC=()=>{
     const [isLoading, setLoading] = useState(true);
-    const [playlistList, setPlaylistList] = useState<PlaylistClass[]|null>(null)
-    const [selectedPlaylist, setSelectedPlaylist] = useState<PlaylistClass|null>(null)
+    const [playlistList, setPlaylistList] = useState<Library[]|null>(null)
+    // const [selectedPlaylist, setSelectedPlaylist] = useState<PlaylistClass|null>(null)
     const [playlistCards, setPlaylistCards] = useState<React.JSX.Element[]|null>(null)
     const [currentTracklist, setCurrentTracklist] = useState<PlaylistItem[]>(null)
     const [hasAudioFeatures, setHasAudioFeatures] = useState<Boolean>(false)
-    const [albumList, setalbumList] = useState<Album[]>(null)
-    const [selectedAlbum, setSelectedAlbum] = useState<Album|null>(null)
+    const [albumList, setalbumList] = useState<Library[]>(null)
+    const [selectedLibraryItem, setSelectedLibraryItem] = useState<Library|null>(null)
+    const [currentTracks, setCurrentTracks] = useState<Track[]>(null)
+
+    const [selectedAlbum, setSelectedAlbum] = useState<Library|null>(null)
     const [albumCards, setAlbumCards] = useState<React.JSX.Element[]|null>(null)
 
 
-    const [stagedPlaylist, setStagedPlaylist] = useState<PlaylistItem[]>([])
+    const [stagedPlaylist, setStagedPlaylist] = useState<Track[]>([])
 
     const[featureFilters, setFeatureFilters] = useState<Record<string, number>>({})
-    const [filteredPlaylist, setFilteredPlaylist] = useState<PlaylistItem[]|null>(null)
+    const [filteredTracks, setFilteredTracks] = useState<Track[]|null>(null)
 
 
     const [stagingState, setStagingState] = useState<String|null>(null)
@@ -41,7 +45,7 @@ const UserLibrary:React.FC=()=>{
 
 
 
-        const addStagedItems =(items:PlaylistItem[])=>{
+        const addStagedItems =(items:Track[])=>{
             const newStagedPlaylist = stagedPlaylist.concat(items)
             setStagedPlaylist(newStagedPlaylist)
             console.log("Added items: ",items)
@@ -49,8 +53,8 @@ const UserLibrary:React.FC=()=>{
 
         }
 
-        const removeStagedItems = (items:PlaylistItem[])=>{
-            const newStagedPlaylist = stagedPlaylist.filter(stagedItem=>!items.some(removedItem => removedItem.track.id === stagedItem.track.id))
+        const removeStagedItems = (items:Track[])=>{
+            const newStagedPlaylist = stagedPlaylist.filter(stagedItem=>!items.some(removedItem => removedItem.id === stagedItem.id))
             setStagedPlaylist(newStagedPlaylist)
             console.log("Removed items: ",items)
             console.log("new Staged Playlist: ",newStagedPlaylist)
@@ -64,22 +68,22 @@ const UserLibrary:React.FC=()=>{
 
 
     const filterFeatures  = useCallback(async ()=>{
-        setFilteredPlaylist(null)
+        setFilteredTracks(null)
 
-        if(!selectedPlaylist){
-            setFilteredPlaylist(null)
+        if(!selectedLibraryItem){
+            setFilteredTracks(null)
             return
         }
 
-        if(currentTracklist && currentTracklist.length>0){
-            if(selectedPlaylist.audioFeaturesSet){ //checks if audiofeatures have been fetched
+        if(currentTracks && currentTracks.length>0){
+            if(selectedLibraryItem.audioFeaturesSet){ //checks if audiofeatures have been fetched
                 setHasAudioFeatures(true)
                 console.log("audio features already set")
     
                 
                 
             }else{
-                await selectedPlaylist.setAudioFeatures() //fetches audio features
+                await selectedLibraryItem.setAudioFeatures() //fetches audio features
                     setHasAudioFeatures(true)
                     console.log("audio features set")
 
@@ -93,10 +97,10 @@ const UserLibrary:React.FC=()=>{
         
   
 
-        let filterPlaylist = currentTracklist
+        let filterPlaylist = currentTracks
 
 
-        if(currentTracklist && selectedPlaylist.audioFeaturesSet){ 
+        if(currentTracks && selectedLibraryItem.audioFeaturesSet){ 
             const currentFilters = Object.keys(featureFilters) 
     
                 for(let feature of currentFilters){ //iterates through keys to of filter names
@@ -106,19 +110,19 @@ const UserLibrary:React.FC=()=>{
                         // console.log("feature-val: ",featureVal)
                         filterPlaylist = filterPlaylist.filter(item=> { //redeclares filterplaylist using the filter function
 
-                        return item.track?.audio_features[feature]>=featureVal-.1&&item.track?.audio_features[feature]<=featureVal+.1  //returns tracks with feature value that are in range of +/-.1 of selecetd value
+                        return item.audio_features[feature]>=featureVal-.1&&item.audio_features[feature]<=featureVal+.1  //returns tracks with feature value that are in range of +/-.1 of selecetd value
                         })
                     }
                 }
 
-                setFilteredPlaylist(filterPlaylist) 
+                setFilteredTracks(filterPlaylist) 
         }
         else{
-            setFilteredPlaylist(null)
+            setFilteredTracks(null)
             console.log("no feature vals")
         }
 
-    }, [currentTracklist, featureFilters, selectedPlaylist]);
+    }, [currentTracks, featureFilters, selectedLibraryItem]);
 
 
 
@@ -137,16 +141,10 @@ const UserLibrary:React.FC=()=>{
             .then(res=>res.json())
             .then(playlists=>{
 
-                const playlistClassList:PlaylistClass[] = playlists.map((playlistObject:Playlist)=>{
+                const playlistClassList:Library[] = playlists.map((playlistObject:Playlist)=>{
                     
 
-                return  new PlaylistClass(playlistObject.id,
-                        playlistObject.images[0],
-                        playlistObject.name,
-                        playlistObject.owner,
-                        playlistObject.snapshot_id,
-                        playlistObject.uri,
-                        playlistObject.tracks.total,)
+                return  new Library(playlistObject)
                 })
                 // console.log(playlistClassList)
                 // console.log("playlistList set for user library")
@@ -172,7 +170,10 @@ const UserLibrary:React.FC=()=>{
                 // })
                 // console.log(playlistClassList)
                 // console.log("playlistList set for user library")
-                setalbumList(albums)
+                const albumClasslist =  albums.map((album:Album)=>{
+                    console.log("album in album list: ",album.album)
+                    return new Library(album['album'])})
+                setalbumList(albumClasslist)
             })
         }
         setLoading(false);
@@ -188,29 +189,23 @@ const UserLibrary:React.FC=()=>{
 
     //**Maps the list of playlist to playlist card components */
     useEffect(()=>{
-        const displayPlaylistTracks = (playlistSelection: PlaylistClass)=>{
+
+
+        const displayTracks = (albumSelection: Library)=>{
             setStagingState("open")
-            setSelectedPlaylist(playlistSelection)
-            setCurrentTracklist(null)
-
-
-        }
-
-        const displayAlbumTracks = (albumSelection: Album)=>{
-            setStagingState("open")
-            setSelectedAlbum(albumSelection)
+            setSelectedLibraryItem(albumSelection)
             setCurrentTracklist(null)
         }
         if (playlistList){
         const playlists = playlistList.map(singlePlaylist =>
-            <PlaylistCard key={singlePlaylist.id} onSelectedPlaylist={displayPlaylistTracks} playlist={singlePlaylist} ></PlaylistCard>
+            <AlbumCard key={singlePlaylist.id} onSelectedAlbum={displayTracks} libraryItem={singlePlaylist} ></AlbumCard>
             );
         setPlaylistCards(playlists)
         }
 
         if(albumList){
             const albums = albumList.map(singleAlbum=>
-                <AlbumCard key={singleAlbum.album.id} onSelectedAlbum={displayAlbumTracks} album={singleAlbum} ></AlbumCard>
+                <AlbumCard key={singleAlbum.id} onSelectedAlbum={displayTracks} libraryItem={singleAlbum} ></AlbumCard>
 
             )
             setAlbumCards(albums)
@@ -220,23 +215,40 @@ const UserLibrary:React.FC=()=>{
 
     //**Fetches selected playlists tracks if not already fetched*/
     useEffect(()=>{
-        console.log("set tracklist block",selectedPlaylist)
-        if(selectedPlaylist && selectedPlaylist.tracks.length<=0){
+        // console.log("set tracklist block",selectedPlaylist)
+        // if(selectedPlaylist && selectedPlaylist.tracks.length<=0){
+        //     // console.log("setcurrent tracks block 1: ", selectedPlaylist.tracks)
+        //     selectedPlaylist.setTracks().then(()=>{
+        //         setCurrentTracklist(selectedPlaylist.tracks)
+        //         // setSelectedPlaylist(selectedPlaylist)
+        //     // console.log("current tracklist set: ", selectedPlaylist)
+        //     }
+        //     )
+        // }else if (selectedPlaylist && selectedPlaylist.tracks.length>0){
+        //     // console.log("setcurrent tracks block 2: ", selectedPlaylist.tracks)
+        //     setCurrentTracklist(selectedPlaylist.tracks)
+        // }else{
+        //     // console.log("setcurrent tracks block 3")
+
+        // }
+
+        // console.log("set tracklist block",selectedPlaylist)
+        if(selectedLibraryItem && !selectedLibraryItem?.tracks){
             // console.log("setcurrent tracks block 1: ", selectedPlaylist.tracks)
-            selectedPlaylist.setTracks().then(()=>{
-                setCurrentTracklist(selectedPlaylist.tracks)
+            selectedLibraryItem.setTracks().then(()=>{
+                setCurrentTracks(selectedLibraryItem.tracks)
                 // setSelectedPlaylist(selectedPlaylist)
             // console.log("current tracklist set: ", selectedPlaylist)
             }
             )
-        }else if (selectedPlaylist && selectedPlaylist.tracks.length>0){
+        }else if (selectedLibraryItem && selectedLibraryItem?.tracks){
             // console.log("setcurrent tracks block 2: ", selectedPlaylist.tracks)
-            setCurrentTracklist(selectedPlaylist.tracks)
+            setCurrentTracks(selectedLibraryItem.tracks)
         }else{
             // console.log("setcurrent tracks block 3")
 
         }
-    }, [selectedPlaylist])
+    }, [selectedLibraryItem])
 
 
     //** FIlters the selected playlist if the audio featrues have been set*/
@@ -244,16 +256,26 @@ const UserLibrary:React.FC=()=>{
         // if(!selectedPlaylist){
         //     setFilteredPlaylist(null)
         // }
+        //let isFeatureFilterSelected = Object.values(featureFilters).some(featureVal=>typeof featureVal === "number")
+
+        // if(selectedPlaylist && isFeatureFilterSelected){
+        //     // console.log(featureFilters.at(-1))
+        //     console.log("useEffect run for filtFeatures")
+        //     filterFeatures()
+        // }else{
+        //     setFilteredPlaylist(currentTracklist)
+        // }
+
         let isFeatureFilterSelected = Object.values(featureFilters).some(featureVal=>typeof featureVal === "number")
 
-        if(selectedPlaylist && isFeatureFilterSelected){
+        if(selectedLibraryItem && isFeatureFilterSelected){
             // console.log(featureFilters.at(-1))
             console.log("useEffect run for filtFeatures")
             filterFeatures()
         }else{
-            setFilteredPlaylist(currentTracklist)
+            setFilteredTracks(currentTracks)
         }
-    }, [currentTracklist, featureFilters, filterFeatures, hasAudioFeatures, selectedPlaylist])
+    }, [ currentTracks, featureFilters, filterFeatures, selectedLibraryItem])
 
 
 
@@ -272,7 +294,7 @@ const UserLibrary:React.FC=()=>{
                         </div>
                         <div className="playlist-items-containers">
 
-                            <SelectedPlaylistContainer onSelectedItems={addStagedItems} playlist={selectedPlaylist} stagedPlaylistItems={stagedPlaylist} filteredTracks={filteredPlaylist}></SelectedPlaylistContainer>
+                            <SelectedPlaylistContainer onSelectedItems={addStagedItems} libraryItem={selectedLibraryItem} stagedPlaylistItems={stagedPlaylist} filteredTracks={filteredTracks}></SelectedPlaylistContainer>
                             {/* <div className="search-filter-container new-playlist" id="search-filter-div"></div> */}
                             <DraftPlaylistContainer onSelectedItems={removeStagedItems} selectedTracks={stagedPlaylist}></DraftPlaylistContainer>
                             {/* <div className="playlist-draft-container new-playlist" id="drafting-div"></div> */}
@@ -294,11 +316,11 @@ const UserLibrary:React.FC=()=>{
                     <div className="main-content-area">
                         
                             <div className="playlist-creation-container-new grow-staging" id="creation-container">
-                            <PlaylistMenuBar onExit={setStagingState} selectedPlaylist={selectedPlaylist}  currentTracks={currentTracklist} onFilterSet={setFeatureFilters}></PlaylistMenuBar>
+                            <PlaylistMenuBar onExit={setStagingState}  currentTracks={currentTracklist} onFilterSet={setFeatureFilters}></PlaylistMenuBar>
 
 
                                 <div className="playlist-items-containers">
-                                    <SelectedPlaylistContainer onSelectedItems={addStagedItems} playlist={selectedPlaylist} stagedPlaylistItems={stagedPlaylist}  filteredTracks={filteredPlaylist}></SelectedPlaylistContainer>
+                                    <SelectedPlaylistContainer onSelectedItems={addStagedItems} libraryItem={selectedLibraryItem} stagedPlaylistItems={stagedPlaylist}  filteredTracks={filteredTracks}></SelectedPlaylistContainer>
 
                                     <DraftPlaylistContainer onSelectedItems={removeStagedItems} selectedTracks={stagedPlaylist}></DraftPlaylistContainer>
 
@@ -325,7 +347,7 @@ const UserLibrary:React.FC=()=>{
                                     <button onClick={toggleCreation} style={hidebutton}></button>
                                 </div>
                                 <div className="playlist-items-containers">
-                                    <SelectedPlaylistContainer onSelectedItems={addStagedItems} playlist={selectedPlaylist} stagedPlaylistItems={stagedPlaylist}  filteredTracks={filteredPlaylist}></SelectedPlaylistContainer>
+                                    <SelectedPlaylistContainer onSelectedItems={addStagedItems} libraryItem={selectedLibraryItem} stagedPlaylistItems={stagedPlaylist}  filteredTracks={filteredTracks}></SelectedPlaylistContainer>
 
                                     <DraftPlaylistContainer onSelectedItems={removeStagedItems} selectedTracks={stagedPlaylist}></DraftPlaylistContainer>
                                     {/* <div className="playlist-draft-container new-playlist" id="drafting-div"></div> */}
@@ -351,7 +373,7 @@ const UserLibrary:React.FC=()=>{
                             </div>
                             <div className="playlist-items-containers">
 
-                                <SelectedPlaylistContainer onSelectedItems={addStagedItems} playlist={selectedPlaylist} stagedPlaylistItems={stagedPlaylist} filteredTracks={filteredPlaylist}></SelectedPlaylistContainer>
+                                <SelectedPlaylistContainer onSelectedItems={addStagedItems} libraryItem={selectedLibraryItem} stagedPlaylistItems={stagedPlaylist} filteredTracks={filteredTracks}></SelectedPlaylistContainer>
 
 
                                 <DraftPlaylistContainer onSelectedItems={removeStagedItems} selectedTracks={stagedPlaylist}></DraftPlaylistContainer>

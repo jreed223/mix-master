@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from "react"
-import { PlaylistItem } from '../../server/types';
+import { PlaylistItem, Track } from '../../server/types';
 import TrackCard from "./TrackCard"
 
 interface DraftPlaylistContainerProps{
-    selectedTracks: PlaylistItem[]|null
-    onSelectedItems:(selectedItems:PlaylistItem[])=>void
+    selectedTracks: Track[]|null
+    onSelectedItems:(selectedItems:Track[])=>void
 }
 
 const DraftPlaylistContainer:React.FC<DraftPlaylistContainerProps>=(props: DraftPlaylistContainerProps)=>{
 
     // const [playlistItems, setPlaylistItems] = useState<PlaylistItem[]|null>(null)
-    const[draftedPlaylist, setDraftedPlaylist] = useState<PlaylistItem[]>(null)
-    const [selectedPlaylistItems, setSelectedPlaylistItems] = useState<PlaylistItem[]>([])
+    const[draftedPlaylist, setDraftedPlaylist] = useState<Track[]>(null)
+    const [selectedTracks, setSelectedTracks] = useState<Track[]>([])
     const [trackCards, setTrackCards] = useState<React.JSX.Element[]|null>(null)
 
 
@@ -29,33 +29,33 @@ const DraftPlaylistContainer:React.FC<DraftPlaylistContainerProps>=(props: Draft
         // setSelectedPlaylistItems([])
         console.log(props.selectedTracks)
         setDraftedPlaylist(props.selectedTracks)
-        const editSelectedItemList = (e: React.ChangeEvent<HTMLInputElement>,selectedItem: PlaylistItem)=>{
+        const editSelectedItemList = (e: React.ChangeEvent<HTMLInputElement>,selectedItem: Track)=>{
             if(e.target.checked){
-                setSelectedPlaylistItems(selectedPlaylistItems.concat([selectedItem]))
+                setSelectedTracks(selectedTracks.concat([selectedItem]))
         
             }else{
-                setSelectedPlaylistItems(selectedPlaylistItems.filter(item=>item!== selectedItem))
+                setSelectedTracks(selectedTracks.filter(item=>item!== selectedItem))
             }
-            console.log(selectedPlaylistItems)
+            console.log(selectedTracks)
         }
 
         if(draftedPlaylist&& draftedPlaylist.length>0){
 
             const tracks = draftedPlaylist.map(singleTrack=>
-                <TrackCard playlistItem={singleTrack} onSelectedTrack={editSelectedItemList} displayHidden={false} checked={null}></TrackCard>
+                <TrackCard track={singleTrack} onSelectedTrack={editSelectedItemList} displayHidden={false} checked={null}></TrackCard>
             )
             setTrackCards(tracks)
     
         }else{
             setTrackCards([])
         }
-    }, [draftedPlaylist, props.selectedTracks, selectedPlaylistItems])
+    }, [draftedPlaylist, props.selectedTracks, selectedTracks])
 
 
     if(trackCards &&trackCards.length>0){
 return(                            
 <div className="playlist-draft-container new-playlist" id="drafting-div">
-    <button onClick={()=>{props.onSelectedItems(selectedPlaylistItems); setSelectedPlaylistItems([])}}>Remove Items</button>
+    <button onClick={()=>{props.onSelectedItems(selectedTracks); setSelectedTracks([])}}>Remove Items</button>
     {trackCards}
     </div>
 )

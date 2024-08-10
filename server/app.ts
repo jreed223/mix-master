@@ -6,7 +6,7 @@ import { fetchPlaylistsItems } from './spotify-data/playlist_items';
 import { getAccessToken, generateCodeChallenge, generateCodeVerifier, getRefreshToken } from './authentication/AuthHandler';
 import { fetchProfile } from './authentication/LoadProfile';
 import { fetchPlaylists } from './spotify-data/playlists';
-import type { Album, AlbumList, Features, Playlist, PlaylistItem, Tag, Tracklist, UserProfile } from './types.d.ts';
+import type { Album, AlbumList, Features, Playlist, PlaylistItem, Tag, Track, Tracklist, UserProfile } from './types.d.ts';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import { fetchLikedTracks } from './spotify-data/saved-songs';
@@ -329,7 +329,7 @@ app.get("/spotify-data/playlist-items", refreshTokens, async (req, res)=>{
 
 app.post("/spotify-data/audio-features", refreshTokens, async (req, res)=>{
     const accessToken = req.cookies.access_token?req.cookies.access_token:res.locals.access_token
-    const playlistItems:PlaylistItem[] = req.body
+    const playlistItems:Track[] = req.body
 
     if(accessToken&&playlistItems){
 

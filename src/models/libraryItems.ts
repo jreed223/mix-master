@@ -1,6 +1,6 @@
 import { CategorizedPlaylist, PlaylistItem, Tag, Track, Image, Features, Artist, Album, Playlist, LikedSongs } from "../../server/types";
 
-type LibraryItem = Playlist | Album["album"] | LikedSongs
+export type LibraryItem = Playlist | Album["album"] | LikedSongs
 export default class Library {
     type: string;
     id: string;
@@ -20,7 +20,12 @@ export default class Library {
         
 
     ){
+        console.log("Library Item type in constructor: ",libraryItem)
+        this.audioFeaturesSet = false;
+        this.type = libraryItem.type
+
         switch (libraryItem.type) {
+
             case 'playlist':
                 this.name = libraryItem.name;
                 this.id = libraryItem.id
@@ -87,7 +92,9 @@ export default class Library {
 
 
     async setTracks(){
+        console.log("setTracks running")
         if(this.type==="playlist"){
+            console.log("playlist in set tracks")
             const playlistItems : PlaylistItem[] = await fetch("/spotify-data/playlist-items", {
                 method: "GET",
                 headers: {"id" : `${this.id}` }
@@ -98,19 +105,7 @@ export default class Library {
             const tracks = playlistItems.map(item=>item.track)
             this.tracks = tracks
         }
-        switch (this.type) {
-            case 'playlist':
-                
-              break;
-            case 'album':
-
-              break;
-            case 'liked songs':
-
-              break;
-            default:
-              throw new Error('Invalid Library Item type'); 
-        }
+        
         
     }
 
@@ -177,7 +172,7 @@ export default class Library {
     }
 
     async setAudioFeatures(){
-            if(this.tracks.length>100){
+            if(this.tracks&&this.tracks.length>100){
                 let startIdx = 0
                 let endIdx = 99
 

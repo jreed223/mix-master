@@ -1,10 +1,10 @@
-import { PlaylistItem } from './../types.d';
-export async function fetchAudioFeatures(playlistItems:PlaylistItem[], accessToken:string): Promise<Response> {
+import { PlaylistItem, Track } from './../types.d';
+export async function fetchAudioFeatures(playlistItems:Track[], accessToken:string): Promise<Response> {
     let trackIdList = []
 
     for(let item of  playlistItems){
         // console.log(item.track.id)
-        trackIdList.push(item.track.id)
+        trackIdList.push(item.id)
     }
 
     const audioFeaturesEndpoint = "https://api.spotify.com/v1/audio-features?ids="+ trackIdList
