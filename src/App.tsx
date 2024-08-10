@@ -16,7 +16,7 @@ function App() {
     const [isLoading, setLoading] = useState<boolean>(true)
 
     useEffect(()=>{
-      console.log("Use effect block running")
+      // console.log("Use effect block running")
         console.log("attempting to load user")
       fetch("/spotify-data/user").then(async user=>{
         setUser(await user.json())
@@ -42,7 +42,7 @@ function App() {
   
   if(isLoading === true){   //If authorizing user, direct to loading screen until user is set
     return(
-      <div><h1>Loading...</h1></div>
+      <div><h1>Loading Profile...</h1></div>
     )
   }else if(user){
     return(<div>

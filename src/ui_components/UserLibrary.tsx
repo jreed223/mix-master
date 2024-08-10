@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 // import PlaylistCard, { PlaylistCardProps } from "./PlaylistCard";
 import React from "react";
-import { Album, CategorizedPlaylist, Features, Playlist, PlaylistItem, Track } from '../../server/types';
+import { Album, CategorizedPlaylist, Features, Playlist, PlaylistItem, Track, UserProfile } from '../../server/types';
 import PlaylistClass from "../models/playlistClass";
 import TrackCard from "./TrackCard";
 import SelectedPlaylistContainer from "./SelectedPlaylistArea";
@@ -13,21 +13,19 @@ import Library, { LibraryItem } from "../models/libraryItems";
 // interface UserLibraryProps{
 //     stagingState: String
 // }
+interface UserLibraryProps{
+    currentUser: UserProfile
+}
 
-const UserLibrary:React.FC=()=>{
+export default function UserLibrary(props:UserLibraryProps){
     const [isLoading, setLoading] = useState(true);
-    const [playlistList, setPlaylistList] = useState<Library[]|null>(null)
-    // const [selectedPlaylist, setSelectedPlaylist] = useState<PlaylistClass|null>(null)
-    const [playlistCards, setPlaylistCards] = useState<React.JSX.Element[]|null>(null)
-    const [currentTracklist, setCurrentTracklist] = useState<PlaylistItem[]>(null)
-    const [hasAudioFeatures, setHasAudioFeatures] = useState<Boolean>(false)
+
+    const [myPlaylistList, setMyPlaylistList] = useState<Library[]|null>(null)
+    const [likedPlaylistList, setLikedPlaylistList] = useState<Library[]|null>(null)
     const [albumList, setalbumList] = useState<Library[]>(null)
+    
     const [selectedLibraryItem, setSelectedLibraryItem] = useState<Library|null>(null)
     const [currentTracks, setCurrentTracks] = useState<Track[]>(null)
-
-    const [selectedAlbum, setSelectedAlbum] = useState<Library|null>(null)
-    const [albumCards, setAlbumCards] = useState<React.JSX.Element[]|null>(null)
-
 
     const [stagedPlaylist, setStagedPlaylist] = useState<Track[]>([])
 
@@ -38,10 +36,14 @@ const UserLibrary:React.FC=()=>{
     const [stagingState, setStagingState] = useState<String|null>(null)
 
 
-        const toggleCreation = ()=>{
+        const closeCreationContainer = useCallback(()=>{
             setStagingState("closed")
             console.log(stagingState)
-        }
+            creationContainer.current.classList = "playlist-creation-container-hidden shrink-staging"
+            // creationContainer.current.removeChild(creationContainer.current.firstChild)
+            libraryContainer.current.classList = "library-container grow-library"
+
+        }, [stagingState])
 
 
 
@@ -77,14 +79,14 @@ const UserLibrary:React.FC=()=>{
 
         if(currentTracks && currentTracks.length>0){
             if(selectedLibraryItem.audioFeaturesSet){ //checks if audiofeatures have been fetched
-                setHasAudioFeatures(true)
+                // setHasAudioFeatures(true)
                 console.log("audio features already set")
     
                 
                 
             }else{
                 await selectedLibraryItem.setAudioFeatures() //fetches audio features
-                    setHasAudioFeatures(true)
+                    // setHasAudioFeatures(true)
                     console.log("audio features set")
 
             }
@@ -136,46 +138,48 @@ const UserLibrary:React.FC=()=>{
     
     //** Fetches the list of playlists for the user and maps them to the Playlist Class */
     useEffect(()=>{
-        if(!playlistList){
+        // if(!playlistList){
             fetch("/spotify-data/playlists")
             .then(res=>res.json())
             .then(playlists=>{
+                let myPlaylists = []
+                let likedPlaylists = []
 
-                const playlistClassList:Library[] = playlists.map((playlistObject:Playlist)=>{
+                playlists.map((playlistObject:Playlist)=>{
+                    return playlistObject.owner.id === props.currentUser.id? 
+                        myPlaylists.push(playlistObject):
+                        likedPlaylists.push(playlistObject)
+
+                                    })
+                    const myPlaylistsClass: Library[] = myPlaylists.map((playlistObject:Playlist)=>{
+                        
                     
+                        return  new Library(playlistObject)
+                    })
+                    const LikedPlaylistsClass: Library[] = likedPlaylists.map((playlistObject:Playlist)=>{
+                            
+                        
+                        return  new Library(playlistObject)
+                    })
 
-                return  new Library(playlistObject)
-                })
-                // console.log(playlistClassList)
-                // console.log("playlistList set for user library")
-                setPlaylistList(playlistClassList)
+                    setMyPlaylistList(myPlaylistsClass)
+                    setLikedPlaylistList(LikedPlaylistsClass)
+                
             })
-        }
+        // }
 
-        if(!albumList){
+        // if(!albumList){
             fetch("/spotify-data/albums")
             .then(res=>res.json())
             .then(albums=>{
 
-                // const playlistClassList:PlaylistClass[] = playlists.map((playlistObject:Playlist)=>{
-                    
-
-                // return  new PlaylistClass(playlistObject.id,
-                //         playlistObject.images[0],
-                //         playlistObject.name,
-                //         playlistObject.owner,
-                //         playlistObject.snapshot_id,
-                //         playlistObject.uri,
-                //         playlistObject.tracks.total,)
-                // })
-                // console.log(playlistClassList)
-                // console.log("playlistList set for user library")
+  
                 const albumClasslist =  albums.map((album:Album)=>{
                     console.log("album in album list: ",album.album)
                     return new Library(album['album'])})
                 setalbumList(albumClasslist)
             })
-        }
+        // }
         setLoading(false);
 
 
@@ -185,52 +189,49 @@ const UserLibrary:React.FC=()=>{
 
         
 
-    }, [albumList, playlistList])
+    }, [props.currentUser.id])
 
     //**Maps the list of playlist to playlist card components */
-    useEffect(()=>{
+    // useEffect(()=>{
 
 
-        const displayTracks = (albumSelection: Library)=>{
-            setStagingState("open")
-            setSelectedLibraryItem(albumSelection)
-            setCurrentTracklist(null)
-        }
-        if (playlistList){
-        const playlists = playlistList.map(singlePlaylist =>
-            <AlbumCard key={singlePlaylist.id} onSelectedAlbum={displayTracks} libraryItem={singlePlaylist} ></AlbumCard>
-            );
-        setPlaylistCards(playlists)
-        }
+    //     const displayTracks = (albumSelection: Library)=>{
+    //         setStagingState("open")
+    //         setSelectedLibraryItem(albumSelection)
 
-        if(albumList){
-            const albums = albumList.map(singleAlbum=>
-                <AlbumCard key={singleAlbum.id} onSelectedAlbum={displayTracks} libraryItem={singleAlbum} ></AlbumCard>
+    //         creationContainer.current.classList = "playlist-creation-container-new grow-staging"
+    //         libraryContainer.current.classList = ('library-container-new shrink-library')
+    //     }
+        
 
-            )
-            setAlbumCards(albums)
-        }
+    //     if(myPlaylistList){
+    //         const myPlaylists = myPlaylistList.map(singlePlaylist =>
+    //         <AlbumCard key={singlePlaylist.id} onSelectedAlbum={displayTracks} libraryItem={singlePlaylist} ></AlbumCard>
+    //         );
+    //     setMyPlaylistCards(myPlaylists)
+    //     }
+
+    //     if(likedPlaylistList){
+    //         const LikedPlaylists = likedPlaylistList.map(singlePlaylist =>
+    //         <AlbumCard key={singlePlaylist.id} onSelectedAlbum={displayTracks} libraryItem={singlePlaylist} ></AlbumCard>
+    //         );
+    //     setLikedPlaylistCards(LikedPlaylists)
+    //     }
+        
+
+    //     if(albumList){
+    //         const albums = albumList.map(singleAlbum=>
+    //             <AlbumCard key={singleAlbum.id} onSelectedAlbum={displayTracks} libraryItem={singleAlbum} ></AlbumCard>
+
+    //         )
+    //         setAlbumCards(albums)
+    //     }
     
-    }, [albumList, playlistList])
+    // }, [albumList, closeCreationContainer, likedPlaylistList, myPlaylistList])
 
     //**Fetches selected playlists tracks if not already fetched*/
     useEffect(()=>{
-        // console.log("set tracklist block",selectedPlaylist)
-        // if(selectedPlaylist && selectedPlaylist.tracks.length<=0){
-        //     // console.log("setcurrent tracks block 1: ", selectedPlaylist.tracks)
-        //     selectedPlaylist.setTracks().then(()=>{
-        //         setCurrentTracklist(selectedPlaylist.tracks)
-        //         // setSelectedPlaylist(selectedPlaylist)
-        //     // console.log("current tracklist set: ", selectedPlaylist)
-        //     }
-        //     )
-        // }else if (selectedPlaylist && selectedPlaylist.tracks.length>0){
-        //     // console.log("setcurrent tracks block 2: ", selectedPlaylist.tracks)
-        //     setCurrentTracklist(selectedPlaylist.tracks)
-        // }else{
-        //     // console.log("setcurrent tracks block 3")
 
-        // }
 
         // console.log("set tracklist block",selectedPlaylist)
         if(selectedLibraryItem && !selectedLibraryItem?.tracks){
@@ -253,18 +254,7 @@ const UserLibrary:React.FC=()=>{
 
     //** FIlters the selected playlist if the audio featrues have been set*/
     useEffect(()=>{
-        // if(!selectedPlaylist){
-        //     setFilteredPlaylist(null)
-        // }
-        //let isFeatureFilterSelected = Object.values(featureFilters).some(featureVal=>typeof featureVal === "number")
 
-        // if(selectedPlaylist && isFeatureFilterSelected){
-        //     // console.log(featureFilters.at(-1))
-        //     console.log("useEffect run for filtFeatures")
-        //     filterFeatures()
-        // }else{
-        //     setFilteredPlaylist(currentTracklist)
-        // }
 
         let isFeatureFilterSelected = Object.values(featureFilters).some(featureVal=>typeof featureVal === "number")
 
@@ -277,128 +267,70 @@ const UserLibrary:React.FC=()=>{
         }
     }, [ currentTracks, featureFilters, filterFeatures, selectedLibraryItem])
 
+    const creationContainer = useRef(null)
+    const libraryContainer = useRef(null)
 
 
+    const displayTracks = (albumSelection: Library)=>{
+        setStagingState("open")
+        setSelectedLibraryItem(albumSelection)
 
-    if(playlistList){
-        
-
-        if(stagingState===null){
-            
-            return (
-                <div className="main-content-area">
-                    <div className="playlist-creation-container-hidden" id="creation-container">
-                        <div className="playlist-creation-menu-bar">
-                            <button onClick={()=>setStagingState("closed")} style={hidebutton}></button>
-
-                        </div>
-                        <div className="playlist-items-containers">
-
-                            <SelectedPlaylistContainer onSelectedItems={addStagedItems} libraryItem={selectedLibraryItem} stagedPlaylistItems={stagedPlaylist} filteredTracks={filteredTracks}></SelectedPlaylistContainer>
-                            {/* <div className="search-filter-container new-playlist" id="search-filter-div"></div> */}
-                            <DraftPlaylistContainer onSelectedItems={removeStagedItems} selectedTracks={stagedPlaylist}></DraftPlaylistContainer>
-                            {/* <div className="playlist-draft-container new-playlist" id="drafting-div"></div> */}
-                        </div>
-                    </div >
-                    <div className="library-container" id="library-container">
-                    <p className="library-heading">Library</p>
-                    <div className='library-content'>
-                        <div className="playlist-content">{playlistCards}</div>
-                        <div className="album-content">{albumCards}</div>
-                    </div>
-                    </div>
-                </div>)
-            }else if(stagingState==="open"){
-                
-        
-                
-                return (
-                    <div className="main-content-area">
-                        
-                            <div className="playlist-creation-container-new grow-staging" id="creation-container">
-                            <PlaylistMenuBar onExit={setStagingState}  currentTracks={currentTracklist} onFilterSet={setFeatureFilters}></PlaylistMenuBar>
-
-
-                                <div className="playlist-items-containers">
-                                    <SelectedPlaylistContainer onSelectedItems={addStagedItems} libraryItem={selectedLibraryItem} stagedPlaylistItems={stagedPlaylist}  filteredTracks={filteredTracks}></SelectedPlaylistContainer>
-
-                                    <DraftPlaylistContainer onSelectedItems={removeStagedItems} selectedTracks={stagedPlaylist}></DraftPlaylistContainer>
-
-                                    {/* <div className="playlist-draft-container new-playlist" id="drafting-div"></div> */}
-                                </div >
-                            </div>
-                        
-                            <div className="library-container-new shrink-library" id="library-container">
-                                <p className="library-heading">Library</p>
-                                <div className='library-content'>
-                                    <div className="playlist-content">{playlistCards}</div>
-                                    <div className="album-content">{albumCards}</div>
-                                </div>
-                            </div>
-                    </div>)
-                // }
-            }else if(stagingState==="closed"){
-  
-                return (
-                    <div className="main-content-area">
-                        
-                            <div className="playlist-creation-container-hidden shrink-staging" id="creation-container">
-                                <div className="playlist-creation-menu-bar">
-                                    <button onClick={toggleCreation} style={hidebutton}></button>
-                                </div>
-                                <div className="playlist-items-containers">
-                                    <SelectedPlaylistContainer onSelectedItems={addStagedItems} libraryItem={selectedLibraryItem} stagedPlaylistItems={stagedPlaylist}  filteredTracks={filteredTracks}></SelectedPlaylistContainer>
-
-                                    <DraftPlaylistContainer onSelectedItems={removeStagedItems} selectedTracks={stagedPlaylist}></DraftPlaylistContainer>
-                                    {/* <div className="playlist-draft-container new-playlist" id="drafting-div"></div> */}
-                                </div >
-                            </div>
-                        
-                            <div className="library-container grow-library" id="library-container">
-                                <p className="library-heading">Library</p>
-                                <div className='library-content'>
-                                    <div className="playlist-content">{playlistCards}</div>
-                                    <div className="album-content">{albumCards}</div>
-                                </div>
-                            </div>
-                    </div>)
-                // }
-            }else if(stagingState==="closed"){
-                
-                return (
-                    <div className="main-content-area">
-                        <div className="playlist-creation-container-hidden shrink-staging" id="creation-container">
-                            <div className="playlist-creation-menu-bar">
-                                <button onClick={toggleCreation} style={hidebutton}></button>
-                            </div>
-                            <div className="playlist-items-containers">
-
-                                <SelectedPlaylistContainer onSelectedItems={addStagedItems} libraryItem={selectedLibraryItem} stagedPlaylistItems={stagedPlaylist} filteredTracks={filteredTracks}></SelectedPlaylistContainer>
-
-
-                                <DraftPlaylistContainer onSelectedItems={removeStagedItems} selectedTracks={stagedPlaylist}></DraftPlaylistContainer>
-
-                                {/* <div className="playlist-draft-container new-playlist" id="drafting-div"></div> */}
-                            </div>
-                        </div >
-                        
-                            <div className="library-container grow-library" id="library-container">
-                                <p className="library-heading">Library</p>
-                                <div className='library-content'>
-                                    <div className="playlist-content">{playlistCards}</div>
-                                    <div className="album-content">{albumCards}</div>
-                                </div>
-                            </div>
-                    </div>)
-            // }
-        }
-    }else if(isLoading){
-
-        return<p>Loading...</p>
-    }else{
-        return<p>No playlists found. Plese try again.</p>
+        creationContainer.current.classList = "playlist-creation-container-new grow-staging"
+        libraryContainer.current.classList = ('library-container-new shrink-library')
     }
+    
 
-}
+    
+   
+        return (
+            <div className="main-content-area">
+                    
+                    <div ref={creationContainer} className="playlist-creation-container-hidden" id="creation-container">
+                    {stagingState==="open"?
+                    <PlaylistMenuBar onExit={closeCreationContainer} onFilterSet={setFeatureFilters}></PlaylistMenuBar>
+                    :<div className="playlist-creation-menu-bar">
+                        <button  style={hidebutton}></button>
+                    
+                    </div>
+                    }
 
-export default UserLibrary
+                        <div className="playlist-items-containers">
+                            <SelectedPlaylistContainer onSelectedItems={addStagedItems} libraryItem={selectedLibraryItem} stagedPlaylistItems={stagedPlaylist}  filteredTracks={filteredTracks}></SelectedPlaylistContainer>
+
+                            <DraftPlaylistContainer onSelectedItems={removeStagedItems} selectedTracks={stagedPlaylist}></DraftPlaylistContainer>
+                        </div >
+                    </div>
+                
+                    <div ref={libraryContainer} className="library-container" id="library-container">
+                        <p className="library-heading">Library</p>
+                        {myPlaylistList&&likedPlaylistList&&albumList?
+                        
+                            <div className='library-content'>
+
+                                <p>My Playlists</p>
+                                <div className="playlist-content">{myPlaylistList.map(singlePlaylist =>
+                                    <AlbumCard key={singlePlaylist.id} onSelectedAlbum={displayTracks} libraryItem={singlePlaylist} ></AlbumCard>
+                                    )}
+                                </div>
+                                    
+                                <p>Liked Playlists</p>
+                                <div className="playlist-content">{likedPlaylistList.map(singlePlaylist =>
+                                    <AlbumCard key={singlePlaylist.id} onSelectedAlbum={displayTracks} libraryItem={singlePlaylist} ></AlbumCard>
+                                    )}
+                                </div>
+            
+                                <p>Albums</p>
+                                <div className="album-content">{albumList.map(singleAlbum=>
+                                    <AlbumCard key={singleAlbum.id} onSelectedAlbum={displayTracks} libraryItem={singleAlbum} ></AlbumCard>
+                                )}
+                                </div>
+                            </div>
+                            :
+                            <div className="library-content">Loading User Library...</div> }
+                  
+                    </div>
+            </div>)
+
+
+                        }
+   

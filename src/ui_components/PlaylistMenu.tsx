@@ -2,11 +2,11 @@ import React, { ChangeEvent, useCallback, useEffect, useRef, useState } from "re
 import { Features, PlaylistItem } from "../../server/types";
 import PlaylistClass from "../models/playlistClass";
 interface PlaylistMenuProps{
-    onExit:(stagingState:React.SetStateAction<String>) => void;
+    onExit:() => void;
     onFilterSet: (newFilter:React.SetStateAction<Record<string, number>>) => void;
     // selectedPlaylist: PlaylistClass;
 
-    currentTracks: PlaylistItem[]|null
+    // currentTracks: PlaylistItem[]|null
 
 }
 const PlaylistMenuBar:React.FC<PlaylistMenuProps>=(props: PlaylistMenuProps)=>{
@@ -70,8 +70,8 @@ const handleInput = (index)=>{
 
         return (
             <div className="playlist-creation-menu-bar" style={{height:100}}>
-                <button onClick={()=>props.onExit("closed")}>Close</button>
-                <button onClick={()=>{toggleDisplayState()}}>Audio Features</button>
+                <button style={{flex:1, whiteSpace:"normal", minWidth:0}}onClick={()=>props.onExit()}>Close</button>
+                <button style={{flex:1, whiteSpace:"normal"}} onClick={()=>{toggleDisplayState()}}>Audio Features</button>
     
                 <div style={{display: "flex", flexDirection:"row", flexWrap:"wrap"}}>
                     {inputControls.map((inputControl, index)=>(
@@ -92,7 +92,7 @@ const handleInput = (index)=>{
     }else{
         return(
             <div className="playlist-creation-menu-bar">
-                <button onClick={()=>props.onExit("closed")}>Close</button>
+                <button onClick={()=>props.onExit()}>Close</button>
                 <button onClick={()=>{toggleDisplayState()}}>Audio Features</button>
             </div>
         )
