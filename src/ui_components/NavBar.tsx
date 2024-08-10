@@ -14,7 +14,7 @@ export default function NavBar({currentUser}:navProps){
                 {/* <button className="create-buttons" onClick={toggleStagingEdit}>Edit</button> */}
                 <p>Welcome, {currentUser.display_name}</p>
             </span>
-            <UserLibrary></UserLibrary>
+            <UserLibrary currentUser={currentUser}></UserLibrary>
         </div>
     )
 }

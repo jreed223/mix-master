@@ -35,7 +35,7 @@ export interface Playlist {
     public: boolean;
     snapshot_id: string;
     tracks: {href: string; total: number;}
-    type: string;
+    type: "playlist";
     uri: string;
 }
 
@@ -53,19 +53,31 @@ export interface CategorizedPlaylist {
 
 
 export interface Album {
-    album_type: string
-    total_tracks: number
-    available_markets: string[]
-    external_urls:{spotify:string}
-    href:string
-    id:string
-    images: Image[]
-    name:string
-    release_date:string
-    release_date_precision:string
-    type:string
-    uri:string
-    artists:Artist[]
+    added_at: Date
+    album:{
+        album_type: string
+        total_tracks: number
+        available_markets: string[]
+        external_urls:{spotify:string}
+        href:string
+        id:string
+        images: Image[]
+        name:string
+        release_date:string
+        release_date_precision:string
+        type:"album"
+        uri:string
+        artists:Artist[]
+        tracks: {
+            href: string
+            limit: number
+            next: string|null
+            offset: number
+            pevious: string|null
+            total: number
+            items: Track[]
+        }
+    }
 }
 
 export interface Artist{
@@ -117,19 +129,43 @@ export interface Tracklist {
     items: PlaylistItem[]
 }
 
+export interface AlbumList {
+    href: string
+    limit: number
+    next: string|null
+    offset: number
+    pevious: string|null
+    total: number
+    items: Album[]
+}
+
+export interface LikedSongs{
+    type: "liked songs"
+    href: string
+    limit: number
+    next: string|null
+    offset: number
+    pevious: string|null
+    total: number
+    items: [{
+        added_at: Date
+        track: Track
+    }]
+}
+
 export interface Features {
-    analysis_url: string
-    acousticness: number
-    danceability: number
-    energy: number
-    instrumentalness: number
-    key: number
-    liveness: number
-    loudness: number
-    mode: number
-    tempo: number
-    time_signature: number
-    valence: number
+    analysis_url: string|null
+    acousticness: number|null
+    danceability: number|null
+    energy: number|null
+    instrumentalness: number|null
+    key: number|null
+    liveness: number|null
+    loudness: number|null
+    mode: number|null
+    tempo: number|null
+    time_signature: number|null
+    valence: number|null
 }
 
 export interface Tag {
@@ -137,3 +173,5 @@ export interface Tag {
     name: string
     url: string
 }
+
+

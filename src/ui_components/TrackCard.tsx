@@ -1,9 +1,13 @@
-import React from "react";
+import React, { useRef } from "react";
 import { PlaylistItem, Track } from "../../server/types";
+import { Checkbox } from "@mui/material";
+import Library from "../models/libraryItems";
 
 export interface TrackCardProps{
-    //onSelectedTrack: (track: Track) => void
-    playlistItem : PlaylistItem;
+    onSelectedTrack: (event: React.ChangeEvent<HTMLInputElement>,selectedItem: Track) => void
+    track : Track;
+    displayHidden : boolean;
+    checked: boolean|null;
 }
 
 const TrackCard: React.FC<TrackCardProps> = (props: TrackCardProps)=>{
@@ -18,9 +22,27 @@ const TrackCard: React.FC<TrackCardProps> = (props: TrackCardProps)=>{
     // };
 
     // console.log(playlist);
+        
+    const displayStyle = props.displayHidden?
+        {display: 'none',
+        textOverflow: 'ellipsis'}:
+            {display: 'flex',
+            textOverflow: 'ellipsis'}
+    
+    if(props.displayHidden){
+
+    }
+    // console.log("checkbox checked? ", props.checked)
     return(
-        <div className="track-card">
-            <p>{props.playlistItem.track.name} by {props.playlistItem.track.artists[0].name}</p>
+        <div className="track-card" id={props.track.id} style={displayStyle}>
+            {props.checked === true?
+                (<input checked={props.checked} key={`checkbox-${props.track.id}`} type="checkbox" onChange={(e)=>props.onSelectedTrack(e, props.track )}/>
+            ):props.checked === false?
+                (<input checked={props.checked} key={`checkbox-${props.track.id}`} type="checkbox" onChange={(e)=>props.onSelectedTrack(e, props.track )}/>
+            ):
+                (<input key={`checkbox-${props.track.id}`} type="checkbox" onChange={(e)=>props.onSelectedTrack(e, props.track )}/>)
+            }
+            <label>{props.track.name} - {props.track.artists[0].name}</label>
         </div>
     )
 

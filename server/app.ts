@@ -6,7 +6,7 @@ import { fetchPlaylistsItems } from './spotify-data/playlist_items';
 import { getAccessToken, generateCodeChallenge, generateCodeVerifier, getRefreshToken } from './authentication/AuthHandler';
 import { fetchProfile } from './authentication/LoadProfile';
 import { fetchPlaylists } from './spotify-data/playlists';
-import type { Features, Playlist, PlaylistItem, Tag, Tracklist, UserProfile } from './types.d.ts';
+import type { Album, AlbumList, Features, Playlist, PlaylistItem, Tag, Track, Tracklist, UserProfile } from './types.d.ts';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import { fetchLikedTracks } from './spotify-data/saved-songs';
@@ -14,6 +14,8 @@ import { error } from 'console';
 import { fetchAudioFeatures } from './spotify-data/audio-features';
 import { access } from 'fs';
 import { fetchTopTags } from './lastFM-data/track-tags';
+import { fetchAlbums } from './spotify-data/saved-albums';
+import { Albums } from '@spotify/web-api-ts-sdk';
 // import { Tracklist, Playlist } from './types';
 
 
@@ -166,6 +168,36 @@ app.get("/callback", (req, res)=>{
 
 })
 
+app.get("/spotify-data/albums", (req, res)=>{
+    const accessToken = req.cookies.access_token? req.cookies.access_token:res.locals.access_token
+    //console.log(req.cookies)
+    if(accessToken){
+        fetchAlbums(accessToken).then(async (response)=>{
+            if(response.ok){
+                console.log("OK response from spotify-data/albums")
+                const albumssObject:AlbumList = await response.json();
+                console.log("albums Object", albumssObject)
+
+                const albumList: Album[] = albumssObject["items"];
+                console.log("albums list", albumList)
+
+                res.send(albumList)
+            }else{
+                const error = await response.json()
+                console.error("Failed to retrieve playlists (/spotify-data/playlists): ", error)
+            }
+        })
+        .catch(e=>{
+            // res.clearCookie('authorizing')
+            // res.clearCookie('access_token')
+            // res.clearCookie('refresh_token')
+            console.error("Fetch operation failed (/spotify-data/playlists)): ", e)
+        })
+    }else{
+        console.error("No access token found (/spotify-data/playlists)")
+    }
+})
+
 
 
 
@@ -268,6 +300,7 @@ app.get("/spotify-data/playlist-items", refreshTokens, async (req, res)=>{
                     }
                 }
                 allPlaylistItems = allPlaylistItems.concat(playlistItems)
+                console.log(allPlaylistItems)
                 //TODO: Remove below for-loop after testing
                 // for(let item of playlistItems){
                 //     allNamesAndArtists.push(` ${item.track.name} by ${item.track.artists[0].name}`)
@@ -296,61 +329,32 @@ app.get("/spotify-data/playlist-items", refreshTokens, async (req, res)=>{
 
 app.post("/spotify-data/audio-features", refreshTokens, async (req, res)=>{
     const accessToken = req.cookies.access_token?req.cookies.access_token:res.locals.access_token
-    const playlistItems:PlaylistItem[] = req.body
-    //console.log(req.body)
-    //console.log("items from audio features:",playlistItems)
-    var startIdx = 0
-    var endIdx = 99
+    const playlistItems:Track[] = req.body
+
     if(accessToken&&playlistItems){
-        while(true){
-            
-            if(endIdx>=playlistItems.length){
-                endIdx = playlistItems.length-1
-            }
-            // console.log(startIdx,endIdx)
-            //console.log(accessToken, playlistItems)
-            let playlistItemsSubset:PlaylistItem[] = playlistItems.slice(startIdx, endIdx+1)
 
-            let audioFeatures= await fetchAudioFeatures(playlistItemsSubset, accessToken).then(async(response)=>{
-                if(response.ok){
-                    console.log("OK response from spotify-data/audio-features")
-                    const audioFeaturesObject = await response.json();
-                    const audioFeatures = audioFeaturesObject.audio_features
-                    return audioFeatures
-                }else{
-                    const error = await response.json()
-                    console.error("Failed to retrieve audio features (/spotify-data/audio-features): ", error)
-                    return
-                }
-            }).catch((e:Error)=>{
-                // res.clearCookie('authorizing')
-                // res.clearCookie('access_token')
-                // res.clearCookie('refresh_token')
-                console.error("Fetch operation failed (/spotify-data/audio-features)): ", e)
-            })
-
-            if(audioFeatures){
-                // console.log("Audio Features loop started")
-                for(let item of audioFeatures){
-                    // console.log(`Audio Features found for song ${startIdx+1}: ${playlistItems[startIdx].track.name}`)
-                    playlistItems[startIdx].track.audio_features = item
-                    startIdx+=1
-                }
-
-                if(startIdx >= playlistItems.length){
-                    console.log("Total audio features found: ", startIdx)
-                    res.send(playlistItems)
-                    return
-                }
+        const audiofeatures= await fetchAudioFeatures(playlistItems, accessToken).then(async(response)=>{
+            if(response.ok){
+                console.log("OK response from spotify-data/audio-features")
+                const audioFeaturesObject = await response.json();
+                const audioFeatures = audioFeaturesObject.audio_features
+                return audioFeatures
             }else{
-                console.error("No audio features found (/spotify-data/audio-features)")
+                const error = await response.json()
+                console.error("Failed to retrieve audio features (/spotify-data/audio-features): ", error)
+                return
             }
+        }).catch((e:Error)=>{
+            // res.clearCookie('authorizing')
+            // res.clearCookie('access_token')
+            // res.clearCookie('refresh_token')
+            console.error("Fetch operation failed (/spotify-data/audio-features)): ", e)
+        })
 
-            startIdx+=1
-            endIdx+=100
+        res.send(audiofeatures)
+        
 
 
-        }
     }else{
         console.error("No playlistItems||accessToken found (/spotify-data/audio-features)")
 

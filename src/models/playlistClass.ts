@@ -1,6 +1,7 @@
-import { CategorizedPlaylist, PlaylistItem, Tag, Track, Image } from "../../server/types";
+import { CategorizedPlaylist, PlaylistItem, Tag, Track, Image, Features } from "../../server/types";
 
 export default class PlaylistClass implements CategorizedPlaylist{
+    type: string;
     id: string;
     image: Image;
     name: string;
@@ -9,7 +10,8 @@ export default class PlaylistClass implements CategorizedPlaylist{
     uri: string;
     totalTracks: number;
     categories?: {tag_list: Tag[] | null, top_tags: Record<string, Track[]>|null}|null
-    tracks?: PlaylistItem[]
+    tracks: PlaylistItem[]
+    audioFeaturesSet: boolean
 
 
     constructor(id: string,
@@ -31,6 +33,7 @@ export default class PlaylistClass implements CategorizedPlaylist{
             this.totalTracks = totalTracks;
             this.categories = categories?categories:{tag_list:[], top_tags:{}};
             this.tracks = tracks?tracks:[];
+            this.audioFeaturesSet = false;
     }
 
     async setTracks(){
@@ -106,4 +109,54 @@ export default class PlaylistClass implements CategorizedPlaylist{
         }
     }
 
+    async setAudioFeatures(){
+            if(this.tracks.length>100){
+                let startIdx = 0
+                let endIdx = 99
+
+                while(startIdx<this.tracks.length){
+                    let playlistItemsSubset:PlaylistItem[] = this.tracks.slice(startIdx, endIdx+1)
+                    const response = await fetch("/spotify-data/audio-features", {
+                        method: "POST",
+                        headers: {
+                            'Content-Type': 'application/json'
+                          },
+                        body: JSON.stringify(playlistItemsSubset)
+                    })
+
+                    const features = await response.json() 
+                    console.log("subset: ", playlistItemsSubset)
+
+                    for(let feature of features){
+                        this.tracks[startIdx].track.audio_features = feature
+                        startIdx+=1
+                        // console.log(`${this.tracks[startIdx]}, Features: ${feature}`)
+                        // console.log(`${this.tracks[startIdx].track.name}, Features: ${feature}`)
+                    }
+                    startIdx=endIdx
+                    endIdx+= 99
+                    
+                }
+                // this.audioFeaturesSet=true
+            }else{
+                const response = await fetch("/spotify-data/audio-features", {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json'
+                      },
+                    body: JSON.stringify(this.tracks)
+                })
+
+                const features:Features[] = await response.json() 
+
+                features.map((feature, index)=>{
+                    return this.tracks[index].track.audio_features = feature
+                })
+                // this.audioFeaturesSet=true
+
+            }
+            this.audioFeaturesSet=true
+            return
+
+    }
 }
