@@ -10,9 +10,7 @@ import PlaylistMenuBar from "./PlaylistMenu";
 import AlbumCard from "./AlbumCard";
 import Library, { LibraryItem } from "../models/libraryItems";
 
-// interface UserLibraryProps{
-//     stagingState: String
-// }
+
 interface UserLibraryProps{
     currentUser: UserProfile
 }
@@ -92,12 +90,6 @@ export default function UserLibrary(props:UserLibraryProps){
             }
         }
 
-        
-
-        
-
-        
-  
 
         let filterPlaylist = currentTracks
 
@@ -152,19 +144,19 @@ export default function UserLibrary(props:UserLibraryProps){
 
                                     })
                     const myPlaylistsClass: Library[] = myPlaylists.map((playlistObject:Playlist)=>{
-                        
-                    
+
+
                         return  new Library(playlistObject)
                     })
                     const LikedPlaylistsClass: Library[] = likedPlaylists.map((playlistObject:Playlist)=>{
-                            
-                        
+
+
                         return  new Library(playlistObject)
                     })
 
                     setMyPlaylistList(myPlaylistsClass)
                     setLikedPlaylistList(LikedPlaylistsClass)
-                
+
             })
         // }
 
@@ -173,7 +165,7 @@ export default function UserLibrary(props:UserLibraryProps){
             .then(res=>res.json())
             .then(albums=>{
 
-  
+
                 const albumClasslist =  albums.map((album:Album)=>{
                     console.log("album in album list: ",album.album)
                     return new Library(album['album'])})
@@ -183,51 +175,15 @@ export default function UserLibrary(props:UserLibraryProps){
         setLoading(false);
 
 
-        
 
 
 
-        
+
+
 
     }, [props.currentUser.id])
 
-    //**Maps the list of playlist to playlist card components */
-    // useEffect(()=>{
 
-
-    //     const displayTracks = (albumSelection: Library)=>{
-    //         setStagingState("open")
-    //         setSelectedLibraryItem(albumSelection)
-
-    //         creationContainer.current.classList = "playlist-creation-container-new grow-staging"
-    //         libraryContainer.current.classList = ('library-container-new shrink-library')
-    //     }
-        
-
-    //     if(myPlaylistList){
-    //         const myPlaylists = myPlaylistList.map(singlePlaylist =>
-    //         <AlbumCard key={singlePlaylist.id} onSelectedAlbum={displayTracks} libraryItem={singlePlaylist} ></AlbumCard>
-    //         );
-    //     setMyPlaylistCards(myPlaylists)
-    //     }
-
-    //     if(likedPlaylistList){
-    //         const LikedPlaylists = likedPlaylistList.map(singlePlaylist =>
-    //         <AlbumCard key={singlePlaylist.id} onSelectedAlbum={displayTracks} libraryItem={singlePlaylist} ></AlbumCard>
-    //         );
-    //     setLikedPlaylistCards(LikedPlaylists)
-    //     }
-        
-
-    //     if(albumList){
-    //         const albums = albumList.map(singleAlbum=>
-    //             <AlbumCard key={singleAlbum.id} onSelectedAlbum={displayTracks} libraryItem={singleAlbum} ></AlbumCard>
-
-    //         )
-    //         setAlbumCards(albums)
-    //     }
-    
-    // }, [albumList, closeCreationContainer, likedPlaylistList, myPlaylistList])
 
     //**Fetches selected playlists tracks if not already fetched*/
     useEffect(()=>{
@@ -278,19 +234,19 @@ export default function UserLibrary(props:UserLibraryProps){
         creationContainer.current.classList = "playlist-creation-container-new grow-staging"
         libraryContainer.current.classList = ('library-container-new shrink-library')
     }
-    
 
-    
-   
+
+
+
         return (
             <div className="main-content-area">
-                    
+
                     <div ref={creationContainer} className="playlist-creation-container-hidden" id="creation-container">
                     {stagingState==="open"?
                     <PlaylistMenuBar onExit={closeCreationContainer} onFilterSet={setFeatureFilters}></PlaylistMenuBar>
                     :<div className="playlist-creation-menu-bar">
                         <button  style={hidebutton}></button>
-                    
+
                     </div>
                     }
 
@@ -300,11 +256,11 @@ export default function UserLibrary(props:UserLibraryProps){
                             <DraftPlaylistContainer onSelectedItems={removeStagedItems} selectedTracks={stagedPlaylist}></DraftPlaylistContainer>
                         </div >
                     </div>
-                
+
                     <div ref={libraryContainer} className="library-container" id="library-container">
                         <p className="library-heading">Library</p>
                         {myPlaylistList&&likedPlaylistList&&albumList?
-                        
+
                             <div className='library-content'>
 
                                 <p>My Playlists</p>
@@ -312,13 +268,13 @@ export default function UserLibrary(props:UserLibraryProps){
                                     <AlbumCard key={singlePlaylist.id} onSelectedAlbum={displayTracks} libraryItem={singlePlaylist} ></AlbumCard>
                                     )}
                                 </div>
-                                    
+
                                 <p>Liked Playlists</p>
                                 <div className="playlist-content">{likedPlaylistList.map(singlePlaylist =>
                                     <AlbumCard key={singlePlaylist.id} onSelectedAlbum={displayTracks} libraryItem={singlePlaylist} ></AlbumCard>
                                     )}
                                 </div>
-            
+
                                 <p>Albums</p>
                                 <div className="album-content">{albumList.map(singleAlbum=>
                                     <AlbumCard key={singleAlbum.id} onSelectedAlbum={displayTracks} libraryItem={singleAlbum} ></AlbumCard>
@@ -327,7 +283,7 @@ export default function UserLibrary(props:UserLibraryProps){
                             </div>
                             :
                             <div className="library-content">Loading User Library...</div> }
-                  
+
                     </div>
             </div>)
 
