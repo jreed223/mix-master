@@ -1,7 +1,7 @@
 import { PlaylistItem, Track } from './../types.d';
 export async function fetchAudioFeatures(playlistItems:Track[], accessToken:string): Promise<Response> {
     let trackIdList = []
-
+    console.log(playlistItems)
     for(let item of  playlistItems){
         // console.log(item.track.id)
         trackIdList.push(item.id)

@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { memo, useRef } from "react";
 import { PlaylistItem, Track } from "../../server/types";
 import { Checkbox } from "@mui/material";
 import Library from "../models/libraryItems";
@@ -48,4 +48,4 @@ const TrackCard: React.FC<TrackCardProps> = (props: TrackCardProps)=>{
 
 }
 
-export default TrackCard
+export default memo(TrackCard)

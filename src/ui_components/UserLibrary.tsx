@@ -1,14 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 // import PlaylistCard, { PlaylistCardProps } from "./PlaylistCard";
 import React from "react";
-import { Album, CategorizedPlaylist, Features, Playlist, PlaylistItem, Track, UserProfile } from '../../server/types';
-import PlaylistClass from "../models/playlistClass";
-import TrackCard from "./TrackCard";
+import { Album, Playlist, Track, UserProfile } from '../../server/types';
 import SelectedPlaylistContainer from "./SelectedPlaylistArea";
 import DraftPlaylistContainer from "./StagingArea";
 import PlaylistMenuBar from "./PlaylistMenu";
 import AlbumCard from "./AlbumCard";
-import Library, { LibraryItem } from "../models/libraryItems";
+import Library from "../models/libraryItems";
 
 
 interface UserLibraryProps{
@@ -60,63 +58,63 @@ export default function UserLibrary(props:UserLibraryProps){
             console.log("new Staged Playlist: ",newStagedPlaylist)
         }
  
-
-    const hidebutton = {
-        display:"none"
-    }
-
-
-
-    const filterFeatures  = useCallback(async ()=>{
-        setFilteredTracks(null)
-
-        if(!selectedLibraryItem){
-            setFilteredTracks(null)
-            return
+        const getNextTracks = ()=>{
+            selectedLibraryItem.getNextTracks()
         }
 
-        if(currentTracks && currentTracks.length>0){
-            if(selectedLibraryItem.audioFeaturesSet){ //checks if audiofeatures have been fetched
-                // setHasAudioFeatures(true)
-                console.log("audio features already set")
+
+
+
+    // const filterFeatures  = useCallback(async ()=>{
+    //     setFilteredTracks(null)
+
+    //     if(!selectedLibraryItem){
+    //         setFilteredTracks(null)
+    //         return
+    //     }
+
+    //     if(currentTracks && currentTracks.length>0){
+    //         if(selectedLibraryItem.audioFeaturesSet){ //checks if audiofeatures have been fetched
+    //             // setHasAudioFeatures(true)
+    //             console.log("audio features already set")
     
                 
                 
-            }else{
-                await selectedLibraryItem.setAudioFeatures() //fetches audio features
-                    // setHasAudioFeatures(true)
-                    console.log("audio features set")
+    //         }else{
+    //             await selectedLibraryItem.setAudioFeatures() //fetches audio features
+    //                 // setHasAudioFeatures(true)
+    //                 console.log("audio features set")
 
-            }
-        }
-
-
-        let filterPlaylist = currentTracks
+    //         }
+    //     }
 
 
-        if(currentTracks && selectedLibraryItem.audioFeaturesSet){ 
-            const currentFilters = Object.keys(featureFilters) 
+    //     let filterPlaylist = currentTracks
+
+
+    //     if(currentTracks && selectedLibraryItem.audioFeaturesSet){ 
+    //         const currentFilters = Object.keys(featureFilters) 
     
-                for(let feature of currentFilters){ //iterates through keys to of filter names
-                    if(typeof featureFilters[feature] === "number"){
+    //             for(let feature of currentFilters){ //iterates through keys to of filter names
+    //                 if(typeof featureFilters[feature] === "number"){
 
-                        const featureVal = featureFilters[feature]/100 //sets value of the selected feature
-                        // console.log("feature-val: ",featureVal)
-                        filterPlaylist = filterPlaylist.filter(item=> { //redeclares filterplaylist using the filter function
+    //                     const featureVal = featureFilters[feature]/100 //sets value of the selected feature
+    //                     // console.log("feature-val: ",featureVal)
+    //                     filterPlaylist = filterPlaylist.filter(item=> { //redeclares filterplaylist using the filter function
 
-                        return item.audio_features[feature]>=featureVal-.1&&item.audio_features[feature]<=featureVal+.1  //returns tracks with feature value that are in range of +/-.1 of selecetd value
-                        })
-                    }
-                }
+    //                     return item.audio_features[feature]>=featureVal-.1&&item.audio_features[feature]<=featureVal+.1  //returns tracks with feature value that are in range of +/-.1 of selecetd value
+    //                     })
+    //                 }
+    //             }
 
-                setFilteredTracks(filterPlaylist) 
-        }
-        else{
-            setFilteredTracks(null)
-            console.log("no feature vals")
-        }
+    //             setFilteredTracks(filterPlaylist) 
+    //     }
+    //     else{
+    //         setFilteredTracks(null)
+    //         console.log("no feature vals")
+    //     }
 
-    }, [currentTracks, featureFilters, selectedLibraryItem]);
+    // }, [currentTracks, featureFilters, selectedLibraryItem]);
 
 
 
@@ -167,7 +165,7 @@ export default function UserLibrary(props:UserLibraryProps){
 
 
                 const albumClasslist =  albums.map((album:Album)=>{
-                    console.log("album in album list: ",album.album)
+                    //console.log("album in album list: ",album.album)
                     return new Library(album['album'])})
                 setalbumList(albumClasslist)
             })
@@ -185,43 +183,43 @@ export default function UserLibrary(props:UserLibraryProps){
 
 
 
-    //**Fetches selected playlists tracks if not already fetched*/
-    useEffect(()=>{
+    // //**Fetches selected playlists tracks if not already fetched*/
+    // useEffect(()=>{
 
 
-        // console.log("set tracklist block",selectedPlaylist)
-        if(selectedLibraryItem && !selectedLibraryItem?.tracks){
-            // console.log("setcurrent tracks block 1: ", selectedPlaylist.tracks)
-            selectedLibraryItem.setTracks().then(()=>{
-                setCurrentTracks(selectedLibraryItem.tracks)
-                // setSelectedPlaylist(selectedPlaylist)
-            // console.log("current tracklist set: ", selectedPlaylist)
-            }
-            )
-        }else if (selectedLibraryItem && selectedLibraryItem?.tracks){
-            // console.log("setcurrent tracks block 2: ", selectedPlaylist.tracks)
-            setCurrentTracks(selectedLibraryItem.tracks)
-        }else{
-            // console.log("setcurrent tracks block 3")
+    //     // console.log("set tracklist block",selectedPlaylist)
+    //     if(selectedLibraryItem && !selectedLibraryItem?.tracks){
+    //         // console.log("setcurrent tracks block 1: ", selectedPlaylist.tracks)
+    //         selectedLibraryItem.setTracks().then(()=>{
+    //             setCurrentTracks(selectedLibraryItem.tracks)
+    //             // setSelectedPlaylist(selectedPlaylist)
+    //         // console.log("current tracklist set: ", selectedPlaylist)
+    //         }
+    //         )
+    //     }else if (selectedLibraryItem && selectedLibraryItem?.tracks){
+    //         // console.log("setcurrent tracks block 2: ", selectedPlaylist.tracks)
+    //         setCurrentTracks(selectedLibraryItem.tracks)
+    //     }else{
+    //         // console.log("setcurrent tracks block 3")
 
-        }
-    }, [selectedLibraryItem])
+    //     }
+    // }, [selectedLibraryItem])
+
+// TODO:Uncomment if it doesn't work
+    // //** FIlters the selected playlist if the audio featrues have been set*/
+    // useEffect(()=>{
 
 
-    //** FIlters the selected playlist if the audio featrues have been set*/
-    useEffect(()=>{
+    //     let isFeatureFilterSelected = Object.values(featureFilters).some(featureVal=>typeof featureVal === "number")
 
-
-        let isFeatureFilterSelected = Object.values(featureFilters).some(featureVal=>typeof featureVal === "number")
-
-        if(selectedLibraryItem && isFeatureFilterSelected){
-            // console.log(featureFilters.at(-1))
-            console.log("useEffect run for filtFeatures")
-            filterFeatures()
-        }else{
-            setFilteredTracks(currentTracks)
-        }
-    }, [ currentTracks, featureFilters, filterFeatures, selectedLibraryItem])
+    //     if(selectedLibraryItem && isFeatureFilterSelected){
+    //         // console.log(featureFilters.at(-1))
+    //         console.log("useEffect run for filtFeatures")
+    //         filterFeatures()
+    //     }else{
+    //         setFilteredTracks(currentTracks)
+    //     }
+    // }, [ currentTracks, featureFilters, filterFeatures, selectedLibraryItem])
 
     const creationContainer = useRef(null)
     const libraryContainer = useRef(null)
@@ -242,16 +240,10 @@ export default function UserLibrary(props:UserLibraryProps){
             <div className="main-content-area">
 
                     <div ref={creationContainer} className="playlist-creation-container-hidden" id="creation-container">
-                    {stagingState==="open"?
                     <PlaylistMenuBar onExit={closeCreationContainer} onFilterSet={setFeatureFilters}></PlaylistMenuBar>
-                    :<div className="playlist-creation-menu-bar">
-                        <button  style={hidebutton}></button>
-
-                    </div>
-                    }
 
                         <div className="playlist-items-containers">
-                            <SelectedPlaylistContainer onSelectedItems={addStagedItems} libraryItem={selectedLibraryItem} stagedPlaylistItems={stagedPlaylist}  filteredTracks={filteredTracks}></SelectedPlaylistContainer>
+                            <SelectedPlaylistContainer onSelectedItems={addStagedItems} libraryItem={selectedLibraryItem} stagedPlaylistItems={stagedPlaylist} onGetNextItems={getNextTracks} featureFilters={featureFilters}></SelectedPlaylistContainer>
 
                             <DraftPlaylistContainer onSelectedItems={removeStagedItems} selectedTracks={stagedPlaylist}></DraftPlaylistContainer>
                         </div >
@@ -289,4 +281,3 @@ export default function UserLibrary(props:UserLibraryProps){
 
 
                         }
-   

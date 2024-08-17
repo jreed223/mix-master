@@ -124,7 +124,7 @@ export interface Tracklist {
     limit: number
     next: string|null
     offset: number
-    pevious: string|null
+    previous: string|null
     total: number
     items: PlaylistItem[]
 }
