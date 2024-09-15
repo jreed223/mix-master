@@ -131,10 +131,13 @@
 }
 
 .playlist-creation-container-new{
-  position: fixed;
+  /* position: fixed; */
   /* display: inline-flex; */
+  display: flex;
+  flex-direction: column;
   top:50px;
   bottom: 0;
+  height: 100%;
   width: 50%;
   background-color: aquamarine;
   transition: width 1s;
@@ -143,8 +146,10 @@
 
 }
 .playlist-creation-container-hidden{
-  position: fixed;
+  /* position: fixed; */
   /* display: inline-flex; */
+  display: flex;
+  flex-direction: column;
   top:50px;
   bottom: 0;
   width: 0%;
@@ -155,6 +160,8 @@
 
 }
 .library-container{
+  overflow-y: scroll;
+
   /* margin-top: 40px; */
   /* padding-top: 2%; */
   width: 100%;
@@ -179,11 +186,14 @@
 
 .playlist-items-containers{
   width: 100%;
-  height: calc(100% - 40px);
+  height: 0px;
+  flex:1;
   display: inline-flex;
 
 }
 .library-container-new{
+  overflow-y: scroll;
+
   /* margin-top: 40px; */
   padding-top: 2px;
   container-type: inline-size;
@@ -269,7 +279,8 @@
 }
 .main-content-area{
   margin-top: 50px;
-  display: inline-block;
+  display: flex;
+  height: calc(100vh - 50px);
   width: 100%;
 }
 @container new-playlist-view (700px < width <= 1200px) {

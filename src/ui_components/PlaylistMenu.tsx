@@ -53,6 +53,18 @@ const handleInput = (index)=>{
 
 }
 
+const clearSelections =()=>{
+
+    for(let input of inputControls){
+        input.checkboxRef.current.checked = true
+        input.sliderRef.current.disabled = true
+    }
+    setSelecetedFeatures({})
+    props.onFilterSet({})
+
+
+}
+
 
 
 
@@ -66,16 +78,17 @@ const handleInput = (index)=>{
     }
     
 
-    if(featureDisplayState){
+    // if(featureDisplayState){
 
         return (
-            <div className="playlist-creation-menu-bar" style={{height:100}}>
-                <button style={{flex:1, whiteSpace:"normal", minWidth:0}}onClick={()=>props.onExit()}>Close</button>
-                <button style={{flex:1, whiteSpace:"normal"}} onClick={()=>{toggleDisplayState()}}>Audio Features</button>
+            <div className="playlist-creation-menu-bar" style={featureDisplayState?{height:100}:{}}>
+                <button onClick={()=>props.onExit()}>Close</button>
+                <button  onClick={()=>{toggleDisplayState()}}>Audio Features</button>
+                <button onClick={()=>clearSelections()}>Clear Feature Selections</button>
     
                 <div style={{display: "flex", flexDirection:"row", flexWrap:"wrap"}}>
                     {inputControls.map((inputControl, index)=>(
-                    <div style={{display:"inline"}}>  
+                    <div style={featureDisplayState?{display:"inline"}:{display:"none"}}>  
                         <label>{inputControl.audioFeature}</label>
                         <input ref={inputControl.checkboxRef} onChange={()=>handleInput(index)} type="checkbox" defaultChecked={true}/>
                         <input ref={inputControl.sliderRef} id={`${inputControl.audioFeature}-slider`} onChange={()=>handleInput(index)} type="range" min="1" max="100" defaultValue="50" className="slider" disabled={true}/>
@@ -89,14 +102,6 @@ const handleInput = (index)=>{
             </div>
         )
 
-    }else{
-        return(
-            <div className="playlist-creation-menu-bar">
-                <button onClick={()=>props.onExit()}>Close</button>
-                <button onClick={()=>{toggleDisplayState()}}>Audio Features</button>
-            </div>
-        )
-    }
 
     
 }

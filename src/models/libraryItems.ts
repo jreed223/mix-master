@@ -47,6 +47,7 @@ export default class Library {
                 this.uri = libraryItem.uri
                 this.totalTracks = libraryItem.total_tracks
                 this.tracks = libraryItem.tracks.items
+                this.trackDataState = [{tracks:libraryItem.tracks.items, audioFeatures: false, categories: false}]
               break;
             case 'liked songs':
                 this.name = "Liked Songs";
