@@ -2,12 +2,12 @@ import React from "react";
 import { Album } from "../../server/types";
 import Library from "../models/libraryItems";
 
-export interface AlbumCardProps{
+export interface LibraryItemCardProps{
     onSelectedAlbum: (album: Library) => void
     libraryItem: Library;
 }
 
-const AlbumCard: React.FC<AlbumCardProps> = (props: AlbumCardProps)=>{
+const LibraryItemCard: React.FC<LibraryItemCardProps> = (props: LibraryItemCardProps)=>{
 
     // const [playlistObject, setPlaylistObject] = useState<PlaylistClass|null>(props.playlist)
 
@@ -31,4 +31,4 @@ const AlbumCard: React.FC<AlbumCardProps> = (props: AlbumCardProps)=>{
 
 }
 
-export default AlbumCard
+export default LibraryItemCard

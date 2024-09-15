@@ -5,9 +5,10 @@ import { Album, Playlist, Track, UserProfile } from '../../server/types';
 import SelectedPlaylistContainer from "./SelectedPlaylistArea";
 import DraftPlaylistContainer from "./StagingArea";
 import PlaylistMenuBar from "./PlaylistMenu";
-import AlbumCard from "./AlbumCard";
+import AlbumCard from "./LibraryItemCard";
 import Library from "../models/libraryItems";
 import CircularProgress from '@mui/material/CircularProgress';
+import { AlbumsComponent, PlaylistsComponent } from "./LibraryComponents";
 
 
 
@@ -16,10 +17,6 @@ interface UserLibraryProps{
 }
 
 export default function UserLibrary(props:UserLibraryProps){
-
-    const [myPlaylistList, setMyPlaylistList] = useState<Library[]|null>(null)
-    const [likedPlaylistList, setLikedPlaylistList] = useState<Library[]|null>(null)
-    const [albumList, setalbumList] = useState<Library[]>(null)
     
     const [selectedLibraryItem, setSelectedLibraryItem] = useState<Library|null>(null)
 
@@ -31,12 +28,6 @@ export default function UserLibrary(props:UserLibraryProps){
 
     const [stagingState, setStagingState] = useState<String|null>(null)
 
-        // const undoStagedItems = ()=>{
-        //     console.log("stagedPlaylist at -1",stagedPlaylistState.at(-1))
-
-        //     setStagedPlaylistState(stagedPlaylistState.slice(0, -1))
-        //     setStagedPlaylist(stagedPlaylistState.at(-2))
-        // }
         const closeCreationContainer = useCallback(()=>{
             setStagingState("closed")
             console.log(stagingState)
@@ -72,61 +63,6 @@ export default function UserLibrary(props:UserLibraryProps){
             selectedLibraryItem.getNextTracks()
         }    
 
-
-    
-    //** Fetches the list of playlists for the user and maps them to the Playlist Class */
-    useEffect(()=>{
-            fetch("/spotify-data/playlists")
-            .then(res=>res.json())
-            .then(playlists=>{
-                let myPlaylists = []
-                let likedPlaylists = []
-
-                playlists.map((playlistObject:Playlist)=>{
-                    return playlistObject.owner.id === props.currentUser.id? 
-                        myPlaylists.push(playlistObject):
-                        likedPlaylists.push(playlistObject)
-
-                                    })
-                    const myPlaylistsClass: Library[] = myPlaylists.map((playlistObject:Playlist)=>{
-
-
-                        return  new Library(playlistObject)
-                    })
-                    const LikedPlaylistsClass: Library[] = likedPlaylists.map((playlistObject:Playlist)=>{
-
-
-                        return  new Library(playlistObject)
-                    })
-
-                    setMyPlaylistList(myPlaylistsClass)
-                    setLikedPlaylistList(LikedPlaylistsClass)
-
-            })
-
-            fetch("/spotify-data/albums")
-            .then(res=>res.json())
-            .then(albums=>{
-
-
-                const albumClasslist =  albums.map((album:Album)=>{
-                    return new Library(album['album'])})
-                setalbumList(albumClasslist)
-            })
-  
-
-
-
-
-
-
-
-    }, [props.currentUser.id])
-
-
-
-
-
     const creationContainer = useRef(null)
     const libraryContainer = useRef(null)
 
@@ -156,41 +92,17 @@ export default function UserLibrary(props:UserLibraryProps){
                     </div>
 
                     <div ref={libraryContainer} className="library-container" id="library-container">
-                        <p className="library-heading">Library</p>
-                        {/* {myPlaylistList&&likedPlaylistList&&albumList? */}
-
+                        {/* <p className="library-heading">Library</p> */}
                             <div className='library-content'>
 
-                                <p>My Playlists</p>
-                                <div className="playlist-content">
-                                    {/* <Suspense fallback={<CircularProgress/>}>
-                                    {
-                                    myPlaylistList.map(singlePlaylist =>
-                                    <AlbumCard key={singlePlaylist.id} onSelectedAlbum={displayTracks} libraryItem={singlePlaylist} ></AlbumCard>
-                                    )}
-                                    </Suspense> */}
-                                    {myPlaylistList?myPlaylistList.map(singlePlaylist =>
-                                    <AlbumCard key={singlePlaylist.id} onSelectedAlbum={displayTracks} libraryItem={singlePlaylist} ></AlbumCard>
-                                    ):<p>LOADING MY PLAYLISTS...</p>}
-                                </div>
+                            <Suspense fallback={<CircularProgress/>}>
+                                <PlaylistsComponent userId={props.currentUser.id} onPlaylistSelection={displayTracks}></PlaylistsComponent>
+                            </Suspense>
+                            <Suspense fallback={<CircularProgress/>}>
+                                <AlbumsComponent userId={props.currentUser.id} onPlaylistSelection={displayTracks}></AlbumsComponent>
+                            </Suspense>
 
-                                <p>Liked Playlists</p>
-                                <div className="playlist-content">
-                                    {likedPlaylistList?likedPlaylistList.map(singlePlaylist =>
-                                    <AlbumCard key={singlePlaylist.id} onSelectedAlbum={displayTracks} libraryItem={singlePlaylist} ></AlbumCard>
-                                    ):<CircularProgress/>}
-                                </div>
-
-                                <p>Albums</p>
-                                <div className="album-content">
-                                    {albumList?albumList.map(singleAlbum=>
-                                    <AlbumCard key={singleAlbum.id} onSelectedAlbum={displayTracks} libraryItem={singleAlbum} ></AlbumCard>
-                                ):<p>LOADING ALBUMS...</p>}
-                                </div>
                             </div>
-                            {/* // : */}
-                            {/* // <div className="library-content">Loading User Library...</div> } */}
-
                     </div>
             </div>)
 

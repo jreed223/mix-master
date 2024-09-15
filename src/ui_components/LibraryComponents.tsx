@@ -1,0 +1,137 @@
+import React, { useEffect, useState } from "react"
+import { Album, UserProfile } from '@spotify/web-api-ts-sdk';
+import UserLibrary from "./UserLibrary";
+import { Playlist } from "../../server/types";
+import Library from "../models/libraryItems";
+import AlbumCard from "./LibraryItemCard";
+import LibraryItemCard from "./LibraryItemCard";
+
+    const fetchAllPlaylists = ()=>{
+        console.log("FETCHING PLAYLISTS")
+        const playlistList = fetch("/spotify-data/playlists")
+        .then(res=>res.json()).then((playlists)=>{
+            console.log("PLAYLISTS: ", playlists)
+            return playlists
+        })
+        return playlistList
+        
+    }
+
+    const fetchLikedAlbums = ()=>{
+      const res = fetch("/spotify-data/albums")
+      .then(res=>res.json())
+      .then(albums=>{
+        return albums
+      })
+      return res
+  
+    }
+
+
+
+
+    function suspensify(promise: Promise<any>) {
+        let status = "pending";
+        let result: any;
+        let suspender = promise.then(
+          (res) => {
+            status = "success";
+            result = res;
+          },
+          (err) => {
+            status = "error";
+            result = err;
+          }
+        );
+      
+        return {
+          read() {
+            if (status === "pending") {
+              throw suspender;  // Suspense will catch this and display fallback
+            } else if (status === "error") {
+              throw result; // ErrorBoundary will catch this
+            } else if (status === "success") {
+              return result;  // Data is ready, return it
+            }
+          },
+        };
+      }
+
+
+    const fetchedPlaylistsResource = suspensify(fetchAllPlaylists())
+    const fetchedAlbumsResource = suspensify(fetchLikedAlbums())
+
+
+    interface LibraryComponentProps{
+        userId: string,
+        onPlaylistSelection: (selection: Library) => void
+    }
+    
+    export const PlaylistsComponent : React.FC<LibraryComponentProps> = (props:LibraryComponentProps)=>{
+
+    let myPlaylists = []
+    let likedPlaylists = []
+
+    const playlists : Playlist[] = fetchedPlaylistsResource.read()
+    console.log("RESOURCE: ",playlists)
+
+    playlists.map((playlistObject:Playlist)=>{
+        return playlistObject.owner.id === props.userId? 
+            myPlaylists.push(playlistObject):
+            likedPlaylists.push(playlistObject)
+
+        })
+        
+        const userPlaylistsClass: Library[] = myPlaylists.map((playlistObject:Playlist)=>new Library(playlistObject))
+        const likedPlaylistsClass: Library[] = likedPlaylists.map((playlistObject:Playlist)=>new Library(playlistObject))
+
+
+    
+        return (
+            <>
+            <h2>My Playlists</h2>
+            <div className="playlist-content">
+                {userPlaylistsClass.map(singlePlaylist =>
+                    <LibraryItemCard key={singlePlaylist.id} onSelectedAlbum={props.onPlaylistSelection} libraryItem={singlePlaylist} ></LibraryItemCard>)
+                    }
+            </div>
+            <h2>Liked Playlists</h2>
+            <div className="playlist-content">
+                {likedPlaylistsClass.map(singlePlaylist =>
+                    <LibraryItemCard key={singlePlaylist.id} onSelectedAlbum={props.onPlaylistSelection} libraryItem={singlePlaylist} ></LibraryItemCard>)}
+            </div>
+            </>
+        )
+
+    
+    }
+
+    export const AlbumsComponent : React.FC<LibraryComponentProps> = (props:LibraryComponentProps)=>{
+
+      const albums : Album[] = fetchedAlbumsResource.read()
+      console.log("RESOURCE: ",albums)
+  
+      const albumClasslist =  albums.map((album:Album)=>{
+        return new Library(album['album'])})
+  //   //setalbumList(albumClasslist)
+  // })
+  
+  
+   
+  
+          
+  
+      
+          return (
+              <>
+              <h2>Liked Albums</h2>
+              <div className="playlist-content">
+                  {albumClasslist.map(singleAlbum =>
+                      <LibraryItemCard key={singleAlbum.id} onSelectedAlbum={props.onPlaylistSelection} libraryItem={singleAlbum} ></LibraryItemCard>)
+                      }
+              </div>
+              </>
+          )
+  
+  }
+// export PlaylistsComponents
