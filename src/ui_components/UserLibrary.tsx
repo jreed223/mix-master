@@ -8,7 +8,7 @@ import PlaylistMenuBar from "./PlaylistMenu";
 import AlbumCard from "./LibraryItemCard";
 import Library from "../models/libraryItems";
 import CircularProgress from '@mui/material/CircularProgress';
-import { AlbumsComponent, PlaylistsComponent } from "./LibraryComponents";
+import { AlbumsComponent, LikedPlaylistsComponent, UserPlaylistsComponent } from "./LibraryComponents";
 
 
 
@@ -67,9 +67,12 @@ export default function UserLibrary(props:UserLibraryProps){
     const libraryContainer = useRef(null)
 
 
-    const displayTracks = (albumSelection: Library)=>{
+    const displayTracks = (selection: Library)=>{
         setStagingState("open")
-        setSelectedLibraryItem(albumSelection)
+        if(selection.id !== selectedLibraryItem?.id){
+            setSelectedLibraryItem(selection)
+        }
+        // setSelectedLibraryItem(selection)
 
         creationContainer.current.classList = "playlist-creation-container-new grow-staging"
         libraryContainer.current.classList = ('library-container-new shrink-library')
@@ -91,18 +94,33 @@ export default function UserLibrary(props:UserLibraryProps){
                         </div >
                     </div>
 
-                    <div ref={libraryContainer} className="library-container" id="library-container">
-                        {/* <p className="library-heading">Library</p> */}
-                            <div className='library-content'>
 
+                    <div ref={libraryContainer} className="library-container" id="library-container">
+                            {/* <div className='library-content'> */}
+                            <div className="user-library-items">
                             <Suspense fallback={<CircularProgress/>}>
-                                <PlaylistsComponent userId={props.currentUser.id} onPlaylistSelection={displayTracks}></PlaylistsComponent>
+                                <UserPlaylistsComponent userId={props.currentUser.id} onPlaylistSelection={displayTracks}></UserPlaylistsComponent>
+                            </Suspense>
+                            </div>
+                            <div className="liked-library-items">
+                            <Suspense fallback={<CircularProgress/>}>
+                                <LikedPlaylistsComponent userId={props.currentUser.id} onPlaylistSelection={displayTracks}></LikedPlaylistsComponent>
                             </Suspense>
                             <Suspense fallback={<CircularProgress/>}>
                                 <AlbumsComponent userId={props.currentUser.id} onPlaylistSelection={displayTracks}></AlbumsComponent>
                             </Suspense>
-
                             </div>
+                            
+                            {/* <div className="liked-library-components">
+                            <Suspense fallback={<CircularProgress/>}>
+                                <LikedPlaylistsComponent userId={props.currentUser.id} onPlaylistSelection={displayTracks}></LikedPlaylistsComponent>
+                            </Suspense>
+                            <Suspense fallback={<CircularProgress/>}>
+                                <AlbumsComponent userId={props.currentUser.id} onPlaylistSelection={displayTracks}></AlbumsComponent>
+                            </Suspense>
+                            </div> */}
+
+                            {/* </div> */}
                     </div>
             </div>)
 

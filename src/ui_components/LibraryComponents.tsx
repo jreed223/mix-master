@@ -67,44 +67,89 @@ import LibraryItemCard from "./LibraryItemCard";
         onPlaylistSelection: (selection: Library) => void
     }
     
-    export const PlaylistsComponent : React.FC<LibraryComponentProps> = (props:LibraryComponentProps)=>{
+    export const UserPlaylistsComponent : React.FC<LibraryComponentProps> = (props:LibraryComponentProps)=>{
 
-    let myPlaylists = []
-    let likedPlaylists = []
+    // let myPlaylists = []
+    // let likedPlaylists = []
 
     const playlists : Playlist[] = fetchedPlaylistsResource.read()
     console.log("RESOURCE: ",playlists)
 
-    playlists.map((playlistObject:Playlist)=>{
-        return playlistObject.owner.id === props.userId? 
-            myPlaylists.push(playlistObject):
-            likedPlaylists.push(playlistObject)
-
-        })
+    const userPlaylists= playlists.filter((playlistObject:Playlist)=>
+      playlistObject.owner.id === props.userId
+      )
         
-        const userPlaylistsClass: Library[] = myPlaylists.map((playlistObject:Playlist)=>new Library(playlistObject))
-        const likedPlaylistsClass: Library[] = likedPlaylists.map((playlistObject:Playlist)=>new Library(playlistObject))
+        const userPlaylistsClass: Library[] = userPlaylists.map((playlistObject:Playlist)=>new Library(playlistObject))
+        // const likedPlaylistsClass: Library[] = likedPlaylists.map((playlistObject:Playlist)=>new Library(playlistObject))
 
 
     
         return (
             <>
-            <h2>My Playlists</h2>
-            <div className="playlist-content">
-                {userPlaylistsClass.map(singlePlaylist =>
-                    <LibraryItemCard key={singlePlaylist.id} onSelectedAlbum={props.onPlaylistSelection} libraryItem={singlePlaylist} ></LibraryItemCard>)
-                    }
+            <div className="user-library-container">
+              <h2 style={{margin:0}}>My Playlists</h2>
+              <div className="user-playlist-content">
+                  {userPlaylistsClass.map(singlePlaylist =>
+                      <LibraryItemCard key={singlePlaylist.id} onSelectedAlbum={props.onPlaylistSelection} libraryItem={singlePlaylist} ownerId={props.userId} ></LibraryItemCard>)
+                      }
+              </div>
             </div>
-            <h2>Liked Playlists</h2>
-            <div className="playlist-content">
-                {likedPlaylistsClass.map(singlePlaylist =>
-                    <LibraryItemCard key={singlePlaylist.id} onSelectedAlbum={props.onPlaylistSelection} libraryItem={singlePlaylist} ></LibraryItemCard>)}
-            </div>
+{/* 
+            <div className="library-content-container">
+              <h2>Liked Playlists</h2>
+              <div className="playlist-content">
+                  {likedPlaylistsClass.map(singlePlaylist =>
+                      <LibraryItemCard key={singlePlaylist.id} onSelectedAlbum={props.onPlaylistSelection} libraryItem={singlePlaylist} ></LibraryItemCard>)}
+              </div>
+            </div> */}
+
             </>
         )
 
     
     }
+
+    export const LikedPlaylistsComponent : React.FC<LibraryComponentProps> = (props:LibraryComponentProps)=>{
+
+      // let myPlaylists = []
+      // let likedPlaylists = []
+  
+      const playlists : Playlist[] = fetchedPlaylistsResource.read()
+      console.log("RESOURCE: ",playlists)
+  
+      const likedPlaylists= playlists.filter((playlistObject:Playlist)=>
+          playlistObject.owner.id !== props.userId
+          )
+          
+          // const userPlaylistsClass: Library[] = myPlaylists.map((playlistObject:Playlist)=>new Library(playlistObject))
+          const likedPlaylistsClass: Library[] = likedPlaylists.map((playlistObject:Playlist)=>new Library(playlistObject))
+  
+  
+      
+          return (
+              <>
+              {/* <div className="library-content-container">
+                <h2>My Playlists</h2>
+                <div className="playlist-content">
+                    {userPlaylistsClass.map(singlePlaylist =>
+                        <LibraryItemCard key={singlePlaylist.id} onSelectedAlbum={props.onPlaylistSelection} libraryItem={singlePlaylist} ></LibraryItemCard>)
+                        }
+                </div>
+              </div> */}
+  
+              <div className="library-content-container">
+                <h2 style={{margin:0}}>Liked Playlists</h2>
+                <div className="playlist-content">
+                    {likedPlaylistsClass.map(singlePlaylist =>
+                        <LibraryItemCard key={singlePlaylist.id} onSelectedAlbum={props.onPlaylistSelection} libraryItem={singlePlaylist} ownerId={""} ></LibraryItemCard>)}
+                </div>
+              </div>
+  
+              </>
+          )
+  
+      
+      }
 
     export const AlbumsComponent : React.FC<LibraryComponentProps> = (props:LibraryComponentProps)=>{
 
@@ -114,7 +159,27 @@ import LibraryItemCard from "./LibraryItemCard";
       const albumClasslist =  albums.map((album:Album)=>{
         return new Library(album['album'])})
   //   //setalbumList(albumClasslist)
-  // })
+      const styles = {
+        libraryContentContainer:{
+          height: "33%",
+          display: "flex",
+          flexDirection: "column",
+          width: "100%",
+          /* overflow-x: scroll; */
+        },
+        playlistContent:{
+          flex: 1,
+          gap: "25px",
+          display: "flex",
+          /* flex-flow: row wrap; */
+          /* max-width: 100%; */
+          /* height: 82%; */
+          justifyContent: "flex-start",
+          overflowX: "scroll",
+      
+        }
+
+      }
   
   
    
@@ -124,11 +189,13 @@ import LibraryItemCard from "./LibraryItemCard";
       
           return (
               <>
-              <h2>Liked Albums</h2>
-              <div className="playlist-content">
-                  {albumClasslist.map(singleAlbum =>
-                      <LibraryItemCard key={singleAlbum.id} onSelectedAlbum={props.onPlaylistSelection} libraryItem={singleAlbum} ></LibraryItemCard>)
-                      }
+              <div className="library-content-container">
+                <h2>Liked Albums</h2>
+                <div className="playlist-content">
+                    {albumClasslist.map(singleAlbum =>
+                        <LibraryItemCard key={singleAlbum.id} onSelectedAlbum={props.onPlaylistSelection} libraryItem={singleAlbum} ownerId={""} ></LibraryItemCard>)
+                        }
+                </div>
               </div>
               </>
           )

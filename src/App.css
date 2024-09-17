@@ -38,37 +38,71 @@
 }
 
 .library-content{
-  display: flex;
-  flex-flow: row wrap;
+  /* display: flex;
+  flex-flow: row wrap; */
   max-width: 100%;
-  flex-wrap: wrap;
-  justify-content: flex-start;
+  /* flex-wrap: wrap;
+  justify-content: flex-start; */
 }
+.library-content-container{
+ height:50%;
+ display: flex;
+ flex-direction: column;
 
-.playlist-content{
-  display: flex;
-  flex-flow: row wrap;
-  max-width: 100%;
-  justify-content: flex-start;
 
   /* overflow-x: scroll; */
   /* flex: 0 0 auto; */
   
 }
 
-.album-content{
+.user-library-container{
+  height:50%;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+ 
+ 
+   /* overflow-x: scroll; */
+   /* flex: 0 0 auto; */
+   
+ }
+.playlist-content{
+  display: flex;
+  /* flex-flow: row wrap; */
+  max-width: 100%;
+  height: 100%;
+  justify-content: flex-start;
+  overflow-x: scroll;
+  gap: 25px;
+  padding: 25px;
+  
+}
+
+.user-playlist-content{
   display: flex;
   flex-flow: row wrap;
   max-width: 100%;
+  height: 100%;
   justify-content: flex-start;
+  overflow-y: scroll;
+  gap: 25px;
+  padding: 25px;
+  
+}
+
+.album-content{
+  /* display: flex;
+  flex-flow: row wrap; */
+  max-width: 100%;
+  /* justify-content: flex-start; */
   /* flex: 0 0 auto; */
 }
 .library-content2{
-  display: flex;
-  flex-flow: row wrap;
+  /* display: flex;
+  flex-flow: row wrap; */
   max-width: 100%;
-  flex-wrap: wrap;
-  justify-content: flex-start;
+  /* flex-wrap: wrap;
+  justify-content: flex-start; */
   /* TODO:Testing */
 }
 .playlist-name{
@@ -76,19 +110,44 @@
 }
 
 .playlist-card{
-  min-width: 27.3%;
-  margin:2% 3%;
-  flex: 1;
-  max-width: min-content;
+  /* display: flex;
+  flex-direction: column; */
+  background-color: rgb(25, 83, 133);
+  aspect-ratio: 1 / 1.5;
+  height: 100%;
+
+}
+.playlist-card2{
+  /* display: flex;
+  flex-direction: column; */
+  background-color: rgb(25, 83, 133);
+  aspect-ratio: 1 / 1.5;
+  height: 100%;
+  margin-left: auto;
+  margin-right: auto;
+
+}
+
+.user-playlist-card{
+  /* display: flex;
+  flex-direction: column; */
+  margin-left: auto;
+  margin-right: auto;
+  background-color: rgb(114, 167, 213);
+  aspect-ratio: 1 / 1.5;
+  height: 50%;
 
 }
 .playlist-card-text{
   margin: none;
   margin: 2%;
+  text-overflow: ellipsis;
+  text-wrap: nowrap;
+  overflow: hidden;
 }
 
 .playlist-card > span{
-  display: inline-flex;
+  /* display: inline-flex; */
   width: 100%;
   height: 100%;
 }
@@ -96,7 +155,7 @@
 
 
 .navbar{
-  position:fixed;
+  position:sticky;
   top: 0;
   width: 100%;
   height: 50px;
@@ -120,14 +179,16 @@
 
 }
 
+.playlist-img-container{
+  height: 67%;
+  width: 100%;
+  overflow: hidden;
+}
 
 .playlist-img{
-  aspect-ratio: 1/1;
-  padding: 1%;
-  width:50%;
-  height:max-content;
+  width:100%;
+  height: 100%;
   object-fit: cover;
-  cursor:pointer;
 }
 
 .playlist-creation-container-new{
@@ -171,6 +232,28 @@
   transition: width 1s;
 
 }
+.library-container{
+  overflow-y: scroll;
+  display:inline-flex;
+/* height: 100%; */
+  /* margin-top: 40px; */
+  /* padding-top: 2%; */
+  width: 100%;
+  margin-left: auto;
+  container-type: inline-size;
+  container-name: playlist-view;
+  transition: width 1s;
+
+}
+.liked-library-items{
+  width: 50%;
+  height: 100%;
+
+}
+.user-library-items{
+  width: 50%;
+  height: 100%;
+}
 
 .playlist-creation-menu-bar{
   background-color: chocolate;
@@ -192,10 +275,12 @@
 
 }
 .library-container-new{
-  overflow-y: scroll;
+  /* overflow-y: scroll; */
 
   /* margin-top: 40px; */
-  padding-top: 2px;
+  /* padding-top: 2px; */
+  display: flex;
+
   container-type: inline-size;
   container-name: new-playlist-view;
   margin-left: auto;
@@ -206,7 +291,9 @@
 
 
 }
-
+.playlist-details-container{
+  text-wrap: nowrap;
+}
 .new-playlist{
   overflow-y:auto;
   width: 50%;
@@ -278,7 +365,7 @@
   }
 }
 .main-content-area{
-  margin-top: 50px;
+  /* margin-top: 50px; */
   display: flex;
   height: calc(100vh - 50px);
   width: 100%;
@@ -365,6 +452,7 @@
       /* flex-direction: row; */
       overflow-x: scroll;
       flex-flow: unset;
+      
       /* flex: 0 0 auto; */
       
     }
@@ -420,6 +508,7 @@
       container-type: inline-size;
       container-name: new-playlist-view;
       /* margin-top: 50%; */
+      display: flex;
       position: fixed;
       top: calc(50% + 40px);
       height: calc(50% - 44px);
