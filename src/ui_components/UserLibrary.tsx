@@ -14,6 +14,7 @@ import { AlbumsComponent, LikedPlaylistsComponent, UserPlaylistsComponent } from
 
 interface UserLibraryProps{
     currentUser: UserProfile
+    activeView: string[]
 }
 
 export default function UserLibrary(props:UserLibraryProps){
@@ -65,6 +66,8 @@ export default function UserLibrary(props:UserLibraryProps){
 
     const creationContainer = useRef(null)
     const libraryContainer = useRef(null)
+    const userItemsContainer = useRef(null)
+    const likedItemsContainer = useRef(null)
 
 
     const displayTracks = (selection: Library)=>{
@@ -78,7 +81,148 @@ export default function UserLibrary(props:UserLibraryProps){
         libraryContainer.current.classList = ('library-container-new shrink-library')
     }
 
+    // let active = {
+    //     width: "100%",
+    //     animation: "grow-columns 1s",
+    //     transition: "1s"
 
+
+
+    // }
+
+    // let inactive = {
+    //     width: "0%",
+    //     animation: "shrink-columns 1s",
+    //     transition: "1s"
+
+
+    // }
+    // let inactive1;
+    // let active1;
+
+    // if(props.activeView.at(0)==="dashboard"){
+        
+    //     inactive = {
+    //             width: "0%",
+    //             animation: "shrink-from-default 1s",
+    //             transition: "1s"
+    //     }
+
+    //     active = {
+    //         width: "100%",
+    //         animation: "grow-from-default 1s",
+    //         transition: "1s"
+
+
+    //     }
+
+    // }
+
+//     const shrinkToDefault = {
+//         width: "0%",
+//         animation: "shrink-to-default 1s",
+//         transition: "1s"
+// }
+
+// const growToDefault = {
+//     width: "100%",
+//     animation: "grow-to-default 1s",
+//     transition: "1s"
+
+
+// }
+const shrinkToDefault = {
+    width: "50%",
+    animation: "shrink-to-default 1s",
+    transition: "1s"
+}
+
+const growToDefault = {
+width: "50%",
+animation: "grow-to-default 1s",
+transition: "1s"
+}
+
+const shrinkFromDeafault = {
+    width: "0%",
+    animation: "shrink-from-default 1s",
+    transition: "1s"
+}
+
+const growFromDefault = {
+    width: "100%",
+    animation: "grow-from-default 1s",
+    transition: "1s"
+}
+
+const active = {
+    width: "100%",
+    animation: "grow-columns 1s",
+    transition: "1s"
+}
+const inactive = {
+    width: "0%",
+    animation: "shrink-columns 1s",
+    transition: "1s"
+}
+let userPlaylistStyles ;
+let likedPlaylistsStyle;
+
+    if(props.activeView.at(-1)==="dashboard" && props.activeView.at(0)!=="dashboard"){
+        
+
+        if(props.activeView.at(0)!=="user playlists"){
+            userPlaylistStyles =growToDefault
+            likedPlaylistsStyle = shrinkToDefault
+        }else{
+            userPlaylistStyles = shrinkToDefault
+            likedPlaylistsStyle = growToDefault
+
+        }
+
+    }else if(props.activeView.at(0)==="dashboard" && props.activeView.at(-1)!=="dashboard"){
+
+
+        if(props.activeView.at(-1)!=="user playlists"){
+            userPlaylistStyles = shrinkFromDeafault
+            likedPlaylistsStyle = growFromDefault
+
+        }else{
+            userPlaylistStyles = growFromDefault
+            likedPlaylistsStyle = shrinkFromDeafault
+
+        }
+
+    }else{
+
+
+        if(props.activeView.at(-1)!=="user playlists"){
+            userPlaylistStyles = inactive
+            likedPlaylistsStyle = active
+
+        }else{
+            userPlaylistStyles = active
+            likedPlaylistsStyle = inactive
+
+        }
+
+    }
+
+    
+
+    // const setView = ()=>{
+    //     switch(props.activeView){
+    //         case "dashboard":
+
+    //             break;
+    //         case "user playlists":
+    //             break;
+    //         case "liked playlists":
+    //             break;
+    //         case "liked albums":
+    //             break;
+    //     }
+    // }
 
 
         return (
@@ -97,30 +241,21 @@ export default function UserLibrary(props:UserLibraryProps){
 
                     <div ref={libraryContainer} className="library-container" id="library-container">
                             {/* <div className='library-content'> */}
-                            <div className="user-library-items">
-                            <Suspense fallback={<CircularProgress/>}>
-                                <UserPlaylistsComponent userId={props.currentUser.id} onPlaylistSelection={displayTracks}></UserPlaylistsComponent>
-                            </Suspense>
-                            </div>
-                            <div className="liked-library-items">
-                            <Suspense fallback={<CircularProgress/>}>
-                                <LikedPlaylistsComponent userId={props.currentUser.id} onPlaylistSelection={displayTracks}></LikedPlaylistsComponent>
-                            </Suspense>
-                            <Suspense fallback={<CircularProgress/>}>
-                                <AlbumsComponent userId={props.currentUser.id} onPlaylistSelection={displayTracks}></AlbumsComponent>
-                            </Suspense>
-                            </div>
                             
-                            {/* <div className="liked-library-components">
+                            <div ref={userItemsContainer} className="user-library-items" style={userPlaylistStyles}>
                             <Suspense fallback={<CircularProgress/>}>
-                                <LikedPlaylistsComponent userId={props.currentUser.id} onPlaylistSelection={displayTracks}></LikedPlaylistsComponent>
+                                <UserPlaylistsComponent activeView={props.activeView} userId={props.currentUser.id} onPlaylistSelection={displayTracks}></UserPlaylistsComponent>
+                            </Suspense>
+                            </div>
+                            <div ref={likedItemsContainer} className="liked-library-items" style={likedPlaylistsStyle}>
+                            <Suspense fallback={<CircularProgress/>}>
+                                <LikedPlaylistsComponent activeView={props.activeView} userId={props.currentUser.id} onPlaylistSelection={displayTracks}></LikedPlaylistsComponent>
                             </Suspense>
                             <Suspense fallback={<CircularProgress/>}>
-                                <AlbumsComponent userId={props.currentUser.id} onPlaylistSelection={displayTracks}></AlbumsComponent>
+                                <AlbumsComponent activeView={props.activeView} userId={props.currentUser.id} onPlaylistSelection={displayTracks}></AlbumsComponent>
                             </Suspense>
-                            </div> */}
+                            </div>
 
-                            {/* </div> */}
                     </div>
             </div>)
 
