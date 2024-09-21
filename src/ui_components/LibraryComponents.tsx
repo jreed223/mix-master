@@ -133,13 +133,157 @@ import LibraryItemCard from "./LibraryItemCard";
         setlikedPlaylistItems(likedPlaylistsClass)
 
       }
-      const active = {
-        height: "100%"
+      const shrinkToDefault = {
+        height: "50%",
+        animation: "shrink-to-default-row 1s"
       }
-      const inactive = {
-        height: "0%"
-      }
-  
+    
+    const growToDefault = {
+    width: "50%",
+    animation: "grow-to-default 1s",
+    transition: "1s"
+    }
+    
+    const shrinkFromDeafault = {
+        width: "0%",
+        animation: "shrink-from-default 1s",
+        transition: "1s"
+    }
+    
+    const growFromDefault = {
+        width: "100%",
+        animation: "grow-from-default 1s",
+        transition: "1s"
+    }
+    
+    const active = {
+        width: "100%",
+        animation: "grow-columns 1s",
+        transition: "1s"
+    }
+    const inactive = {
+        width: "0%",
+        animation: "shrink-columns 1s",
+        transition: "1s"
+    }
+    // let userPlaylistStyles ;
+    // let likedPlaylistsStyle;
+    
+
+    const [likedPlaylistsStyle, setLikedPlaylistsStyle] = useState({})
+
+    useEffect(()=>{
+
+
+      if(props.activeView.at(-1)==="dashboard"){ //navigating to dashboard
+
+        switch(props.activeView.at(-2)){
+   case "user playlists":
+         if(props.activeView.at(-3)==="liked playlists"){
+           setLikedPlaylistsStyle({
+             height: "50%",
+             animation: "shrink-to-default-row 1s",
+             transition: "1s"
+           })
+             }else if(props.activeView.at(-3)==="liked albums"){
+              setLikedPlaylistsStyle({
+                 height: "50%",
+                 animation: "grow-to-default-row 1s",
+                 transition: "1s"
+               }   )
+             }
+       break;
+   case "liked playlists":
+     // userPlaylistStyles = 
+     setLikedPlaylistsStyle({
+       height: "50%",
+       animation: "shrink-to-default-row 1s",
+       transition: "1s"
+     })
+       break;
+   case "liked albums":
+    setLikedPlaylistsStyle({
+       height: "50%",
+       animation: "grow-to-default-row 1s",
+       transition: "1s"
+     })
+       break;
+}
+
+
+}else if(props.activeView.at(-2)==="dashboard"){ //navigating from dashboard
+
+ switch(props.activeView.at(-1)){
+   case "user playlists":
+        //  likedPlaylistsStyle={}
+       break;
+   case "liked playlists":
+     // userPlaylistStyles = 
+     setLikedPlaylistsStyle({
+       height: "100%",
+       animation: "grow-from-default-row 1s",
+       transition: "1s"
+     })
+       break;
+   case "liked albums":
+    setLikedPlaylistsStyle({
+       height: "0%",
+       animation: "shrink-from-default-row 1s",
+       transition: "1s"
+     })
+       break;
+}
+   
+
+}
+else if (props.activeView.at(-2)==="liked playlists"||"liked albums"){ //navigating row liked card
+
+ switch(props.activeView.at(-1)){
+   case "liked playlists":
+    setLikedPlaylistsStyle({
+       height: "100%",
+       animation: "grow-row 1s",
+       transition: "1s"
+     })
+     break;
+   case "liked albums":
+    setLikedPlaylistsStyle({
+       height: "0%",
+       animation: "shrink-row 1s",
+       transition: "1s"
+     })
+     break;
+
+ }
+}else if (props.activeView.at(-2)==="user playlists"){ //navigating from to liked row
+
+ switch(props.activeView.at(-1)){
+   case "liked playlists":
+     if(props.activeView.at(-3)!=="liked playlists"){
+      setLikedPlaylistsStyle({
+       height: "100%",
+       animation: "grow-row 1s",
+       transition: "1s"
+     })
+   }
+     break;
+   case "liked albums":
+     if(props.activeView.at(-3)==="liked playlists"){
+      setLikedPlaylistsStyle({
+         height: "0%",
+         animation: "shrink-row 1s",
+         transition: "1s"
+       })
+     }
+     
+     break;
+
+ }
+}
+
+    }, [props.activeView])
+    
+        
   
       if(likedPlaylistItems){
         
@@ -148,7 +292,7 @@ import LibraryItemCard from "./LibraryItemCard";
               <>
 
   
-              <div className="library-content-container" style={props.activeView.at(-1)==="liked playlists"?active:props.activeView.at(-1)==="liked albums"?inactive:{}}>
+              <div className="library-content-container" style={likedPlaylistsStyle}>
                 <h2 style={{margin:0}}>Liked Playlists</h2>
                 <div className="playlist-content" style={props.activeView.at(-1)==="liked albums"?{padding: "0%"}:{}}>
                     {likedPlaylistItems.map(singlePlaylist =>
@@ -159,7 +303,7 @@ import LibraryItemCard from "./LibraryItemCard";
               </>
           )
         }
-      }
+}
 
     export const AlbumsComponent : React.FC<LibraryComponentProps> = (props:LibraryComponentProps)=>{
       const [albumItems, setAlbumItems] =useState(null)
@@ -173,6 +317,118 @@ import LibraryItemCard from "./LibraryItemCard";
           setAlbumItems(albumClasslist)
         }
       
+        const [likedAlbumsStyle, setLikedAlbumsStyle] = useState({})
+
+        useEffect(()=>{
+    
+    
+          if(props.activeView.at(-1)==="dashboard"){ //navigating to dashboard
+    
+            switch(props.activeView.at(-2)){
+       case "user playlists":
+             if(props.activeView.at(-3)==="liked albums"){
+               setLikedAlbumsStyle({
+                 height: "50%",
+                 animation: "shrink-to-default-row 1s",
+                 transition: "1s"
+               })
+                 }else if(props.activeView.at(-3)==="liked playlists"){
+                  setLikedAlbumsStyle({
+                     height: "50%",
+                     animation: "grow-to-default-row 1s",
+                     transition: "1s"
+                   }   )
+                 }
+           break;
+       case "liked albums":
+         // userPlaylistStyles = 
+         setLikedAlbumsStyle({
+           height: "50%",
+           animation: "shrink-to-default-row 1s",
+           transition: "1s"
+         })
+           break;
+       case "liked playlists":
+        setLikedAlbumsStyle({
+           height: "50%",
+           animation: "grow-to-default-row 1s",
+           transition: "1s"
+         })
+           break;
+    }
+    
+    
+    }else if(props.activeView.at(-2)==="dashboard"){ //navigating from dashboard
+    
+     switch(props.activeView.at(-1)){
+       case "user playlists":
+            //  likedPlaylistsStyle={}
+           break;
+       case "liked albums":
+         // userPlaylistStyles = 
+         setLikedAlbumsStyle({
+           height: "100%",
+           animation: "grow-from-default-row 1s",
+           transition: "1s"
+         })
+           break;
+       case "liked playlists":
+        setLikedAlbumsStyle({
+           height: "0%",
+           animation: "shrink-from-default-row 1s",
+           transition: "1s"
+         })
+           break;
+    }
+       
+    
+    }
+    else if (props.activeView.at(-2)==="liked playlists"||"liked albums"){ //navigating row liked card
+    
+     switch(props.activeView.at(-1)){
+       case "liked albums":
+        setLikedAlbumsStyle({
+           height: "100%",
+           animation: "grow-row 1s",
+           transition: "1s"
+         })
+         break;
+       case "liked playlists":
+        setLikedAlbumsStyle({
+           height: "0%",
+           animation: "shrink-row 1s",
+           transition: "1s"
+         })
+         break;
+    
+     }
+    }else if (props.activeView.at(-2)==="user playlists"){ //navigating from to liked row
+    
+     switch(props.activeView.at(-1)){
+       case "liked albums":
+         if(props.activeView.at(-3)!=="liked albums"){
+          setLikedAlbumsStyle({
+           height: "100%",
+           animation: "grow-row 1s",
+           transition: "1s"
+         })
+       }
+         break;
+       case "liked playlist":
+         if(props.activeView.at(-3)==="liked albums"){
+          setLikedAlbumsStyle({
+             height: "0%",
+             animation: "shrink-row 1s",
+             transition: "1s"
+           })
+         }
+         
+         break;
+    
+     }
+    }
+    
+        }, [props.activeView])
   
       // const albumClasslist =  albums.map((album:Album)=>{
       //   return new Library(album['album'])})
@@ -212,7 +468,7 @@ import LibraryItemCard from "./LibraryItemCard";
               
               return (
                 <>
-                <div className="library-content-container" style={props.activeView.at(-1)==="liked albums"?active:props.activeView.at(-1)==="liked playlists"?inactive:{}}>
+                <div className="library-content-container" style={likedAlbumsStyle}>
                   <h2 style={{margin:0}}>Liked Albums</h2>
                   <div className="playlist-content" style={props.activeView.at(-1)==="liked playlists"?{padding: "0%"}:{}}>
                       {albumItems.map(singleAlbum =>

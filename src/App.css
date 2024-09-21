@@ -246,6 +246,60 @@
   }
 }
 
+@keyframes grow-row {
+  0%{
+    height: 0%; 
+  }
+  100%{
+    height: 100%;
+  }
+}
+
+@keyframes shrink-row{
+  0%{
+    height: 100%;
+  }
+  100%{
+    height: 0%;
+  }
+}
+
+@keyframes grow-from-default-row {
+  0%{
+    height: 50%; 
+  }
+  100%{
+    height: 100%;
+  }
+}
+
+@keyframes shrink-from-default-row{
+  0%{
+    height: 50%;
+  }
+  100%{
+    height: 0%;
+  }
+}
+
+@keyframes grow-to-default-row {
+  0%{
+    height: 0%; 
+  }
+  100%{
+    height: 50%;
+  }
+}
+
+@keyframes shrink-to-default-row{
+  0%{
+    height: 100%;
+  }
+  100%{
+    height: 50%;
+  }
+}
+
 .playlist-creation-container-new{
   /* position: fixed; */
   /* display: inline-flex; */
