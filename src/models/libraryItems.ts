@@ -1,4 +1,4 @@
-import { CategorizedPlaylist, PlaylistItem, Tag, Track, Image, Features, Artist, Album, Playlist, LikedSongs } from "../../server/types";
+import { CategorizedPlaylist, PlaylistItem, Tag, Track, Image, Features, Artist, Album, Playlist, LikedSongs, Tracklist } from "../../server/types";
 
 export type LibraryItem = Playlist | Album["album"] | LikedSongs
 export default class Library {
@@ -12,8 +12,10 @@ export default class Library {
     uri: string;
     totalTracks: number;
     categories?: {tag_list: Tag[] | null, top_tags: Record<string, Track[]>|null}|null
-    tracks: Track[]
+    tracks?: Track[]|null
+    next?: string|null
     audioFeaturesSet: boolean
+    trackDataState?: [{tracks:Track[], audioFeatures: boolean, categories: boolean}]|null
 
     constructor(
         libraryItem: LibraryItem,
@@ -34,6 +36,7 @@ export default class Library {
                 this.owner = libraryItem.owner
                 this.uri = libraryItem.uri
                 this.totalTracks = libraryItem.tracks.total
+                this.tracks = null
               break;
             case 'album':
                 this.name = libraryItem.name;
@@ -44,6 +47,7 @@ export default class Library {
                 this.uri = libraryItem.uri
                 this.totalTracks = libraryItem.total_tracks
                 this.tracks = libraryItem.tracks.items
+                this.trackDataState = [{tracks:libraryItem.tracks.items, audioFeatures: false, categories: false}]
               break;
             case 'liked songs':
                 this.name = "Liked Songs";
@@ -89,10 +93,7 @@ export default class Library {
     //         this.audioFeaturesSet = false;
     // }
 
-
-
-    async setTracks(){
-        console.log("setTracks running")
+    async setTracklist(){
         if(this.type==="playlist"){
             console.log("playlist in set tracks")
             const playlistItems : PlaylistItem[] = await fetch("/spotify-data/playlist-items", {
@@ -104,6 +105,63 @@ export default class Library {
             })
             const tracks = playlistItems.map(item=>item.track)
             this.tracks = tracks
+        }
+    }
+
+    async getNextTracks(){
+        if(this.type==="playlist" && this.next){
+            console.log("playlist in set tracks")
+            
+            const playlistItems : Tracklist = await fetch("/spotify-data/next-playlist-items", {
+                method: "POST",
+                headers:{
+                'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({next: this.next})
+                // headers: {"id" : `${this.id}` }
+            },
+    ).then(async (res)=>{
+                console.log("get next tracks response: ", res)
+
+                const itemData = await res.json()
+                console.log("itemdata: ",itemData)
+                return itemData
+            })
+            const tracks = playlistItems.items.map(item=>item.track)
+            console.log("tracks: ", tracks)
+            const newtracks = this.tracks.concat(tracks)
+
+            this.tracks = newtracks
+            this.next = playlistItems.next
+            this.audioFeaturesSet=false
+            return tracks
+        }
+    }
+
+
+    async setTracks(){
+        // console.log(this.id)
+        console.log("setTracks running")
+        if(this.type==="playlist"){
+            console.log("playlist in set tracks")
+            const playlistItems : {next: string ,items:PlaylistItem[]} = await fetch("/spotify-data/playlist-items", {
+                
+                method: "GET",
+                headers: {"id" : `${this.id}` }
+            }).then(async (res)=>{
+                const items = await res.json()
+                console.log("set tracks response: ", items)
+                return items
+            })
+            const tracks = playlistItems.items.map(item=>item.track)
+            this.trackDataState = [
+                    {tracks: tracks, 
+                    audioFeatures: false,
+                    categories: false}
+                ]
+            this.tracks = tracks
+            console.log("tracks set in setTrack: ", this.tracks)
+            this.next = playlistItems.next
         }
         
         
@@ -182,12 +240,16 @@ export default class Library {
                     const response = await fetch("/spotify-data/audio-features", {
                         method: "POST",
                         headers: {
-                            'Content-Type': 'application/json'
+                            'Content-Type': 'plain/text'
                           },
                         body: JSON.stringify(playlistItemsSubset)
                     })
-
+                    console.log("audiofeatures response: ", response)
                     const features = await response.json() 
+
+                    console.log("audiofeatures response.json() : ", features)
+
+
                     console.log("subset: ", playlistItemsSubset)
 
                     for(let feature of features){
