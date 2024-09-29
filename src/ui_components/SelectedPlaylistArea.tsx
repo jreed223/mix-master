@@ -273,7 +273,7 @@ const stageSelectedDisplayedTracks = () =>{
                 <div style={{
                     position:"sticky",
                     top: 0,
-                    backgroundColor: "bisque"
+                    backgroundColor: "#141414",
                 }}>
                 {isFeatureFilterSelected && loadingState==="filtering"?
                     

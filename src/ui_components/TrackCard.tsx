@@ -47,9 +47,11 @@ useEffect(()=>{
 
     const displayStyle = displayHidden?
         {display: 'none',
-        textOverflow: 'ellipsis'}:
+        textOverflow: 'ellipsis',
+        color: "#878787"}:
             {display: 'flex',
-            textOverflow: 'ellipsis'}
+            textOverflow: 'ellipsis',
+            color: "#878787"}
     
     // if(props.displayHidden){
 

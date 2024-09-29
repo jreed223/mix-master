@@ -131,46 +131,49 @@ export default function UserLibrary(props:UserLibraryProps){
 
 
 // }
-const shrinkToDefault = {
-    width: "50%",
-    animation: "shrink-to-default 1s",
-    transition: "1s"
-}
 
-const growToDefault = {
-width: "50%",
-animation: "grow-to-default 1s",
-transition: "1s"
-}
-
-const shrinkFromDeafault = {
-    width: "0%",
-    animation: "shrink-from-default 1s",
-    transition: "1s"
-}
-
-const growFromDefault = {
-    width: "100%",
-    animation: "grow-from-default 1s",
-    transition: "1s"
-}
-
-const active = {
-    width: "100%",
-    animation: "grow-columns 1s",
-    transition: "1s"
-}
-const inactive = {
-    width: "0%",
-    animation: "shrink-columns 1s",
-    transition: "1s"
-}
-let userPlaylistStyles ;
+// let userPlaylistStyles ;
 // let likedPlaylistsStyle;
 
 const [userPlaylistsStyle, setUserPlaylistsStyle] = useState({})
 const [likedPlaylistsStyle, setLikedPlaylistsStyle] = useState({})
 useEffect(()=>{
+
+    const shrinkToDefault = {
+        width: "50%",
+        animation: "shrink-to-default 1s",
+        transition: "1s"
+    }
+    
+    const growToDefault = {
+    width: "50%",
+    animation: "grow-to-default 1s",
+    transition: "1s"
+    }
+    
+    const shrinkFromDeafault = {
+        width: "0%",
+        animation: "shrink-from-default 1s",
+        transition: "1s"
+    }
+    
+    const growFromDefault = {
+        width: "100%",
+        animation: "grow-from-default 1s",
+        transition: "1s",
+    }
+    
+    const active = {
+        width: "100%",
+        animation: "grow-columns 1s",
+        transition: "1s"
+    }
+    const inactive = {
+        width: "0%",
+        animation: "shrink-columns 1s",
+        transition: "1s"
+    }
+    
     if(props.activeView.at(-1)==="dashboard" ){
         
 
@@ -199,40 +202,38 @@ useEffect(()=>{
     }
     else{
 
+        switch(props.activeView.at(-1)){
+            case "user playlists":
+                if(props.activeView.at(-2)==="liked playlists"||"liked albums"){
+                    setLikedPlaylistsStyle(inactive)
+                    setUserPlaylistsStyle(active)
+                }
+                break;
+            case "liked playlists":
+                if(props.activeView.at(-2)==="liked albums"){
 
-        if(props.activeView.at(-1)==="user playlists"){
-            setUserPlaylistsStyle(active)
-            setLikedPlaylistsStyle(inactive)
-            
+                }else{
+                    setLikedPlaylistsStyle(active)
+                    setUserPlaylistsStyle(inactive)
+                }
+                break;
+            case "liked albums":
+                if(props.activeView.at(-2)==="liked playlists"){
 
+                }else{
+                    setLikedPlaylistsStyle(active)
+                    setUserPlaylistsStyle(inactive)
+                }
+                break;
+        
         }
-        else if(props.activeView.at(-2)!=="liked playlists"||"liked albums"){
-            setUserPlaylistsStyle(inactive)
-            setLikedPlaylistsStyle(active)
 
 
-        }
-        console.log(`activeView : ${props.activeView}, userPlaylistStyles : ${JSON.stringify(userPlaylistStyles)}, likedPlaylistsStyle : ${JSON.stringify(likedPlaylistsStyle)}`)
+        // console.log(`activeView : ${props.activeView}, userPlaylistStyles : ${JSON.stringify(userPlaylistStyles)}, likedPlaylistsStyle : ${JSON.stringify(likedPlaylistsStyle)}`)
 
     }
-}, [props.activeView, growToDefault, shrinkToDefault, shrinkFromDeafault, growFromDefault, userPlaylistStyles, likedPlaylistsStyle, inactive, active])
-   
+}, [props.activeView])
 
-    
-
-    // const setView = ()=>{
-    //     switch(props.activeView){
-    //         case "dashboard":
-
-    //             break;
-    //         case "user playlists":
-    //             break;
-    //         case "liked playlists":
-    //             break;
-    //         case "liked albums":
-    //             break;
-    //     }
-    // }
 
 
         return (
@@ -254,15 +255,15 @@ useEffect(()=>{
                             
                             <div ref={userItemsContainer} className="user-library-items" style={userPlaylistsStyle}>
                             <Suspense fallback={<CircularProgress/>}>
-                                <UserPlaylistsComponent activeView={props.activeView} userId={props.currentUser.id} onPlaylistSelection={displayTracks}></UserPlaylistsComponent>
+                                <UserPlaylistsComponent stagingState={stagingState}activeView={props.activeView} userId={props.currentUser.id} onPlaylistSelection={displayTracks} selectedLibraryItemId={selectedLibraryItem?.id}></UserPlaylistsComponent>
                             </Suspense>
                             </div>
                             <div ref={likedItemsContainer} className="liked-library-items" style={likedPlaylistsStyle}>
                             <Suspense fallback={<CircularProgress/>}>
-                                <LikedPlaylistsComponent activeView={props.activeView} userId={props.currentUser.id} onPlaylistSelection={displayTracks}></LikedPlaylistsComponent>
+                                <LikedPlaylistsComponent stagingState={stagingState} activeView={props.activeView} userId={props.currentUser.id} onPlaylistSelection={displayTracks} selectedLibraryItemId={selectedLibraryItem?.id}></LikedPlaylistsComponent>
                             </Suspense>
                             <Suspense fallback={<CircularProgress/>}>
-                                <AlbumsComponent activeView={props.activeView} userId={props.currentUser.id} onPlaylistSelection={displayTracks}></AlbumsComponent>
+                                <AlbumsComponent stagingState={stagingState} activeView={props.activeView} userId={props.currentUser.id} onPlaylistSelection={displayTracks} selectedLibraryItemId={selectedLibraryItem?.id}></AlbumsComponent>
                             </Suspense>
                             </div>
 

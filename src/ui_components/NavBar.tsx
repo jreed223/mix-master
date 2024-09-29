@@ -12,7 +12,7 @@ export default function NavBar({currentUser}:navProps){
 
     return(
         <div>
-            <span className="navbar">
+            <span style={{color: "rgb(135, 135, 135)"}}className="navbar">
                 <h2>User Library</h2>
                 <button onClick={()=>{setActiveView((prev)=>prev.at(-1)!=="dashboard"?[prev.at(-2),prev.at(-1),"dashboard"]:activeView)}}>Dashboard</button>
                 <button onClick={()=>{setActiveView((prev)=>prev.at(-1)!=="user playlists"?[prev.at(-2),prev.at(-1), "user playlists"]:activeView)}}>My Playlists</button>
