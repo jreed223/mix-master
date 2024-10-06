@@ -145,11 +145,11 @@ return(
                     backgroundColor: "#141414"
                 }}>
 
-                    {props.stagedTracks.length>0?<>
+            
                     {/* <input type="checkbox" readOnly checked={} onClick={()=>{toggleSelectAll()}}/><label>Check all</label> */}
                     <button onClick={()=>{deselectAllClicked()}}>Deselect All</button>
                     <button onClick={()=>{selectAllClicked()}}>Select All</button>
-                    <button onClick={()=>{props.onSelectedItems(selectedTracks); setSelectedTracks([])}}>Remove Items</button></>:<></>}
+                    <button onClick={()=>{props.onSelectedItems(selectedTracks); setSelectedTracks([])}}>Remove Items</button>
 
                     {props.stagedItemsState.length>0?
                     <>

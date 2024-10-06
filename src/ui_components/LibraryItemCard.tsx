@@ -3,10 +3,11 @@ import { Album } from "../../server/types";
 import Library from "../models/libraryItems";
 
 export interface LibraryItemCardProps{
-    onSelectedAlbum: (album: Library) => void
+    onSelectedAlbum: (album: Library, currentView: string) => void
     libraryItem: Library;
     ownerId: string;
     selectedLibraryItemId: string
+    currentView: string
 }
 
 const LibraryItemCard: React.FC<LibraryItemCardProps> = (props: LibraryItemCardProps)=>{
@@ -18,7 +19,7 @@ const LibraryItemCard: React.FC<LibraryItemCardProps> = (props: LibraryItemCardP
                 {/* <span> */}
                     <div className={props.selectedLibraryItemId===props.libraryItem.id?"selected-playlist-img-container":"user-playlist-img-container"}>
                 <img className="user-playlist-img" src={props.libraryItem.image.url} alt = "playlist cover"  ></img>
-                <div className={"user-playlist-details-container"} onClick={()=>props.onSelectedAlbum(props.libraryItem)}>
+                <div className={"user-playlist-details-container"} onClick={()=>props.onSelectedAlbum(props.libraryItem, props.currentView)}>
                         <p className="playlist-name playlist-card-text">{props.libraryItem.name!==""?props.libraryItem.name:"Untitled"}</p>
                         {/* {props.libraryItem.type ==="album" ? 
                             <p className = "playlist-card-text">{props.libraryItem.artists[0].name}</p>: props.libraryItem.type ==="playlist" && ? 
@@ -38,7 +39,7 @@ const LibraryItemCard: React.FC<LibraryItemCardProps> = (props: LibraryItemCardP
                 {/* <span> */}
                     <div className={props.selectedLibraryItemId===props.libraryItem.id?"selected-playlist-img-container":"playlist-img-container"}>
                 <img className="playlist-img" src={props.libraryItem.image.url} alt = "playlist cover"  ></img>
-                <div className={"playlist-details-container"}onClick={()=>props.onSelectedAlbum(props.libraryItem)}>
+                <div className={"playlist-details-container"}onClick={()=>props.onSelectedAlbum(props.libraryItem, props.currentView)}>
                         <p className="playlist-name playlist-card-text">{props.libraryItem.name!==""?props.libraryItem.name:"Untitled"}</p>
                         {props.libraryItem.type ==="album" ? 
                             <p className = "playlist-card-text">{props.libraryItem.artists[0].name}</p>: props.libraryItem.type ==="playlist"? 

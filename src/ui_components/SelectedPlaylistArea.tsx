@@ -107,13 +107,35 @@ const filterFeatures2  = useCallback(async ()=>{
 
             for(let feature of currentFilters){ //iterates through keys to of filter names
                 if(typeof props.featureFilters[feature] === "number"){
+                    if(feature==="key"||feature==="mode"||feature==="time_signature"){
 
-                    const featureVal = props.featureFilters[feature]/100 //sets value of the selected feature
-                    // console.log("feature-val: ",featureVal)
-                    filterPlaylist = filterPlaylist.filter(item=> { //redeclares filterplaylist using the filter function
+                        const featureVal = props.featureFilters[feature]
 
-                    return item.audio_features[feature]>=featureVal-.1&&item.audio_features[feature]<=featureVal+.1  //returns tracks with feature value that are in range of +/-.1 of selecetd value
-                    })
+                        filterPlaylist = filterPlaylist.filter(item=> { //redeclares filterplaylist using the filter function
+
+                            return item.audio_features[feature]===featureVal  //returns tracks with feature value that are in range of +/-.1 of selecetd value
+                            })
+                        
+                    }else if(feature==="tempo"||feature==="loudness"){
+
+                        const featureVal = props.featureFilters[feature]
+
+                        filterPlaylist = filterPlaylist.filter(item=> { //redeclares filterplaylist using the filter function
+
+                            return item.audio_features[feature]>=featureVal-5&&item.audio_features[feature]<=featureVal+5  //returns tracks with feature value that are in range of +/-.1 of selecetd value
+                            })
+                        
+                    }else{
+
+                        const featureVal = props.featureFilters[feature]/100 //sets value of the selected feature
+                        // console.log("feature-val: ",featureVal)
+                        filterPlaylist = filterPlaylist.filter(item=> { //redeclares filterplaylist using the filter function
+    
+                        return item.audio_features[feature]>=featureVal-.1&&item.audio_features[feature]<=featureVal+.1  //returns tracks with feature value that are in range of +/-.1 of selecetd value
+                        })
+
+                    }
+
                 }
             }
             console.log("filtered playlist", filterPlaylist)
