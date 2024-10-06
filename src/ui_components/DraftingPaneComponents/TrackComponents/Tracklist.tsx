@@ -1,7 +1,7 @@
 import React, { ReactElement, useCallback, useEffect, useState } from "react"
-import { Track } from '../../server/types';
+import { Track } from "../../../../server/types"
+import TrackCard, { TrackCardProps } from "./TrackCard"
 
-import TrackCard, { TrackCardProps } from "./TrackCard";
 
 interface tracklistProps{
     // currentUser: UserProfile

@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react"
 import { Album, UserProfile } from '@spotify/web-api-ts-sdk';
-import UserLibrary from "./UserLibrary";
-import { Playlist } from "../../server/types";
-import Library from "../models/libraryItems";
-import AlbumCard from "./LibraryItemCard";
+import UserLibrary from "../SinglePageView";
+import { Playlist } from "../../../server/types";
+import Library from "../../models/libraryItems";
 import LibraryItemCard from "./LibraryItemCard";
 
     const fetchAllPlaylists = ()=>{
@@ -113,7 +112,7 @@ import LibraryItemCard from "./LibraryItemCard";
       return (
         <>
         <div className="user-library-container" >
-          <h2 style={{margin:0, color:"#878787"}}>My Playlists</h2>
+          <h2 style={{margin:0, color:"#878787", paddingTop: "15px", paddingBottom: "10px"}}>My Playlists</h2>
           <div className="user-playlist-content" style={userPlaylistsStyle}>
               {userPlaylistsItems.map(singlePlaylist =>
                   <LibraryItemCard key={singlePlaylist.id} onSelectedAlbum={props.onPlaylistSelection} libraryItem={singlePlaylist} ownerId={props.userId} selectedLibraryItemId={props.selectedLibraryItemId} currentView={"user playlists"} ></LibraryItemCard>)
@@ -158,7 +157,7 @@ import LibraryItemCard from "./LibraryItemCard";
       // animation: "shrink-to-default-row 1s",
       transition: "1s"
     })
-    const [likedContentStyle, setLikedContentStyle] = useState({height: "calc(50vh - 106px)",
+    const [likedContentStyle, setLikedContentStyle] = useState({height: "calc(50vh - 131px)",
       // animation: "shrink-to-default-albums",
       transition: "1s"})
 
@@ -167,7 +166,7 @@ import LibraryItemCard from "./LibraryItemCard";
           switch(props.activeView.at(-1)){
             case "dashboard":
               setLikedContentStyle({
-                height: "calc(50vh - 106px)",
+                height: "calc(50vh - 131px)",
                 // animation: "shrink-to-default-albums",
                 transition: "1s"
               })
@@ -179,7 +178,7 @@ import LibraryItemCard from "./LibraryItemCard";
               break;
             case "liked playlists":
               setLikedContentStyle({
-                height: "calc(100vh - 132px)",
+                height: "calc(100vh - 157px)",
                 // animation: "grow-from-default-albums",
                 transition: "1s"
           
@@ -212,7 +211,7 @@ import LibraryItemCard from "./LibraryItemCard";
 
   
               <div className="library-content-container" style={likedPlaylistsStyle}>
-                <h2 style={{margin:0, color:"#878787"}}>Liked Playlists</h2>
+                <h2 style={{margin:0, color:"#878787", paddingTop: "15px", paddingBottom: "10px"}}>Liked Playlists</h2>
                 <div className="playlist-content" style={likedContentStyle}>
                     {likedPlaylistItems.map(singlePlaylist =>
                         <LibraryItemCard key={singlePlaylist.id} onSelectedAlbum={props.onPlaylistSelection} libraryItem={singlePlaylist} ownerId={""} selectedLibraryItemId={props.selectedLibraryItemId} currentView={"liked playlists"} ></LibraryItemCard>)}
@@ -246,7 +245,7 @@ import LibraryItemCard from "./LibraryItemCard";
         }
         )
         const [albumContentStyle, setAlbumContentStyle] = useState({
-          height: "calc(50vh - 106px)",
+          height: "calc(50vh - 131px)",
           // animation: "shrink-to-default-albums",
           transition: "1s"
         })
@@ -257,7 +256,7 @@ import LibraryItemCard from "./LibraryItemCard";
           switch(props.activeView.at(-1)){
             case "dashboard":
               setAlbumContentStyle({
-                height: "calc(50vh - 106px)",
+                height: "calc(50vh - 131px)",
                 // animation: "shrink-to-default-albums",
                 transition: "1s"
               })
@@ -269,7 +268,7 @@ import LibraryItemCard from "./LibraryItemCard";
               break;
             case "liked albums":
               setAlbumContentStyle({
-                height: "calc(100vh - 132px)",
+                height: "calc(100vh - 157px)",
                 // animation: "grow-from-default-albums",
                 transition: "1s"
           
@@ -301,7 +300,7 @@ import LibraryItemCard from "./LibraryItemCard";
               return (
                 <>
                 <div className="library-content-container" style={likedAlbumsStyle}>
-                  <h2 style={{margin:0, color:"#878787"}}>Liked Albums</h2>
+                  <h2 style={{margin:0, color:"#878787", paddingTop: "15px", paddingBottom: "10px"}}>Liked Albums</h2>
                   <div className="playlist-content" style={albumContentStyle} >
                       {albumItems.map(singleAlbum =>
                           <LibraryItemCard key={singleAlbum.id} onSelectedAlbum={props.onPlaylistSelection} libraryItem={singleAlbum} ownerId={""} selectedLibraryItemId={props.selectedLibraryItemId} currentView={"liked albums"} ></LibraryItemCard>)

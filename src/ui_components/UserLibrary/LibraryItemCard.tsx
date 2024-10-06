@@ -1,6 +1,6 @@
 import React from "react";
-import { Album } from "../../server/types";
-import Library from "../models/libraryItems";
+import Library from "../../models/libraryItems";
+
 
 export interface LibraryItemCardProps{
     onSelectedAlbum: (album: Library, currentView: string) => void

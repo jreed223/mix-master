@@ -5,8 +5,8 @@ import { Album, Playlist, Track, UserProfile } from '../../server/types';
 
 import Library from "../models/libraryItems";
 import CircularProgress from '@mui/material/CircularProgress';
-import { AlbumsComponent, LikedPlaylistsComponent, UserPlaylistsComponent } from "./LibraryComponents";
-import DraftingArea from "./PlaylistCreation";
+import { AlbumsComponent, LikedPlaylistsComponent, UserPlaylistsComponent } from "./UserLibrary/LibraryComponents";
+import DraftingArea from "./DraftingPaneComponents/DraftingPane";
 
 
 
@@ -56,10 +56,12 @@ useEffect(()=>{
             case "dashboard":
                 setLikedPlaylistsStyle({
                     width: "50%",
+                    
                     transition: "1s"
                 })
                 setUserPlaylistsStyle(   {
                     width: "50%",
+                    paddingRight: "25px",
                     transition: "1s"
                 })
                 break;                
@@ -71,7 +73,7 @@ useEffect(()=>{
                     })
                     setUserPlaylistsStyle({
                         width: "100%",
-
+                        paddingRight: "25px",
                         transition: "1s"
                     })
                 // }
@@ -96,7 +98,7 @@ useEffect(()=>{
                 })
                 setUserPlaylistsStyle({
                     width: "0%",
-
+                    
                     transition: "1s"
                 })
                 break;
@@ -106,13 +108,13 @@ useEffect(()=>{
 
 }, [props.activeView])
 
-const currentGap = props.activeView.at(-1)==="dashboard"||props.activeView.at(-1)==="user playlists"?"25px": "0px"
+// const currentGap = props.activeView.at(-1)==="dashboard"||props.activeView.at(-1)==="user playlists"?"25px": "0px"
 
         return (
             <div className="main-content-area">
                 <DraftingArea selectedLibraryItem={selectedLibraryItem} setStagingState={setStagingState} stagingState={stagingState} ></DraftingArea>
 
-                    <div ref={libraryContainer} style={stagingState==="open"?{width:"50%", gap: currentGap}:{gap:currentGap}} className="library-container" id="library-container">
+                    <div ref={libraryContainer} style={stagingState==="open"?{width:"50%"}:{width:"100%"}} className="library-container" id="library-container">
                             
                             <div ref={userItemsContainer} className="user-library-items" style={userPlaylistsStyle}>
                             <Suspense fallback={<CircularProgress/>}>

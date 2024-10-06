@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react"
-import { PlaylistItem, Track } from '../../server/types';
-import TrackCard from "./TrackCard"
+import { PlaylistItem, Track } from '../../../server/types';
+import TrackCard from "./TrackComponents/TrackCard";
 
 interface DraftPlaylistContainerProps{
     stagedTracks: Track[]|null

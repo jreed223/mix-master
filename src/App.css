@@ -403,14 +403,14 @@
 .library-container{
   background: rgb(33, 33, 33);
   /* overflow-y: scroll; */
-  padding: 0 25px;
+  padding-left: 25px;
   /* gap: 25px; */
   /* margin-top: 40px; */
   /* padding-top: 2%; */
   width: 100%;
   margin-left: auto;
-  container-type: inline-size;
-  container-name: playlist-view;
+  /* container-type: inline-size;
+  container-name: playlist-view; */
   transition:1s;
 
 }
@@ -423,22 +423,22 @@ button{
   background: rgb(33, 33, 33);
 
   /* overflow-y: scroll; */
-  display:inline-flex;
+  display:flex;
 /* height: 100%; */
   /* margin-top: 40px; */
   /* padding-top: 2%; */
   width: 100%;
   margin-left: auto;
-  container-type: inline-size;
-  container-name: playlist-view;
-  transition: width 1s;
+  /* container-type: inline-size;
+  container-name: playlist-view; */
+  transition: 1s;
 
 }
 .liked-library-items{
   width: 50%;
   height: calc(100vh - 50px);
-  /* padding-left: 12.5px;
-  padding-right: 25px; */
+  /* padding-left: 12.5px;*/
+  padding-right: 25px;
 
 }
 .user-library-items{

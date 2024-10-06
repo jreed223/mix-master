@@ -1,12 +1,12 @@
 import React, { useCallback, useRef, useState } from "react"
 // import { UserProfile } from '@spotify/web-api-ts-sdk';
-import UserLibrary from './UserLibrary';
+import UserLibrary from '../SinglePageView';
 import { Button } from "@mui/material";
 import PlaylistMenuBar from "./PlaylistMenu";
 import SelectedPlaylistContainer from "./SelectedPlaylistArea";
-import DraftPlaylistContainer from "./StagingArea";
-import Library from "../models/libraryItems";
-import { Track } from "../../server/types";
+import DraftPlaylistContainer from "./DraftPlaylistArea";
+import Library from "../../models/libraryItems";
+import { Track } from "../../../server/types";
 
 interface draftingProps{
 

@@ -1,10 +1,9 @@
 import React, { Dispatch, ReactElement, SetStateAction, useCallback, useEffect, useRef, useState } from "react"
-import { Features, PlaylistItem, Track } from '../../server/types';
-import TrackCard, { TrackCardProps } from "./TrackCard"
-import PlaylistClass from "../models/playlistClass"
-import Library from "../models/libraryItems"
-import { LibraryItem } from '../models/libraryItems';
-import Tracklist from "./Tracklist";
+import { Features, PlaylistItem, Track } from '../../../server/types';
+import PlaylistClass from "../../models/playlistClass"
+import Library from "../../models/libraryItems"
+import { LibraryItem } from '../../models/libraryItems';
+import Tracklist from "./TrackComponents/Tracklist";
 interface SelectedPlaylistContainerProps{
     libraryItem: Library|null
     stagedPlaylistItems: Track[]|null

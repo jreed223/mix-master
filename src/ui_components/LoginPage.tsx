@@ -1,13 +1,13 @@
 import React from "react"
-import { redirectToAuthCodeFlow } from "../authentication/AuthHandler";
+// import { redirectToAuthCodeFlow } from "../authentication/AuthHandler";
 
-function intialLogin (){
+// function intialLogin (){
 
-    const clientId = "002130106d174cc495fc8443cac019f2";
-    console.log("Authorizing the Application")
-    window.localStorage.setItem('authorizing', 'true'); //removed from storage once the user is loaded and authorized
-    redirectToAuthCodeFlow(clientId);
-}
+//     const clientId = "002130106d174cc495fc8443cac019f2";
+//     console.log("Authorizing the Application")
+//     window.localStorage.setItem('authorizing', 'true'); //removed from storage once the user is loaded and authorized
+//     redirectToAuthCodeFlow(clientId);
+// }
 
 export default function LoginPage(){
     return(
