@@ -13,7 +13,8 @@ interface draftingProps{
     selectedLibraryItem: Library,
 
     setStagingState: React.Dispatch<React.SetStateAction<string>>,
-    stagingState: string
+    stagingState: string,
+    setActiveView: React.Dispatch<React.SetStateAction<string[]>>
 
 
 
@@ -57,6 +58,7 @@ export default function DraftingArea(props:draftingProps){
 
     const closeCreationContainer = useCallback(()=>{
         props.setStagingState("closed")
+        props.setActiveView(["dashboard"])
         // console.log(stagingState)
         creationContainer.current.classList = "playlist-creation-container-hidden shrink-staging"
         // libraryContainer.current.classList = "library-container grow-library"
@@ -132,7 +134,7 @@ export default function DraftingArea(props:draftingProps){
         <PlaylistMenuBar onExit={closeCreationContainer}  togglefeatures={toggleDisplayState}></PlaylistMenuBar>
 
             <div className="playlist-items-containers">
-            {<div style={{display: "flex", flexDirection:"column", width:displayFeatureMenu?"100%":"0%"}} className="new-playlist">
+            {<div style={{display: "flex", overflowX:"hidden", flexDirection:"column", flex:displayFeatureMenu?"1":"0"}} className="new-playlist">
                     {inputControls.map((inputControl, index)=>(
                     <div >  
                         <input ref={inputControl.checkboxRef} onChange={()=>handleInput(index)} type="checkbox" defaultChecked={true}/>
@@ -147,7 +149,7 @@ export default function DraftingArea(props:draftingProps){
                 
                 <SelectedPlaylistContainer onSelectedItems={addStagedItems} libraryItem={props.selectedLibraryItem} stagedPlaylistItems={stagedPlaylist} onGetNextItems={getNextTracks} featureFilters={selectedFeatures}></SelectedPlaylistContainer>
 
-                <DraftPlaylistContainer stagedItemsState={stagedPlaylistState} onUndostaging={setStagedPlaylist} onSelectedItems={removeStagedItems} stagedTracks={stagedPlaylist}></DraftPlaylistContainer>
+                <DraftPlaylistContainer stagedItemsState={stagedPlaylistState} onUndostaging={setStagedPlaylist} onSelectedItems={removeStagedItems} stagedTracks={stagedPlaylist} removeDraft={removeStagedItems }></DraftPlaylistContainer>
             </div >
         </div>
     )

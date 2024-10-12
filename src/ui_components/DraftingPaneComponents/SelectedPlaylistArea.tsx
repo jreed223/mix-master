@@ -1,15 +1,15 @@
-import React, { Dispatch, ReactElement, SetStateAction, useCallback, useEffect, useRef, useState } from "react"
-import { Features, PlaylistItem, Track } from '../../../server/types';
-import PlaylistClass from "../../models/playlistClass"
+import React, {  useCallback, useEffect, useState } from "react"
+import { Features, Track } from '../../../server/types';
+// import PlaylistClass from "../../models/playlistClass"
 import Library from "../../models/libraryItems"
-import { LibraryItem } from '../../models/libraryItems';
+// import { LibraryItem } from '../../models/libraryItems';
 import Tracklist from "./TrackComponents/Tracklist";
 interface SelectedPlaylistContainerProps{
     libraryItem: Library|null
     stagedPlaylistItems: Track[]|null
     onSelectedItems: (selectedItems: Track[]) => void
     onGetNextItems: ()=>void
-    featureFilters: Record<string, number>
+    featureFilters: Record<string, number>,
     // filteredTracks: Track[]
 
 }
@@ -275,7 +275,10 @@ const stageSelectedDisplayedTracks = () =>{
     setSelectedLibraryItems([])
     }
 
+
 }
+
+
 
 
 
@@ -295,23 +298,25 @@ const stageSelectedDisplayedTracks = () =>{
                     position:"sticky",
                     top: 0,
                     backgroundColor: "#141414",
+                    zIndex: 1
                 }}>
+                    <button onClick={(e)=>{selectAllclicked();}} value={"SelectAll"}>Select All</button>
+                        <button onClick={()=>{deselectAllClicked()}}>Deselect All</button>
+                        <button onClick={()=>{stageSelectedDisplayedTracks();}}>Add Items</button>
+
                 {isFeatureFilterSelected && loadingState==="filtering"?
                     
-                    (
+                    (   
                         <p>Filtering Tracks...</p>
                         ):(
                         <> 
-                        <button onClick={(e)=>{selectAllclicked();}} value={"SelectAll"}>Select All</button>
-                        <button onClick={()=>{deselectAllClicked()}}>Deselect All</button>
-                        <button onClick={()=>{stageSelectedDisplayedTracks();}}>Add Items</button>
 
                         </>
                         
                         )}
                 </div>
 
-                <Tracklist allTracks={allTracks} selectedLibraryItems={selectedLibraryItems} stagedTracks={props.stagedPlaylistItems} setSelectedLibraryItems={setSelectedLibraryItems}  filteredTracks={filteredTracks}></Tracklist>
+                <Tracklist tracklistArea="selected playlist" allTracks={allTracks} selectedLibraryItems={selectedLibraryItems} stagedTracks={props.stagedPlaylistItems} setSelectedLibraryItems={setSelectedLibraryItems} filteredTracks={filteredTracks} draftTracks={props.onSelectedItems}></Tracklist>
 
 
 

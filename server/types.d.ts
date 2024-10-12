@@ -94,7 +94,7 @@ export interface Artist{
 }
 
 export interface Track {
-    album: Album
+    album: Album['album']
     artists: Artist[]
     available_markets: string[]
     disc_number: number
@@ -104,6 +104,7 @@ export interface Track {
     external_urls: {spotify:string }
     href:string
     id:string|null
+    images: Image[]
     is_playable:boolean
     name:string
     popularity:number

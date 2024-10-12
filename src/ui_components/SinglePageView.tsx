@@ -1,7 +1,7 @@
-import { Suspense, useCallback, useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 // import PlaylistCard, { PlaylistCardProps } from "./PlaylistCard";
 import React from "react";
-import { Album, Playlist, Track, UserProfile } from '../../server/types';
+import { UserProfile } from '../../server/types';
 
 import Library from "../models/libraryItems";
 import CircularProgress from '@mui/material/CircularProgress';
@@ -45,8 +45,9 @@ useEffect(()=>{
     if(stagingState==="closed"){
         props.setDisabledDashboard(false)
 
+
     }
-})
+}, [props, stagingState])
 useEffect(()=>{
 
 
@@ -61,7 +62,7 @@ useEffect(()=>{
                 })
                 setUserPlaylistsStyle(   {
                     width: "50%",
-                    paddingRight: "25px",
+                    // paddingRight: "25px",
                     transition: "1s"
                 })
                 break;                
@@ -73,7 +74,7 @@ useEffect(()=>{
                     })
                     setUserPlaylistsStyle({
                         width: "100%",
-                        paddingRight: "25px",
+                        //paddingRight: "25px",
                         transition: "1s"
                     })
                 // }
@@ -112,7 +113,7 @@ useEffect(()=>{
 
         return (
             <div className="main-content-area">
-                <DraftingArea selectedLibraryItem={selectedLibraryItem} setStagingState={setStagingState} stagingState={stagingState} ></DraftingArea>
+                <DraftingArea selectedLibraryItem={selectedLibraryItem} setStagingState={setStagingState} stagingState={stagingState} setActiveView={props.setActiveView} ></DraftingArea>
 
                     <div ref={libraryContainer} style={stagingState==="open"?{width:"50%"}:{width:"100%"}} className="library-container" id="library-container">
                             

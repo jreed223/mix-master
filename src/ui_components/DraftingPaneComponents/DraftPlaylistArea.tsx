@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useRef, useState } from "react"
-import { PlaylistItem, Track } from '../../../server/types';
+import React, { useEffect, useState } from "react"
+import { Track } from '../../../server/types';
 import TrackCard from "./TrackComponents/TrackCard";
 
 interface DraftPlaylistContainerProps{
@@ -7,6 +7,8 @@ interface DraftPlaylistContainerProps{
     onSelectedItems:(selectedItems:Track[])=>void
     onUndostaging: React.Dispatch<React.SetStateAction<Track[]>>
     stagedItemsState: Track[][]
+    removeDraft: (selectedItems: Track[]) => void
+
 }
 
 const DraftPlaylistContainer:React.FC<DraftPlaylistContainerProps>=(props: DraftPlaylistContainerProps)=>{
@@ -15,8 +17,8 @@ const DraftPlaylistContainer:React.FC<DraftPlaylistContainerProps>=(props: Draft
     // const [displayedTracks, setDisplayedTracks] = useState<Track[]>(null)
     const [selectedTracks, setSelectedTracks] = useState<Track[]>([])
     const [trackCards, setTrackCards] = useState<React.JSX.Element[]|null>(null)
-    const [stagedHistory, setStagedHistory] = useState<Track[][]>([[]])
-    const [undoHistory, setUndoStagedHistory] = useState<Track[][]>(null)
+    const [stagedHistory] = useState<Track[][]>([[]])
+    // const [] = useState<Track[][]>(null)
     const [undoRedoController, setUndoRedoController] = useState<number>(null)    // const [selectAllState, setSelectAllState] =useState<boolean[]>([])
     // const [selectAllChecked, setSelectAllChecked] = useState<boolean>(false)
 
@@ -45,14 +47,14 @@ const DraftPlaylistContainer:React.FC<DraftPlaylistContainerProps>=(props: Draft
         if(props.stagedTracks&& props.stagedTracks.length>0){
 
             const tracks = props.stagedTracks.map(singleTrack=>
-                <TrackCard key={`drafted-playlist-${singleTrack.id}`}  track={singleTrack} onSelectedTrack={editSelectedItemList2} displayHidden={false} selectedLibraryItems={selectedTracks}></TrackCard>
+                <TrackCard tracklistArea="draft playlist" draftTrack={props.removeDraft} key={`drafted-playlist-${singleTrack.id}`}  track={singleTrack} onSelectedTrack={editSelectedItemList2} displayHidden={false} selectedLibraryItems={selectedTracks}></TrackCard>
             )
             setTrackCards(tracks)
     
         }else{
             setTrackCards([])
         }
-    }, [props.stagedTracks, selectedTracks])
+    }, [props.removeDraft, props.stagedTracks, selectedTracks])
 
 
     useEffect(()=>{
@@ -142,7 +144,8 @@ return(
         <div style={{
                     position:"sticky",
                     top: 0,
-                    backgroundColor: "#141414"
+                    backgroundColor: "#141414",
+                    zIndex: 1,
                 }}>
 
             

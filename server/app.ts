@@ -180,7 +180,10 @@ app.get("/spotify-data/albums", (req, res)=>{
 
                 const albumList: Album[] = albumssObject["items"];
                 console.log("albums list", albumList)
-
+                const newList =albumList.map((album)=>{return album.album.tracks.items.map((track)=>{track.images = album.album.images
+                    return album
+                })})
+                console.log("NEWLIST: ",newList)
                 res.send(albumList)
             }else{
                 const error = await response.json()
@@ -265,7 +268,7 @@ app.post("/spotify-data/next-playlist-items", refreshTokens, async (req, res)=>{
         }).then(async (response)=>{
             if(response.ok){
                 console.log("OK response from spotify-data/next-playlist-items")
-                const trackData = await response.json();
+                const trackData  = await response.json();
                 
                 res.send(trackData)
             }else{
@@ -320,6 +323,8 @@ app.get("/spotify-data/playlist-items", refreshTokens, async (req, res)=>{
                     if(playlistItems[i].track===null){
                         console.error(`Playlist item #${i} contains an invalid track`)
                         playlistItems.splice(i,1)
+                    }else{
+                        playlistItems[i].track.images = playlistItems[i].track.album.images
                     }
                 }
                 allPlaylistItems = allPlaylistItems.concat(playlistItems)

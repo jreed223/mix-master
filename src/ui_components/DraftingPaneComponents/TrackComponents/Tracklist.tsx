@@ -4,6 +4,7 @@ import TrackCard, { TrackCardProps } from "./TrackCard"
 
 
 interface tracklistProps{
+    tracklistArea: string
     // currentUser: UserProfile
     allTracks: Track[]
     selectedLibraryItems: Track[]
@@ -12,7 +13,7 @@ interface tracklistProps{
     setSelectedLibraryItems: React.Dispatch<React.SetStateAction<Track[]>>
     // trackDataState: TrackData[]
     filteredTracks: Track[]
-    
+    draftTracks: (selectedItems: Track[]) => void
 
 }
 
@@ -57,7 +58,7 @@ useEffect(()=>{
                         
             if(hiddenItems.includes(singleTrack)){
            
-                const trackCard =  <TrackCard key={`selected-playlist-${singleTrack.id}`} track={singleTrack} onSelectedTrack={editSelectedItemList2} displayHidden={true} selectedLibraryItems={props.selectedLibraryItems}></TrackCard>
+                const trackCard =  <TrackCard tracklistArea={props.tracklistArea} key={`selected-playlist-${singleTrack.id}`} track={singleTrack} onSelectedTrack={editSelectedItemList2} displayHidden={true} selectedLibraryItems={props.selectedLibraryItems} draftTrack={props.draftTracks}></TrackCard>
                 hiddenTracksList.push(trackCard)
                 return TrackCard
                
@@ -65,7 +66,7 @@ useEffect(()=>{
       
             {
               
-                const trackCard =  <TrackCard key={`selected-playlist-${singleTrack.id}`} track={singleTrack} onSelectedTrack={editSelectedItemList2} displayHidden={false}  selectedLibraryItems={props.selectedLibraryItems}></TrackCard>
+                const trackCard =  <TrackCard tracklistArea={props.tracklistArea} key={`selected-playlist-${singleTrack.id}`} track={singleTrack} onSelectedTrack={editSelectedItemList2} displayHidden={false}  selectedLibraryItems={props.selectedLibraryItems} draftTrack={props.draftTracks} ></TrackCard>
                 displayedTrackList.push(trackCard)
                 // setDisplayedTracks(displayedTracks.concat([trackCard]))
                 return TrackCard
@@ -79,7 +80,7 @@ useEffect(()=>{
 
 
     }
-}, [editSelectedItemList2, props.allTracks, props.selectedLibraryItems, props.stagedTracks, props.filteredTracks])
+}, [editSelectedItemList2, props.allTracks, props.selectedLibraryItems, props.stagedTracks, props.filteredTracks, props.draftTracks, props.tracklistArea])
 
 if(props.allTracks){
     const hiddenItems = props.allTracks.filter(track=>{
@@ -97,7 +98,7 @@ if(props.allTracks){
                     
         if(hiddenItems.includes(singleTrack)){
        
-            const trackCard =  <TrackCard key={`selected-playlist-${singleTrack.id}`} track={singleTrack} onSelectedTrack={editSelectedItemList2} displayHidden={true} selectedLibraryItems={props.selectedLibraryItems}></TrackCard>
+            const trackCard =  <TrackCard tracklistArea={props.tracklistArea} draftTrack={props.draftTracks} key={`selected-playlist-${singleTrack.id}`} track={singleTrack} onSelectedTrack={editSelectedItemList2} displayHidden={true} selectedLibraryItems={props.selectedLibraryItems}></TrackCard>
             hiddenTracksList.push(trackCard)
             return TrackCard
            
@@ -105,7 +106,7 @@ if(props.allTracks){
   
         {
           
-            const trackCard =  <TrackCard key={`selected-playlist-${singleTrack.id}`} track={singleTrack} onSelectedTrack={editSelectedItemList2} displayHidden={false}  selectedLibraryItems={props.selectedLibraryItems}></TrackCard>
+            const trackCard =  <TrackCard tracklistArea={props.tracklistArea}  draftTrack={props.draftTracks} key={`selected-playlist-${singleTrack.id}`} track={singleTrack} onSelectedTrack={editSelectedItemList2} displayHidden={false}  selectedLibraryItems={props.selectedLibraryItems}></TrackCard>
             displayedTrackList.push(trackCard)
             // setDisplayedTracks(displayedTracks.concat([trackCard]))
             return TrackCard

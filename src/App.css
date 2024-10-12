@@ -57,6 +57,18 @@
   
 }
 
+
+.track-card-text{
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+   margin:"0px";
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: "ellipsis";
+}
+
 .user-library-container{
   height:50%;
   display: flex;
@@ -64,9 +76,11 @@
   height: 100%;
   overflow: clip;
   text-wrap: nowrap;
+  container-type: inline-size;
+
   /* padding-left: 25px;
   padding-right: 12.5px; */
- 
+  
  
    /* overflow-x: scroll; */
    /* flex: 0 0 auto; */
@@ -409,8 +423,8 @@
   /* padding-top: 2%; */
   width: 100%;
   margin-left: auto;
-  /* container-type: inline-size;
-  container-name: playlist-view; */
+  container-type: inline-size;
+  /* container-name: playlist-view; */
   transition:1s;
 
 }
@@ -438,7 +452,7 @@ button{
   width: 50%;
   height: calc(100vh - 50px);
   /* padding-left: 12.5px;*/
-  padding-right: 25px;
+  /* padding-right: 25px; */
 
 }
 .user-library-items{
@@ -448,6 +462,10 @@ button{
   padding-right: 12.5px; */
 
 }
+.track-card{
+  height: 80px;
+}
+
 
 .playlist-creation-menu-bar{
   background-color: #141414;
@@ -556,7 +574,9 @@ button{
   overflow-y:auto;
   background-color: #212121;
   color: rgb(135, 135, 135);
-  width: 100%;
+  overflow-x: hidden;
+  /* width: 100%; */
+  flex: 2;
   height: 100%;
   transition: 1s;  /* transition: width 1s; */
 }

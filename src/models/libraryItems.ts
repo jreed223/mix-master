@@ -46,7 +46,12 @@ export default class Library {
                 this.artists = libraryItem.artists
                 this.uri = libraryItem.uri
                 this.totalTracks = libraryItem.total_tracks
-                this.tracks = libraryItem.tracks.items
+                this.tracks = libraryItem.tracks.items.map((item)=>{
+                    item.images = libraryItem.images
+                    console.log("IMAGES",item.images)
+
+                    return item
+                })
                 this.trackDataState = [{tracks:libraryItem.tracks.items, audioFeatures: false, categories: false}]
               break;
             case 'liked songs':
