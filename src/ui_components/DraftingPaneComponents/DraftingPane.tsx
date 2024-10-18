@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from "react"
+import React, { useCallback, useEffect, useRef, useState } from "react"
 // import { UserProfile } from '@spotify/web-api-ts-sdk';
 import UserLibrary from '../SinglePageView';
 import { Button } from "@mui/material";
@@ -7,6 +7,7 @@ import SelectedPlaylistContainer from "./SelectedPlaylistArea";
 import DraftPlaylistContainer from "./DraftPlaylistArea";
 import Library from "../../models/libraryItems";
 import { Track } from "../../../server/types";
+import { relative } from "path";
 
 interface draftingProps{
 
@@ -15,6 +16,10 @@ interface draftingProps{
     setStagingState: React.Dispatch<React.SetStateAction<string>>,
     stagingState: string,
     setActiveView: React.Dispatch<React.SetStateAction<string[]>>
+    activeView:string[]
+    isSearching:boolean
+    setDisabledDashboard: React.Dispatch<React.SetStateAction<boolean>>
+    setIsSeraching : React.Dispatch<React.SetStateAction<boolean>>
 
 
 
@@ -26,8 +31,21 @@ export default function DraftingArea(props:draftingProps){
     const [selectedFeatures, setSelecetedFeatures] = useState<Record<string, number>>({})
     const [stagedPlaylist, setStagedPlaylist] = useState<Track[]>([])
     const [stagedPlaylistState, setStagedPlaylistState] = useState<Track[][]>([[]])
+    const [isFullScreen, setIsFullScreen] = useState(false)
+    const [currentAudio, setCurrentAudio] = useState<{url:string, audio: HTMLAudioElement}>(null)
 
 
+    useEffect(()=>{
+        if(props.activeView){
+            setIsFullScreen(false)
+        }
+    },[props.activeView])
+
+    useEffect(()=>{
+        if(props.isSearching){
+            setIsFullScreen(false)
+        }
+    },[props.isSearching])
 
     const creationContainer = useRef(null)
 
@@ -58,7 +76,12 @@ export default function DraftingArea(props:draftingProps){
 
     const closeCreationContainer = useCallback(()=>{
         props.setStagingState("closed")
-        props.setActiveView(["dashboard"])
+        setIsFullScreen(false)
+
+        if(!props.isSearching){
+            props.setDisabledDashboard(false)
+            props.setActiveView(["dashboard"])
+        }
         // console.log(stagingState)
         creationContainer.current.classList = "playlist-creation-container-hidden shrink-staging"
         // libraryContainer.current.classList = "library-container grow-library"
@@ -128,13 +151,26 @@ export default function DraftingArea(props:draftingProps){
         }
     }
 
+    const toggleFullScreen = ()=>{
+        if(!isFullScreen&&props.isSearching){
+            props.setIsSeraching(false)
+        }
+        setIsFullScreen(!isFullScreen)
+
+    }
+
 
     return(
-        <div ref={creationContainer} className={"playlist-creation-container-hidden"}style={props.stagingState==="open"?{width:"50%"}:{width:"0%"}} id="creation-container">
-        <PlaylistMenuBar onExit={closeCreationContainer}  togglefeatures={toggleDisplayState}></PlaylistMenuBar>
+        <div ref={creationContainer} className={"playlist-creation-container-hidden"}style={isFullScreen?{width: "100%"}:props.stagingState==="open"?{width:"50%"}:{width:"0%"}} id="creation-container">
+        <PlaylistMenuBar toggleFullScreen={toggleFullScreen} onExit={closeCreationContainer}  togglefeatures={toggleDisplayState}></PlaylistMenuBar>
 
-            <div className="playlist-items-containers">
-            {<div style={{display: "flex", overflowX:"hidden", flexDirection:"column", flex:displayFeatureMenu?"1":"0"}} className="new-playlist">
+            <div className="playlist-items-containers" style={{position: "relative"}}>
+           
+                
+                <SelectedPlaylistContainer currentAudio={currentAudio} setCurrentAudio={setCurrentAudio} isFullScreen={isFullScreen} stagingState={props.stagingState} isFilterDisplayed={displayFeatureMenu} onSelectedItems={addStagedItems} libraryItem={props.selectedLibraryItem} stagedPlaylistItems={stagedPlaylist} onGetNextItems={getNextTracks} featureFilters={selectedFeatures}></SelectedPlaylistContainer>
+
+
+                {<div style={{display: "flex", overflowX:"hidden", flexDirection:"column", flex:displayFeatureMenu?"1":"0"}} className="new-playlist">
                     {inputControls.map((inputControl, index)=>(
                     <div >  
                         <input ref={inputControl.checkboxRef} onChange={()=>handleInput(index)} type="checkbox" defaultChecked={true}/>
@@ -146,10 +182,8 @@ export default function DraftingArea(props:draftingProps){
                     }
 
                 </div>}
-                
-                <SelectedPlaylistContainer onSelectedItems={addStagedItems} libraryItem={props.selectedLibraryItem} stagedPlaylistItems={stagedPlaylist} onGetNextItems={getNextTracks} featureFilters={selectedFeatures}></SelectedPlaylistContainer>
 
-                <DraftPlaylistContainer stagedItemsState={stagedPlaylistState} onUndostaging={setStagedPlaylist} onSelectedItems={removeStagedItems} stagedTracks={stagedPlaylist} removeDraft={removeStagedItems }></DraftPlaylistContainer>
+                <DraftPlaylistContainer currentAudio={currentAudio} setCurrentAudio={setCurrentAudio} stagingState={props.stagingState} stagedItemsState={stagedPlaylistState} onUndostaging={setStagedPlaylist} onSelectedItems={removeStagedItems} stagedTracks={stagedPlaylist} removeDraft={removeStagedItems }></DraftPlaylistContainer>
             </div >
         </div>
     )

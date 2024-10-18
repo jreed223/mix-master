@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useCallback, useEffect, useState } from "react"
 import { Track } from '../../../server/types';
 import TrackCard from "./TrackComponents/TrackCard";
 
@@ -8,6 +8,12 @@ interface DraftPlaylistContainerProps{
     onUndostaging: React.Dispatch<React.SetStateAction<Track[]>>
     stagedItemsState: Track[][]
     removeDraft: (selectedItems: Track[]) => void
+    stagingState: string
+    currentAudio: {url:string, audio: HTMLAudioElement}
+    setCurrentAudio: React.Dispatch<React.SetStateAction<{
+    url: string;
+    audio: HTMLAudioElement;
+}>>
 
 }
 
@@ -25,7 +31,10 @@ const DraftPlaylistContainer:React.FC<DraftPlaylistContainerProps>=(props: Draft
 
 
 
-
+    const deselectTrack = useCallback((trackId: string)=>{
+        setSelectedTracks(prev=>prev.filter(selectedTrack => selectedTrack.id !== trackId))
+    },[])
+    
 
     useEffect(()=>{
         console.log(props.stagedTracks)
@@ -46,15 +55,15 @@ const DraftPlaylistContainer:React.FC<DraftPlaylistContainerProps>=(props: Draft
 
         if(props.stagedTracks&& props.stagedTracks.length>0){
 
-            const tracks = props.stagedTracks.map(singleTrack=>
-                <TrackCard tracklistArea="draft playlist" draftTrack={props.removeDraft} key={`drafted-playlist-${singleTrack.id}`}  track={singleTrack} onSelectedTrack={editSelectedItemList2} displayHidden={false} selectedLibraryItems={selectedTracks}></TrackCard>
+            const tracks = props.stagedTracks.slice().reverse().map(singleTrack=>
+                <TrackCard deselectTrack={deselectTrack} currentAudio={props.currentAudio} setCurrentAudio={props.setCurrentAudio}tracklistArea="draft-playlist" draftTrack={props.removeDraft} key={`drafted-playlist-${singleTrack.id}`}  track={singleTrack} onSelectedTrack={editSelectedItemList2} displayHidden={false} selectedLibraryItems={selectedTracks}></TrackCard>
             )
             setTrackCards(tracks)
     
         }else{
             setTrackCards([])
         }
-    }, [props.removeDraft, props.stagedTracks, selectedTracks])
+    }, [deselectTrack, props.currentAudio, props.removeDraft, props.setCurrentAudio, props.stagedTracks, selectedTracks])
 
 
     useEffect(()=>{
@@ -139,7 +148,7 @@ const redoClicked = ()=>{
         // stagedHistory.push(props.stagedTracks)
 
 return(
-<div className="playlist-draft-container new-playlist" id="drafting-div">
+<div className="playlist-draft-container new-playlist" style={props.stagingState==="open"?{borderRight: "2px solid #141414", transition: "1s"}:{borderRight: "0px solid #141414", transition: "1s"}} id="drafting-div">
     {
         <div style={{
                     position:"sticky",
@@ -163,7 +172,6 @@ return(
 
                 </div>
                 }
-    
     {trackCards}
     </div>
 )

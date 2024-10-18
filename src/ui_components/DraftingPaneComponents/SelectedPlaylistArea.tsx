@@ -10,6 +10,15 @@ interface SelectedPlaylistContainerProps{
     onSelectedItems: (selectedItems: Track[]) => void
     onGetNextItems: ()=>void
     featureFilters: Record<string, number>,
+    isFilterDisplayed: boolean
+    stagingState: string
+    isFullScreen: boolean
+    currentAudio: {url:string, audio: HTMLAudioElement}
+    setCurrentAudio: React.Dispatch<React.SetStateAction<{
+    url: string;
+    audio: HTMLAudioElement;
+}>>
+
     // filteredTracks: Track[]
 
 }
@@ -17,7 +26,9 @@ interface SelectedPlaylistContainerProps{
 interface TrackData{
     tracks:Track[], 
     audioFeatures: boolean, 
-    categories: boolean
+    categories: boolean,
+
+
 }
 
 const SelectedPlaylistContainer:React.FC<SelectedPlaylistContainerProps>=(props: SelectedPlaylistContainerProps)=>{
@@ -278,7 +289,7 @@ const stageSelectedDisplayedTracks = () =>{
 
 }
 
-
+// const style = props.stagingState==="open"?{borderRight: "2px solid #141414", transition: "1s", flex: props.isFilterDisplayed?2:1}:{borderRight: "0px solid #141414", transition: "1s"}
 
 
 
@@ -293,7 +304,7 @@ const stageSelectedDisplayedTracks = () =>{
     }else if(allTracks){
 
         return(
-            <div className="search-filter-container new-playlist" id="search-filter-div" >
+            <div className="search-filter-container new-playlist" style={props.stagingState==="open"?{borderRight: "2px solid #141414", transition: "1s", flex: props.isFilterDisplayed&&!props.isFullScreen?2:1}:{borderRight: "0px solid #141414", transition: "1s"}} id="search-filter-div" >
                 <div style={{
                     position:"sticky",
                     top: 0,
@@ -316,12 +327,12 @@ const stageSelectedDisplayedTracks = () =>{
                         )}
                 </div>
 
-                <Tracklist tracklistArea="selected playlist" allTracks={allTracks} selectedLibraryItems={selectedLibraryItems} stagedTracks={props.stagedPlaylistItems} setSelectedLibraryItems={setSelectedLibraryItems} filteredTracks={filteredTracks} draftTracks={props.onSelectedItems}></Tracklist>
+                <Tracklist currentAudio={props.currentAudio} setCurrentAudio={props.setCurrentAudio} tracklistArea="selected-playlist" allTracks={allTracks} selectedLibraryItems={selectedLibraryItems} stagedTracks={props.stagedPlaylistItems} setSelectedLibraryItems={setSelectedLibraryItems} filteredTracks={filteredTracks} draftTracks={props.onSelectedItems}></Tracklist>
 
 
 
                 {props.libraryItem.next?
-                <div className="track-card" style={{position: "sticky", bottom:0}}>
+                <div style={{}}>
                     {
                     loadingState==="loadingNext"?
                         <button disabled={true} style={{width: `100%`, overflowX: "hidden", padding: 0}}>Loading...</button>:

@@ -4,7 +4,7 @@ import React from "react"
 interface PlaylistMenuProps{
     onExit:() => void;
     togglefeatures: () => void
-
+    toggleFullScreen: () => void
 
 }
 const PlaylistMenuBar:React.FC<PlaylistMenuProps>=(props: PlaylistMenuProps)=>{
@@ -14,6 +14,7 @@ const PlaylistMenuBar:React.FC<PlaylistMenuProps>=(props: PlaylistMenuProps)=>{
             <div className="playlist-creation-menu-bar" >
                 <button onClick={()=>props.onExit()}>Close</button>
                 <button  onClick={()=>{props.togglefeatures()}}>Audio Features</button>
+                <button onClick={()=>props.toggleFullScreen()}>Full Screen</button>
 
             </div>
         )

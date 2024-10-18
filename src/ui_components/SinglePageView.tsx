@@ -7,20 +7,25 @@ import Library from "../models/libraryItems";
 import CircularProgress from '@mui/material/CircularProgress';
 import { AlbumsComponent, LikedPlaylistsComponent, UserPlaylistsComponent } from "./UserLibrary/LibraryComponents";
 import DraftingArea from "./DraftingPaneComponents/DraftingPane";
+import SearchBar from "./SearchBar";
 
 
 
 interface UserLibraryProps{
     currentUser: UserProfile
     activeView: string[]
-    setActiveView: React.Dispatch<React.SetStateAction<string[]>>
+    setActiveView:React.Dispatch<React.SetStateAction<string[]>>
     setDisabledDashboard: React.Dispatch<React.SetStateAction<boolean>>
+    isSearching: boolean
+    setIsSearching: React.Dispatch<React.SetStateAction<boolean>>
+    stagingState: string
+    setStagingState: React.Dispatch<React.SetStateAction<string>>
 }
 
 export default function UserLibrary(props:UserLibraryProps){
     
     const [selectedLibraryItem, setSelectedLibraryItem] = useState<Library|null>(null)
-    const [stagingState, setStagingState] = useState<string|null>(null)
+    // const [stagingState, setStagingState] = useState<string|null>(null)
 
 
 
@@ -30,7 +35,7 @@ export default function UserLibrary(props:UserLibraryProps){
 
 
     const displayTracks = (selection: Library, currentView: string)=>{
-        setStagingState("open")
+        props.setStagingState("open")
         props.setActiveView([currentView])
         props.setDisabledDashboard(true)
         if(selection.id !== selectedLibraryItem?.id){
@@ -41,15 +46,18 @@ export default function UserLibrary(props:UserLibraryProps){
 
 const [userPlaylistsStyle, setUserPlaylistsStyle] = useState({})
 const [likedPlaylistsStyle, setLikedPlaylistsStyle] = useState({})
+// useEffect(()=>{
+//     if(stagingState==="closed"){
+//         props.setDisabledDashboard(false)
+
+
+//     }
+// }, [props, stagingState])
+// const [isSeaching, setIsSearching]=useState(false)
+
 useEffect(()=>{
-    if(stagingState==="closed"){
-        props.setDisabledDashboard(false)
 
-
-    }
-}, [props, stagingState])
-useEffect(()=>{
-
+console.log("ACTIVE VIEW RAN!!!")
 
     
 
@@ -67,11 +75,15 @@ useEffect(()=>{
                 })
                 break;                
             case "user playlists":
-                    setLikedPlaylistsStyle({
-                        width: "0%",
+                // setIsSeaching(false)
+                    if(!props.isSearching){
+                        setLikedPlaylistsStyle({
+                            width: "0%",
+    
+                            transition: "1s"
+                        })
+                    }
 
-                        transition: "1s"
-                    })
                     setUserPlaylistsStyle({
                         width: "100%",
                         //paddingRight: "25px",
@@ -80,6 +92,11 @@ useEffect(()=>{
                 // }
                 break;
             case "liked playlists":
+                // if(stagingState==="open"){
+                //     setIsSearching(false)
+
+                // }
+
                 setLikedPlaylistsStyle({
                     width: "100%",
 
@@ -92,6 +109,11 @@ useEffect(()=>{
                 })
                 break;
             case "liked albums":
+                // if(stagingState==="open"){
+                //     setIsSearching(false)
+
+                // }
+
                 setLikedPlaylistsStyle({
                     width: "100%",
 
@@ -107,32 +129,48 @@ useEffect(()=>{
         }
 
 
-}, [props.activeView])
+}, [props.isSearching, props.activeView])
+
+
+const handleSearch=()=>{
+    if(props.isSearching){
+
+    }else{
+        props.setIsSearching(true)
+        props.setDisabledDashboard(true)
+        if(props.activeView.at(-1)==="dashboard"){
+            props.setActiveView(["user playlists"])
+            
+        }
+    }
+}
 
 // const currentGap = props.activeView.at(-1)==="dashboard"||props.activeView.at(-1)==="user playlists"?"25px": "0px"
 
         return (
-            <div className="main-content-area">
-                <DraftingArea selectedLibraryItem={selectedLibraryItem} setStagingState={setStagingState} stagingState={stagingState} setActiveView={props.setActiveView} ></DraftingArea>
+            <div className="main-content-area" style={{position: "relative"}}>
+                <DraftingArea setIsSeraching={props.setIsSearching}setDisabledDashboard={props.setDisabledDashboard} isSearching={props.isSearching} selectedLibraryItem={selectedLibraryItem} setStagingState={props.setStagingState} stagingState={props.stagingState} setActiveView={props.setActiveView} activeView={props.activeView} ></DraftingArea>
 
-                    <div ref={libraryContainer} style={stagingState==="open"?{width:"50%"}:{width:"100%"}} className="library-container" id="library-container">
+                    <div ref={libraryContainer} style={{flexGrow:1}} className="library-container" id="library-container">
                             
                             <div ref={userItemsContainer} className="user-library-items" style={userPlaylistsStyle}>
                             <Suspense fallback={<CircularProgress/>}>
-                                <UserPlaylistsComponent stagingState={stagingState}activeView={props.activeView} userId={props.currentUser.id} onPlaylistSelection={displayTracks} selectedLibraryItemId={selectedLibraryItem?.id}></UserPlaylistsComponent>
+                                <UserPlaylistsComponent setIsSearching={props.setIsSearching} isSearching={props.isSearching} stagingState={props.stagingState}activeView={props.activeView} userId={props.currentUser.id} onPlaylistSelection={displayTracks} selectedLibraryItemId={selectedLibraryItem?.id}></UserPlaylistsComponent>
                             </Suspense>
                             </div>
                             <div ref={likedItemsContainer} className="liked-library-items" style={likedPlaylistsStyle}>
                             <Suspense fallback={<CircularProgress/>}>
-                                <LikedPlaylistsComponent stagingState={stagingState} activeView={props.activeView} userId={props.currentUser.id} onPlaylistSelection={displayTracks} selectedLibraryItemId={selectedLibraryItem?.id}></LikedPlaylistsComponent>
+                                <LikedPlaylistsComponent setIsSearching={props.setIsSearching} isSearching={props.isSearching} stagingState={props.stagingState} activeView={props.activeView} userId={props.currentUser.id} onPlaylistSelection={displayTracks} selectedLibraryItemId={selectedLibraryItem?.id}></LikedPlaylistsComponent>
                             </Suspense>
                             <Suspense fallback={<CircularProgress/>}>
-                                <AlbumsComponent stagingState={stagingState} activeView={props.activeView} userId={props.currentUser.id} onPlaylistSelection={displayTracks} selectedLibraryItemId={selectedLibraryItem?.id}></AlbumsComponent>
+                                <AlbumsComponent setIsSearching={props.setIsSearching} isSearching={props.isSearching} stagingState={props.stagingState} activeView={props.activeView} userId={props.currentUser.id} onPlaylistSelection={displayTracks} selectedLibraryItemId={selectedLibraryItem?.id}></AlbumsComponent>
                             </Suspense>
                             </div>
 
                     </div>
+                    <SearchBar setActiveView={props.setActiveView} setDisabledDashboard={props.setDisabledDashboard} stagingState={props.stagingState} setIsSearching={props.setIsSearching} isSearching={props.isSearching}></SearchBar>
+                    <button style={{position: "absolute", right:0, top: 0}} onClick={()=>{handleSearch(); }}>search</button>
             </div>)
 
 
-                        }
+}

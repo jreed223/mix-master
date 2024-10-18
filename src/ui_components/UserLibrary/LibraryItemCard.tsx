@@ -8,6 +8,7 @@ export interface LibraryItemCardProps{
     ownerId: string;
     selectedLibraryItemId: string
     currentView: string
+    setIsSearching: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const LibraryItemCard: React.FC<LibraryItemCardProps> = (props: LibraryItemCardProps)=>{
@@ -19,7 +20,7 @@ const LibraryItemCard: React.FC<LibraryItemCardProps> = (props: LibraryItemCardP
                 {/* <span> */}
                     <div className={props.selectedLibraryItemId===props.libraryItem.id?"selected-playlist-img-container":"user-playlist-img-container"}>
                 <img className="user-playlist-img" src={props.libraryItem.image.url} alt = "playlist cover"  ></img>
-                <div className={"user-playlist-details-container"} onClick={()=>props.onSelectedAlbum(props.libraryItem, props.currentView)}>
+                <div className={"user-playlist-details-container"} onClick={()=>{props.onSelectedAlbum(props.libraryItem, props.currentView); props.setIsSearching(false)}}>
                         <p className="playlist-name playlist-card-text">{props.libraryItem.name!==""?props.libraryItem.name:"Untitled"}</p>
                         {/* {props.libraryItem.type ==="album" ? 
                             <p className = "playlist-card-text">{props.libraryItem.artists[0].name}</p>: props.libraryItem.type ==="playlist" && ? 
@@ -39,7 +40,7 @@ const LibraryItemCard: React.FC<LibraryItemCardProps> = (props: LibraryItemCardP
                 {/* <span> */}
                     <div className={props.selectedLibraryItemId===props.libraryItem.id?"selected-playlist-img-container":"playlist-img-container"}>
                 <img className="playlist-img" src={props.libraryItem.image.url} alt = "playlist cover"  ></img>
-                <div className={"playlist-details-container"}onClick={()=>props.onSelectedAlbum(props.libraryItem, props.currentView)}>
+                <div className={"playlist-details-container"}onClick={()=>{props.onSelectedAlbum(props.libraryItem, props.currentView); props.setIsSearching(false)}}>
                         <p className="playlist-name playlist-card-text">{props.libraryItem.name!==""?props.libraryItem.name:"Untitled"}</p>
                         {props.libraryItem.type ==="album" ? 
                             <p className = "playlist-card-text">{props.libraryItem.artists[0].name}</p>: props.libraryItem.type ==="playlist"? 
