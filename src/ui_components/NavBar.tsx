@@ -1,6 +1,7 @@
 import React, { useState } from "react"
-import { UserProfile } from '@spotify/web-api-ts-sdk';
+// import { UserProfile } from '@spotify/web-api-ts-sdk';
 import UserLibrary from './SinglePageView';
+import { UserProfile } from "../../server/types";
 // import { Button } from "@mui/material";
 
 interface navProps{

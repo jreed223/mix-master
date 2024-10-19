@@ -29,7 +29,7 @@ export default function SearchBar(props:SearchProps){
 
          </div> */}
         <div  className={"search-bar"} style={props.isSearching?{ width:"50%"}:{width:"0%"}}>
-        <button onClick={closeSearch}>Close</button>
+        <button style={{marginTop:"15px", marginLeft: "15px"}} onClick={closeSearch}>Close</button>
   
         </div>
     

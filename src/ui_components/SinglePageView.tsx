@@ -169,7 +169,7 @@ const handleSearch=()=>{
 
                     </div>
                     <SearchBar setActiveView={props.setActiveView} setDisabledDashboard={props.setDisabledDashboard} stagingState={props.stagingState} setIsSearching={props.setIsSearching} isSearching={props.isSearching}></SearchBar>
-                    <button style={{position: "absolute", right:0, top: 0}} onClick={()=>{handleSearch(); }}>search</button>
+                    <button style={{position: "absolute", right:"15px", top: "15px"}} onClick={()=>{handleSearch(); }}>search</button>
             </div>)
 
 
