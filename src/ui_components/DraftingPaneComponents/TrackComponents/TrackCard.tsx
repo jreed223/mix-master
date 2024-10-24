@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Track } from "../../../../server/types";
 import { relative } from 'path';
+import TrackClass from "../../../models/Tracks";
 
 export interface TrackCardProps{
     tracklistArea: string
-    onSelectedTrack: (checked: boolean,selectedItem: Track) => void
-    track : Track;
+    onSelectedTrack: (checked: boolean,selectedItem: TrackClass) => void
+    trackClass : TrackClass;
     displayHidden : boolean;
-    selectedLibraryItems: Track[]
-    draftTrack: (selectedItems: Track[]) => void
+    selectedLibraryItems: TrackClass[]
+    draftTrack: (selectedItems: TrackClass[]) => void
     currentAudio: {url:string, audio: HTMLAudioElement}
     setCurrentAudio: React.Dispatch<React.SetStateAction<{
     url: string;
@@ -22,7 +23,7 @@ const TrackCard: React.FC<TrackCardProps> = ({
     tracklistArea,
 
     onSelectedTrack,
-    track,
+    trackClass,
     displayHidden,
     selectedLibraryItems,
     draftTrack,
@@ -36,19 +37,19 @@ const TrackCard: React.FC<TrackCardProps> = ({
 
 //TODO: Seperate Selected Draft Items and selected plailist items
 useEffect(()=>{
-    if(selectedLibraryItems.some((libraryItem)=>libraryItem.id===track.id)){
+    if(selectedLibraryItems.some((libraryItem)=>libraryItem.track.id===trackClass.track.id)){
         setIsChecked(true)
     }else{
         setIsChecked(false)
     }
 
-}, [selectedLibraryItems, track.id, tracklistArea])  
+}, [selectedLibraryItems, trackClass.track.id, tracklistArea])  
 
 
     
     const handleCheck = ()=>{
         setIsChecked((prevState)=>!prevState);
-        onSelectedTrack(!isChecked, track )
+        onSelectedTrack(!isChecked, trackClass )
 
 
     }
@@ -71,16 +72,16 @@ useEffect(()=>{
             }
 
     useEffect(()=>{
-        if(track?.preview_url!==currentAudio?.url){
+        if(trackClass?.track?.preview_url!==currentAudio?.url){
             setPreviewState(null)
         }else{
             currentAudio.audio.addEventListener('ended', ()=>setPreviewState(null))
         }
-    }, [track?.preview_url, currentAudio?.url, currentAudio?.audio])
+    }, [trackClass.track?.preview_url, currentAudio?.url, currentAudio?.audio])
 
    
     // const [currentAudio, setCurrentAudio] = useState<{url:string, audio: HTMLAudioElement}>(null)
-    const [previewState, setPreviewState] = useState(currentAudio?.url===track.preview_url?(currentAudio?.audio.paused?"#e56767":"#59b759"):null)
+    const [previewState, setPreviewState] = useState(currentAudio?.url===trackClass.track.preview_url?(currentAudio?.audio.paused?"#e56767":"#59b759"):null)
     const playPreviewAudio = (url)=>{
         const audio = new Audio(url)
 
@@ -123,35 +124,35 @@ useEffect(()=>{
     // console.log("checkbox checked? ", props.checked)
     // console.log(track.album.images)
     return(
-        <div className={`${tracklistArea} track-card`} id={track.id} style={displayStyle}>
+        <div className={`${tracklistArea} track-card`} id={trackClass.track.id} style={displayStyle}>
             
             {/* <input readOnly checked={isChecked} key={`checkbox-${track.id}`} type="checkbox" onClick={(e)=>handleCheck()}/> */}
             {tracklistArea==="draft-playlist"?
             <>
-            <button style={{width:"40px", height: "100%"}} onClick={()=>{draftTrack([track]); deselectTrack(track.id);}}>&lt;</button>
+            <button style={{width:"40px", height: "100%"}} onClick={()=>{draftTrack([trackClass]); deselectTrack(trackClass.track.id);}}>&lt;</button>
             {/* <div onClick={()=>playPreviewAudio(track.preview_url)} style={{color: !previewState?"inherit":previewState}}>preview</div> */}
 
                         <div style={{position: "relative", textAlign:"right",display:"flex", flexDirection:"column", flexGrow: '1', width: "0%", textWrap:'nowrap', height:"100%", justifyContent:'center'}}>
-                        <p style={{margin:"0px"}} className="track-card-text">{track.name}</p>
-                        <p style={{ margin:"0px"}} className="track-card-text">{track.artists[0].name}</p>
+                        <p style={{margin:"0px"}} className="track-card-text">{trackClass.track.name}</p>
+                        <p style={{ margin:"0px"}} className="track-card-text">{trackClass.track.artists[0].name}</p>
                         <div onClick={(e)=>handleCheck()} style={{backgroundColor: isChecked?"#00000061":"inherit",top:0, left:0,width:"100%", height:"100%", position:"absolute",  }}></div>
                         </div>
                         </>
                 :<></>}
             <div style={{position: "relative",height: "100%", aspectRatio: "1 / 1"}}>
-            <img style={{position:"relative", height: "100%", aspectRatio: "1 / 1"}}onClick={(e)=>handleCheck()} src={(track?.album?.images[0]?.url)?(track.album.images[0].url):(track?.images[0]?.url)}alt={`${track.name} cover`}></img>
-            <div onClick={()=>playPreviewAudio(track.preview_url)} style={{color: !previewState?"inherit":previewState,top:0, left:0,width:"100%", height:"100%", position:"absolute"}}>preview</div>
+            <img style={{position:"relative", height: "100%", aspectRatio: "1 / 1"}}onClick={(e)=>handleCheck()} src={(trackClass.track?.album?.images[0]?.url)?(trackClass.track?.album.images[0].url):(trackClass.track?.images[0]?.url)}alt={`${trackClass.track.name} cover`}></img>
+            <div onClick={()=>playPreviewAudio(trackClass.track.preview_url)} style={{color: !previewState?"inherit":previewState,top:0, left:0,width:"100%", height:"100%", position:"absolute"}}>preview</div>
             </div>
             {tracklistArea==="selected-playlist"?
             <>
                         <div style={{position: "relative", display:"flex", flexDirection:"column",  overflow: 'hidden', flexGrow: '1', width: "0%", height:"100%", justifyContent:'center'}}>
-                        <p style={{margin:"0px"}} className="track-card-text">{track.name}</p>
-                        <p style={{ margin:"0px"}} className="track-card-text">{track.artists[0].name}</p>
+                        <p style={{margin:"0px"}} className="track-card-text">{trackClass.track.name}</p>
+                        <p style={{ margin:"0px"}} className="track-card-text">{trackClass.track.artists[0].name}</p>
                         <div onClick={(e)=>handleCheck()} style={{backgroundColor: isChecked?"#00000061":"inherit",top:0, left:0,width:"100%", height:"100%", position:"absolute",  }}></div>
                         </div>
                         {/* <div onClick={()=>playPreviewAudio(track.preview_url)} style={{color: !previewState?"inherit":previewState}}>preview</div> */}
 
-                        <button style={{width:"40px", height: "100%"}} onClick={()=>{draftTrack([track]); deselectTrack(track.id)}}>&gt;</button>
+                        <button style={{width:"40px", height: "100%"}} onClick={()=>{draftTrack([trackClass]); deselectTrack(trackClass.track.id)}}>&gt;</button>
                         </>
         
                 : <></>}

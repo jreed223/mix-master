@@ -4,10 +4,11 @@ import { Features, Track } from '../../../server/types';
 import TrackCollection from "../../models/libraryItems"
 // import { LibraryItem } from '../../models/libraryItems';
 import Tracklist from "./TrackComponents/Tracklist";
+import TrackClass from "../../models/Tracks";
 interface SelectedPlaylistContainerProps{
     libraryItem: TrackCollection|null
-    stagedPlaylistItems: Track[]|null
-    onSelectedItems: (selectedItems: Track[]) => void
+    stagedPlaylistItems: TrackClass[]|null
+    onSelectedItems: (selectedItems: TrackClass[]) => void
     onGetNextItems: ()=>void
     featureFilters: Record<string, number>,
     isFilterDisplayed: boolean
@@ -24,7 +25,7 @@ interface SelectedPlaylistContainerProps{
 }
 
 interface TrackData{
-    tracks:Track[], 
+    tracks:TrackClass[], 
     audioFeatures: boolean, 
     categories: boolean,
 
@@ -34,13 +35,13 @@ interface TrackData{
 const SelectedPlaylistContainer:React.FC<SelectedPlaylistContainerProps>=(props: SelectedPlaylistContainerProps)=>{
 
 
-const [selectedLibraryItems, setSelectedLibraryItems] = useState<Track[]>([])
-const [filteredTracks, setFilteredTracks] = useState<Track[]|null>([])
+const [selectedLibraryItems, setSelectedLibraryItems] = useState<TrackClass[]>([])
+const [filteredTracks, setFilteredTracks] = useState<TrackClass[]|null>([])
 
-const [nextTracks, setNextTracks] = useState<Track[]>(null)
+const [nextTracks, setNextTracks] = useState<TrackClass[]>(null)
 
 const [trackDataState, setTrackDataState] = useState<TrackData[]>(null) //{batch1: {Tracks = [], audioFeatures: false, categories: false}}
-const [allTracks, setAllTracks] = useState<Track[]>(null)
+const [allTracks, setAllTracks] = useState<TrackClass[]>(null)
 const [loadingState, setLoadingState] = useState<String>(null)
 
 
@@ -64,7 +65,7 @@ const [loadingState, setLoadingState] = useState<String>(null)
 //     // console.log(selectedPlaylistItems)
 // }, [selectedLibraryItems])
 
-const setAudioFeatures=async (tracks:Track[])=>{
+const setAudioFeatures=async (trackClassList:TrackClass[])=>{
   
 
         const response = await fetch("/spotify-data/audio-features", {
@@ -72,18 +73,18 @@ const setAudioFeatures=async (tracks:Track[])=>{
             headers: {
                 'Content-Type': 'application/json'
               },
-            body: JSON.stringify(tracks)
+            body: JSON.stringify(trackClassList.map(trackClass=>trackClass.track))
         })
 
         const features:Features[] = await response.json() 
         let startIdx = 0
 
         for(let feature of features){
-            tracks[startIdx].audio_features = feature
+            trackClassList[startIdx].audio_features = feature
             startIdx+=1
       
         }
-        console.log("tracks after changes: ", tracks)
+        console.log("tracks after changes: ", trackClassList)
 
 }
 
@@ -101,7 +102,7 @@ const filterFeatures2  = useCallback(async ()=>{
                 console.log("audio features already set")
 
             }else{ //runs if audioFeatures have not been set for the tracks in a TrackData object
-                await setAudioFeatures(trackData.tracks) //fetches audio features for the trackData tracks
+                await setAudioFeatures(trackData.tracks)//fetches audio features for the trackData tracks
                     // setHasAudioFeatures(true)
                     trackData.audioFeatures = true
                     console.log("audio features set")
@@ -166,14 +167,14 @@ const filterFeatures2  = useCallback(async ()=>{
             setLoadingState("loading")
 
 
-            let allTracks :Track[]= []
+            let allTracks :TrackClass[]= []
 
             if(props.libraryItem && !props.libraryItem?.trackDataState){
                 // console.log("setcurrent tracks block 1: ", selectedPlaylist.tracks)
                 props.libraryItem.setTracks().then(()=>{
                     console.log("library item trackDataState after setting: ", props.libraryItem.trackDataState)
                     setTrackDataState(props.libraryItem.trackDataState)
-                    allTracks = props.libraryItem.trackDataState.flatMap(track=>track.tracks)
+                    allTracks = props.libraryItem.trackDataState.flatMap(trackData=>trackData.tracks)
                     setAllTracks(allTracks)
                     setLoadingState(null)
 
@@ -235,11 +236,13 @@ const filterFeatures2  = useCallback(async ()=>{
 
 
 
-let displayedItems: Track[]
+let displayedItems: TrackClass[]
 
-    allTracks?displayedItems = allTracks.filter(track=>{
-        const staged  = props.stagedPlaylistItems.includes(track)
-        const filtered =  isFeatureFilterSelected?!filteredTracks.some(filteredTrack => filteredTrack.id === track.id):false
+    allTracks?displayedItems = allTracks.filter(trackClass=>{
+        const staged  = props.stagedPlaylistItems.some(item=>item.track.id===trackClass.track.id)
+
+        const staged2  = props.stagedPlaylistItems.includes(trackClass)
+        const filtered =  isFeatureFilterSelected?!filteredTracks.some(filteredTrackClass => filteredTrackClass.track.id === trackClass.track.id):false
         // console.log(`staged: ${staged}, filtered: ${filtered}`)
     
     
@@ -250,15 +253,15 @@ const selectAllclicked = ()=>{
     
 
         const selections = displayedItems
-        const newSelections : Track[] = selections.filter((selection)=>!selectedLibraryItems.some((item)=>item.id ===selection.id))
+        const newSelections : TrackClass[] = selections.filter((selection)=>!selectedLibraryItems.some((item)=>item.track.id ===selection.track.id))
         const allSelected = selectedLibraryItems.concat(newSelections)
         setSelectedLibraryItems(allSelected)
 }
 
 const deselectAllClicked = ()=>{
-    const selections: Track[] = displayedItems
-    const removedSelections : Track[] =  selections.filter((selection)=>selectedLibraryItems.some((item)=>item.id ===selection.id))
-    const allDeselected = selectedLibraryItems.filter(item=>!removedSelections.some((selection)=>selection.id === item.id))
+    const selections: TrackClass[] = displayedItems
+    const removedSelections : TrackClass[] =  selections.filter((selection)=>selectedLibraryItems.some((item)=>item.track.id ===selection.track.id))
+    const allDeselected = selectedLibraryItems.filter(item=>!removedSelections.some((selection)=>selection.track.id === item.track.id))
     setSelectedLibraryItems(allDeselected)
 }
 
@@ -273,11 +276,11 @@ const stageSelectedDisplayedTracks = () =>{
 
     if(filteredTracks&&filteredTracks.length>0){
 
-    const selectedDisplayed = (selectedLibraryItems.filter(selectedItem=>filteredTracks.some(filteredItem=>selectedItem.id === filteredItem.id)))
+    const selectedDisplayed = (selectedLibraryItems.filter(selectedItem=>filteredTracks.some(filteredItem=>selectedItem.track.id === filteredItem.track.id)))
     props.onSelectedItems(selectedDisplayed); 
 
     // console.log("selected displayed tracks: ", selectedDisplayed)
-    const selectedHidden = (selectedLibraryItems.filter(selectedItem=>!filteredTracks.some(filteredItem=>selectedItem.id === filteredItem.id)))
+    const selectedHidden = (selectedLibraryItems.filter(selectedItem=>!filteredTracks.some(filteredItem=>selectedItem.track.id === filteredItem.track.id)))
     // console.log("selected hidden tracks: ", selectedHidden)
     setSelectedLibraryItems(selectedHidden)
     }else{

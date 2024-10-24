@@ -6,6 +6,7 @@ import ResultCard from "./ResultCard";
 // import { Button } from "@mui/material";
 import { albums } from '../../server/SpotifyData/controllers/libraryControllers/albums';
 import TrackCollection from "../models/libraryItems";
+import TrackClass from "../models/Tracks";
 
 interface SearchProps{
     isSearching: boolean
@@ -19,8 +20,8 @@ interface SearchProps{
     setSearchQuery: React.Dispatch<React.SetStateAction<string>>
     searchResults: SearchResults
     handleSearch: () => Promise<void>
-    setStagedPlaylist: React.Dispatch<React.SetStateAction<Track[]>>
-    stagedPlaylist: Track[]
+    setStagedPlaylist: React.Dispatch<React.SetStateAction<TrackClass[]>>
+    stagedPlaylist: TrackClass[]
     setSelectedLibraryItem: React.Dispatch<React.SetStateAction<TrackCollection>>
 
     
@@ -87,15 +88,16 @@ export default function SearchBar(props:SearchProps){
         })
 
         const trackCards =  props.searchResults.tracks.items.map((track)=>{
+            const trackClass = new TrackClass(track)
             const draftTrack = (e)=>{
                 e.preventDefault()
-                    props.setStagedPlaylist(prev=>prev?prev.concat([track]):[track])
+                    props.setStagedPlaylist(prev=>prev?prev.concat([trackClass]):[trackClass])
                     props.setStagingState("open")
             }
-            const isDrafted = props.stagedPlaylist?.some(item=>item.id===track.id)
+            const isDrafted = props.stagedPlaylist?.some(item=>item.track.id===track.id)
             return <ResultCard result={{
                 type: "track",
-                item: track,
+                item: trackClass,
                 draftTrack: draftTrack,
                 isDrafted: isDrafted
                 // stagedPlaylist: props.stagedPlaylist,

@@ -1,19 +1,20 @@
 import React, { ReactElement, useCallback, useEffect, useState } from "react"
 import { Track } from "../../../../server/types"
 import TrackCard, { TrackCardProps } from "./TrackCard"
+import TrackClass from "../../../models/Tracks"
 
 
 interface tracklistProps{
     tracklistArea: string
     // currentUser: UserProfile
-    allTracks: Track[]
-    selectedLibraryItems: Track[]
+    allTracks: TrackClass[]
+    selectedLibraryItems: TrackClass[]
     // featureFilters: Record<string, number>
-    stagedTracks:Track[]
-    setSelectedLibraryItems: React.Dispatch<React.SetStateAction<Track[]>>
+    stagedTracks:TrackClass[]
+    setSelectedLibraryItems: React.Dispatch<React.SetStateAction<TrackClass[]>>
     // trackDataState: TrackData[]
-    filteredTracks: Track[]
-    draftTracks: (selectedItems: Track[]) => void
+    filteredTracks: TrackClass[]
+    draftTracks: (selectedItems: TrackClass[]) => void
     currentAudio: {url:string, audio: HTMLAudioElement}
     setCurrentAudio: React.Dispatch<React.SetStateAction<{
     url: string;
@@ -29,7 +30,7 @@ const [displayedTracks, setDisplayedTracks] = useState<ReactElement<TrackCardPro
 
 const [hiddenTracks, setHiddenTracks] = useState<ReactElement<TrackCardProps>[]>([])
 
-const editSelectedItemList2 = useCallback((checked: boolean ,selectedItem: Track)=>{
+const editSelectedItemList2 = useCallback((checked: boolean ,selectedItem: TrackClass)=>{
     if(checked){
         // const lst = selectedLibraryItems.concat([selectedItem])
         console.log("track card checked: ", console.log(props.selectedLibraryItems))
@@ -44,15 +45,17 @@ const editSelectedItemList2 = useCallback((checked: boolean ,selectedItem: Track
     // console.log(selectedPlaylistItems)
 }, [props])
 const deselectTrack = useCallback((trackId)=>{
-    props.setSelectedLibraryItems(props.selectedLibraryItems.filter(item=>item.id!==trackId))
+    props.setSelectedLibraryItems(props.selectedLibraryItems.filter(item=>item.track.id!==trackId))
 },[props])
 
 ///*Sets hidden tracks*//
 useEffect(()=>{
     if(props.allTracks){
-        const hiddenItems = props.allTracks.filter(track=>{
-            const staged  = props.stagedTracks.includes(track)
-            const filteredOut = !props.filteredTracks.some(filteredTrack => filteredTrack.id === track.id)
+        const hiddenItems = props.allTracks.filter(trackClass=>{
+            const staged  = props.stagedTracks.some(item=>item.track.id === trackClass.track.id)
+
+            // const staged  = props.stagedTracks.includes(trackClass)
+            const filteredOut = !props.filteredTracks.some(filteredTrack => filteredTrack.track.id === trackClass.track.id)
             // console.log(`staged: ${staged}, filtered: ${filteredOut}`)
 
 
@@ -61,11 +64,11 @@ useEffect(()=>{
    
         let hiddenTracksList = []
         let displayedTrackList = []
-        props.allTracks.map(singleTrack=>{
+        props.allTracks.map(trackClass=>{
                         
-            if(hiddenItems.includes(singleTrack)){
+            if(hiddenItems.some(item=>item.track.id===trackClass.track.id)){
            
-                const trackCard =  <TrackCard deselectTrack={deselectTrack}currentAudio={props.currentAudio} setCurrentAudio={props.setCurrentAudio} tracklistArea={props.tracklistArea} key={`selected-playlist-${singleTrack.id}`} track={singleTrack} onSelectedTrack={editSelectedItemList2} displayHidden={true} selectedLibraryItems={props.selectedLibraryItems} draftTrack={props.draftTracks}></TrackCard>
+                const trackCard =  <TrackCard deselectTrack={deselectTrack}currentAudio={props.currentAudio} setCurrentAudio={props.setCurrentAudio} tracklistArea={props.tracklistArea} key={`selected-playlist-${trackClass.track.id}`} trackClass={trackClass} onSelectedTrack={editSelectedItemList2} displayHidden={true} selectedLibraryItems={props.selectedLibraryItems} draftTrack={props.draftTracks}></TrackCard>
                 hiddenTracksList.push(trackCard)
                 return TrackCard
                
@@ -73,7 +76,7 @@ useEffect(()=>{
       
             {
               
-                const trackCard =  <TrackCard deselectTrack={deselectTrack} currentAudio={props.currentAudio} setCurrentAudio={props.setCurrentAudio} tracklistArea={props.tracklistArea} key={`selected-playlist-${singleTrack.id}`} track={singleTrack} onSelectedTrack={editSelectedItemList2} displayHidden={false}  selectedLibraryItems={props.selectedLibraryItems} draftTrack={props.draftTracks} ></TrackCard>
+                const trackCard =  <TrackCard deselectTrack={deselectTrack} currentAudio={props.currentAudio} setCurrentAudio={props.setCurrentAudio} tracklistArea={props.tracklistArea} key={`selected-playlist-${trackClass.track.id}`} trackClass={trackClass} onSelectedTrack={editSelectedItemList2} displayHidden={false}  selectedLibraryItems={props.selectedLibraryItems} draftTrack={props.draftTracks} ></TrackCard>
                 displayedTrackList.push(trackCard)
                 // setDisplayedTracks(displayedTracks.concat([trackCard]))
                 return TrackCard
@@ -90,9 +93,11 @@ useEffect(()=>{
 }, [editSelectedItemList2, props.allTracks, props.selectedLibraryItems, props.stagedTracks, props.filteredTracks, props.draftTracks, props.tracklistArea, props, deselectTrack])
 
 if(props.allTracks){
-    const hiddenItems = props.allTracks.filter(track=>{ //return all tracks that are hidden
-        const staged  = props.stagedTracks.includes(track)
-        const filteredOut = !props.filteredTracks.some(filteredTrack => filteredTrack.id === track.id)
+    const hiddenItems = props.allTracks.filter(trackClass=>{ //return all tracks that are hidden
+        const staged  = props.stagedTracks.some(item=>item.track.id === trackClass.track.id)
+
+        // const staged2  = props.stagedTracks.includes(trackClass.track)
+        const filteredOut = !props.filteredTracks.some(filteredTrack => filteredTrack.track.id === trackClass.track.id)
         // console.log(`staged: ${staged}, filtered: ${filteredOut}`)
 
 
@@ -101,11 +106,11 @@ if(props.allTracks){
 
     let hiddenTracksList = []
     let displayedTrackList = []
-    props.allTracks.map(singleTrack=>{
+    props.allTracks.map(trackClass=>{
                     
-        if(hiddenItems.includes(singleTrack)){
+        if(hiddenItems.includes(trackClass)){
        
-            const trackCard =  <TrackCard deselectTrack={deselectTrack} currentAudio={props.currentAudio} setCurrentAudio={props.setCurrentAudio} tracklistArea={props.tracklistArea} draftTrack={props.draftTracks} key={`selected-playlist-${singleTrack.id}`} track={singleTrack} onSelectedTrack={editSelectedItemList2} displayHidden={true} selectedLibraryItems={props.selectedLibraryItems}></TrackCard>
+            const trackCard =  <TrackCard deselectTrack={deselectTrack} currentAudio={props.currentAudio} setCurrentAudio={props.setCurrentAudio} tracklistArea={props.tracklistArea} draftTrack={props.draftTracks} key={`selected-playlist-${trackClass.track.id}`} trackClass={trackClass} onSelectedTrack={editSelectedItemList2} displayHidden={true} selectedLibraryItems={props.selectedLibraryItems}></TrackCard>
             hiddenTracksList.push(trackCard)
             return TrackCard
            
@@ -113,7 +118,7 @@ if(props.allTracks){
   
         {
           
-            const trackCard =  <TrackCard deselectTrack={deselectTrack} currentAudio={props.currentAudio} setCurrentAudio={props.setCurrentAudio} tracklistArea={props.tracklistArea}  draftTrack={props.draftTracks} key={`selected-playlist-${singleTrack.id}`} track={singleTrack} onSelectedTrack={editSelectedItemList2} displayHidden={false}  selectedLibraryItems={props.selectedLibraryItems}></TrackCard>
+            const trackCard =  <TrackCard deselectTrack={deselectTrack} currentAudio={props.currentAudio} setCurrentAudio={props.setCurrentAudio} tracklistArea={props.tracklistArea}  draftTrack={props.draftTracks} key={`selected-playlist-${trackClass.track.id}`} trackClass={trackClass} onSelectedTrack={editSelectedItemList2} displayHidden={false}  selectedLibraryItems={props.selectedLibraryItems}></TrackCard>
             displayedTrackList.push(trackCard)
             // setDisplayedTracks(displayedTracks.concat([trackCard]))
             return TrackCard

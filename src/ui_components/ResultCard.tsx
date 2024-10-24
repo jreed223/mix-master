@@ -3,10 +3,11 @@ import { relative } from 'path';
 import { Album, Artist, Playlist, SearchResults, Track } from "../../server/types";
 import { searchResults } from '../../server/SpotifyData/controllers/supplementalControllers/searchResults';
 import TrackCollection from "../models/libraryItems";
+import TrackClass from "../models/Tracks";
 
 type TrackResult = {
     type: "track"
-    item: Track
+    item: TrackClass
     draftTrack:  (e: any) => void
     isDrafted: boolean
 }
@@ -102,10 +103,10 @@ switch(props.result.type){
         return(
             <div style={{display: "flex"}} className="track-card" >
             <div style={{display: "inline-flex", position: "relative",height: "100%", aspectRatio: "1 / 1"}}>
-            <img style={{position:"relative", height: "100%", aspectRatio: "1 / 1"}} src={props.result.item?.album?.images[0].url}alt={`${props.result.item.name} cover`}></img>
+            <img style={{position:"relative", height: "100%", aspectRatio: "1 / 1"}} src={props.result.item?.track.album?.images[0].url}alt={`${props.result.item.track.name} cover`}></img>
             {/* <div onClick={()=>playPreviewAudio(track.preview_url)} style={{color: !previewState?"inherit":previewState,top:0, left:0,width:"100%", height:"100%", position:"absolute"}}>preview</div> */}
             </div>
-            <p style={{display:'inline'}}className={"track-card-text"}>Track: {trackProps.item?.name}</p>
+            <p style={{display:'inline'}}className={"track-card-text"}>Track: {trackProps.item?.track.name}</p>
             <button disabled={trackProps.isDrafted} onClick={(e)=>trackProps.draftTrack(e)}></button>
 
             </div>

@@ -9,6 +9,7 @@ import { AlbumsComponent, LikedPlaylistsComponent, UserPlaylistsComponent } from
 import DraftingArea from "./DraftingPaneComponents/DraftingPane";
 import SearchBar from "./SearchBar";
 import { searchResults } from '../../server/SpotifyData/controllers/supplementalControllers/searchResults';
+import TrackClass from "../models/Tracks";
 
 
 
@@ -134,7 +135,7 @@ console.log("ACTIVE VIEW RAN!!!")
 
 const [searchQuery, setSearchQuery] = useState()
 const [searchResults, setSearchresults] = useState(null)
-    const [stagedPlaylist, setStagedPlaylist] = useState<Track[]>([])
+    const [stagedPlaylist, setStagedPlaylist] = useState<TrackClass[]>([])
 
 const resultList=(resultsObject: SearchResults)=>{
     let fullItemList = []

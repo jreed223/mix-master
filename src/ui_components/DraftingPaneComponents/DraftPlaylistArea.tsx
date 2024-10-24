@@ -1,13 +1,14 @@
 import React, { useCallback, useEffect, useState } from "react"
 import { Track } from '../../../server/types';
 import TrackCard from "./TrackComponents/TrackCard";
+import TrackClass from "../../models/Tracks";
 
 interface DraftPlaylistContainerProps{
-    stagedTracks: Track[]|null
-    onSelectedItems:(selectedItems:Track[])=>void
-    onUndostaging: React.Dispatch<React.SetStateAction<Track[]>>
-    stagedItemsState: Track[][]
-    removeDraft: (selectedItems: Track[]) => void
+    stagedTracks: TrackClass[]|null
+    onSelectedItems:(selectedItems:TrackClass[])=>void
+    onUndostaging: React.Dispatch<React.SetStateAction<TrackClass[]>>
+    stagedItemsState: TrackClass[][]
+    removeDraft: (selectedItems: TrackClass[]) => void
     stagingState: string
     currentAudio: {url:string, audio: HTMLAudioElement}
     setCurrentAudio: React.Dispatch<React.SetStateAction<{
@@ -21,9 +22,9 @@ const DraftPlaylistContainer:React.FC<DraftPlaylistContainerProps>=(props: Draft
 
     // const [playlistItems, setPlaylistItems] = useState<PlaylistItem[]|null>(null)
     // const [displayedTracks, setDisplayedTracks] = useState<Track[]>(null)
-    const [selectedTracks, setSelectedTracks] = useState<Track[]>([])
+    const [selectedTracks, setSelectedTracks] = useState<TrackClass[]>([])
     const [trackCards, setTrackCards] = useState<React.JSX.Element[]|null>(null)
-    const [stagedHistory] = useState<Track[][]>([[]])
+    const [stagedHistory] = useState<TrackClass[][]>([[]])
     // const [] = useState<Track[][]>(null)
     const [undoRedoController, setUndoRedoController] = useState<number>(null)    // const [selectAllState, setSelectAllState] =useState<boolean[]>([])
     // const [selectAllChecked, setSelectAllChecked] = useState<boolean>(false)
@@ -32,7 +33,7 @@ const DraftPlaylistContainer:React.FC<DraftPlaylistContainerProps>=(props: Draft
 
 
     const deselectTrack = useCallback((trackId: string)=>{
-        setSelectedTracks(prev=>prev.filter(selectedTrack => selectedTrack.id !== trackId))
+        setSelectedTracks(prev=>prev.filter(selectedTrack => selectedTrack.track.id !== trackId))
     },[])
     
 
@@ -41,7 +42,7 @@ const DraftPlaylistContainer:React.FC<DraftPlaylistContainerProps>=(props: Draft
         // setSelectedPlaylistItems([])
         console.log(props.stagedTracks)
 
-        const editSelectedItemList2 = (checked: boolean,selectedItem: Track)=>{
+        const editSelectedItemList2 = (checked: boolean,selectedItem: TrackClass)=>{
             if(checked){
                 setSelectedTracks(selectedTracks.concat([selectedItem]))
         
@@ -55,8 +56,8 @@ const DraftPlaylistContainer:React.FC<DraftPlaylistContainerProps>=(props: Draft
 
         if(props.stagedTracks&& props.stagedTracks.length>0){
 
-            const tracks = props.stagedTracks.slice().reverse().map(singleTrack=>
-                <TrackCard deselectTrack={deselectTrack} currentAudio={props.currentAudio} setCurrentAudio={props.setCurrentAudio}tracklistArea="draft-playlist" draftTrack={props.removeDraft} key={`drafted-playlist-${singleTrack.id}`}  track={singleTrack} onSelectedTrack={editSelectedItemList2} displayHidden={false} selectedLibraryItems={selectedTracks}></TrackCard>
+            const tracks = props.stagedTracks.slice().reverse().map(trackClass=>
+                <TrackCard deselectTrack={deselectTrack} currentAudio={props.currentAudio} setCurrentAudio={props.setCurrentAudio}tracklistArea="draft-playlist" draftTrack={props.removeDraft} key={`drafted-playlist-${trackClass.track.id}`}  trackClass={trackClass} onSelectedTrack={editSelectedItemList2} displayHidden={false} selectedLibraryItems={selectedTracks}></TrackCard>
             )
             setTrackCards(tracks)
     
@@ -69,9 +70,9 @@ const DraftPlaylistContainer:React.FC<DraftPlaylistContainerProps>=(props: Draft
     useEffect(()=>{
 
 
-          function areListsEqual(list1: Track[], list2: Track[]): boolean {
+          function areListsEqual(list1: TrackClass[], list2: TrackClass[]): boolean {
             if (list1.length !== list2.length) return false;
-            return list1.every((obj, index)=>obj.id === list2[index].id)
+            return list1.every((obj, index)=>obj.track.id === list2[index].track.id)
           
             //return list1.every((obj1, index) => areObjectsEqual(obj1, list2[index]));
           }

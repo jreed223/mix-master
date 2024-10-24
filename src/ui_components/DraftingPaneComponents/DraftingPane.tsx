@@ -5,6 +5,7 @@ import SelectedPlaylistContainer from "./SelectedPlaylistArea";
 import DraftPlaylistContainer from "./DraftPlaylistArea";
 import TrackCollection from "../../models/libraryItems";
 import { Track } from "../../../server/types";
+import TrackClass from "../../models/Tracks";
 
 interface draftingProps{
 
@@ -17,8 +18,8 @@ interface draftingProps{
     isSearching:boolean
     setDisabledDashboard: React.Dispatch<React.SetStateAction<boolean>>
     setIsSeraching : React.Dispatch<React.SetStateAction<boolean>>
-    setStagedPlaylist: React.Dispatch<React.SetStateAction<Track[]>>
-    stagedPlaylist: Track[]
+    setStagedPlaylist: React.Dispatch<React.SetStateAction<TrackClass[]>>
+    stagedPlaylist: TrackClass[]
 
 
 }
@@ -27,7 +28,7 @@ export default function DraftingArea(props:draftingProps){
     const [displayFeatureMenu, setDisplayFeatureMenu] = useState(false)
     const [selectedFeatures, setSelecetedFeatures] = useState<Record<string, number>>({})
     // const [stagedPlaylist, setStagedPlaylist] = useState<Track[]>([])
-    const [stagedPlaylistState, setStagedPlaylistState] = useState<Track[][]>([[]])
+    const [stagedPlaylistState, setStagedPlaylistState] = useState<TrackClass[][]>([[]])
     const [isFullScreen, setIsFullScreen] = useState(false)
     const [currentAudio, setCurrentAudio] = useState<{url:string, audio: HTMLAudioElement}>(null)
 
@@ -46,7 +47,7 @@ export default function DraftingArea(props:draftingProps){
 
     const creationContainer = useRef(null)
 
-    const addStagedItems =(items:Track[])=>{
+    const addStagedItems =(items:TrackClass[])=>{
         const newStagedPlaylist = props.stagedPlaylist.concat(items)
         props.setStagedPlaylist(newStagedPlaylist)
         setStagedPlaylistState(stagedPlaylistState.concat([newStagedPlaylist]))
@@ -57,8 +58,8 @@ export default function DraftingArea(props:draftingProps){
 
     }
 
-    const removeStagedItems = (items:Track[])=>{
-        const newStagedPlaylist = props.stagedPlaylist.filter(stagedItem=>!items.some(removedItem => removedItem.id === stagedItem.id))
+    const removeStagedItems = (items:TrackClass[])=>{
+        const newStagedPlaylist = props.stagedPlaylist.filter(stagedItem=>!items.some(removedItem => removedItem.track.id === stagedItem.track.id))
         props.setStagedPlaylist(newStagedPlaylist)
         setStagedPlaylistState(stagedPlaylistState.concat([newStagedPlaylist]))
         console.log("Removed items: ",items)
