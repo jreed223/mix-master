@@ -1,10 +1,10 @@
 import React from "react";
-import Library from "../../models/libraryItems";
+import TrackCollection from "../../models/libraryItems";
 
 
 export interface LibraryItemCardProps{
-    onSelectedAlbum: (album: Library, currentView: string) => void
-    libraryItem: Library;
+    onSelectedAlbum: (album: TrackCollection, currentView: string) => void
+    libraryItem: TrackCollection;
     ownerId: string;
     selectedLibraryItemId: string
     currentView: string

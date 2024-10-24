@@ -76,7 +76,7 @@
   position: absolute;
   right: 0;
    height:100%; 
-
+   color: rgb(135, 135, 135);
    transition: 1s;
 }
 .search-bar-container{

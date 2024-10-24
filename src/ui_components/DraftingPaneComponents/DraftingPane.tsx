@@ -3,12 +3,12 @@ import React, { useCallback, useEffect, useRef, useState } from "react"
 import PlaylistMenuBar from "./PlaylistMenu";
 import SelectedPlaylistContainer from "./SelectedPlaylistArea";
 import DraftPlaylistContainer from "./DraftPlaylistArea";
-import Library from "../../models/libraryItems";
+import TrackCollection from "../../models/libraryItems";
 import { Track } from "../../../server/types";
 
 interface draftingProps{
 
-    selectedLibraryItem: Library,
+    selectedLibraryItem: TrackCollection,
 
     setStagingState: React.Dispatch<React.SetStateAction<string>>,
     stagingState: string,
@@ -17,8 +17,8 @@ interface draftingProps{
     isSearching:boolean
     setDisabledDashboard: React.Dispatch<React.SetStateAction<boolean>>
     setIsSeraching : React.Dispatch<React.SetStateAction<boolean>>
-
-
+    setStagedPlaylist: React.Dispatch<React.SetStateAction<Track[]>>
+    stagedPlaylist: Track[]
 
 
 }
@@ -26,7 +26,7 @@ interface draftingProps{
 export default function DraftingArea(props:draftingProps){
     const [displayFeatureMenu, setDisplayFeatureMenu] = useState(false)
     const [selectedFeatures, setSelecetedFeatures] = useState<Record<string, number>>({})
-    const [stagedPlaylist, setStagedPlaylist] = useState<Track[]>([])
+    // const [stagedPlaylist, setStagedPlaylist] = useState<Track[]>([])
     const [stagedPlaylistState, setStagedPlaylistState] = useState<Track[][]>([[]])
     const [isFullScreen, setIsFullScreen] = useState(false)
     const [currentAudio, setCurrentAudio] = useState<{url:string, audio: HTMLAudioElement}>(null)
@@ -47,8 +47,8 @@ export default function DraftingArea(props:draftingProps){
     const creationContainer = useRef(null)
 
     const addStagedItems =(items:Track[])=>{
-        const newStagedPlaylist = stagedPlaylist.concat(items)
-        setStagedPlaylist(newStagedPlaylist)
+        const newStagedPlaylist = props.stagedPlaylist.concat(items)
+        props.setStagedPlaylist(newStagedPlaylist)
         setStagedPlaylistState(stagedPlaylistState.concat([newStagedPlaylist]))
         console.log("Added items: ",items)
         console.log("new Staged Playlist: ",newStagedPlaylist)
@@ -58,8 +58,8 @@ export default function DraftingArea(props:draftingProps){
     }
 
     const removeStagedItems = (items:Track[])=>{
-        const newStagedPlaylist = stagedPlaylist.filter(stagedItem=>!items.some(removedItem => removedItem.id === stagedItem.id))
-        setStagedPlaylist(newStagedPlaylist)
+        const newStagedPlaylist = props.stagedPlaylist.filter(stagedItem=>!items.some(removedItem => removedItem.id === stagedItem.id))
+        props.setStagedPlaylist(newStagedPlaylist)
         setStagedPlaylistState(stagedPlaylistState.concat([newStagedPlaylist]))
         console.log("Removed items: ",items)
         console.log("new Staged Playlist: ",newStagedPlaylist)
@@ -164,7 +164,7 @@ export default function DraftingArea(props:draftingProps){
             <div className="playlist-items-containers" style={{position: "relative"}}>
            
                 
-                <SelectedPlaylistContainer currentAudio={currentAudio} setCurrentAudio={setCurrentAudio} isFullScreen={isFullScreen} stagingState={props.stagingState} isFilterDisplayed={displayFeatureMenu} onSelectedItems={addStagedItems} libraryItem={props.selectedLibraryItem} stagedPlaylistItems={stagedPlaylist} onGetNextItems={getNextTracks} featureFilters={selectedFeatures}></SelectedPlaylistContainer>
+                <SelectedPlaylistContainer currentAudio={currentAudio} setCurrentAudio={setCurrentAudio} isFullScreen={isFullScreen} stagingState={props.stagingState} isFilterDisplayed={displayFeatureMenu} onSelectedItems={addStagedItems} libraryItem={props.selectedLibraryItem} stagedPlaylistItems={props.stagedPlaylist} onGetNextItems={getNextTracks} featureFilters={selectedFeatures}></SelectedPlaylistContainer>
 
 
                 {<div style={{display: "flex", overflowX:"hidden", flexDirection:"column", flex:displayFeatureMenu?"1":"0"}} className="new-playlist">
@@ -180,7 +180,7 @@ export default function DraftingArea(props:draftingProps){
 
                 </div>}
 
-                <DraftPlaylistContainer currentAudio={currentAudio} setCurrentAudio={setCurrentAudio} stagingState={props.stagingState} stagedItemsState={stagedPlaylistState} onUndostaging={setStagedPlaylist} onSelectedItems={removeStagedItems} stagedTracks={stagedPlaylist} removeDraft={removeStagedItems }></DraftPlaylistContainer>
+                <DraftPlaylistContainer currentAudio={currentAudio} setCurrentAudio={setCurrentAudio} stagingState={props.stagingState} stagedItemsState={stagedPlaylistState} onUndostaging={props.setStagedPlaylist} onSelectedItems={removeStagedItems} stagedTracks={props.stagedPlaylist} removeDraft={removeStagedItems }></DraftPlaylistContainer>
             </div >
         </div>
     )

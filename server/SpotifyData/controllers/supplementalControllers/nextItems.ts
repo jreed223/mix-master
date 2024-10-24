@@ -7,9 +7,9 @@ import { PlaylistItem, Tracklist } from '../../../types';
 
 export const nextItems = async (req: expressRequest, res: expressResponse)=>{
     const accessToken = req.cookies.access_token? req.cookies.access_token:res.locals.access_token
-    const nextLink = req.body
+    const nextLink = req.body.next
     if(accessToken && nextLink){
-      const nextTracks:Tracklist = await  fetch(nextLink.next,{
+      const nextTracks:Tracklist = await  fetch(nextLink,{
             method: "GET", headers: { Authorization: `Bearer ${accessToken}` }
         }).then(async (response)=>{
             if(response.ok){

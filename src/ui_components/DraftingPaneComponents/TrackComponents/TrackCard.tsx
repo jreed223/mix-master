@@ -139,7 +139,7 @@ useEffect(()=>{
                         </>
                 :<></>}
             <div style={{position: "relative",height: "100%", aspectRatio: "1 / 1"}}>
-            <img style={{position:"relative", height: "100%", aspectRatio: "1 / 1"}}onClick={(e)=>handleCheck()} src={track?.images[0]?.url}alt={`${track.name} cover`}></img>
+            <img style={{position:"relative", height: "100%", aspectRatio: "1 / 1"}}onClick={(e)=>handleCheck()} src={(track?.album?.images[0]?.url)?(track.album.images[0].url):(track?.images[0]?.url)}alt={`${track.name} cover`}></img>
             <div onClick={()=>playPreviewAudio(track.preview_url)} style={{color: !previewState?"inherit":previewState,top:0, left:0,width:"100%", height:"100%", position:"absolute"}}>preview</div>
             </div>
             {tracklistArea==="selected-playlist"?

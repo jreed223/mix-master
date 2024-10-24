@@ -1,13 +1,14 @@
 import { Suspense, useEffect, useRef, useState } from "react";
 // import PlaylistCard, { PlaylistCardProps } from "./PlaylistCard";
 import React from "react";
-import { UserProfile } from '../../server/types';
+import { SearchResults, Track, UserProfile } from '../../server/types';
 
-import Library from "../models/libraryItems";
+import TrackCollection from "../models/libraryItems";
 import CircularProgress from '@mui/material/CircularProgress';
 import { AlbumsComponent, LikedPlaylistsComponent, UserPlaylistsComponent } from "./UserLibrary/LibraryComponents";
 import DraftingArea from "./DraftingPaneComponents/DraftingPane";
 import SearchBar from "./SearchBar";
+import { searchResults } from '../../server/SpotifyData/controllers/supplementalControllers/searchResults';
 
 
 
@@ -24,7 +25,7 @@ interface UserLibraryProps{
 
 export default function UserLibrary(props:UserLibraryProps){
     
-    const [selectedLibraryItem, setSelectedLibraryItem] = useState<Library|null>(null)
+    const [selectedLibraryItem, setSelectedLibraryItem] = useState<TrackCollection|null>(null)
     // const [stagingState, setStagingState] = useState<string|null>(null)
 
 
@@ -34,7 +35,7 @@ export default function UserLibrary(props:UserLibraryProps){
     const likedItemsContainer = useRef(null)
 
 
-    const displayTracks = (selection: Library, currentView: string)=>{
+    const displayTracks = (selection: TrackCollection, currentView: string)=>{
         props.setStagingState("open")
         props.setActiveView([currentView])
         props.setDisabledDashboard(true)
@@ -131,9 +132,38 @@ console.log("ACTIVE VIEW RAN!!!")
 
 }, [props.isSearching, props.activeView])
 
+const [searchQuery, setSearchQuery] = useState()
+const [searchResults, setSearchresults] = useState(null)
+    const [stagedPlaylist, setStagedPlaylist] = useState<Track[]>([])
 
-const handleSearch=()=>{
+const resultList=(resultsObject: SearchResults)=>{
+    let fullItemList = []
+    // for(let type of Object.keys(searchResults)){
+        
+      fullItemList=  fullItemList.concat(resultsObject?.albums.items)
+      fullItemList= fullItemList.concat(resultsObject?.artists.items)
+      fullItemList= fullItemList.concat(resultsObject?.tracks.items)
+      fullItemList= fullItemList.concat(resultsObject?.playlists.items)
+    // }
+    console.log("FILL ITEM LIST: ",fullItemList)
+}
+
+const handleSearch= async ()=>{
+    // event.preventDefault()
     if(props.isSearching){
+
+        const results = await fetch("/spotify-data/search-results", {
+            method: "POST",
+            headers:{
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({query: searchQuery})
+            // headers: {"id" : `${this.id}` }
+        })
+        const newResults = await results.json()
+        console.log(newResults)
+        setSearchresults(newResults)
+        resultList(newResults)
 
     }else{
         props.setIsSearching(true)
@@ -149,7 +179,7 @@ const handleSearch=()=>{
 
         return (
             <div className="main-content-area" style={{position: "relative"}}>
-                <DraftingArea setIsSeraching={props.setIsSearching}setDisabledDashboard={props.setDisabledDashboard} isSearching={props.isSearching} selectedLibraryItem={selectedLibraryItem} setStagingState={props.setStagingState} stagingState={props.stagingState} setActiveView={props.setActiveView} activeView={props.activeView} ></DraftingArea>
+                <DraftingArea stagedPlaylist={stagedPlaylist} setStagedPlaylist={setStagedPlaylist} setIsSeraching={props.setIsSearching}setDisabledDashboard={props.setDisabledDashboard} isSearching={props.isSearching} selectedLibraryItem={selectedLibraryItem} setStagingState={props.setStagingState} stagingState={props.stagingState} setActiveView={props.setActiveView} activeView={props.activeView} ></DraftingArea>
 
                     <div ref={libraryContainer} style={{flexGrow:1}} className="library-container" id="library-container">
                             
@@ -168,8 +198,10 @@ const handleSearch=()=>{
                             </div>
 
                     </div>
-                    <SearchBar setActiveView={props.setActiveView} setDisabledDashboard={props.setDisabledDashboard} stagingState={props.stagingState} setIsSearching={props.setIsSearching} isSearching={props.isSearching}></SearchBar>
-                    <button style={{position: "absolute", right:"15px", top: "15px"}} onClick={()=>{handleSearch(); }}>search</button>
+                    <form style={{height:"100%"}}>
+                    <SearchBar setSelectedLibraryItem={setSelectedLibraryItem} setStagingState={props.setStagingState} stagedPlaylist={stagedPlaylist} setStagedPlaylist={setStagedPlaylist} handleSearch={handleSearch} searchResults={searchResults} searchQuery={searchQuery} setSearchQuery={setSearchQuery} setActiveView={props.setActiveView} setDisabledDashboard={props.setDisabledDashboard} stagingState={props.stagingState} setIsSearching={props.setIsSearching} isSearching={props.isSearching}></SearchBar>
+                    <button style={{position: "absolute", right:"15px", top: "15px"}} type="submit" onClick={(e:React.MouseEvent<HTMLButtonElement>)=>{e.preventDefault();handleSearch(); }}>search</button>
+                    </form>
             </div>)
 
 

@@ -176,3 +176,42 @@ export interface Tag {
 }
 
 
+export interface SearchResults{
+
+albums: {
+    href: string
+    limit: number
+    next: string|null
+    offset: number
+    previous: string|null
+    total: number
+    items: Album['album'][]
+}
+artists: {
+    href: string
+    limit: number
+    next: string|null
+    offset: number
+    previous: string|null
+    total: number
+    items: Artist[]
+}
+playlists: {
+    href: string
+    limit: number
+    next: string|null
+    offset: number
+    previous: string|null
+    total: number
+    items: Playlist[]
+}
+tracks: {
+    href: string
+    limit: number
+    next: string|null
+    offset: number
+    previous: string|null
+    total: number
+    items: Track[]
+}
+}

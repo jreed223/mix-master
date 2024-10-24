@@ -1,7 +1,7 @@
 import { CategorizedPlaylist, PlaylistItem, Tag, Track, Image, Features, Artist, Album, Playlist, LikedSongs, Tracklist } from "../../server/types";
 
-export type LibraryItem = Playlist | Album["album"] | LikedSongs
-export default class Library {
+export type Collection = Playlist | Album["album"] | LikedSongs
+export default class TrackCollection {
     type: string;
     id: string;
     image: Image;
@@ -18,50 +18,51 @@ export default class Library {
     trackDataState?: [{tracks:Track[], audioFeatures: boolean, categories: boolean}]|null
 
     constructor(
-        libraryItem: LibraryItem,
+        collection: Collection,
         
 
     ){
-        console.log("Library Item type in constructor: ",libraryItem)
+        console.log("Library Item type in constructor: ",collection)
         this.audioFeaturesSet = false;
-        this.type = libraryItem.type
+        this.type = collection.type
 
-        switch (libraryItem.type) {
+        switch (collection.type) {
 
             case 'playlist':
-                this.name = libraryItem.name;
-                this.id = libraryItem.id
-                this.image = libraryItem.images[0]
-                this.name = libraryItem.name
-                this.owner = libraryItem.owner
-                this.uri = libraryItem.uri
-                this.totalTracks = libraryItem.tracks.total
+                this.name = collection.name;
+                this.id = collection.id
+                this.image = collection.images[0]
+                this.name = collection.name
+                this.owner = collection.owner
+                this.uri = collection.uri
+                this.totalTracks = collection.tracks.total
                 this.tracks = null
               break;
             case 'album':
-                this.name = libraryItem.name;
-                this.id = libraryItem.id
-                this.image = libraryItem.images[0]
-                this.name = libraryItem.name
-                this.artists = libraryItem.artists
-                this.uri = libraryItem.uri
-                this.totalTracks = libraryItem.total_tracks
-                this.tracks = libraryItem.tracks.items.map((item)=>{
-                    item.images = libraryItem.images
+                this.name = collection.name;
+                this.id = collection.id
+                this.image = collection.images[0]
+                this.name = collection.name
+                this.artists = collection.artists
+                this.uri = collection.uri
+                this.totalTracks = collection.total_tracks
+                this.tracks = collection.tracks.items.map((item)=>{
+                    item.images = collection.images
                     console.log("IMAGES",item.images)
 
                     return item
                 })
-                this.trackDataState = [{tracks:libraryItem.tracks.items, audioFeatures: false, categories: false}]
+                //TODO:Should this be this.tracks?
+                this.trackDataState = [{tracks:collection.tracks.items, audioFeatures: false, categories: false}]
               break;
             case 'liked songs':
                 this.name = "Liked Songs";
                 this.id = "Liked Songs";
-                this.tracks = libraryItem.items.map(item=>item.track)
+                this.tracks = collection.items.map(item=>item.track)
                 //this.image = libraryItem.images[0]
                 //this.owner = libraryItem.
                 //this.uri = libraryItem.
-                this.totalTracks = libraryItem.total
+                this.totalTracks = collection.total
 
               break;
             default:

@@ -29,14 +29,14 @@ export const userProfile = (req: expressRequest, res: expressResponse)=>{
                 res.send(user)
             }else{
                 const error = await response.json()
-                // res.clearCookie('authorizing')
-                // res.clearCookie('access_token')
+                res.clearCookie('authorizing')
+                res.clearCookie('access_token')
                 console.error("Failed to retrieve user (/spotify-data/user): ", error)
             }
         })
         .catch((e:Error)=>{
-            // res.clearCookie('authorizing')
-            // res.clearCookie('access_token')
+            res.clearCookie('authorizing')
+            res.clearCookie('access_token')
             // res.clearCookie('refresh_token')
             console.error("Fetch operation failed (/spotify-data/user)): ", e)
         })

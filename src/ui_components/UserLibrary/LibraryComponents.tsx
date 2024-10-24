@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react"
 // import { Album } from '@spotify/web-api-ts-sdk';
 // import UserLibrary from "../SinglePageView";
 import { Album, Playlist } from "../../../server/types";
-import Library from "../../models/libraryItems";
+import TrackCollection from "../../models/libraryItems";
 import LibraryItemCard from "./LibraryItemCard";
 
     const fetchAllPlaylists = ()=>{
@@ -66,7 +66,7 @@ import LibraryItemCard from "./LibraryItemCard";
     interface LibraryComponentProps{
       selectedLibraryItemId: string|null,
         userId: string,
-        onPlaylistSelection: (selection: Library, currentView: string) => void
+        onPlaylistSelection: (selection: TrackCollection, currentView: string) => void
         activeView: string[]
         stagingState: String
         isSearching: boolean
@@ -84,7 +84,7 @@ import LibraryItemCard from "./LibraryItemCard";
         playlistObject.owner.id === props.userId
         )
           
-          const userPlaylistsClass: Library[] = userPlaylists.map((playlistObject:Playlist)=>new Library(playlistObject))
+          const userPlaylistsClass: TrackCollection[] = userPlaylists.map((playlistObject:Playlist)=>new TrackCollection(playlistObject))
           setUserPlaylistsItems(userPlaylistsClass)
     }
 
@@ -153,7 +153,7 @@ import LibraryItemCard from "./LibraryItemCard";
           )
           
           // const userPlaylistsClass: Library[] = myPlaylists.map((playlistObject:Playlist)=>new Library(playlistObject))
-          const likedPlaylistsClass: Library[] = likedPlaylists.map((playlistObject:Playlist)=>new Library(playlistObject))
+          const likedPlaylistsClass: TrackCollection[] = likedPlaylists.map((playlistObject:Playlist)=>new TrackCollection(playlistObject))
         setlikedPlaylistItems(likedPlaylistsClass)
 
       }
@@ -311,7 +311,7 @@ import LibraryItemCard from "./LibraryItemCard";
         if(!albumItems){
           const albums : Album[] = fetchedAlbumsResource.read()
           const albumClasslist =  albums.map((album:Album)=>{
-            return new Library(album['album'])})
+            return new TrackCollection(album['album'])})
           setAlbumItems(albumClasslist)
         }
      

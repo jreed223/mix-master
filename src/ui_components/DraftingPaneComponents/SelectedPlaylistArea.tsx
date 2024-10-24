@@ -1,11 +1,11 @@
 import React, {  useCallback, useEffect, useState } from "react"
 import { Features, Track } from '../../../server/types';
 // import PlaylistClass from "../../models/playlistClass"
-import Library from "../../models/libraryItems"
+import TrackCollection from "../../models/libraryItems"
 // import { LibraryItem } from '../../models/libraryItems';
 import Tracklist from "./TrackComponents/Tracklist";
 interface SelectedPlaylistContainerProps{
-    libraryItem: Library|null
+    libraryItem: TrackCollection|null
     stagedPlaylistItems: Track[]|null
     onSelectedItems: (selectedItems: Track[]) => void
     onGetNextItems: ()=>void

@@ -19,7 +19,7 @@ export default function NavBar({currentUser}:navProps){
     return(
         <div style={{overflow: 'clip'}}>
             <span style={{color: "rgb(135, 135, 135)"}}className="navbar">
-                <h2>User Library</h2>
+                <h3>User Library</h3>
                 <button disabled={disabledDashboard} onClick={()=>{setActiveView((prev)=>[prev.at(-2),prev.at(-1),"dashboard"])}}>Dashboard</button>
                 <button onClick={()=>{setActiveView((prev)=>[prev.at(-2),prev.at(-1), "user playlists"]); stagingState==="open"?setIsSearching(false):setIsSearching(prev=>prev)}}>My Playlists</button>
                 <button onClick={()=>{setActiveView((prev)=>[prev.at(-2), prev.at(-1), "liked playlists"]); stagingState==="open"?setIsSearching(false):setIsSearching(prev=>prev)}}>Liked Playlists</button>
