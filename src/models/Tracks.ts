@@ -11,4 +11,8 @@ export default class TrackClass{
     track: Track
     private collection?:TrackCollection|null
     audio_features?: Features|null
+
+    getCollection(){
+        return this.collection
+    }
 }

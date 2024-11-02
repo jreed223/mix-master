@@ -142,7 +142,7 @@ const filterFeatures2  = useCallback(async ()=>{
                         // console.log("feature-val: ",featureVal)
                         filterPlaylist = filterPlaylist.filter(item=> { //redeclares filterplaylist using the filter function
     
-                        return item.audio_features[feature]>=featureVal-.1&&item.audio_features[feature]<=featureVal+.1  //returns tracks with feature value that are in range of +/-.1 of selecetd value
+                        return item.audio_features[feature]>=featureVal-.075&&item.audio_features[feature]<=featureVal+.075  //returns tracks with feature value that are in range of +/-.1 of selecetd value
                         })
 
                     }

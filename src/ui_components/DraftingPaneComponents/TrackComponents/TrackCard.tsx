@@ -123,6 +123,8 @@ useEffect(()=>{
     // }
     // console.log("checkbox checked? ", props.checked)
     // console.log(track.album.images)
+
+    const trackImgUrl = trackClass?.getCollection()?.image.url||trackClass.track?.album?.images[0]?.url||trackClass.track?.images[0]?.url
     return(
         <div className={`${tracklistArea} track-card`} id={trackClass.track.id} style={displayStyle}>
             
@@ -140,7 +142,7 @@ useEffect(()=>{
                         </>
                 :<></>}
             <div style={{position: "relative",height: "100%", aspectRatio: "1 / 1"}}>
-            <img style={{position:"relative", height: "100%", aspectRatio: "1 / 1"}}onClick={(e)=>handleCheck()} src={(trackClass.track?.album?.images[0]?.url)?(trackClass.track?.album.images[0].url):(trackClass.track?.images[0]?.url)}alt={`${trackClass.track.name} cover`}></img>
+            <img loading="lazy" style={{position:"relative", height: "100%", aspectRatio: "1 / 1"}}onClick={(e)=>handleCheck()} src={trackImgUrl}alt={`${trackClass.track.name} cover`}></img>
             <div onClick={()=>playPreviewAudio(trackClass.track.preview_url)} style={{color: !previewState?"inherit":previewState,top:0, left:0,width:"100%", height:"100%", position:"absolute"}}>preview</div>
             </div>
             {tracklistArea==="selected-playlist"?

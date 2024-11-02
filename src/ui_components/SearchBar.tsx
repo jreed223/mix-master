@@ -54,6 +54,7 @@ export default function SearchBar(props:SearchProps){
             return album
         })
                 const tracklistClass = new TrackCollection(albumObject)
+                console.log('TRACKLIST CLASS: ',tracklistClass)
                 props.setSelectedLibraryItem(tracklistClass)
                 props.setStagingState('open')
 

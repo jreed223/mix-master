@@ -9,7 +9,7 @@ import express, { Request as expressRequest, Response as expressResponse, NextFu
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import { userRoutes } from './SpotifyData/routers/userRouter';
-import { supplementalRoutes } from './SpotifyData/routers/supplementalRouter';
+import { draftingPaneRoutes, searchBarRoutes } from './SpotifyData/routers/supplementalRouter';
 import { libraryRoutes } from './SpotifyData/routers/libraryRouter';
 
 type FetchResponse = Response;  //Fetch API Response
@@ -110,7 +110,9 @@ app.use(express.json({limit: '50mb'}));
 app.use(express.static("build"))
 
 userRoutes(app)
-supplementalRoutes(app)
+// supplementalRoutes(app)
+searchBarRoutes(app)
+draftingPaneRoutes(app)
 libraryRoutes(app)
 
 
