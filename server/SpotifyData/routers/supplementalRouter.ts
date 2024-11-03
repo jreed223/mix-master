@@ -25,9 +25,7 @@ import { artistAlbums } from '../controllers/supplementalControllers/artistAlbum
 
 export const draftingPaneRoutes  = (app: Application)=>{
     app.post("/spotify-data/next-playlist-items", refreshTokens, nextItems)
-
     app.post("/spotify-data/audio-features", refreshTokens, audioFeatures)
-    
     app.get("/lastFM-data/track-tags", trackTags)
 
 
@@ -36,8 +34,8 @@ export const draftingPaneRoutes  = (app: Application)=>{
 
 export const searchBarRoutes = (app: Application)=>{
     app.post("/spotify-data/search-results", refreshTokens, searchResults)
-    app.post("/spotify-data/album", album)
-    app.post("/spotify-data/artistAlbums", artistAlbums)
+    app.post("/spotify-data/album",refreshTokens, album)
+    app.post("/spotify-data/artistAlbums",refreshTokens, artistAlbums)
 
     
 }

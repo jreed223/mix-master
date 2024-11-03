@@ -38,6 +38,11 @@ export default function SearchBar(props:SearchProps){
             props.setDisabledDashboard(false);
         }
     }
+    const draftTrack = (e, trackClass:TrackClass)=>{
+        e.preventDefault()
+            props.setStagedPlaylist(prev=>prev?prev.concat([trackClass]):[trackClass])
+            props.setStagingState("open")
+    }
 
     const displayTracks = async (item: Playlist|Album['album'])=>{
 
@@ -60,6 +65,8 @@ export default function SearchBar(props:SearchProps){
 
             }else{
 
+                
+
                 const tracklistClass = new TrackCollection(item)
                 props.setSelectedLibraryItem(tracklistClass)
                 props.setStagingState('open')
@@ -69,11 +76,17 @@ export default function SearchBar(props:SearchProps){
  
     }
 
+    const isDrafted= (trackId:string) => props.stagedPlaylist?.some(item=>item.track.id===trackId)
+
+
   
     
     if(props.searchResults){
        const albumCards =  props.searchResults.albums.items.map((album)=>{
-            return <ResultCard result={{
+            return <ResultCard 
+            key={album.id}
+
+            result={{
                 type: "album",
                 item: album,
                 displayTracks: displayTracks
@@ -81,7 +94,10 @@ export default function SearchBar(props:SearchProps){
         })
 
         const playlistCards =  props.searchResults.playlists.items.map((playlist)=>{
-            return <ResultCard result={{
+            return <ResultCard
+            key={playlist.id}
+
+            result={{
                 type: "playlist",
                 item: playlist,
                 displayTracks: displayTracks
@@ -90,13 +106,10 @@ export default function SearchBar(props:SearchProps){
 
         const trackCards =  props.searchResults.tracks.items.map((track)=>{
             const trackClass = new TrackClass(track)
-            const draftTrack = (e)=>{
-                e.preventDefault()
-                    props.setStagedPlaylist(prev=>prev?prev.concat([trackClass]):[trackClass])
-                    props.setStagingState("open")
-            }
-            const isDrafted = props.stagedPlaylist?.some(item=>item.track.id===track.id)
-            return <ResultCard result={{
+            
+            return <ResultCard 
+            key={track.id}
+            result={{
                 type: "track",
                 item: trackClass,
                 draftTrack: draftTrack,
@@ -107,11 +120,17 @@ export default function SearchBar(props:SearchProps){
         })
 
         const artistCards =  props.searchResults.artists.items.map((artist)=>{
+            
+
             return <ResultCard 
+            key={artist.id}
             
                 result={{
                 type: "artist",
                 item: artist,
+                displayTracks: displayTracks,
+                draftTrack: draftTrack,
+                isDrafted:isDrafted
 
             }}></ResultCard>
         })

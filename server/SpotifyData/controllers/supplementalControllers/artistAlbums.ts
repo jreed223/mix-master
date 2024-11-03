@@ -9,11 +9,13 @@ export async function fetchArtistAlbums(accessToken:string, id: string): Promise
     const albumTypes=['single', 'album', 'appears_on', 'compilation']
     const params = new URLSearchParams()
     // params.append("q", query)
-    params.set("include_groups", albumTypes.join(','))
-    params.set("limit", "50")
-try{
+    // params.set("include_groups", albumTypes.join(','))
+    params.append("limit", "50")
     
-    const res = await fetch("https://api.spotify.com/v1/artists/"+ id +" /albums/?"+ params.toString(), {
+try{
+    console.log(`https://api.spotify.com/v1/artists/${id}/albums?`+ params)
+    
+    const res = await fetch(`https://api.spotify.com/v1/artists/${id}/albums?`+ params, {
         method: "GET", headers: { Authorization: `Bearer ${accessToken}` }
     });
     //console.log(res.headers)
@@ -46,14 +48,14 @@ export const artistAlbums = (req: expressRequest, res: expressResponse)=>{
                 res.send(albumsResult)
             }else{
                 const error = await response.json()
-                console.error("Failed to retrieve playlists (/spotify-data/playlists): ", error)
+                console.error("Failed to retrieve dtata (/spotify-data/playlists): ", error)
             }
         })
         .catch(e=>{
             // res.clearCookie('authorizing')
             // res.clearCookie('access_token')
             // res.clearCookie('refresh_token')
-            console.error("Fetch operation failed (/spotify-data/playlists)): ", e)
+            console.error("Fetch operation failed HERE (/spotify-data/playlists)): ", e)
         })
     }else{
         console.error("No access token found (/spotify-data/playlists)")
