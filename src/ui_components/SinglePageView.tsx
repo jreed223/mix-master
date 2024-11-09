@@ -137,8 +137,9 @@ const [searchQuery, setSearchQuery] = useState()
 const [searchResults, setSearchresults] = useState(null)
     const [stagedPlaylist, setStagedPlaylist] = useState<TrackClass[]>([])
 
+type ResultTypes = SearchResults['albums']['items']|SearchResults['playlists']['items']|SearchResults['artists']['items']|SearchResults['tracks']['items']
 const resultList=(resultsObject: SearchResults)=>{
-    let fullItemList = []
+    let fullItemList :ResultTypes[]= []
     // for(let type of Object.keys(searchResults)){
         
       fullItemList=  fullItemList.concat(resultsObject?.albums.items)

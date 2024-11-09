@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState, useRef } from "react"
 // import { Album } from '@spotify/web-api-ts-sdk';
 // import UserLibrary from "../SinglePageView";
 import { Album, Playlist } from "../../../server/types";
 import TrackCollection from "../../models/libraryItems";
 import LibraryItemCard from "./LibraryItemCard";
+// import useRef from 'react';
 
     const fetchAllPlaylists = ()=>{
         console.log("FETCHING PLAYLISTS")
@@ -140,11 +141,15 @@ import LibraryItemCard from "./LibraryItemCard";
 
     export const LikedPlaylistsComponent : React.FC<LibraryComponentProps> = (props:LibraryComponentProps)=>{
       const [likedPlaylistItems, setlikedPlaylistItems] =useState(null)
+      const [currentCards, setCurrentCards] = useState(null)
+      const [playlistCards, setPlaylistCards] = useState(null)
+      const [threshold, setThreshold] = useState(null)
 
-      // let myPlaylists = []
-      // let likedPlaylists = []
-  
-      // console.log("RESOURCE: ",playlists)
+      const playlistsContainer = useRef(null)
+
+
+
+
 
       if(!likedPlaylistItems){
         const playlists: Playlist[] = fetchedPlaylistsResource.read()
@@ -155,9 +160,17 @@ import LibraryItemCard from "./LibraryItemCard";
           // const userPlaylistsClass: Library[] = myPlaylists.map((playlistObject:Playlist)=>new Library(playlistObject))
           const likedPlaylistsClass: TrackCollection[] = likedPlaylists.map((playlistObject:Playlist)=>new TrackCollection(playlistObject))
         setlikedPlaylistItems(likedPlaylistsClass)
+        
 
       }
 
+      useEffect(()=>{
+        if(likedPlaylistItems){
+          const cards = likedPlaylistItems?.map(singlePlaylist =>
+            <LibraryItemCard setIsSearching={props.setIsSearching} key={singlePlaylist.id} onSelectedAlbum={props.onPlaylistSelection} libraryItem={singlePlaylist} ownerId={""} selectedLibraryItemId={props.selectedLibraryItemId} currentView={"liked playlists"} ></LibraryItemCard>)
+          setPlaylistCards(cards)
+        }
+      }, [likedPlaylistItems, props.setIsSearching, props.onPlaylistSelection, props.selectedLibraryItemId])
     
 
     const [likedPlaylistsStyle, setLikedPlaylistsStyle] = useState({
@@ -169,17 +182,19 @@ import LibraryItemCard from "./LibraryItemCard";
     const [likedContentStyle, setLikedContentStyle] = useState({height: "calc(50vh - 82px)",
       // animation: "shrink-to-default-albums",
       transition: "1s",
-      overflowY:'auto' as 'auto'    })
+      overflowY:'clip' as 'auto'|'clip'    })
+
 
       useEffect(()=>{
 
           switch(props.activeView.at(-1)){
             case "dashboard":
+              // setCurrentCards(playlistCards?.slice(0,3))
               setLikedContentStyle({
                 height: "calc(50vh - 82px)",
                 // animation: "shrink-to-default-albums",
                 transition: "1s",
-                overflowY:'auto'
+                overflowY:'clip'
               })
 
               if(props.stagingState==="open"){
@@ -203,13 +218,9 @@ import LibraryItemCard from "./LibraryItemCard";
               }
               
 
-              // setLikedPlaylistsStyle({
-              //   width: props.stagingState==="open"?"25vw":"50vw",
-              //   height: "50%",
-              //   transition: "1s"
-              // })
               break;
             case "liked playlists":
+              // setCurrentCards(playlistCards)
               setLikedContentStyle({
                 height: "calc(100vh - 107px)",
                 // animation: "grow-from-default-albums",
@@ -239,11 +250,7 @@ import LibraryItemCard from "./LibraryItemCard";
               }
 
 
-              // setLikedPlaylistsStyle({
-              //   width: props.stagingState==="open"||props.isSearching?"50vw":"100vw",
-              //   height: "100%",
-              //   transition: "1s"
-              // })
+
               break;
             case "liked albums":
               if(props.stagingState==="open"||props.isSearching){
@@ -266,33 +273,67 @@ import LibraryItemCard from "./LibraryItemCard";
 
               }
 
-              // setLikedPlaylistsStyle({
-              //   width: props.stagingState==="open"||props.isSearching?"50vw":"100vw",
-              //   height: "0%",
-              //   transition: "1s"
-              // })
-
           }
  
-      }, [props.stagingState, props.activeView, props.isSearching])
+      }, [props.stagingState, props.activeView, props.isSearching, playlistCards])
 
+      useEffect(()=>{
+        const calcThreshold = ()=> {
+          setThreshold((50/100)*window.innerHeight)
+        }
+
+        calcThreshold()
+
+        window.addEventListener('resize', calcThreshold)
+
+        return () => {
+          window.removeEventListener('resize', calcThreshold);
+        };
+       },[])
+
+
+      useEffect(()=>{
+
+      const resizeObserver = new ResizeObserver(entries => {
+        for (let entry of entries) {
+          const height = entry.contentRect.height;
+          console.log('Observed height:', height);
+          if (height < threshold) {
+            // setCurrentCards(playlistCards.slice(0,3))
+            const previewContentStyle = {...likedContentStyle, overflowY: 'clip' as "clip"}
+            setLikedContentStyle(previewContentStyle)
+          } else {
+            const fullContentStyle = {...likedContentStyle, overflowY: 'auto' as "auto"}
+            setLikedContentStyle(fullContentStyle)
+            // setCurrentCards(playlistCards)
+          }
+        }
+      });
+
+      if (playlistsContainer.current) {
+        resizeObserver.observe(playlistsContainer.current);
+      }
+
+
+      return () => {
+        resizeObserver.disconnect();
+      };
+      },[likedContentStyle, playlistCards, threshold])
 
         
   
       if(likedPlaylistItems){
-        
 
           return (
               <>
 
   
-              <div className="library-content-container" style={likedPlaylistsStyle}>
+              <div ref={playlistsContainer} className="library-content-container" style={likedPlaylistsStyle}>
                 <h2 style={{margin:0, color:"#878787", padding: "15px 0px 10px 25px"}}>Liked Playlists</h2>
 
                 <div style={likedContentStyle}>
                 <div className="playlist-content" >
-                    {likedPlaylistItems.map(singlePlaylist =>
-                        <LibraryItemCard setIsSearching={props.setIsSearching} key={singlePlaylist.id} onSelectedAlbum={props.onPlaylistSelection} libraryItem={singlePlaylist} ownerId={""} selectedLibraryItemId={props.selectedLibraryItemId} currentView={"liked playlists"} ></LibraryItemCard>)}
+                {playlistCards}
                 </div>
                 </div>
               </div>
@@ -304,6 +345,11 @@ import LibraryItemCard from "./LibraryItemCard";
 
     export const AlbumsComponent : React.FC<LibraryComponentProps> = (props:LibraryComponentProps)=>{
       const [albumItems, setAlbumItems] =useState(null)
+      const [currentCards, setCurrentCards] = useState(null)
+      const [albumCards, setAlbumCards] = useState(null)
+      const [threshold, setThreshold] = useState(null)
+
+      const albumsContainer = useRef(null)
 
       // const albumData : Album[] = fetchedAlbumsResource.read()
       // console.log("RESOURCE: ",albums)
@@ -314,20 +360,28 @@ import LibraryItemCard from "./LibraryItemCard";
             return new TrackCollection(album['album'])})
           setAlbumItems(albumClasslist)
         }
+
+        useEffect(()=>{
+          if(albumItems){
+            const cards = albumItems?.map(album =>
+              <LibraryItemCard setIsSearching={props.setIsSearching} key={album.id} onSelectedAlbum={props.onPlaylistSelection} libraryItem={album} ownerId={""} selectedLibraryItemId={props.selectedLibraryItemId} currentView={"liked playlists"} ></LibraryItemCard>)
+            setAlbumCards(cards)
+          }
+        }, [props.setIsSearching, props.onPlaylistSelection, props.selectedLibraryItemId, albumItems])
      
       
         const [likedAlbumsStyle, setLikedAlbumsStyle] = useState({
           width: props.stagingState==="open"||props.isSearching?"calc(25vw - 37.5px)":"calc(50vw - 37.5px)",
           height: "50%",
           // animation: "shrink-to-default-row 1s",
-          transition: "1s"
+          transition: "1s",
         }
         )
         const [albumContentStyle, setAlbumContentStyle] = useState({
           height: "calc(50vh - 82px)",
           // animation: "shrink-to-default-albums",
           transition: "1s",
-          overflowY: 'auto' as 'auto'
+          overflowY: 'clip' as 'auto'|'clip'
         })
 
 
@@ -339,7 +393,7 @@ import LibraryItemCard from "./LibraryItemCard";
                 height: "calc(50vh - 82px)",
                 // animation: "shrink-to-default-albums",
                 transition: "1s",
-                overflowY: 'auto'
+                overflowY: 'clip'
               })
 
               if(props.stagingState==="open"){
@@ -434,24 +488,83 @@ import LibraryItemCard from "./LibraryItemCard";
  
       }, [props.stagingState, props.activeView, props.isSearching])
 
+        useEffect(()=>{
+        const calcThreshold = ()=> {
+          setThreshold((50/100)*window.innerHeight)
+        }
+
+        calcThreshold()
+
+        window.addEventListener('resize', calcThreshold)
+
+        return () => {
+          window.removeEventListener('resize', calcThreshold);
+        };
+       },[])
+
+
+      useEffect(()=>{
+
+      const resizeObserver = new ResizeObserver(entries => {
+        for (let entry of entries) {
+          const height = entry.contentRect.height;
+          console.log('Observed height:', height);
+          if (height < threshold) {
+            // setCurrentCards(albumCards.slice(0,3))
+            // albumContentStyle.overflowY = 'clip'
+            const previewContentStyle = {...albumContentStyle, overflowY: 'clip' as "clip"}
+            setAlbumContentStyle(previewContentStyle)
+          } else {
+            const fullContentStyle = {...albumContentStyle, overflowY: 'auto' as "auto"}
+            setAlbumContentStyle(fullContentStyle)
+            // setCurrentCards(albumCards)
+
+          }
+        }
+      });
+
+      if (albumsContainer.current) {
+        resizeObserver.observe(albumsContainer.current);
+      }
+
+
+      return () => {
+        resizeObserver.disconnect();
+      };
+      },[albumCards, albumContentStyle, threshold])
+
        
 
    
   
           if(albumItems){
-            
+
+            // const albumCards = albumItems.map(singleAlbum =>
+              // <LibraryItemCard setIsSearching={props.setIsSearching} key={singleAlbum.id} onSelectedAlbum={props.onPlaylistSelection} libraryItem={singleAlbum} ownerId={""} selectedLibraryItemId={props.selectedLibraryItemId} currentView={"liked albums"} ></LibraryItemCard>)
+
+            // const previewCards = albumCards.slice(0, 3)
+        //     if(albumContentStyle.overflowY ==='clip'){
+        //       console.log('CONTENT CLIPPED:',albumContentStyle.overflowY)
+        //     // <button>View All</button>
+        //   }else{
+        //   // <></>
+        // }
               
               return (
                 <>
-                <div className="library-content-container" style={likedAlbumsStyle}>
+                <div ref={albumsContainer} className="library-content-container" style={likedAlbumsStyle}>
                   <h2 style={{margin:0, color:"#878787", padding: "15px 0px 10px 25px"}}>Liked Albums</h2>
                   <div style={albumContentStyle}>
                   <div className="playlist-content" >
-                      {albumItems.map(singleAlbum =>
+                    {/* {props.activeView.at(-1)==="liked albums"?albumCards:previewCards}
+                      {/* {albumItems.map(singleAlbum =>
                           <LibraryItemCard setIsSearching={props.setIsSearching} key={singleAlbum.id} onSelectedAlbum={props.onPlaylistSelection} libraryItem={singleAlbum} ownerId={""} selectedLibraryItemId={props.selectedLibraryItemId} currentView={"liked albums"} ></LibraryItemCard>)
-                          }
+                          } */} {albumCards}
                   </div>
+                                    
                   </div>
+                  {/* {albumContentStyle.overflowY ==='clip'as 'clip'|'auto'?<button>View All</button>:<></>} */}
+
                 </div>
                 </>
             )

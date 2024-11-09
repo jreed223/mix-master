@@ -131,7 +131,8 @@ useEffect(()=>{
             {/* <input readOnly checked={isChecked} key={`checkbox-${track.id}`} type="checkbox" onClick={(e)=>handleCheck()}/> */}
             {tracklistArea==="draft-playlist"?
             <>
-            <button style={{width:"40px", height: "100%"}} onClick={()=>{draftTrack([trackClass]); deselectTrack(trackClass.track.id);}}>&lt;</button>
+            <button style={{width:"40px", height: "100%", borderRadius: "10%"}} onClick={()=>{draftTrack([trackClass]); deselectTrack(trackClass.track.id);}}>&#10006;
+            </button>
             {/* <div onClick={()=>playPreviewAudio(track.preview_url)} style={{color: !previewState?"inherit":previewState}}>preview</div> */}
 
                         <div style={{position: "relative", textAlign:"right",display:"flex", flexDirection:"column", flexGrow: '1', width: "0%", textWrap:'nowrap', height:"100%", justifyContent:'center'}}>
@@ -154,7 +155,9 @@ useEffect(()=>{
                         </div>
                         {/* <div onClick={()=>playPreviewAudio(track.preview_url)} style={{color: !previewState?"inherit":previewState}}>preview</div> */}
 
-                        <button style={{width:"40px", height: "100%"}} onClick={()=>{draftTrack([trackClass]); deselectTrack(trackClass.track.id)}}>&gt;</button>
+                        <button style={{width:"40px", height: "100%", borderRadius: "10%"}} onClick={()=>{draftTrack([trackClass]); deselectTrack(trackClass.track.id)}}>+
+
+                        </button>
                         </>
         
                 : <></>}
