@@ -179,10 +179,11 @@ import LibraryItemCard from "./LibraryItemCard";
       // animation: "shrink-to-default-row 1s",
       transition: "1s"
     })
-    const [likedContentStyle, setLikedContentStyle] = useState({height: "calc(50vh - 82px)",
+    const [likedContentStyle, setLikedContentStyle] = useState({height: "calc(50vh - 84px)",
       // animation: "shrink-to-default-albums",
       transition: "1s",
-      overflowY:'clip' as 'auto'|'clip'    })
+      overflowY:'clip' as 'auto'|'clip',
+    position: 'relative' as 'relative'   })
 
 
       useEffect(()=>{
@@ -191,10 +192,11 @@ import LibraryItemCard from "./LibraryItemCard";
             case "dashboard":
               // setCurrentCards(playlistCards?.slice(0,3))
               setLikedContentStyle({
-                height: "calc(50vh - 82px)",
+                height: "calc(50vh - 84px)",
                 // animation: "shrink-to-default-albums",
                 transition: "1s",
-                overflowY:'clip'
+                overflowY:'clip',
+                position: 'relative'
               })
 
               if(props.stagingState==="open"){
@@ -225,7 +227,8 @@ import LibraryItemCard from "./LibraryItemCard";
                 height: "calc(100vh - 107px)",
                 // animation: "grow-from-default-albums",
                 overflowY:'auto',
-                transition: "1s"
+                transition: "1s",
+                position: 'relative'
           
                })
 
@@ -293,6 +296,21 @@ import LibraryItemCard from "./LibraryItemCard";
 
 
       useEffect(()=>{
+        const previewStyle = {
+          height: "calc(50vh - 84px)",
+          // animation: "shrink-to-default-albums",
+          transition: "1s",
+          overflowY: 'clip' as 'clip',
+          position: 'relative' as 'relative'
+        }
+
+        const fullViewStyle = {
+          height: "calc(100vh - 107px)",
+          // animation: "shrink-to-default-albums",
+          transition: "1s",
+          overflowY: 'auto' as 'auto',
+          position: 'relative' as 'relative'
+        }
 
       const resizeObserver = new ResizeObserver(entries => {
         for (let entry of entries) {
@@ -300,11 +318,11 @@ import LibraryItemCard from "./LibraryItemCard";
           console.log('Observed height:', height);
           if (height < threshold) {
             // setCurrentCards(playlistCards.slice(0,3))
-            const previewContentStyle = {...likedContentStyle, overflowY: 'clip' as "clip"}
-            setLikedContentStyle(previewContentStyle)
+            // const previewContentStyle = {...likedContentStyle, overflowY: 'clip' as "clip"}
+            setLikedContentStyle(previewStyle)
           } else {
-            const fullContentStyle = {...likedContentStyle, overflowY: 'auto' as "auto"}
-            setLikedContentStyle(fullContentStyle)
+            // const fullContentStyle = {...likedContentStyle, overflowY: 'auto' as "auto"}
+            setLikedContentStyle(fullViewStyle)
             // setCurrentCards(playlistCards)
           }
         }
@@ -334,6 +352,8 @@ import LibraryItemCard from "./LibraryItemCard";
                 <div style={likedContentStyle}>
                 <div className="playlist-content" >
                 {playlistCards}
+                {props.activeView.at(-1)==='dashboard'&&(likedContentStyle.overflowY ==='clip'as 'clip')?<button style={{position: 'absolute', bottom: 0}}>View All</button>:<></>}
+
                 </div>
                 </div>
               </div>
@@ -364,7 +384,7 @@ import LibraryItemCard from "./LibraryItemCard";
         useEffect(()=>{
           if(albumItems){
             const cards = albumItems?.map(album =>
-              <LibraryItemCard setIsSearching={props.setIsSearching} key={album.id} onSelectedAlbum={props.onPlaylistSelection} libraryItem={album} ownerId={""} selectedLibraryItemId={props.selectedLibraryItemId} currentView={"liked playlists"} ></LibraryItemCard>)
+              <LibraryItemCard setIsSearching={props.setIsSearching} key={album.id} onSelectedAlbum={props.onPlaylistSelection} libraryItem={album} ownerId={""} selectedLibraryItemId={props.selectedLibraryItemId} currentView={"liked albums"} ></LibraryItemCard>)
             setAlbumCards(cards)
           }
         }, [props.setIsSearching, props.onPlaylistSelection, props.selectedLibraryItemId, albumItems])
@@ -378,11 +398,13 @@ import LibraryItemCard from "./LibraryItemCard";
         }
         )
         const [albumContentStyle, setAlbumContentStyle] = useState({
-          height: "calc(50vh - 82px)",
+          height: "calc(50vh - 84px)",
           // animation: "shrink-to-default-albums",
           transition: "1s",
-          overflowY: 'clip' as 'auto'|'clip'
+          overflowY: 'clip' as 'auto'|'clip',
+          position: 'relative' as 'relative'
         })
+        
 
 
         useEffect(()=>{
@@ -390,10 +412,11 @@ import LibraryItemCard from "./LibraryItemCard";
           switch(props.activeView.at(-1)){
             case "dashboard":
               setAlbumContentStyle({
-                height: "calc(50vh - 82px)",
+                height: "calc(50vh - 84px)",
                 // animation: "shrink-to-default-albums",
                 transition: "1s",
-                overflowY: 'clip'
+                overflowY: 'clip',
+                position: 'relative'
               })
 
               if(props.stagingState==="open"){
@@ -426,7 +449,8 @@ import LibraryItemCard from "./LibraryItemCard";
                 height: "calc(100vh - 107px)",
                 // animation: "grow-from-default-albums",
                 transition: "1s",
-                overflowY: 'auto'
+                overflowY: 'auto',
+                position: 'relative'
           
                })
 
@@ -504,6 +528,21 @@ import LibraryItemCard from "./LibraryItemCard";
 
 
       useEffect(()=>{
+        const previewStyle = {
+          height: "calc(50vh - 84px)",
+          // animation: "shrink-to-default-albums",
+          transition: "1s",
+          overflowY: 'clip' as 'clip',
+          position: 'relative' as 'relative'
+        }
+
+        const fullViewStyle = {
+          height: "calc(100vh - 107px)",
+          // animation: "shrink-to-default-albums",
+          transition: "1s",
+          overflowY: 'auto' as 'auto',
+          position: 'relative' as 'relative'
+        }
 
       const resizeObserver = new ResizeObserver(entries => {
         for (let entry of entries) {
@@ -512,11 +551,11 @@ import LibraryItemCard from "./LibraryItemCard";
           if (height < threshold) {
             // setCurrentCards(albumCards.slice(0,3))
             // albumContentStyle.overflowY = 'clip'
-            const previewContentStyle = {...albumContentStyle, overflowY: 'clip' as "clip"}
-            setAlbumContentStyle(previewContentStyle)
+            // const previewContentStyle = {...albumContentStyle, height:'calc(50vh - 107px)', overflowY: 'clip' as "clip"}
+            setAlbumContentStyle(previewStyle)
           } else {
-            const fullContentStyle = {...albumContentStyle, overflowY: 'auto' as "auto"}
-            setAlbumContentStyle(fullContentStyle)
+            // const fullContentStyle = {...albumContentStyle, height:'calc(100vh - 107px)', overflowY: 'auto' as "auto"}
+            setAlbumContentStyle(fullViewStyle)
             // setCurrentCards(albumCards)
 
           }
@@ -560,10 +599,12 @@ import LibraryItemCard from "./LibraryItemCard";
                       {/* {albumItems.map(singleAlbum =>
                           <LibraryItemCard setIsSearching={props.setIsSearching} key={singleAlbum.id} onSelectedAlbum={props.onPlaylistSelection} libraryItem={singleAlbum} ownerId={""} selectedLibraryItemId={props.selectedLibraryItemId} currentView={"liked albums"} ></LibraryItemCard>)
                           } */} {albumCards}
+                                           
+                      {props.activeView.at(-1)==='dashboard'&&(albumContentStyle.overflowY ==='clip'as 'clip'|'auto')?<button style={{position: 'absolute', bottom: 0}}>View All</button>:<></>}
+
                   </div>
                                     
                   </div>
-                  {/* {albumContentStyle.overflowY ==='clip'as 'clip'|'auto'?<button>View All</button>:<></>} */}
 
                 </div>
                 </>
