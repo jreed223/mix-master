@@ -1,358 +1,303 @@
-import React, {  useCallback, useEffect, useState } from "react"
+import React, { useCallback, useEffect, useState } from "react"
 import { Features, Track } from '../../../server/types';
 // import PlaylistClass from "../../models/playlistClass"
 import TrackCollection from "../../models/libraryItems"
 // import { LibraryItem } from '../../models/libraryItems';
 import Tracklist from "./TrackComponents/Tracklist";
 import TrackClass from "../../models/Tracks";
-interface SelectedPlaylistContainerProps{
-    libraryItem: TrackCollection|null
-    stagedPlaylistItems: TrackClass[]|null
+interface SelectedPlaylistContainerProps {
+    libraryItem: TrackCollection | null
+    stagedPlaylistItems: TrackClass[] | null
     onSelectedItems: (selectedItems: TrackClass[]) => void
-    onGetNextItems: ()=>void
+    onGetNextItems: () => void
     featureFilters: Record<string, number>,
     isFilterDisplayed: boolean
     stagingState: string
     isFullScreen: boolean
-    currentAudio: {url:string, audio: HTMLAudioElement}
+    currentAudio: { url: string, audio: HTMLAudioElement }
     setCurrentAudio: React.Dispatch<React.SetStateAction<{
-    url: string;
-    audio: HTMLAudioElement;
-}>>
+        url: string;
+        audio: HTMLAudioElement;
+    }>>
 
     // filteredTracks: Track[]
 
 }
 
-interface TrackData{
-    tracks:TrackClass[], 
-    audioFeatures: boolean, 
+interface TrackData {
+    tracks: TrackClass[],
+    audioFeatures: boolean,
     categories: boolean,
 
 
 }
 
-const SelectedPlaylistContainer:React.FC<SelectedPlaylistContainerProps>=(props: SelectedPlaylistContainerProps)=>{
+const SelectedPlaylistContainer: React.FC<SelectedPlaylistContainerProps> = (props: SelectedPlaylistContainerProps) => {
 
 
-const [selectedLibraryItems, setSelectedLibraryItems] = useState<TrackClass[]>([])
-const [filteredTracks, setFilteredTracks] = useState<TrackClass[]|null>([])
+    const [selectedLibraryItems, setSelectedLibraryItems] = useState<TrackClass[]>([])
+    const [filteredTracks, setFilteredTracks] = useState<TrackClass[] | null>([])
 
-const [nextTracks, setNextTracks] = useState<TrackClass[]>(null)
+    const [nextTracks, setNextTracks] = useState<TrackClass[]>(null)
 
-const [trackDataState, setTrackDataState] = useState<TrackData[]>(null) //{batch1: {Tracks = [], audioFeatures: false, categories: false}}
-const [allTracks, setAllTracks] = useState<TrackClass[]>(null)
-const [loadingState, setLoadingState] = useState<String>(null)
-
-
+    const [trackDataState, setTrackDataState] = useState<TrackData[]>(null) //{batch1: {Tracks = [], audioFeatures: false, categories: false}}
+    const [allTracks, setAllTracks] = useState<TrackClass[]>(null)
+    const [loadingState, setLoadingState] = useState<String>(null)
 
 
+    const setAudioFeatures = async (trackClassList: TrackClass[]) => {
 
-
-
-
-// const editSelectedItemList2 = useCallback((checked: boolean ,selectedItem: Track)=>{
-//     if(checked){
-//         // const lst = selectedLibraryItems.concat([selectedItem])
-//         console.log("track card checked: ", console.log(selectedLibraryItems))
-
-//         setSelectedLibraryItems(selectedLibraryItems.concat([selectedItem]))
-
-//     }else{
-//         console.log("track card unchecked: ", console.log(selectedLibraryItems.filter(item=>item!== selectedItem)))
-//         setSelectedLibraryItems(selectedLibraryItems.filter(item=>item!== selectedItem))
-//     }
-//     // console.log(selectedPlaylistItems)
-// }, [selectedLibraryItems])
-
-const setAudioFeatures=async (trackClassList:TrackClass[])=>{
-  
 
         const response = await fetch("/spotify-data/audio-features", {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json'
-              },
-            body: JSON.stringify(trackClassList.map(trackClass=>trackClass.track))
+            },
+            body: JSON.stringify(trackClassList.map(trackClass => trackClass.track))
         })
 
-        const features:Features[] = await response.json() 
+        const features: Features[] = await response.json()
         let startIdx = 0
 
-        for(let feature of features){
+        for (let feature of features) {
             trackClassList[startIdx].audio_features = feature
-            startIdx+=1
-      
+            startIdx += 1
+
         }
         console.log("tracks after changes: ", trackClassList)
 
-}
-
-
-const filterFeatures2  = useCallback(async ()=>{
-    if(!trackDataState){
-        setFilteredTracks([])
-        return
     }
 
-    
-    if(trackDataState!=null && trackDataState.length>0){ //runs only TrackData has been initialized
-        for(let trackData of trackDataState){ //iterates through each TrackData object
-            if(trackData.audioFeatures){ //checks if audiofeatures have been fetched
-                console.log("audio features already set")
 
-            }else{ //runs if audioFeatures have not been set for the tracks in a TrackData object
-                await setAudioFeatures(trackData.tracks)//fetches audio features for the trackData tracks
+    const filterFeatures2 = useCallback(async () => {
+        if (!trackDataState) {
+            setFilteredTracks([])
+            return
+        }
+
+
+        if (trackDataState != null && trackDataState.length > 0) { //runs only TrackData has been initialized
+            for (let trackData of trackDataState) { //iterates through each TrackData object
+                if (trackData.audioFeatures) { //checks if audiofeatures have been fetched
+                    console.log("audio features already set")
+
+                } else { //runs if audioFeatures have not been set for the tracks in a TrackData object
+                    await setAudioFeatures(trackData.tracks)//fetches audio features for the trackData tracks
                     // setHasAudioFeatures(true)
                     trackData.audioFeatures = true
                     console.log("audio features set")
-    
+
+                }
+            }
+
+        }
+        let filterPlaylist = allTracks
+
+
+        const currentFilters = Object.keys(props.featureFilters)
+
+        for (let feature of currentFilters) { //iterates through keys to of filter names
+            if (typeof props.featureFilters[feature] === "number") {
+                if (feature === "key" || feature === "mode" || feature === "time_signature") {
+                    const featureVal = props.featureFilters[feature]
+                    filterPlaylist = filterPlaylist.filter(item => { //redeclares filterplaylist using the filter function
+                        return item.audio_features[feature] === featureVal  //returns tracks with feature value that are in range of +/-.1 of selecetd value
+                    })
+
+                } else if (feature === "tempo" || feature === "loudness") {
+                    const featureVal = props.featureFilters[feature]
+                    filterPlaylist = filterPlaylist.filter(item => { //redeclares filterplaylist using the filter function
+                        return item.audio_features[feature] >= featureVal - 5 && item.audio_features[feature] <= featureVal + 5  //returns tracks with feature value that are in range of +/-.1 of selecetd value
+                    })
+
+                } else {
+
+                    const featureVal = props.featureFilters[feature] / 100 //sets value of the selected feature
+                    // console.log("feature-val: ",featureVal)
+                    filterPlaylist = filterPlaylist.filter(item => { //redeclares filterplaylist using the filter function
+                        return item.audio_features[feature] >= featureVal - .075 && item.audio_features[feature] <= featureVal + .075  //returns tracks with feature value that are in range of +/-.1 of selecetd value
+                    })
+                }
+
             }
         }
+        console.log("filtered playlist", filterPlaylist)
+        setFilteredTracks(filterPlaylist)
 
-    }
-    let filterPlaylist = allTracks
-
-    
-        const currentFilters = Object.keys(props.featureFilters) 
-
-            for(let feature of currentFilters){ //iterates through keys to of filter names
-                if(typeof props.featureFilters[feature] === "number"){
-                    if(feature==="key"||feature==="mode"||feature==="time_signature"){
-
-                        const featureVal = props.featureFilters[feature]
-
-                        filterPlaylist = filterPlaylist.filter(item=> { //redeclares filterplaylist using the filter function
-
-                            return item.audio_features[feature]===featureVal  //returns tracks with feature value that are in range of +/-.1 of selecetd value
-                            })
-                        
-                    }else if(feature==="tempo"||feature==="loudness"){
-
-                        const featureVal = props.featureFilters[feature]
-
-                        filterPlaylist = filterPlaylist.filter(item=> { //redeclares filterplaylist using the filter function
-
-                            return item.audio_features[feature]>=featureVal-5&&item.audio_features[feature]<=featureVal+5  //returns tracks with feature value that are in range of +/-.1 of selecetd value
-                            })
-                        
-                    }else{
-
-                        const featureVal = props.featureFilters[feature]/100 //sets value of the selected feature
-                        // console.log("feature-val: ",featureVal)
-                        filterPlaylist = filterPlaylist.filter(item=> { //redeclares filterplaylist using the filter function
-    
-                        return item.audio_features[feature]>=featureVal-.075&&item.audio_features[feature]<=featureVal+.075  //returns tracks with feature value that are in range of +/-.1 of selecetd value
-                        })
-
-                    }
-
-                }
-            }
-            console.log("filtered playlist", filterPlaylist)
-            setFilteredTracks(filterPlaylist) 
+    }, [allTracks, props.featureFilters, trackDataState]);
 
 
 
-}, [allTracks, props.featureFilters, trackDataState]);
+    //**Fetches selected playlists tracks if not already fetched*/
+    useEffect(() => {
+        // setSelectAllChecked(false)
+        setTrackDataState(null)
+        setFilteredTracks([])
+        setSelectedLibraryItems([])
+        setLoadingState("loading")
 
 
+        let allTracks: TrackClass[] = []
 
-        //**Fetches selected playlists tracks if not already fetched*/
-        useEffect(()=>{
-            // setSelectAllChecked(false)
-            setTrackDataState(null)
-            setFilteredTracks([])
-            setSelectedLibraryItems([])
-            setLoadingState("loading")
-
-
-            let allTracks :TrackClass[]= []
-
-            if(props.libraryItem && !props.libraryItem?.trackDataState){
-                // console.log("setcurrent tracks block 1: ", selectedPlaylist.tracks)
-                props.libraryItem.setTracks().then(()=>{
-                    console.log("library item trackDataState after setting: ", props.libraryItem.trackDataState)
-                    setTrackDataState(props.libraryItem.trackDataState)
-                    allTracks = props.libraryItem.trackDataState.flatMap(trackData=>trackData.tracks)
-                    setAllTracks(allTracks)
-                    setLoadingState(null)
-
-                }
-                )
-            }else if (props.libraryItem && props.libraryItem?.trackDataState){
+        if (props.libraryItem && !props.libraryItem?.trackDataState) {
+            // console.log("setcurrent tracks block 1: ", selectedPlaylist.tracks)
+            props.libraryItem.setTracks().then(() => {
+                console.log("library item trackDataState after setting: ", props.libraryItem.trackDataState)
                 setTrackDataState(props.libraryItem.trackDataState)
-                allTracks = props.libraryItem.trackDataState.flatMap(track=>track.tracks)
+                allTracks = props.libraryItem.trackDataState.flatMap(trackData => trackData.tracks)
                 setAllTracks(allTracks)
                 setLoadingState(null)
 
             }
-    
-        }, [props.libraryItem])
+            )
+        } else if (props.libraryItem && props.libraryItem?.trackDataState) {
+            setTrackDataState(props.libraryItem.trackDataState)
+            allTracks = props.libraryItem.trackDataState.flatMap(track => track.tracks)
+            setAllTracks(allTracks)
+            setLoadingState(null)
+
+        }
+
+    }, [props.libraryItem])
 
 
-        let isFeatureFilterSelected = Object.values(props.featureFilters).some(featureVal=>typeof featureVal === "number")
+    let isFeatureFilterSelected = Object.values(props.featureFilters).some(featureVal => typeof featureVal === "number")
 
-        //** FIlters the selected playlist if the audio featrues have been set*/
-    useEffect(()=>{
-
-
-    
-            if(trackDataState!=null  && isFeatureFilterSelected){
-                setLoadingState("filtering")
-                // console.log(featureFilters.at(-1))
-                console.log("useEffect run for filtFeatures")
-                // console.log("currentTracks: ", currentTracks)
-                filterFeatures2().then(()=>setLoadingState(null))
-               
-
-            }else{
-                setFilteredTracks(allTracks)
-            }
+    //** FIlters the selected playlist if the audio featrues have been set*/
+    useEffect(() => {
 
 
 
-        }, [props.featureFilters, trackDataState, filterFeatures2, allTracks, isFeatureFilterSelected, ])
+        if (trackDataState != null && isFeatureFilterSelected) {
+            setLoadingState("filtering")
+            // console.log(featureFilters.at(-1))
+            console.log("useEffect run for filtFeatures")
+            // console.log("currentTracks: ", currentTracks)
+            filterFeatures2().then(() => setLoadingState(null))
 
-    
-    useEffect(()=>{
-            if(nextTracks){
-                const newTrackData = [{tracks: nextTracks, audioFeatures: false, categories: false}]
-                setTrackDataState(trackDataState.concat(newTrackData))
-                setAllTracks(allTracks.concat(nextTracks))
-                console.log("nextTracks: ", nextTracks)
-            }
-            setNextTracks(null)
-        }, [allTracks, nextTracks, trackDataState])
 
+        } else {
+            setFilteredTracks(allTracks)
+        }
 
 
 
+    }, [props.featureFilters, trackDataState, filterFeatures2, allTracks, isFeatureFilterSelected,])
+
+
+    useEffect(() => {
+        if (nextTracks) {
+            const newTrackData = [{ tracks: nextTracks, audioFeatures: false, categories: false }]
+            setTrackDataState(trackDataState.concat(newTrackData))
+            setAllTracks(allTracks.concat(nextTracks))
+            console.log("nextTracks: ", nextTracks)
+        }
+        setNextTracks(null)
+    }, [allTracks, nextTracks, trackDataState])
 
 
 
 
-// allTracks&&props.stagedPlaylistItems? unStagedItems = allTracks.filter(unStagedItem=>!props.stagedPlaylistItems.some(stagedItem => stagedItem.id === unStagedItem.id)): unStagedItems=[]
 
 
 
-let displayedItems: TrackClass[]
 
-    allTracks?displayedItems = allTracks.filter(trackClass=>{
-        const staged  = props.stagedPlaylistItems.some(item=>item.track.id===trackClass.track.id)
 
-        const staged2  = props.stagedPlaylistItems.includes(trackClass)
-        const filtered =  isFeatureFilterSelected?!filteredTracks.some(filteredTrackClass => filteredTrackClass.track.id === trackClass.track.id):false
+
+
+    let displayedItems: TrackClass[]
+
+    allTracks ? displayedItems = allTracks.filter(trackClass => {
+        const staged = props.stagedPlaylistItems.some(item => item.track.id === trackClass.track.id)
+
+        const filtered = isFeatureFilterSelected ? !filteredTracks.some(filteredTrackClass => filteredTrackClass.track.id === trackClass.track.id) : false
         // console.log(`staged: ${staged}, filtered: ${filtered}`)
-    
-    
-        return !staged&&!filtered
-    }):displayedItems = []
 
-const selectAllclicked = ()=>{
-    
+
+        return !staged && !filtered
+    }) : displayedItems = []
+
+    const selectAllclicked = () => {
+
 
         const selections = displayedItems
-        const newSelections : TrackClass[] = selections.filter((selection)=>!selectedLibraryItems.some((item)=>item.track.id ===selection.track.id))
+        const newSelections: TrackClass[] = selections.filter((selection) => !selectedLibraryItems.some((item) => item.track.id === selection.track.id))
         const allSelected = selectedLibraryItems.concat(newSelections)
         setSelectedLibraryItems(allSelected)
-}
+    }
 
-const deselectAllClicked = ()=>{
-    const selections: TrackClass[] = displayedItems
-    const removedSelections : TrackClass[] =  selections.filter((selection)=>selectedLibraryItems.some((item)=>item.track.id ===selection.track.id))
-    const allDeselected = selectedLibraryItems.filter(item=>!removedSelections.some((selection)=>selection.track.id === item.track.id))
-    setSelectedLibraryItems(allDeselected)
-}
-
-
-
-
-
-const stageSelectedDisplayedTracks = () =>{
-    
-   
-
-
-    if(filteredTracks&&filteredTracks.length>0){
-
-    const selectedDisplayed = (selectedLibraryItems.filter(selectedItem=>filteredTracks.some(filteredItem=>selectedItem.track.id === filteredItem.track.id)))
-    props.onSelectedItems(selectedDisplayed); 
-
-    // console.log("selected displayed tracks: ", selectedDisplayed)
-    const selectedHidden = (selectedLibraryItems.filter(selectedItem=>!filteredTracks.some(filteredItem=>selectedItem.track.id === filteredItem.track.id)))
-    // console.log("selected hidden tracks: ", selectedHidden)
-    setSelectedLibraryItems(selectedHidden)
-    }else{
-        console.log("selected Library items: ", selectedLibraryItems)
-    props.onSelectedItems(selectedLibraryItems);
-    setSelectedLibraryItems([])
+    const deselectAllClicked = () => {
+        const selections: TrackClass[] = displayedItems
+        const removedSelections: TrackClass[] = selections.filter((selection) => selectedLibraryItems.some((item) => item.track.id === selection.track.id))
+        const allDeselected = selectedLibraryItems.filter(item => !removedSelections.some((selection) => selection.track.id === item.track.id))
+        setSelectedLibraryItems(allDeselected)
     }
 
 
-}
-
-// const style = props.stagingState==="open"?{borderRight: "2px solid #141414", transition: "1s", flex: props.isFilterDisplayed?2:1}:{borderRight: "0px solid #141414", transition: "1s"}
 
 
 
+    const stageSelectedDisplayedTracks = () => {
 
-    if(loadingState==="loading"){
 
-        return(
-        <div className="search-filter-container new-playlist" id="search-filter-div" >
-            <p>loading...</p>
-        </div>
-        )
-    }else if(allTracks){
 
-        return(
-            <div className="search-filter-container new-playlist" style={props.stagingState==="open"?{borderRight: "2px solid #141414", transition: "1s", flex: props.isFilterDisplayed&&!props.isFullScreen?2:1}:{borderRight: "0px solid #141414", transition: "1s"}} id="search-filter-div" >
+
+        if (filteredTracks && filteredTracks.length > 0) {
+
+            const selectedDisplayed = (selectedLibraryItems.filter(selectedItem => filteredTracks.some(filteredItem => selectedItem.track.id === filteredItem.track.id)))
+            props.onSelectedItems(selectedDisplayed);
+
+            // console.log("selected displayed tracks: ", selectedDisplayed)
+            const selectedHidden = (selectedLibraryItems.filter(selectedItem => !filteredTracks.some(filteredItem => selectedItem.track.id === filteredItem.track.id)))
+            // console.log("selected hidden tracks: ", selectedHidden)
+            setSelectedLibraryItems(selectedHidden)
+        } else {
+            console.log("selected Library items: ", selectedLibraryItems)
+            props.onSelectedItems(selectedLibraryItems);
+            setSelectedLibraryItems([])
+        }
+
+
+    }
+
+
+        return (
+            <div className="search-filter-container new-playlist" style={props.stagingState === "open" ? { borderRight: "2px solid #141414", transition: "1s", flex: props.isFilterDisplayed && !props.isFullScreen ? 2 : 1 } : { borderRight: "0px solid #141414", transition: "1s" }} id="search-filter-div" >
                 <div style={{
-                    position:"sticky",
+                    position: "sticky",
                     top: 0,
                     backgroundColor: "#141414",
                     zIndex: 1
                 }}>
-                    <button onClick={(e)=>{selectAllclicked();}} value={"SelectAll"}>Select All</button>
-                        <button onClick={()=>{deselectAllClicked()}}>Deselect All</button>
-                        <button onClick={()=>{stageSelectedDisplayedTracks();}}>Add Items</button>
-
-                {isFeatureFilterSelected && loadingState==="filtering"?
-                    
-                    (   
-                        <p>Filtering Tracks...</p>
-                        ):(
-                        <> 
-
-                        </>
-                        
-                        )}
-                </div>
-
-                <Tracklist currentAudio={props.currentAudio} setCurrentAudio={props.setCurrentAudio} tracklistArea="selected-playlist" allTracks={allTracks} selectedLibraryItems={selectedLibraryItems} stagedTracks={props.stagedPlaylistItems} setSelectedLibraryItems={setSelectedLibraryItems} filteredTracks={filteredTracks} draftTracks={props.onSelectedItems}></Tracklist>
-
-
-
-                {props.libraryItem.next?
-                <div style={{}}>
-                    {
-                    loadingState==="loadingNext"?
-                        <button disabled={true} style={{width: `100%`, overflowX: "hidden", padding: 0}}>Loading...</button>:
-                            <button onClick={()=>{
-                                setLoadingState("loadingNext")
-                                props.libraryItem.getNextTracks().then((newTracks)=>{setNextTracks(newTracks); setLoadingState(null)})
+                    <button onClick={(e) => { selectAllclicked(); }} value={"SelectAll"}>Select All</button>
+                    <button onClick={() => { deselectAllClicked() }}>Deselect All</button>
+                    <button onClick={() => { stageSelectedDisplayedTracks(); }}>Add Items</button>
+                    {isFeatureFilterSelected && loadingState === "filtering" 
+                    ?(<p>Filtering Tracks...</p>) 
+                    : (<></>)}
+                </div>{loadingState==="loading"
+                    ?<div className="search-filter-container new-playlist" id="search-filter-div" >
+                        <p>loading...</p>
+                    </div>
+                    :<Tracklist currentAudio={props.currentAudio} setCurrentAudio={props.setCurrentAudio} tracklistArea="selected-playlist" allTracks={allTracks} selectedLibraryItems={selectedLibraryItems} stagedTracks={props.stagedPlaylistItems} setSelectedLibraryItems={setSelectedLibraryItems} filteredTracks={filteredTracks} draftTracks={props.onSelectedItems}></Tracklist>}
+                {props.libraryItem?.next ?
+                    <div style={{}}>
+                        {
+                            loadingState === "loadingNext" ?
+                                <button disabled={true} style={{ width: `100%`, overflowX: "hidden", padding: 0 }}>Loading...</button> :
+                                <button onClick={() => {
+                                    setLoadingState("loadingNext")
+                                    props.libraryItem.getNextTracks().then((newTracks) => { setNextTracks(newTracks); setLoadingState(null) })
                                 }}
-                                    style={{width: `100%`, overflowX: "hidden", padding: 0}}>
-                                More
-                            </button>
-                    }
-                </div>:
-                <></>}
+                                    style={{ width: `100%`, overflowX: "hidden", padding: 0 }}>
+                                    More
+                                </button>
+                        }
+                    </div> :
+                    <></>}
             </div>
         )
-    
-    }
+
 
 }
 

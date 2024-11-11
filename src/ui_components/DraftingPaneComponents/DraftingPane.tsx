@@ -4,8 +4,8 @@ import PlaylistMenuBar from "./PlaylistMenu";
 import SelectedPlaylistContainer from "./SelectedPlaylistArea";
 import DraftPlaylistContainer from "./DraftPlaylistArea";
 import TrackCollection from "../../models/libraryItems";
-import { Track } from "../../../server/types";
 import TrackClass from "../../models/Tracks";
+import { ActiveView } from "../NavBar";
 
 interface draftingProps{
 
@@ -13,8 +13,8 @@ interface draftingProps{
 
     setStagingState: React.Dispatch<React.SetStateAction<string>>,
     stagingState: string,
-    setActiveView: React.Dispatch<React.SetStateAction<string[]>>
-    activeView:string[]
+    setActiveView: React.Dispatch<React.SetStateAction<ActiveView[]>>
+    activeView:ActiveView[]
     isSearching:boolean
     setDisabledDashboard: React.Dispatch<React.SetStateAction<boolean>>
     setIsSeraching : React.Dispatch<React.SetStateAction<boolean>>
@@ -72,19 +72,7 @@ export default function DraftingArea(props:draftingProps){
     } 
 
 
-    const closeCreationContainer = useCallback(()=>{
-        props.setStagingState("closed")
-        setIsFullScreen(false)
 
-        if(!props.isSearching){
-            props.setDisabledDashboard(false)
-            props.setActiveView(["dashboard"])
-        }
-        // console.log(stagingState)
-        creationContainer.current.classList = "playlist-creation-container-hidden shrink-staging"
-        // libraryContainer.current.classList = "library-container grow-library"
-
-    }, [props])
 
     const inputControls = [
         { checkboxRef: useRef(null), sliderRef: useRef(null), audioFeature: "danceability", inputType: "range", min: "0", max:"100", default:"50", tooltipText:'Danceability describes how suitable a track is for dancing based on a combination of musical elements including tempo, rhythm stability, beat strength, and overall regularity. A value of 0.0 is least danceable and 1.0 is most danceable.'},
@@ -141,36 +129,20 @@ export default function DraftingArea(props:draftingProps){
     
     
     }
-    const toggleDisplayState = ()=>{
-        if(displayFeatureMenu===true){
-            setDisplayFeatureMenu(false)
-        }else{
-            setDisplayFeatureMenu(true)
-        }
-    }
 
-    const toggleFullScreen = ()=>{
-        if(!isFullScreen&&props.isSearching){
-            props.setIsSeraching(false)
-        }
-        setIsFullScreen(!isFullScreen)
-
-    }
 
 
     return(
-        <div ref={creationContainer} className={"playlist-creation-container-hidden"}style={isFullScreen?{width: "100%"}:props.stagingState==="open"?{width:"50%"}:{width:"0%"}} id="creation-container">
-        <PlaylistMenuBar toggleFullScreen={toggleFullScreen} onExit={closeCreationContainer}  togglefeatures={toggleDisplayState}></PlaylistMenuBar>
+        <div ref={creationContainer} className={"playlist-creation-container-hidden"}style={isFullScreen?{width: "100%", overflowX: "clip"}:props.stagingState==="open"?{width:"50%", overflowX: "clip"}:{width:"0%", overflowX: "clip"}} id="creation-container">
+        <div style={{width:isFullScreen?"100vw":"50vw", height: "100%", transition: '1s'}}>
+        <PlaylistMenuBar setIsFullScreen={setIsFullScreen} isFullScreen={isFullScreen} setIsSeraching={props.setIsSeraching} isSearching={props.isSearching} setDisplayFeatureMenu={setDisplayFeatureMenu} displayFeatureMenu={displayFeatureMenu} setStagingState={props.setStagingState} stagingState={props.stagingState} setDisabledDashboard={props.setDisabledDashboard} disabledDashboard={false} draftingPaneContainer={creationContainer} setActiveView={props.setActiveView}></PlaylistMenuBar>
 
             <div className="playlist-items-containers" style={{position: "relative"}}>
-           
-                
+
                 <SelectedPlaylistContainer currentAudio={currentAudio} setCurrentAudio={setCurrentAudio} isFullScreen={isFullScreen} stagingState={props.stagingState} isFilterDisplayed={displayFeatureMenu} onSelectedItems={addStagedItems} libraryItem={props.selectedLibraryItem} stagedPlaylistItems={props.stagedPlaylist} onGetNextItems={getNextTracks} featureFilters={selectedFeatures}></SelectedPlaylistContainer>
 
-                
                 {<div style={{display: "flex", overflowX:"hidden", flexDirection:"column", flex:displayFeatureMenu?"1":"0"}} className="new-playlist">
                     {inputControls.map((inputControl, index)=>{
-                    const rect = inputControl.checkboxRef.current?.getBoundingClientRect()||{bottom:'50%', right:'50%'};
 
                     return(   
                     <div >  
@@ -187,6 +159,7 @@ export default function DraftingArea(props:draftingProps){
 
                 <DraftPlaylistContainer currentAudio={currentAudio} setCurrentAudio={setCurrentAudio} stagingState={props.stagingState} stagedItemsState={stagedPlaylistState} onUndostaging={props.setStagedPlaylist} onSelectedItems={removeStagedItems} stagedTracks={props.stagedPlaylist} removeDraft={removeStagedItems }></DraftPlaylistContainer>
             </div >
+            </div>
         </div>
     )
 }

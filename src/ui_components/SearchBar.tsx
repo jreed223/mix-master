@@ -1,25 +1,22 @@
 import React, { useState } from "react"
 // import { UserProfile } from '@spotify/web-api-ts-sdk';
-import UserLibrary from './SinglePageView';
-import { Album, Playlist, SearchResults, Track } from "../../server/types";
+import { Album, Playlist, SearchResults } from "../../server/types";
 import ResultCard from "./ResultCard";
 // import { Button } from "@mui/material";
-import { albums } from '../../server/SpotifyData/controllers/libraryControllers/albums';
 import TrackCollection from "../models/libraryItems";
 import TrackClass from "../models/Tracks";
+import { ActiveView } from "./NavBar";
 
 interface SearchProps {
+    activeView: ActiveView[];
     isSearching: boolean
     setIsSearching: React.Dispatch<React.SetStateAction<boolean>>
     stagingState: string
     setStagingState: React.Dispatch<React.SetStateAction<string>>
 
     setDisabledDashboard: (value: React.SetStateAction<boolean>) => void
-    setActiveView: React.Dispatch<React.SetStateAction<string[]>>
-    searchQuery: string
-    setSearchQuery: React.Dispatch<React.SetStateAction<string>>
-    searchResults: SearchResults
-    handleSearch: () => Promise<void>
+    setActiveView: React.Dispatch<React.SetStateAction<ActiveView[]>>
+
     setStagedPlaylist: React.Dispatch<React.SetStateAction<TrackClass[]>>
     stagedPlaylist: TrackClass[]
     setSelectedLibraryItem: React.Dispatch<React.SetStateAction<TrackCollection>>
@@ -34,7 +31,7 @@ export default function SearchBar(props: SearchProps) {
         e.preventDefault()
         props.setIsSearching(false)
         if (props.stagingState === "closed") {
-            props.setActiveView(["dashboard"]);
+            props.setActiveView(["Dashboard"]);
             props.setDisabledDashboard(false);
         }
     }
@@ -80,11 +77,53 @@ export default function SearchBar(props: SearchProps) {
     const isDrafted = (trackId: string) => props.stagedPlaylist?.some(item => item.track.id === trackId)
 
     const [expandedArtistId, setExpandedArtistId] = useState(null)
+    
+const [searchQuery, setSearchQuery] = useState(null)
+const [searchResults, setSearchresults] = useState(null)
+
+type ResultTypes = SearchResults['albums']['items']|SearchResults['playlists']['items']|SearchResults['artists']['items']|SearchResults['tracks']['items']
+const resultList=(resultsObject: SearchResults)=>{
+    let fullItemList :ResultTypes[]= []
+        
+      fullItemList=  fullItemList.concat(resultsObject?.albums.items)
+      fullItemList= fullItemList.concat(resultsObject?.artists.items)
+      fullItemList= fullItemList.concat(resultsObject?.tracks.items)
+      fullItemList= fullItemList.concat(resultsObject?.playlists.items)
+    // }
+    console.log("FILL ITEM LIST: ",fullItemList)
+}
+
+const handleSearch= async ()=>{
+    // event.preventDefault()
+    if(props.isSearching){
+
+        const results = await fetch("/spotify-data/search-results", {
+            method: "POST",
+            headers:{
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({query: searchQuery})
+            // headers: {"id" : `${this.id}` }
+        })
+        const newResults = await results.json()
+        console.log(newResults)
+        setSearchresults(newResults)
+        resultList(newResults)
+
+    }else{
+        props.setIsSearching(true)
+        props.setDisabledDashboard(true)
+        if(props.activeView.at(-1)==="Dashboard"){
+            props.setActiveView(["User Playlists"])
+            
+        }
+    }
+}
 
 
 
-    if (props.searchResults) {
-        const albumCards = props.searchResults.albums.items.map((album) => {
+    if (searchResults) {
+        const albumCards = searchResults.albums.items.map((album) => {
             return <ResultCard
                 key={album.id}
                 popularity={null}
@@ -95,7 +134,7 @@ export default function SearchBar(props: SearchProps) {
                 }}></ResultCard>
         })
 
-        const playlistCards = props.searchResults.playlists.items.map((playlist) => {
+        const playlistCards = searchResults.playlists.items.map((playlist) => {
             return <ResultCard
                 key={playlist.id}
                 popularity={null}
@@ -106,7 +145,7 @@ export default function SearchBar(props: SearchProps) {
                 }}></ResultCard>
         })
 
-        const trackCards = props.searchResults.tracks.items.map((track) => {
+        const trackCards = searchResults.tracks.items.map((track) => {
             const trackClass = new TrackClass(track)
 
             return <ResultCard
@@ -122,7 +161,7 @@ export default function SearchBar(props: SearchProps) {
                 }}></ResultCard>
         })
 
-        const artistCards = props.searchResults.artists.items.map((artist) => {
+        const artistCards = searchResults.artists.items.map((artist) => {
 
 
             return <ResultCard
@@ -148,30 +187,30 @@ export default function SearchBar(props: SearchProps) {
         const sortedTrackCards = sortResults(trackCards)
         // const sortedPlaylistCards = sortResults(albumCards)
 
+        
+
 
         const onEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
             if (e.key === "Enter") {
                 e.preventDefault();
-                props.handleSearch()
+                handleSearch()
             }
         }
 
 
         return (
-            <>
-                {/* <div className="search-bar-container" style={props.isSearching?{backgroundColor:"#000000bd", width:"100%", left: props.stagingState==="open"?"50%":"0"}:{width:"0%", left: props.stagingState==="open"?"50%":"0"}}>
+            
+                     <form style={{height:"100%"}}>
 
-
-         </div> */}
                 <div className={"search-bar"} style={props.isSearching ? { height: "100%", width: "50%", overflowX: 'clip' } : { height: "100%", width: "0%", overflowX: 'clip' }}>
                     <div style={{width:"50vw", height: "100%"}}>
                     <div style={{ height: "40px" }}>
                         <button style={{ paddingTop: "15px", paddingLeft: "15px" }} onKeyDown={(e) => e.preventDefault()} onClick={(e) => { closeSearch(e) }}>Close</button>
-                        <input type="text" placeholder="Search..." value={props.searchQuery} onKeyDown={(e) => { onEnter(e) }} onChange={(e) => { e.preventDefault(); props.isSearching ? props.setSearchQuery(e.target.value) : props.setSearchQuery(prev => prev) }}></input>
+                        <input type="text" placeholder="Search..." value={searchQuery} onKeyDown={(e) => { onEnter(e) }} onChange={(e) => { e.preventDefault(); props.isSearching ? setSearchQuery(e.target.value) : setSearchQuery(prev => prev) }}></input>
                     </div>
                     <div className="search-results" style={{ height: "calc(100% - 40px)", overflowY: "hidden", position: "relative" }}>
 
-                        {props.searchResults ?
+                        {searchResults ?
                             <>
                                 {/* {sortedCards} */}
                                 <div style={{ height: "100%", display: "flex", flexDirection: "row" }}>
@@ -184,9 +223,8 @@ export default function SearchBar(props: SearchProps) {
                                 <div style={{width: "0%", height: "100%", display: "flex", flexDirection: "column" }} >
 
                                     <div style={{ overflowY: "scroll", flex: 1 }}>{albumCards}</div>
-                                    <div style={{ overflowY: "scroll", flex: 1 }}>{playlistCards}
-
-                                    </div>
+                                    <div style={{ overflowY: "scroll", flex: 1 }}>{playlistCards}</div>
+                                    
                                 </div>
                                 </div>
                             </> : <></>
@@ -196,21 +234,29 @@ export default function SearchBar(props: SearchProps) {
                     </div>
                     </div>
                 </div>
+                <button style={{position: "absolute", right:"15px", top: "15px"}} type="submit" onClick={(e:React.MouseEvent<HTMLButtonElement>)=>{e.preventDefault();handleSearch(); }}>search</button>
 
-            </>
+
+            </form>
 
         )
     } else {
         return (<>
+                             <form style={{height:"100%"}}>
+
             <div className={"search-bar"} style={props.isSearching ? { width: "50%" } : { width: "0%" }}>
                 <button style={{ marginTop: "15px", marginLeft: "15px" }} onClick={(e) => closeSearch(e)}>Close</button>
-                <input type="text" placeholder="Search..." value={props.searchQuery} onChange={(e) => { props.isSearching ? props.setSearchQuery(e.target.value) : props.setSearchQuery(prev => prev) }}></input>
+                <input type="text" placeholder="Search..." value={searchQuery} onChange={(e) => { props.isSearching ? setSearchQuery(e.target.value) : setSearchQuery(prev => prev) }}></input>
                 <div className="search-results">
 
 
                 </div>
 
             </div>
+            <button style={{position: "absolute", right:"15px", top: "15px"}} type="submit" onClick={(e:React.MouseEvent<HTMLButtonElement>)=>{e.preventDefault();handleSearch(); }}>search</button>
+
+            </form>
+
         </>)
     }
 }
