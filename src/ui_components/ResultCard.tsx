@@ -1,10 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { relative } from 'path';
-import { Album, Artist, Playlist, SearchResults, Track } from "../../server/types";
-import { searchResults } from '../../server/SpotifyData/controllers/supplementalControllers/searchResults';
-import TrackCollection from "../models/libraryItems";
+import { Album, Artist, Playlist, SearchResults } from "../../server/types";
 import TrackClass from '../models/Tracks';
-import { albums } from '../../server/SpotifyData/controllers/libraryControllers/albums';
 
 type TrackResult = {
     type: "track"

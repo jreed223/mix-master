@@ -1,24 +1,16 @@
 import { CircularProgress } from "@mui/material";
-import React, { Suspense } from "react"
+import React, { Suspense, useContext } from "react"
 import { useEffect, useState } from "react"
 import { LibraryItemsView } from "./LibraryCollectionsWindow";
-import { ActiveView } from "../NavBar";
-import TrackCollection from "../../models/libraryItems";
+import { NavigationContext } from "../../state_management/NavigationProvider";
 
 interface LibraryComponentsProps {
-
-  setActiveView: React.Dispatch<React.SetStateAction<ActiveView[]>>
-  setIsSearching: React.Dispatch<React.SetStateAction<boolean>>
-  isSearching: boolean
-  stagingState: String
-  activeView: ActiveView[]
   userId: string
-  selectedLibraryItemId: string
-  setStagingState: React.Dispatch<React.SetStateAction<string>>
-  onPlaylistSelection: (selection: TrackCollection, currentView: ActiveView) => void
 }
 
 export const LibraryComponents: React.FC<LibraryComponentsProps> = (props: LibraryComponentsProps) => {
+
+  const {activeView, isSearching} = useContext(NavigationContext)
 
   const fetchAllPlaylists = () => {
     console.log("FETCHING PLAYLISTS")
@@ -28,12 +20,10 @@ export const LibraryComponents: React.FC<LibraryComponentsProps> = (props: Libra
         return playlists
       })
     return playlistList
-
   }
 
   const fetchLikedAlbums = () => {
     console.log("FETCHING PLAYLISTS")
-
     const res = fetch("/spotify-data/albums")
       .then(res => res.json())
       .then(albums => {
@@ -85,10 +75,7 @@ export const LibraryComponents: React.FC<LibraryComponentsProps> = (props: Libra
   useEffect(() => {
 
     console.log("ACTIVE VIEW RAN!!!")
-
-
-
-    switch (props.activeView.at(-1)) {
+    switch (activeView.at(-1)) {
       case "Dashboard":
         setSecondaryViewStyle({
           width: "50%",
@@ -100,7 +87,7 @@ export const LibraryComponents: React.FC<LibraryComponentsProps> = (props: Libra
         })
         break;
       case "User Playlists":
-        if (!props.isSearching) {
+        if (!isSearching) {
           setSecondaryViewStyle({
             width: "0%",
 
@@ -146,25 +133,24 @@ export const LibraryComponents: React.FC<LibraryComponentsProps> = (props: Libra
     }
 
 
-  }, [props.isSearching, props.activeView])
+  }, [isSearching, activeView])
 
 
 
 
   return (
     <div style={{ flexGrow: 1 }} className="library-container" id="library-container">
-
       <div className="user-library-items" style={primaryViewStyle}>
         <Suspense fallback={<CircularProgress />}>
-          <LibraryItemsView setStagingState={props.setStagingState}  fetchedLibraryResource={fetchedPlaylistsResource} setActiveView={props.setActiveView} setIsSearching={props.setIsSearching} isSearching={props.isSearching} stagingState={props.stagingState} activeView={props.activeView} userId={props.userId} onPlaylistSelection={props.onPlaylistSelection} selectedLibraryItemId={props.selectedLibraryItemId} viewName={"User Playlists"} primaryView={"User Playlists"}></LibraryItemsView>
+          <LibraryItemsView  fetchedLibraryResource={fetchedPlaylistsResource} userId={props.userId}  viewName={"User Playlists"} ></LibraryItemsView>
         </Suspense>
       </div>
       <div className="liked-library-items" style={secondaryViewStyle}>
         <Suspense fallback={<CircularProgress />}>
-          <LibraryItemsView setStagingState={props.setStagingState}  fetchedLibraryResource={fetchedPlaylistsResource} setActiveView={props.setActiveView} setIsSearching={props.setIsSearching} isSearching={props.isSearching} stagingState={props.stagingState} activeView={props.activeView} userId={props.userId} onPlaylistSelection={props.onPlaylistSelection} selectedLibraryItemId={props.selectedLibraryItemId} viewName={"Liked Playlists"} primaryView={"User Playlists"}  ></LibraryItemsView>
+          <LibraryItemsView   fetchedLibraryResource={fetchedPlaylistsResource}  userId={props.userId} viewName={"Liked Playlists"}></LibraryItemsView>
         </Suspense>
         <Suspense fallback={<CircularProgress />}>
-          <LibraryItemsView setStagingState={props.setStagingState}  fetchedLibraryResource={fetchedAlbumsResource} setActiveView={props.setActiveView} setIsSearching={props.setIsSearching} isSearching={props.isSearching} stagingState={props.stagingState} activeView={props.activeView} userId={props.userId} onPlaylistSelection={props.onPlaylistSelection} selectedLibraryItemId={props.selectedLibraryItemId} viewName={"Liked Albums"} primaryView={"User Playlists"}></LibraryItemsView>
+          <LibraryItemsView  fetchedLibraryResource={fetchedAlbumsResource} userId={props.userId}  viewName={"Liked Albums"} ></LibraryItemsView>
         </Suspense>
       </div>
 

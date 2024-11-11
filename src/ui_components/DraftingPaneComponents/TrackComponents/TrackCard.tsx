@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { Track } from "../../../../server/types";
-import { relative } from 'path';
+import React, { useContext, useEffect, useState } from "react";
 import TrackClass from "../../../models/Tracks";
+import { DraftingContext } from "../../../state_management/DraftingPaneProvider";
 
 export interface TrackCardProps{
     tracklistArea: string
@@ -10,11 +9,7 @@ export interface TrackCardProps{
     displayHidden : boolean;
     selectedLibraryItems: TrackClass[]
     draftTrack: (selectedItems: TrackClass[]) => void
-    currentAudio: {url:string, audio: HTMLAudioElement}
-    setCurrentAudio: React.Dispatch<React.SetStateAction<{
-    url: string;
-    audio: HTMLAudioElement;
-}>>
+
 deselectTrack: (trackId: string) => void
 
 }
@@ -27,13 +22,17 @@ const TrackCard: React.FC<TrackCardProps> = ({
     displayHidden,
     selectedLibraryItems,
     draftTrack,
-    currentAudio,
-    setCurrentAudio,
     deselectTrack
 
 })=>{
 
+    const {
+        
+        
+        currentAudio, setCurrentAudio} = useContext(DraftingContext)
+
     const [isChecked, setIsChecked]= useState(false)
+
 
 //TODO: Seperate Selected Draft Items and selected plailist items
 useEffect(()=>{
@@ -50,8 +49,6 @@ useEffect(()=>{
     const handleCheck = ()=>{
         setIsChecked((prevState)=>!prevState);
         onSelectedTrack(!isChecked, trackClass )
-
-
     }
 
 
@@ -59,16 +56,10 @@ useEffect(()=>{
         {display: 'none',
         textOverflow: 'ellipsis',
         color: "#878787"}:
-            // {width:"100%",
-            //     display: 'flex',
-            // textOverflow: 'ellipsis',
-            // color: "#878787"}
+
             {
                 display: 'flex',
                 alignItems: 'center',
-                // border: isChecked?"1px solid #2fdc2fcf": "none",
-                // boxShadow: isChecked?"rgb(1 255 7 / 75%) 0px 0px 25px inset":"none"
-
             }
 
     useEffect(()=>{
@@ -118,11 +109,6 @@ useEffect(()=>{
         }
         
     }    // if(props.displayHidden){
-    // const artists = track.artists.map(artist=>artist.name)
-
-    // }
-    // console.log("checkbox checked? ", props.checked)
-    // console.log(track.album.images)
 
     const trackImgUrl = trackClass?.getCollection()?.image.url||trackClass.track?.album?.images[0]?.url||trackClass.track?.images[0]?.url
     return(
@@ -133,17 +119,16 @@ useEffect(()=>{
             <>
             <button style={{width:"40px", height: "100%", borderRadius: "10%"}} onClick={()=>{draftTrack([trackClass]); deselectTrack(trackClass.track.id);}}>&#10006;
             </button>
-            {/* <div onClick={()=>playPreviewAudio(track.preview_url)} style={{color: !previewState?"inherit":previewState}}>preview</div> */}
 
                         <div style={{position: "relative", textAlign:"right",display:"flex", flexDirection:"column", flexGrow: '1', width: "0%", textWrap:'nowrap', height:"100%", justifyContent:'center'}}>
                         <p style={{margin:"0px"}} className="track-card-text">{trackClass.track.name}</p>
                         <p style={{ margin:"0px"}} className="track-card-text">{trackClass.track.artists[0].name}</p>
-                        <div onClick={(e)=>handleCheck()} style={{backgroundColor: isChecked?"#00000061":"inherit",top:0, left:0,width:"100%", height:"100%", position:"absolute",  }}></div>
+                        <div onClick={()=>handleCheck()} style={{backgroundColor: isChecked?"#00000061":"inherit",top:0, left:0,width:"100%", height:"100%", position:"absolute",  }}></div>
                         </div>
                         </>
                 :<></>}
             <div style={{position: "relative",height: "100%", aspectRatio: "1 / 1"}}>
-            <img loading="lazy" style={{position:"relative", height: "100%", aspectRatio: "1 / 1"}}onClick={(e)=>handleCheck()} src={trackImgUrl}alt={`${trackClass.track.name} cover`}></img>
+            <img loading="lazy" style={{position:"relative", height: "100%", aspectRatio: "1 / 1"}}onClick={()=>handleCheck()} src={trackImgUrl}alt={`${trackClass.track.name} cover`}></img>
             <div onClick={()=>playPreviewAudio(trackClass.track.preview_url)} style={{color: !previewState?"inherit":previewState,top:0, left:0,width:"100%", height:"100%", position:"absolute"}}>preview</div>
             </div>
             {tracklistArea==="selected-playlist"?
@@ -151,9 +136,8 @@ useEffect(()=>{
                         <div style={{position: "relative", display:"flex", flexDirection:"column",  overflow: 'hidden', flexGrow: '1', width: "0%", height:"100%", justifyContent:'center'}}>
                         <p style={{margin:"0px"}} className="track-card-text">{trackClass.track.name}</p>
                         <p style={{ margin:"0px"}} className="track-card-text">{trackClass.track.artists[0].name}</p>
-                        <div onClick={(e)=>handleCheck()} style={{backgroundColor: isChecked?"#00000061":"inherit",top:0, left:0,width:"100%", height:"100%", position:"absolute",  }}></div>
+                        <div onClick={()=>handleCheck()} style={{backgroundColor: isChecked?"#00000061":"inherit",top:0, left:0,width:"100%", height:"100%", position:"absolute",  }}></div>
                         </div>
-                        {/* <div onClick={()=>playPreviewAudio(track.preview_url)} style={{color: !previewState?"inherit":previewState}}>preview</div> */}
 
                         <button style={{width:"40px", height: "100%", borderRadius: "10%"}} onClick={()=>{draftTrack([trackClass]); deselectTrack(trackClass.track.id)}}>+
 

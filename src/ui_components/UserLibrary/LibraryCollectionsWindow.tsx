@@ -1,26 +1,22 @@
-import React, { useEffect, useState, useRef } from "react"
+import React, { useEffect, useState, useRef, useContext } from "react"
 import { Album, Playlist } from "../../../server/types";
 import TrackCollection from "../../models/libraryItems";
 import LibraryItemCard from "./LibraryItemCard";
-import { ActiveView } from "../NavBar";
+import { ViewName } from "../NavBar";
+import { NavigationContext } from "../../state_management/NavigationProvider";
+import { DraftingContext } from "../../state_management/DraftingPaneProvider";
 
 
 
 interface LibraryItemsViewProps {
-  selectedLibraryItemId: string | null,
+  // selectedLibraryItemId: string | null,
   userId: string,
-  onPlaylistSelection: (selection: TrackCollection, currentView: ActiveView) => void
-  activeView: ActiveView[]
-  stagingState: String
-  isSearching: boolean
-  setIsSearching: React.Dispatch<React.SetStateAction<boolean>>
-  setActiveView: React.Dispatch<React.SetStateAction<ActiveView[]>>
-  viewName: ActiveView
-  primaryView: ActiveView
+  // onPlaylistSelection: (selection: TrackCollection, currentView: ViewName) => void
+  viewName: ViewName
+  // primaryView: ViewName
   fetchedLibraryResource: {
     read(): any;
   }
-  setStagingState: React.Dispatch<React.SetStateAction<string>>
 }
 
 
@@ -34,6 +30,9 @@ export const LibraryItemsView: React.FC<LibraryItemsViewProps> = (props: Library
   const [heightThreshold, setHeightThreshold] = useState(null)
   const [widthThreshold, setWidthThreshold] = useState(null)
 
+  const {activeView, setActiveView, isSearching, setIsSearching, stagingState, setStagingState, primaryView} = useContext(NavigationContext)
+
+  const {selectedLibraryItem} = useContext(DraftingContext)
 
   const libraryItemsContainer = useRef(null)
 
@@ -70,14 +69,14 @@ export const LibraryItemsView: React.FC<LibraryItemsViewProps> = (props: Library
   useEffect(() => {
     if (libraryItems) {
       const cards = libraryItems?.map(item =>
-        <LibraryItemCard setIsSearching={props.setIsSearching} key={item.id} onSelectedCollection={props.onPlaylistSelection} libraryItem={item} ownerId={""} selectedLibraryItemId={props.selectedLibraryItemId} currentView={props.viewName} ></LibraryItemCard>)
+        <LibraryItemCard key={item.id}  libraryItem={item} ownerId={""} view={props.viewName} ></LibraryItemCard>)
       setLibraryItemCards(cards)
     }
-  }, [props.setIsSearching, props.onPlaylistSelection, props.selectedLibraryItemId, libraryItems, props.viewName])
+  }, [setIsSearching, selectedLibraryItem?.id , libraryItems, props.viewName])
 
 
   const [outterContainerStyle, setOutterContainerStyle] = useState({
-    width: props.stagingState === "open" || props.isSearching ? "calc(25vw - 37.5px)" : "calc(50vw - 37.5px)",
+    width: stagingState === "open" || isSearching ? "calc(25vw - 37.5px)" : "calc(50vw - 37.5px)",
     height: "50%",
     transition: "1s",
   })
@@ -97,12 +96,12 @@ export const LibraryItemsView: React.FC<LibraryItemsViewProps> = (props: Library
 
 
   useEffect(() => {
-    if (props.viewName !== props.primaryView) {
-      switch (props.activeView.at(-1)) {
+    if (props.viewName !== primaryView) {
+      switch (activeView.at(-1)) {
         case "Dashboard":
 
           const dashboardHeight =
-            props.stagingState === "open"
+            stagingState === "open"
               ? {
                 width: "25vw",
                 height: "50%",
@@ -119,7 +118,7 @@ export const LibraryItemsView: React.FC<LibraryItemsViewProps> = (props: Library
         case props.viewName:
 
           const activeHeight =
-            (props.stagingState === "open" || props.isSearching)
+            (stagingState === "open" || isSearching)
               ? {
                 width: "50vw",
                 height: "100%",
@@ -133,12 +132,12 @@ export const LibraryItemsView: React.FC<LibraryItemsViewProps> = (props: Library
 
           setOutterContainerStyle(activeHeight)
           break;
-        case props.primaryView:
+        case primaryView:
 
           break;
 
         default:
-          const hiddenHeight = (props.stagingState === "open" || props.isSearching)
+          const hiddenHeight = (stagingState === "open" || isSearching)
             ? {
               width: "50vw",
               height: "0%",
@@ -160,31 +159,31 @@ export const LibraryItemsView: React.FC<LibraryItemsViewProps> = (props: Library
     } else {
 
       const growFromDefault = {
-        width: props.stagingState === "open" || props.isSearching ? "50vw" : "100vw",
+        width: stagingState === "open" || isSearching ? "50vw" : "100vw",
         transition: "1s",
         overflowY: "auto"
 
       }
       const shrinkToDefault = {
-        width: props.stagingState === "open" || props.isSearching ? "25vw" : "50vw",
+        width: stagingState === "open" || isSearching ? "25vw" : "50vw",
         transition: "1s",
         overflowY: "auto"
       }
-      console.log(props.activeView.at(-1) !== "User Playlists")
-      if (props.activeView.at(-1) === "Dashboard") {
+      console.log(activeView.at(-1) !== "User Playlists")
+      if (activeView.at(-1) === "Dashboard") {
         setPrimaryContentStyle(shrinkToDefault)
-      } else if (props.activeView.at(-1) === "User Playlists") {
+      } else if (activeView.at(-1) === "User Playlists") {
         setPrimaryContentStyle(growFromDefault)
 
       }
 
     }
-  }, [props.stagingState, props.activeView, props.isSearching, libraryItemCards, props.viewName, props.primaryView])
+  }, [stagingState, activeView, isSearching, libraryItemCards, props.viewName, primaryView])
 
   const [currentFlexFlow, setCurrentFlexFlow] = useState('row')
   useEffect(() => {
 
-    if (props.viewName !== props.primaryView) {
+    if (props.viewName !== primaryView) {
       const calcThreshold = () => {
         setHeightThreshold((50 / 100) * window.innerHeight - 24.5)
 
@@ -200,7 +199,7 @@ export const LibraryItemsView: React.FC<LibraryItemsViewProps> = (props: Library
       };
 
     }
-  }, [props.primaryView, props.viewName])
+  }, [primaryView, props.viewName])
 
 
 
@@ -208,15 +207,15 @@ export const LibraryItemsView: React.FC<LibraryItemsViewProps> = (props: Library
 
   useEffect(() => {
 
-    if (props.viewName !== props.primaryView) {
+    if (props.viewName !== primaryView) {
       const resizeObserver = new ResizeObserver(entries => {
         for (let entry of entries) {
           const height = entry.contentRect.height;
           const width = entry.contentRect.width
 
-          const currentWidthThreshold = props.isSearching || props.stagingState === "open" ? (widthThreshold / 2) : widthThreshold
+          const currentWidthThreshold = isSearching || stagingState === "open" ? (widthThreshold / 2) : widthThreshold
           if (width >= currentWidthThreshold - 50) {
-            if (props.activeView.at(-1) === props.viewName) {
+            if (activeView.at(-1) === props.viewName) {
               setIsPreview(false)
               setCurrentCards(libraryItemCards)
               setCurrentFlexFlow('row wrap')
@@ -247,7 +246,7 @@ export const LibraryItemsView: React.FC<LibraryItemsViewProps> = (props: Library
 
             setCurrentCards(libraryItemCards.slice(0, 5))
 
-            if ((height < heightThreshold+50 ) && props.activeView.at(-1) === "Dashboard") {
+            if ((height < heightThreshold+50 ) && activeView.at(-1) === "Dashboard") {
 
               setInnerContentStyle({
                 height: "calc((50vw * 0.25) + 50px)",
@@ -271,13 +270,13 @@ export const LibraryItemsView: React.FC<LibraryItemsViewProps> = (props: Library
       };
     }
 
-  }, [libraryItemCards, innerContentStyle, heightThreshold, props.activeView, props.isSearching, props.stagingState, widthThreshold, props.viewName, props.primaryView])
+  }, [libraryItemCards, innerContentStyle, heightThreshold, activeView, isSearching, stagingState, widthThreshold, props.viewName, primaryView])
 
 
 
 
 
-  if ((props.viewName === props.primaryView) && libraryItems) {
+  if ((props.viewName === primaryView) && libraryItems) {
 
 
     return (
@@ -290,13 +289,13 @@ export const LibraryItemsView: React.FC<LibraryItemsViewProps> = (props: Library
                   : props.viewName}
               </h2>
             {<button 
-              onClick={props.activeView.at(-1)===props.viewName
-                ?() => {props.setStagingState('closed'); props.setIsSearching(false); props.setActiveView(["Dashboard"]);}
-                :() => props.setActiveView([props.viewName])} 
-              style={props.activeView.at(-1) === 'Dashboard' 
+              onClick={activeView.at(-1)===props.viewName
+                ?() => {setStagingState('closed'); setIsSearching(false); setActiveView(["Dashboard"]);}
+                :() => setActiveView([props.viewName])} 
+              style={activeView.at(-1) === 'Dashboard' 
                 ? { transition: '1s', opacity: 1, height: "25px", width: "calc(50vw * .25)" } 
                 : { transition: '1s', opacity: 1, height: "25px", width: "calc(50vw * .25)" }}>
-              {props.activeView.at(-1)==="Dashboard"
+              {activeView.at(-1)==="Dashboard"
                 ?"View All"
                 :"Dashboard"} {/* &#10238; */}
               </button>}
@@ -318,13 +317,13 @@ export const LibraryItemsView: React.FC<LibraryItemsViewProps> = (props: Library
             <h2 style={{ margin: 0, color: "#878787", padding: "15px 0px 10px 25px" }}>
               {props.viewName === 'User Playlists' ? 'My Playlists' : props.viewName}</h2>
             {<button 
-              onClick={props.activeView.at(-1)===props.viewName
-                ?() => {props.setStagingState('closed'); props.setIsSearching(false); props.setActiveView(["Dashboard"])}
-                :() => props.setActiveView([props.viewName])} 
-              style={currentCards?.length <= 5 && props.activeView.at(-1) === 'Dashboard' 
+              onClick={activeView.at(-1)===props.viewName
+                ?() => {setStagingState('closed'); setIsSearching(false); setActiveView(["Dashboard"])}
+                :() => setActiveView([props.viewName])} 
+              style={currentCards?.length <= 5 && activeView.at(-1) === 'Dashboard' 
                 ? { transition: '1s', opacity: 1, height: "25px", width: "calc(50vw * .25)"} 
                 : { transition: '1s', opacity: 1, height: "25px", width: "calc(50vw * .25)" }}>
-              {props.activeView.at(-1)==="Dashboard"
+              {activeView.at(-1)==="Dashboard"
                 ?"View All"
                 :"Dashboard"}
             </button>}
