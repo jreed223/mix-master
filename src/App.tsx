@@ -6,6 +6,7 @@ import LoginPage from './ui_components/LoginPage';
 
 import NavBar from './ui_components/NavBar';
 import { UserProfile } from '../server/types';
+import NavigationProvider from './state_management/NavigationProvider';
 
 
 
@@ -45,9 +46,12 @@ function App() {
       <div><h1>Loading Profile...</h1></div>
     )
   }else if(user){
-    return(<div>
-      <NavBar currentUser={user}></NavBar>
-    </div>)
+    return(
+    <NavigationProvider>
+      <div>
+        <NavBar currentUser={user}></NavBar>
+      </div>
+    </NavigationProvider>)
   }else{ //If no user found and not authorizing user
     return <LoginPage></LoginPage>
         }

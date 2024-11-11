@@ -1,7 +1,8 @@
 import { CategorizedPlaylist, PlaylistItem, Tag, Track, Image, Features, Artist, Album, Playlist, LikedSongs, Tracklist } from "../../server/types";
+import TrackClass from "./Tracks";
 
-export type LibraryItem = Playlist | Album["album"] | LikedSongs
-export default class Library {
+export type Collection = Playlist | Album["album"] | LikedSongs
+export default class TrackCollection {
     type: string;
     id: string;
     image: Image;
@@ -12,51 +13,58 @@ export default class Library {
     uri: string;
     totalTracks: number;
     categories?: {tag_list: Tag[] | null, top_tags: Record<string, Track[]>|null}|null
-    tracks?: Track[]|null
+    tracks?: TrackClass[]|null
     next?: string|null
     audioFeaturesSet: boolean
-    trackDataState?: [{tracks:Track[], audioFeatures: boolean, categories: boolean}]|null
+    trackDataState?: [{tracks:TrackClass[], audioFeatures: boolean, categories: boolean}]|null
 
     constructor(
-        libraryItem: LibraryItem,
+        collection: Collection,
         
 
     ){
-        console.log("Library Item type in constructor: ",libraryItem)
+        console.log("Library Item type in constructor: ",collection)
         this.audioFeaturesSet = false;
-        this.type = libraryItem.type
+        this.type = collection.type
 
-        switch (libraryItem.type) {
+        switch (collection.type) {
 
             case 'playlist':
-                this.name = libraryItem.name;
-                this.id = libraryItem.id
-                this.image = libraryItem.images[0]
-                this.name = libraryItem.name
-                this.owner = libraryItem.owner
-                this.uri = libraryItem.uri
-                this.totalTracks = libraryItem.tracks.total
+                this.name = collection.name;
+                this.id = collection.id
+                this.image = collection.images[0]
+                this.name = collection.name
+                this.owner = collection.owner
+                this.uri = collection.uri
+                this.totalTracks = collection.tracks.total
                 this.tracks = null
               break;
             case 'album':
-                this.name = libraryItem.name;
-                this.id = libraryItem.id
-                this.image = libraryItem.images[0]
-                this.name = libraryItem.name
-                this.artists = libraryItem.artists
-                this.uri = libraryItem.uri
-                this.totalTracks = libraryItem.total_tracks
-                this.tracks = libraryItem.tracks.items
-                this.trackDataState = [{tracks:libraryItem.tracks.items, audioFeatures: false, categories: false}]
+                const tracklist = collection.tracks.items.map((item)=>{
+                    const track = new TrackClass(item, this)
+                    return track
+                })
+
+                this.name = collection.name;
+                this.id = collection.id
+                this.image = collection.images[0]
+                this.name = collection.name
+                this.artists = collection.artists
+                this.uri = collection.uri
+                this.totalTracks = collection.total_tracks
+                this.tracks = collection.tracks.items.map(item=>new TrackClass(item, this))
+                //TODO:Should this be this.tracks?
+
+                this.trackDataState = [{tracks:tracklist, audioFeatures: false, categories: false}]
               break;
             case 'liked songs':
                 this.name = "Liked Songs";
                 this.id = "Liked Songs";
-                this.tracks = libraryItem.items.map(item=>item.track)
+                this.tracks = collection.items.map(item=>new TrackClass(item.track, this))
                 //this.image = libraryItem.images[0]
                 //this.owner = libraryItem.
                 //this.uri = libraryItem.
-                this.totalTracks = libraryItem.total
+                this.totalTracks = collection.total
 
               break;
             default:
@@ -103,7 +111,7 @@ export default class Library {
                 const items = await res.json()
                 return items
             })
-            const tracks = playlistItems.map(item=>item.track)
+            const tracks = playlistItems.map(item=>new TrackClass(item.track, this))
             this.tracks = tracks
         }
     }
@@ -127,7 +135,7 @@ export default class Library {
                 console.log("itemdata: ",itemData)
                 return itemData
             })
-            const tracks = playlistItems.items.map(item=>item.track)
+            const tracks = playlistItems.items.map(item=>new TrackClass(item.track, this))
             console.log("tracks: ", tracks)
             const newtracks = this.tracks.concat(tracks)
 
@@ -153,7 +161,8 @@ export default class Library {
                 console.log("set tracks response: ", items)
                 return items
             })
-            const tracks = playlistItems.items.map(item=>item.track)
+            const tracks = playlistItems.items.map(item=>new TrackClass(item.track))
+            // const tracks1 = playlistItems.items.map(item=>item.track)
             this.trackDataState = [
                     {tracks: tracks, 
                     audioFeatures: false,
@@ -182,11 +191,11 @@ export default class Library {
         let tagRecord: Record<string, Tag> = {}
         let topCategories: Record<string, Track[]> = {}
 
-        for(let track of this.tracks){
+        for(let trackClass of this.tracks){
             const response = await fetch("/lastFM-data/track-tags", {
                 method: 'GET',
-                headers: {"artist" : encodeURIComponent(track.artists[0].name),
-                    "track" : encodeURI(track.name)
+                headers: {"artist" : encodeURIComponent(trackClass.track.artists[0].name),
+                    "track" : encodeURI(trackClass.track.name)
                 }
             })
             if(response.ok){
@@ -196,7 +205,7 @@ export default class Library {
             
                 for(let tag of tags){
                     if(categories[`${tag.name}`]){
-                        categories[`${tag.name}`].push(track)
+                        categories[`${tag.name}`].push(trackClass.track)
                         //console.log(categories1[`${tag.name}`])
                         if(categories[`${tag.name}`].length >= 4 && tag.name !== "Uncategorized"){
                             //console.log(categories[`${tag.name}`])
@@ -214,7 +223,7 @@ export default class Library {
                         }
                     }else{
                         //const newCategory:Track[] = {tag: {count:tag.count, name:tag.name, url: tag.url}, tracks: [item.track]}
-                        categories[`${tag.name}`] = [track]
+                        categories[`${tag.name}`] = [trackClass.track]
                         
                     }
                 }
@@ -236,7 +245,7 @@ export default class Library {
 
                 while(startIdx<this.tracks.length){
                     //TODO: Edit Audio features function to receive Track[]
-                    let playlistItemsSubset:Track[] = this.tracks.slice(startIdx, endIdx+1)
+                    let playlistItemsSubset:Track[] = this.tracks.map(trackClass=>trackClass.track).slice(startIdx, endIdx+1)
                     const response = await fetch("/spotify-data/audio-features", {
                         method: "POST",
                         headers: {
