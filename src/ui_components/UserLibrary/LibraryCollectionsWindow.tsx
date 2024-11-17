@@ -5,15 +5,13 @@ import LibraryItemCard from "./LibraryItemCard";
 import { ViewName } from "../NavBar";
 import { NavigationContext } from "../../state_management/NavigationProvider";
 import { DraftingContext } from "../../state_management/DraftingPaneProvider";
+import { relative } from 'path';
 
 
 
 interface LibraryItemsViewProps {
-  // selectedLibraryItemId: string | null,
   userId: string,
-  // onPlaylistSelection: (selection: TrackCollection, currentView: ViewName) => void
   viewName: ViewName
-  // primaryView: ViewName
   fetchedLibraryResource: {
     read(): any;
   }
@@ -68,11 +66,11 @@ export const LibraryItemsView: React.FC<LibraryItemsViewProps> = (props: Library
 
   useEffect(() => {
     if (libraryItems) {
-      const cards = libraryItems?.map(item =>
-        <LibraryItemCard key={item.id}  libraryItem={item} ownerId={""} view={props.viewName} ></LibraryItemCard>)
+      const cards = libraryItems.map(item =>
+        <LibraryItemCard key={item.id}  libraryItem={item} ownerId={props.userId} view={props.viewName} ></LibraryItemCard>)
       setLibraryItemCards(cards)
     }
-  }, [setIsSearching, selectedLibraryItem?.id , libraryItems, props.viewName])
+  }, [setIsSearching, selectedLibraryItem?.id, libraryItems, props.viewName, props.userId])
 
 
   const [outterContainerStyle, setOutterContainerStyle] = useState({
@@ -282,8 +280,8 @@ export const LibraryItemsView: React.FC<LibraryItemsViewProps> = (props: Library
     return (
       <>
         <div className="user-library-container" >
-          <div style={{ display: 'inline-flex', width: "50vw", overflowX:'clip', alignItems: 'center', height: "45px" }}>
-            <h2 style={{ margin: 0, color: "#878787", padding: "15px 0px 10px 25px" }}>
+          <div style={{ margin:"0px 25px", display: 'inline-flex', width: "calc(100% - 50px)", overflowX:'clip', alignItems: 'center', height: "45px", position: "relative" }}>
+            <h2 style={{ margin: "15px 0px 5px", color: "#878787", padding: "0px 25px 0px 0px"  }}>
               {props.viewName === 'User Playlists' 
                   ? 'My Playlists' 
                   : props.viewName}
@@ -293,8 +291,8 @@ export const LibraryItemsView: React.FC<LibraryItemsViewProps> = (props: Library
                 ?() => {setStagingState('closed'); setIsSearching(false); setActiveView(["Dashboard"]);}
                 :() => setActiveView([props.viewName])} 
               style={activeView.at(-1) === 'Dashboard' 
-                ? { transition: '1s', opacity: 1, height: "25px", width: "calc(50vw * .25)" } 
-                : { transition: '1s', opacity: 1, height: "25px", width: "calc(50vw * .25)" }}>
+                ? { transition: '1s', opacity: !isSearching&&stagingState!=="open"?1:0, height: "25px", width: "calc(50vw * .25)", borderRadius:"25px", position: "absolute", top: "15px", left: "50%", transform: "translateX(-50%)"  } 
+                : {  transition: '1s', opacity: !isSearching&&stagingState!=="open"?1:0, height: "25px", width: "calc(50vw * .25)", borderRadius:"25px", position: "absolute", top: "15px", left: "50%", transform: "translateX(-50%)" }}>
               {activeView.at(-1)==="Dashboard"
                 ?"View All"
                 :"Dashboard"} {/* &#10238; */}
@@ -313,20 +311,21 @@ export const LibraryItemsView: React.FC<LibraryItemsViewProps> = (props: Library
     return (
       <>
         <div ref={libraryItemsContainer} className="library-content-container" style={outterContainerStyle}>
-          <div style={{ display: 'inline-flex', width: "50vw", overflowX:'clip', alignItems: 'center', height: "45px" }}>
-            <h2 style={{ margin: 0, color: "#878787", padding: "15px 0px 10px 25px" }}>
+          <div style={{ margin:"0px 25px", display: 'inline-flex', width: "calc(100% - 50px)", overflowX:'clip', alignItems: 'center', height: "45px", position: "relative" }}>
+            <h2 style={{ margin: "15px 0px 5px", color: "#878787", padding: "0px 25px 0px 0px" }}>
               {props.viewName === 'User Playlists' ? 'My Playlists' : props.viewName}</h2>
-            {<button 
-              onClick={activeView.at(-1)===props.viewName
-                ?() => {setStagingState('closed'); setIsSearching(false); setActiveView(["Dashboard"])}
-                :() => setActiveView([props.viewName])} 
-              style={currentCards?.length <= 5 && activeView.at(-1) === 'Dashboard' 
-                ? { transition: '1s', opacity: 1, height: "25px", width: "calc(50vw * .25)"} 
-                : { transition: '1s', opacity: 1, height: "25px", width: "calc(50vw * .25)" }}>
-              {activeView.at(-1)==="Dashboard"
-                ?"View All"
-                :"Dashboard"}
-            </button>}
+              {<button
+                onClick={activeView.at(-1)===props.viewName
+                  ?() => {setStagingState('closed'); setIsSearching(false); setActiveView(["Dashboard"])}
+                  :() => setActiveView([props.viewName])}
+              
+                style={currentCards?.length <= 5 && activeView.at(-1) === 'Dashboard'
+                  ? { transition: '1s', animation:"fade-in 1s", opacity: !isSearching&&stagingState!=="open"?1:1, height: "25px", width: "calc(50vw * .25)", borderRadius:"25px", position: "absolute", top: "15px", left: "50%", transform: "translateX(-50%)" }
+                  : { transition: '1s', animation:"fade-in 1s", opacity: !isSearching&&stagingState!=="open"?1:1, height: "25px", width: "calc(50vw * .25)", borderRadius:"25px", position: "absolute", top: "15px", left: "50%", transform: "translateX(-50%)"  }}>
+                {activeView.at(-1)==="Dashboard"
+                  ?"View All"
+                  :"Dashboard"}
+              </button>}
           </div>
           <div style={innerContentStyle}>
             <div className="playlist-content" style={{ flexFlow: currentFlexFlow, height: isPreview ? "calc(100% - 50px)" : 'fit-content' }} >

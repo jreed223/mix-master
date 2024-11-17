@@ -16,6 +16,7 @@ export default function TracklistProvider({children}){
     const [trackDataState, setTrackDataState] = useState<TrackData[]>(null) //{batch1: {Tracks = [], audioFeatures: false, categories: false}}
     const [selectedFeatures, setSelecetedFeatures] = useState<Record<string, number>>({})
     const [filteredTracks, setFilteredTracks] = useState<TrackClass[] | null>([])
+    const [loadingState, setLoadingState] = useState<string>(null)
 
     
     const setAudioFeatures = async (trackClassList: TrackClass[]) => {
@@ -92,7 +93,7 @@ export default function TracklistProvider({children}){
 
 
     return(
-        <TracklistContext.Provider value={{allTracks, setAllTracks, trackDataState, setTrackDataState, selectedFeatures, setSelecetedFeatures, filteredTracks, setFilteredTracks, filterFeatures}}>
+        <TracklistContext.Provider value={{allTracks, setAllTracks, trackDataState, setTrackDataState, selectedFeatures, setSelecetedFeatures, filteredTracks, setFilteredTracks, filterFeatures, loadingState, setLoadingState}}>
             {children}
         </TracklistContext.Provider>
     )

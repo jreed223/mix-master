@@ -12,14 +12,11 @@ interface PlaylistMenuProps{
 
 
 }
-const FilterMenu:React.FC<PlaylistMenuProps>=(props: PlaylistMenuProps)=>{
-    const {setActiveView, isSearching, setIsSearching, setStagingState} = useContext(NavigationContext)
+const FilterMenu:React.FC<PlaylistMenuProps>=()=>{
+    useContext(NavigationContext)
     const {
-        
-        isMaxDraftView: isFullScreen, setIsMaxDraftView: setIsFullScreen,
-        
-        displayFeatureMenu, setDisplayFeatureMenu} = useContext(DraftingContext)
-        const {allTracks, setAllTracks, trackDataState, setTrackDataState, selectedFeatures, setSelecetedFeatures, filteredTracks, setFilteredTracks} = useContext(TracklistContext)
+        displayFeatureMenu, isMaxDraftView} = useContext(DraftingContext)
+        const {selectedFeatures, setSelecetedFeatures} = useContext(TracklistContext)
 
 
         const inputControls = [
@@ -74,7 +71,7 @@ const FilterMenu:React.FC<PlaylistMenuProps>=(props: PlaylistMenuProps)=>{
             {inputControls.map((inputControl, index)=>{
 
             return(   
-            <div >  
+            <div style={{width: isMaxDraftView?"33.3vw":"12.5vw", transition: "1s"}}>  
                 <input ref={inputControl.checkboxRef} onChange={()=>handleInput(index)} type="checkbox" defaultChecked={true}/>
                 <label>{inputControl.audioFeature}</label><div className="tooltip"> ? <span className="tooltip-text">{inputControl.tooltipText}</span></div>
                 <input style={{width: "80%"}} ref={inputControl.sliderRef} id={`${inputControl.audioFeature}-slider`} onChange={()=>handleInput(index)} type={inputControl.inputType} min={inputControl.min} max={inputControl.max} defaultValue={inputControl.default} className="slider" disabled={true}/>

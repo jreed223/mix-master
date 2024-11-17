@@ -18,18 +18,18 @@ export default function NavBar({currentUser}:navProps){
     // const [isSearching, setIsSearching] = useState(false)
     // const [stagingState, setStagingState] = useState<string>("closed")
 
-    const {setActiveView, setIsSearching, stagingState} = useContext(NavigationContext)
+    const {setActiveView, activeView, setIsSearching, stagingState, setStagingState, isSearching} = useContext(NavigationContext)
 
     return(
 
             <div style={{overflow: 'clip'}}>
-                <span style={{color: "rgb(135, 135, 135)"}}className="navbar">
-                    <h3>Mix Master</h3>
+                <span style={{color: "rgb(135, 135, 135)", overflow:"clip"}}className="navbar">
+                    <h2 style={{width:"calc(30%)",textAlign:"center", margin: 0, alignContent:"center",}} onClick={()=>{stagingState==="open"?setActiveView(prev=>isSearching?prev.at(-1)==="Dashboard"?["User Playlists"]:prev:["Dashboard"]):stagingState==="closed"&&activeView.at(-1)==="Dashboard"?setActiveView(["User Playlists"]):setActiveView(prev=>prev);setStagingState(stagingState==="open"?"closed":"open");}} >Mix Master</h2>
                     <div style={{position: "absolute", left:"50%", transform: "translate(-50%, -50%)", top: "50%", height: "100%", alignItems: "end", width: "40%", display: "flex", justifyContent: "center", gap:"25px" }}>
                     {/* <button style={{width:"calc(25% - 18.75px)", height: "70%"}} disabled={disabledDashboard} onClick={()=>{setActiveView((prev)=>[prev.at(-2),prev.at(-1),"Dashboard"])}}>Your Library</button> */}
-                    <button style={{width:"calc(25% - 18.75px)", height: "70%"}} onClick={()=>{setActiveView((prev)=>[prev.at(-2), prev.at(-1), "Liked Playlists"]); stagingState==="open"?setIsSearching(false):setIsSearching(prev=>prev)}}>Liked Playlists</button>
-                    <button style={{width:"calc(25% - 18.75px)", height: "70%"}} onClick={()=>{setActiveView((prev)=>[prev.at(-2),prev.at(-1), "User Playlists"]); stagingState==="open"?setIsSearching(false):setIsSearching(prev=>prev)}}>My Playlists</button>
-                    <button style={{width:"calc(25% - 18.75px)", height: "70%"}} onClick={()=>{setActiveView((prev)=>[prev.at(-2),prev.at(-1),"Liked Albums"]); stagingState==="open"?setIsSearching(false):setIsSearching(prev=>prev)}}>Liked Albums</button>
+                    <button disabled={activeView.at(-1)==="User Playlists"} style={{width:"calc(25% - 18.75px)", height: "70%"}} onClick={()=>{setActiveView((prev)=>[prev.at(-2),prev.at(-1), "User Playlists"]); stagingState==="open"?setIsSearching(false):setIsSearching(prev=>prev)}}>My Playlists</button>
+                    <button disabled={activeView.at(-1)==="Liked Playlists"} style={{width:"calc(25% - 18.75px)", height: "70%"}} onClick={()=>{setActiveView((prev)=>[prev.at(-2), prev.at(-1), "Liked Playlists"]); stagingState==="open"?setIsSearching(false):setIsSearching(prev=>prev)}}>Liked Playlists</button>
+                    <button disabled={activeView.at(-1)==="Liked Albums"} style={{width:"calc(25% - 18.75px)", height: "70%"}} onClick={()=>{setActiveView((prev)=>[prev.at(-2),prev.at(-1),"Liked Albums"]); stagingState==="open"?setIsSearching(false):setIsSearching(prev=>prev)}}>Liked Albums</button>
                     </div>
                     <p>Welcome, {currentUser.display_name}</p>
                 </span>

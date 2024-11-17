@@ -32,7 +32,7 @@ export default class TrackCollection {
             case 'playlist':
                 this.name = collection.name;
                 this.id = collection.id
-                this.image = collection.images[0]
+                this.image = collection?.images?.at(0)||{height:0, width: 0, url:null}
                 this.name = collection.name
                 this.owner = collection.owner
                 this.uri = collection.uri
@@ -47,7 +47,7 @@ export default class TrackCollection {
 
                 this.name = collection.name;
                 this.id = collection.id
-                this.image = collection.images[0]
+                this.image =  collection?.images?.at(0)||{height:0, width: 0, url:null}
                 this.name = collection.name
                 this.artists = collection.artists
                 this.uri = collection.uri

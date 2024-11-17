@@ -140,7 +140,7 @@ const ResultCard: React.FC<ResultCardProps> = (props: ResultCardProps) => {
 
             return (
                 <>
-                <div style={{ background: "#141414", width: expanded?"100%":"50%", height: "80px", position:expanded?'fixed':'relative', top:expanded?'90px':'0px', zIndex:artistProps.expandedArtistId===albumProps.item.id? 1000 : 'unset' }}>
+                <div style={{ background: "#141414", width: expanded?"100%":"50%", height: "80px", position:expanded?'fixed':'relative', top:expanded?'90px':'0px', zIndex:artistProps.expandedArtistId===albumProps.item.id? 1000 : 'unset', overflowY: 'auto' }}>
                     <div style={{ display: "flex" }} className="track-card">
                         <div style={{ display: "inline-flex", position: "relative", height: "100%", aspectRatio: "1 / 1" }}>
                             <img loading="lazy" style={{ borderRadius: "50%", position: "relative", height: "100%", aspectRatio: "1 / 1" }} src={props.result.item?.images[0]?.url} alt={`${props.result.item.name} cover`}></img>
@@ -150,7 +150,7 @@ const ResultCard: React.FC<ResultCardProps> = (props: ResultCardProps) => {
                       
         
                     </div>
-                    <div style={{  width:(artistProps.expandedArtistId===albumProps.item.id) && expanded?"50%":"100%",height:(artistProps.expandedArtistId===albumProps.item.id) && expanded?"calc(100vh - 160px)":"0%" ,   background: "rgb(33 33 33)", overflowY:'scroll', transition:expanded?" height 1s": "none",  zIndex:artistProps.expandedArtistId===albumProps.item.id? 1000 : 'unset' }}>
+                    <div style={{ position:"fixed", width:(artistProps.expandedArtistId===albumProps.item.id) && expanded?"50%":"25%",height:(artistProps.expandedArtistId===albumProps.item.id) && expanded?"calc(100vh - 160px)":"0%" ,   background: "rgb(33 33 33)", overflowY:'scroll', transition:expanded?" height 1s": "height 1s",  zIndex:artistProps.expandedArtistId===albumProps.item.id? 1000 : 'unset' }}>
                    {artistAlbumsCards}
                </div>
    

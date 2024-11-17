@@ -24,7 +24,7 @@ export default function Tracklist(props:tracklistProps){
         stagedPlaylist
         
                 } = useContext(DraftingContext)    
-        const {allTracks, filteredTracks} = useContext(TracklistContext)
+        const {allTracks, filteredTracks, loadingState, setLoadingState} = useContext(TracklistContext)
 
 const [displayedTracks, setDisplayedTracks] = useState<ReactElement<TrackCardProps>[]>([])
 
@@ -125,19 +125,28 @@ if(allTracks){
             return TrackCard
             
         }})
+
+        if(loadingState === "filtering"){
+            return(
+                <p>Filtering Tracks...</p>
+            ) 
+
+        }else{
+            return(
+                <>
+                       {
+                            displayedTracks
+                        }
+                        {
+                            hiddenTracks
+                        }
+             
+                </>
+            )
+
+        }
     
-    
-    return(
-        <>
-               {
-                    displayedTracks
-                }
-                {
-                    hiddenTracks
-                }
-     
-        </>
-    )
+
 
 }
 }

@@ -38,11 +38,11 @@ const SelectedPlaylistContainer: React.FC<SelectedPlaylistContainerProps> = () =
         selectedFeatures,
         filteredTracks,
         setFilteredTracks,
-        filterFeatures} = useContext(TracklistContext)
+        filterFeatures, loadingState, setLoadingState} = useContext(TracklistContext)
 
     const [selectedTracks, setSelectedTracks] = useState<TrackClass[]>([])
     const [nextTracks, setNextTracks] = useState<TrackClass[]>(null)
-    const [loadingState, setLoadingState] = useState<String>(null)
+    // const [loadingState, setLoadingState] = useState<String>(null)
 
     const addStagedItems =(items:TrackClass[])=>{
         const newStagedPlaylist = stagedPlaylist.concat(items)
@@ -88,7 +88,7 @@ const SelectedPlaylistContainer: React.FC<SelectedPlaylistContainerProps> = () =
 
         }
 
-    }, [selectedLibraryItem, setAllTracks, setFilteredTracks, setTrackDataState])
+    }, [selectedLibraryItem, setAllTracks, setFilteredTracks, setLoadingState, setTrackDataState])
 
 
     let isFeatureFilterSelected = Object.values(selectedFeatures).some(featureVal => typeof featureVal === "number")
@@ -109,7 +109,7 @@ const SelectedPlaylistContainer: React.FC<SelectedPlaylistContainerProps> = () =
 
 
 
-    }, [selectedFeatures, trackDataState, filterFeatures, allTracks, isFeatureFilterSelected, setFilteredTracks])
+    }, [selectedFeatures, trackDataState, filterFeatures, allTracks, isFeatureFilterSelected, setFilteredTracks, setLoadingState])
 
 
     useEffect(() => {
@@ -174,14 +174,21 @@ const SelectedPlaylistContainer: React.FC<SelectedPlaylistContainerProps> = () =
                     position: "sticky",
                     top: 0,
                     backgroundColor: "#141414",
-                    zIndex: 1
+                    zIndex: 1,
+                    height: "12%",
+                    display:"flex",
+                    flexDirection:"column"
+                    
                 }}>
+                    <div style={{width:"100%", flex: "1"}}>
                     <button onClick={() => { selectAllclicked(); }} value={"SelectAll"}>Select All</button>
                     <button onClick={() => { deselectAllClicked() }}>Deselect All</button>
                     <button onClick={() => { stageSelectedDisplayedTracks(); }}>Add Items</button>
-                    {isFeatureFilterSelected && loadingState === "filtering" 
+                    {/* {isFeatureFilterSelected && loadingState === "filtering" 
                     ?(<p>Filtering Tracks...</p>) 
-                    : (<></>)}
+                    : (<></>)} */}
+                    </div>
+                    <p style={{margin:0}}>{selectedLibraryItem?.name}</p>
                 </div>{loadingState==="loading"
                     ?<div className="search-filter-container new-playlist" id="search-filter-div" >
                         <p>loading...</p>
