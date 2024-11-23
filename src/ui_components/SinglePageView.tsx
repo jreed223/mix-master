@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, } from "react";
 import React from "react";
 import { UserProfile } from '../../server/types';
 
@@ -24,6 +24,7 @@ export default function UserLibrary(props: UserLibraryProps) {
             <div className="main-content-area" style={{ position: "relative" }}>
                 <DraftingArea ></DraftingArea>
                 <LibraryComponents  userId={props.currentUser.id} ></LibraryComponents>
+                {/* <ErrorBoundary></ErrorBoundary> */}
                 <SearchBar ></SearchBar>
             </div>
         </DraftingProvider>

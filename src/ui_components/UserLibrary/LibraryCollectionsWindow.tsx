@@ -3,7 +3,7 @@ import { Album, Playlist } from "../../../server/types";
 import TrackCollection from "../../models/libraryItems";
 import LibraryItemCard from "./LibraryItemCard";
 import { ViewName } from "../NavBar";
-import { NavigationContext } from "../../state_management/NavigationProvider";
+import { NavigationContext, NavigationContextType } from "../../state_management/NavigationProvider";
 import { DraftingContext } from "../../state_management/DraftingPaneProvider";
 import { relative } from 'path';
 
@@ -28,20 +28,33 @@ export const LibraryItemsView: React.FC<LibraryItemsViewProps> = (props: Library
   const [heightThreshold, setHeightThreshold] = useState(null)
   const [widthThreshold, setWidthThreshold] = useState(null)
 
-  const {activeView, setActiveView, isSearching, setIsSearching, stagingState, setStagingState, primaryView} = useContext(NavigationContext)
+  const {activeView, setActiveView, isSearching, setIsSearching, stagingState, setStagingState, primaryView} = useContext<NavigationContextType>(NavigationContext)
 
   const {selectedLibraryItem} = useContext(DraftingContext)
 
   const libraryItemsContainer = useRef(null)
 
   let libraryCollections;
+  const preloadImage = (src) => {
+    const link = document.createElement('link');
+    link.rel = 'preload';
+    link.as = 'image';
+    link.href = src;
+    document.head.appendChild(link);
+  };
+
   if (!libraryItems) {
     switch (props.viewName) {
       case 'Liked Albums':
         const albums: Album[] = props.fetchedLibraryResource.read()
         libraryCollections = albums.map((album: Album | Playlist) => {
-          return new TrackCollection(album['album'])
+          const albumCollection = new TrackCollection(album['album'])
+          if(albums.length>0){
+            preloadImage(albumCollection.image.url)
+          }
+          return albumCollection
         })
+
         break;
       case 'Liked Playlists':
         const playlists1: Playlist[] = props.fetchedLibraryResource.read()
@@ -49,7 +62,13 @@ export const LibraryItemsView: React.FC<LibraryItemsViewProps> = (props: Library
           playlistObject.owner.id !== props.userId
         )
 
-        libraryCollections = likedPlaylists.map((playlistObject: Playlist) => new TrackCollection(playlistObject))
+        libraryCollections = likedPlaylists.map((playlistObject: Playlist) => {
+          const likedPlaylistCollection = new TrackCollection(playlistObject)
+          if(likedPlaylists.length>0){
+            preloadImage(likedPlaylistCollection.image.url)
+          }
+          return likedPlaylistCollection
+        })
         break;
       case 'User Playlists':
         const playlists2: Playlist[] = props.fetchedLibraryResource.read()
@@ -57,7 +76,13 @@ export const LibraryItemsView: React.FC<LibraryItemsViewProps> = (props: Library
           playlistObject.owner.id === props.userId
         )
 
-        libraryCollections = userPlaylists.map((playlistObject: Playlist) => new TrackCollection(playlistObject))
+        libraryCollections = userPlaylists.map((playlistObject: Playlist) =>{
+          const userPlaylistCollection = new TrackCollection(playlistObject)
+          if(userPlaylists.length>0){
+            preloadImage(userPlaylistCollection.image.url)
+          }
+          return userPlaylistCollection
+        } )
         break;
     }
 
@@ -84,8 +109,8 @@ export const LibraryItemsView: React.FC<LibraryItemsViewProps> = (props: Library
     transition: "1s",
     overflowY: 'auto' as 'auto' | 'clip',
     position: 'relative' as 'relative',
-    margin: '0px 25px',
-    background: "#141414"
+    // margin: '0px 25px',
+    // background: "#141414"
   })
 
   const [primaryContentStyle, setPrimaryContentStyle] = useState(null)
@@ -223,8 +248,8 @@ export const LibraryItemsView: React.FC<LibraryItemsViewProps> = (props: Library
                 transition: "1s",
                 overflowY: 'auto',
                 position: 'relative',
-                margin: '0px 25px',
-                background: "#141414"
+                // margin: '0px 25px',
+                // background: "#141414"
               })
             }
 
@@ -236,8 +261,8 @@ export const LibraryItemsView: React.FC<LibraryItemsViewProps> = (props: Library
               transition: "1s",
               overflowY: 'auto',
               position: 'relative',
-              margin: '0px 25px',
-              background: "#141414"
+              // margin: '0px 25px',
+              // background: "#141414"
 
             })
             setCurrentFlexFlow('row')
@@ -251,8 +276,8 @@ export const LibraryItemsView: React.FC<LibraryItemsViewProps> = (props: Library
                 transition: "1s",
                 overflowY: 'clip',
                 position: 'relative',
-                margin: '0px 25px',
-                background: "#141414"
+                // margin: '0px 25px',
+                // background: "#141414"
               })
             }
           }
@@ -291,11 +316,10 @@ export const LibraryItemsView: React.FC<LibraryItemsViewProps> = (props: Library
                 ?() => {setStagingState('closed'); setIsSearching(false); setActiveView(["Dashboard"]);}
                 :() => setActiveView([props.viewName])} 
               style={activeView.at(-1) === 'Dashboard' 
-                ? { transition: '1s', opacity: !isSearching&&stagingState!=="open"?1:0, height: "25px", width: "calc(50vw * .25)", borderRadius:"25px", position: "absolute", top: "15px", left: "50%", transform: "translateX(-50%)"  } 
-                : {  transition: '1s', opacity: !isSearching&&stagingState!=="open"?1:0, height: "25px", width: "calc(50vw * .25)", borderRadius:"25px", position: "absolute", top: "15px", left: "50%", transform: "translateX(-50%)" }}>
-              {activeView.at(-1)==="Dashboard"
-                ?"View All"
-                :"Dashboard"} {/* &#10238; */}
+                ? { transition: '1s', opacity: activeView.at(-1)==="Dashboard"?1:0, height: "25px", width: "calc(50vw * .25)", borderRadius:"25px", position: "absolute", top: "15px", left: "50%", transform: "translateX(-50%)"  } 
+                : {  transition: '1s', opacity: activeView.at(-1)==="Dashboard"?1:0, height: "25px", width: "calc(50vw * .25)", borderRadius:"25px", position: "absolute", top: "15px", left: "50%", transform: "translateX(-50%)" }}>
+              View All
+            {/* &#10238; */}
               </button>}
           </div>
           <div style={primaryContentStyle}>
@@ -320,11 +344,10 @@ export const LibraryItemsView: React.FC<LibraryItemsViewProps> = (props: Library
                   :() => setActiveView([props.viewName])}
               
                 style={currentCards?.length <= 5 && activeView.at(-1) === 'Dashboard'
-                  ? { transition: '1s', animation:"fade-in 1s", opacity: !isSearching&&stagingState!=="open"?1:1, height: "25px", width: "calc(50vw * .25)", borderRadius:"25px", position: "absolute", top: "15px", left: "50%", transform: "translateX(-50%)" }
-                  : { transition: '1s', animation:"fade-in 1s", opacity: !isSearching&&stagingState!=="open"?1:1, height: "25px", width: "calc(50vw * .25)", borderRadius:"25px", position: "absolute", top: "15px", left: "50%", transform: "translateX(-50%)"  }}>
-                {activeView.at(-1)==="Dashboard"
-                  ?"View All"
-                  :"Dashboard"}
+                  ? { transition: '1s', animation:"fade-in 1s", opacity: activeView.at(-1)==="Dashboard"?1:0, height: "25px", width: "calc(50vw * .25)", borderRadius:"25px", position: "absolute", top: "15px", left: "50%", transform: "translateX(-50%)" }
+                  : { transition: '1s', animation:"fade-in 1s", opacity: activeView.at(-1)==="Dashboard"?1:0, height: "25px", width: "calc(50vw * .25)", borderRadius:"25px", position: "absolute", top: "15px", left: "50%", transform: "translateX(-50%)"  }}>
+                View All
+                  
               </button>}
           </div>
           <div style={innerContentStyle}>

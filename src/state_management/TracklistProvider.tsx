@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useState } from "react"
+import React, { createContext, useCallback, useMemo, useState } from "react"
 import TrackClass from "../models/Tracks"
 import { TrackData } from "../ui_components/DraftingPaneComponents/SelectedPlaylistArea"
 import { Features } from "../../server/types"
@@ -88,12 +88,12 @@ export default function TracklistProvider({children}){
 
     }, [allTracks, selectedFeatures, setFilteredTracks, trackDataState]);
 
-
+const context = useMemo(()=>({allTracks, setAllTracks, trackDataState, setTrackDataState, selectedFeatures, setSelecetedFeatures, filteredTracks, setFilteredTracks, filterFeatures, loadingState, setLoadingState}),[allTracks, filterFeatures, filteredTracks, loadingState, selectedFeatures, trackDataState])
 
 
 
     return(
-        <TracklistContext.Provider value={{allTracks, setAllTracks, trackDataState, setTrackDataState, selectedFeatures, setSelecetedFeatures, filteredTracks, setFilteredTracks, filterFeatures, loadingState, setLoadingState}}>
+        <TracklistContext.Provider value={context}>
             {children}
         </TracklistContext.Provider>
     )

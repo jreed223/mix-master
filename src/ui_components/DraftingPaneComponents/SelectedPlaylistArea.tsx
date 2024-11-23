@@ -175,20 +175,19 @@ const SelectedPlaylistContainer: React.FC<SelectedPlaylistContainerProps> = () =
                     top: 0,
                     backgroundColor: "#141414",
                     zIndex: 1,
-                    height: "12%",
                     display:"flex",
                     flexDirection:"column"
                     
                 }}>
-                    <div style={{width:"100%", flex: "1"}}>
-                    <button onClick={() => { selectAllclicked(); }} value={"SelectAll"}>Select All</button>
-                    <button onClick={() => { deselectAllClicked() }}>Deselect All</button>
-                    <button onClick={() => { stageSelectedDisplayedTracks(); }}>Add Items</button>
+                    <div style={{margin:"auto", flex: "1"}}>
+                    <button style={{margin:"auto 10px", flex: "1"}} onClick={() => { selectAllclicked(); }} value={"SelectAll"}>Select All</button>
+                    <button style={{margin:"auto 10px", flex: "1"}} onClick={() => { deselectAllClicked() }}>Deselect All</button>
+                    <button style={{margin:"auto 10px", flex: "1"}} onClick={() => { stageSelectedDisplayedTracks(); }}>Add Items</button>
                     {/* {isFeatureFilterSelected && loadingState === "filtering" 
                     ?(<p>Filtering Tracks...</p>) 
                     : (<></>)} */}
                     </div>
-                    <p style={{margin:0}}>{selectedLibraryItem?.name}</p>
+                    <h3 style={{margin:"5px 15px", textAlign:'center'}}>{selectedLibraryItem?.name}</h3>
                 </div>{loadingState==="loading"
                     ?<div className="search-filter-container new-playlist" id="search-filter-div" >
                         <p>loading...</p>

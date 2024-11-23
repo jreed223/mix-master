@@ -23,8 +23,8 @@ const DraftPlaylistContainer: React.FC<DraftPlaylistContainerProps> = (props: Dr
         setStagedPlaylistState,
         setStagedPlaylist,
         stagedPlaylist,
-        currentAudio,
-        setCurrentAudio } = useContext(DraftingContext)
+        
+         } = useContext(DraftingContext)
 
     const deselectTrack = useCallback((trackId: string) => {
         setSelectedTracks(prev => prev.filter(selectedTrack => selectedTrack.track.id !== trackId))
@@ -63,7 +63,7 @@ const DraftPlaylistContainer: React.FC<DraftPlaylistContainerProps> = (props: Dr
         } else {
             setTrackCards([])
         }
-    }, [deselectTrack, currentAudio, removeStagedItems, setCurrentAudio, stagedPlaylist, selectedTracks])
+    }, [deselectTrack, removeStagedItems, stagedPlaylist, selectedTracks])
 
 
     useEffect(() => {
@@ -136,13 +136,17 @@ const DraftPlaylistContainer: React.FC<DraftPlaylistContainerProps> = (props: Dr
                     top: 0,
                     backgroundColor: "#141414",
                     zIndex: 1,
+                     display:"flex",
+                    flexDirection:"column"
                 }}>
 
+                    <div style={{margin:"auto", flex: "1"}}>
 
                     {/* <input type="checkbox" readOnly checked={} onClick={()=>{toggleSelectAll()}}/><label>Check all</label> */}
-                    <button onClick={() => { deselectAllClicked() }}>Deselect All</button>
-                    <button onClick={() => { selectAllClicked() }}>Select All</button>
-                    <button onClick={() => { removeStagedItems(selectedTracks); setSelectedTracks([]) }}>Remove Items</button>
+                        <button style={{margin:"auto 10px", flex: "1"}} onClick={() => { deselectAllClicked() }}>Deselect All</button>
+                        <button style={{margin:"auto 10px", flex: "1"}} onClick={() => { selectAllClicked() }}>Select All</button>
+                        <button style={{margin:"auto 10px", flex: "1"}} onClick={() => { removeStagedItems(selectedTracks); setSelectedTracks([]) }}>Remove Items</button>
+                    
 
                     {stagedPlaylistState.length > 0 ?
                         <>
@@ -150,7 +154,9 @@ const DraftPlaylistContainer: React.FC<DraftPlaylistContainerProps> = (props: Dr
                             {undoRedoController ? <button onClick={() => { redoClicked() }}>Redo</button> : <></>}
                         </>
                         : <></>}
+                        </div>
 
+                    <input placeholder="Playlist Draft..." type="text" style={{margin:"8px 15px", textAlign:'center', minWidth:"50%", alignSelf:"center", width:"fit-content"}}></input>
                 </div>
             }
             {trackCards}

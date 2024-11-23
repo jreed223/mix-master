@@ -1,8 +1,8 @@
 import { CircularProgress } from "@mui/material";
-import React, { Suspense, useContext } from "react"
+import React, { Suspense, useContext, useMemo } from "react"
 import { useEffect, useState } from "react"
 import { LibraryItemsView } from "./LibraryCollectionsWindow";
-import { NavigationContext } from "../../state_management/NavigationProvider";
+import { NavigationContext, NavigationContextType } from "../../state_management/NavigationProvider";
 
 interface LibraryComponentsProps {
   userId: string
@@ -10,7 +10,7 @@ interface LibraryComponentsProps {
 
 export const LibraryComponents: React.FC<LibraryComponentsProps> = (props: LibraryComponentsProps) => {
 
-  const {activeView, isSearching, primaryView} = useContext(NavigationContext)
+  const {activeView, isSearching, primaryView} = useContext<NavigationContextType>(NavigationContext)
 
   const fetchAllPlaylists = () => {
     console.log("FETCHING PLAYLISTS")
@@ -64,8 +64,8 @@ export const LibraryComponents: React.FC<LibraryComponentsProps> = (props: Libra
   }
 
 
-  const fetchedPlaylistsResource = suspensify(fetchAllPlaylists())
-  const fetchedAlbumsResource = suspensify(fetchLikedAlbums())
+  const fetchedPlaylistsResource = useMemo(()=>suspensify(fetchAllPlaylists()),[])
+  const fetchedAlbumsResource = useMemo(()=>suspensify(fetchLikedAlbums()),[])
 
 
   const [primaryViewStyle, setPrimaryViewStyle] = useState<{ width: string, transition: string }>(null)
@@ -115,20 +115,6 @@ export const LibraryComponents: React.FC<LibraryComponentsProps> = (props: Libra
           transition: "1s"
         })
         break;
-      // case "Liked Albums":
-
-
-      //   setSecondaryViewStyle({
-      //     width: "100%",
-
-      //     transition: "1s"
-      //   })
-      //   setPrimaryViewStyle({
-      //     width: "0%",
-
-      //     transition: "1s"
-      //   })
-      //   break;
 
     }
 

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react"
+import React, { useContext, useEffect, useRef, useState } from "react"
 // import { UserProfile } from '@spotify/web-api-ts-sdk';
 import { Album, Playlist, SearchResults, Artist } from '../../server/types';
 import ResultCard from "./ResultCard";
@@ -47,14 +47,22 @@ export default function SearchBar() {
     const [playlistCards, setPlaylistCards] = useState(null)
     const [trackCards, setTrackCards] = useState(null)
 
+    const queryRef = useRef(null)
     useEffect(()=>{
             const timer = setTimeout(()=>{
                 setFinalQuery(searchQuery)
+                
             }, 750)
 
         return()=>clearTimeout(timer)
 
     },[searchQuery])
+    
+    useEffect(()=>{
+        if(!isSearching){
+            queryRef.current=finalQuery
+        }
+    },[finalQuery, isSearching])
 
 
     useEffect(()=>{
@@ -96,7 +104,7 @@ export default function SearchBar() {
         if (searchResults) {
             const albumCards = searchResults.albums.items.map((album) => {
                 return <ResultCard
-                    key={album.id}
+                    key={album?.id}
                     popularity={null}
                     result={{
                         type: "album",
@@ -107,7 +115,7 @@ export default function SearchBar() {
             setAlbumCards(albumCards)
             const playlistCards = searchResults.playlists.items.map((playlist) => {
                 return <ResultCard
-                    key={playlist.id}
+                    key={playlist?.id}
                     popularity={null}
                     result={{
                         type: "playlist",
@@ -118,24 +126,12 @@ export default function SearchBar() {
             setPlaylistCards(playlistCards)
             console.log(searchResults.tracks)
     
-            const trackCards2 = searchResults.tracks.items.map((track) => {
-                const trackClass = new TrackClass(track)
-    
-                return <ResultCard
-                    popularity={track.popularity}
-                    key={track.id}
-                    result={{
-                        type: "track",
-                        item: trackClass,
-                        draftTrack: draftTrack,
-                        isDrafted: isDrafted
-                    }}></ResultCard>
-            })
+
             const trackCards = searchResults.tracks.items.map((track) => {
                 const trackClass = new TrackClass(track)
                 trackClass.track.name==="Good Life"?(console.log("GOOD LIFE: ", track)):console.log("...")
     
-                return <TrackCard key={track.id} tracklistArea={"search-bar-card"} onSelectedTrack={()=>{}} trackClass={trackClass} displayHidden={false} selectedLibraryItems={[]} draftTrack={draftTrack} deselectTrack={()=>{}}></TrackCard>
+                return <TrackCard key={track?.id} tracklistArea={"search-bar-card"} onSelectedTrack={()=>{}} trackClass={trackClass} displayHidden={false} selectedLibraryItems={[]} draftTrack={draftTrack} deselectTrack={()=>{}}></TrackCard>
             })
     
             setTrackCards(trackCards)
@@ -143,8 +139,8 @@ export default function SearchBar() {
     
     
                 return <ResultCard
-                    key={artist.id}
-                    popularity={artist.popularity}
+                    key={artist?.id}
+                    popularity={artist?.popularity}
                     result={{
                         type: "artist",
                         item: artist,
@@ -176,6 +172,8 @@ export default function SearchBar() {
     
         const handleSearch = async () => {
             // event.preventDefault()
+            setIsLoading(true)
+
             if (isSearching) {
     
                 const results = await fetch("/spotify-data/search-results", {
@@ -203,7 +201,6 @@ export default function SearchBar() {
         }
     
         if(isSearching && finalQuery){
-            setIsLoading(true)
             handleSearch()
         }
     },[activeView, finalQuery, isSearching, setActiveView, setIsSearching])
@@ -233,7 +230,7 @@ export default function SearchBar() {
             setFinalQuery(searchQuery)
         }else{
             setIsSearching(true)
-            setActiveView(['User Playlists'])
+            setActiveView(prev=>prev.at(-1)==="Dashboard"?['User Playlists']:prev)
         }
 
     }
@@ -268,21 +265,16 @@ export default function SearchBar() {
                                 <div>Loading</div>:
                             searchResults ?
                                 <>
-                                    <div style={{ height: "100%", display: "flex", flexDirection: "row" }}>
-                                        <div style={{ width: "calc(100%)", height: "100%", display: "flex", flexDirection: "column", gap: "10px", }} >
+                                    <div style={{ height: "100%", display: "flex", flexDirection: "row", overflow: "auto" }}>
+                                        <div style={{ width: "calc(100%)", height: "100%", flexDirection: "column", gap: "10px", }} >
 
                                             {/* <div style={{ display: "flex", flexFlow: "row wrap", overflowY: "auto" }}>{artistCards}</div> */}
-                                            <div style={{ overflowY: "scroll", flex: 2, display: "flex", flexFlow: "row wrap" }}>
+                                            <div style={{ flex: 2, display: "flex", flexFlow: "row wrap" }}>
                                                 {currentCards}
                                                 </div>
 
                                         </div>
-                                        {/* <div style={{ width: "0%", height: "100%", display: "flex", flexDirection: "column" }} >
 
-                                            <div style={{ overflowY: "scroll", flex: 1 }}>{albumCards}</div>
-                                            <div style={{ overflowY: "scroll", flex: 1 }}>{playlistCards}</div>
-
-                                        </div> */}
                                     </div>
                                 </> : <></>
 
@@ -297,23 +289,5 @@ export default function SearchBar() {
             </form>
 
         )
-    // } else {
-    //     return (<>
-    //         <form style={{ height: "100%" }}>
 
-    //             <div className={"search-bar"} style={isSearching ? { width: "50%" } : { width: "0%" }}>
-    //                 <button style={{ marginTop: "15px", marginLeft: "15px" }} onClick={(e) => closeSearch(e)}>Close</button>
-    //                 <input type="text" placeholder="Search..." value={searchQuery} onChange={(e) => { isSearching ? setSearchQuery(e.target.value) : setSearchQuery(prev => prev) }}></input>
-    //                 <div className="search-results">
-
-
-    //                 </div>
-
-    //             </div>
-    //             <button style={{ position: "absolute", right: "15px", top: "15px", borderRadius: "25px", height: "25px" }} type="submit" onClick={(e: React.MouseEvent<HTMLButtonElement>) => { e.preventDefault(); handleSearch(); }}>search</button>
-
-    //         </form>
-
-    //     </>)
-    // }
 }

@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import TrackClass from "../../../models/Tracks";
 import { DraftingContext } from "../../../state_management/DraftingPaneProvider";
+import { NavigationContext } from "../../../state_management/NavigationProvider";
 
 export interface TrackCardProps{
     tracklistArea: string
@@ -29,12 +30,11 @@ const TrackCard: React.FC<TrackCardProps> = ({
     const {
         
         
-        currentAudio, setCurrentAudio} = useContext(DraftingContext)
+        currentAudio, setCurrentAudio, currentAudioColor, setAudioDetails} = useContext(NavigationContext)
 
     const [isChecked, setIsChecked]= useState(false)
 
 
-//TODO: Seperate Selected Draft Items and selected plailist items
 useEffect(()=>{
     if(selectedLibraryItems.some((libraryItem)=>libraryItem?.track?.id===trackClass?.track?.id)){
         setIsChecked(true)
@@ -67,19 +67,26 @@ useEffect(()=>{
         if(trackClass?.track?.preview_url!==currentAudio?.url){
             setPreviewState(null)
         }else{
-            currentAudio.audio.addEventListener('ended', ()=>setPreviewState(null))
+            setPreviewState(currentAudioColor)
+
         }
-    }, [trackClass.track?.preview_url, currentAudio?.url, currentAudio?.audio])
+    }, [trackClass?.track?.preview_url, currentAudio?.url, currentAudioColor])
 
    
-    // const [currentAudio, setCurrentAudio] = useState<{url:string, audio: HTMLAudioElement}>(null)
-    const [previewState, setPreviewState] = useState(currentAudio?.url===trackClass.track?.preview_url?(currentAudio?.audio.paused?"#e56767":"#59b759"):null)
+    const [previewState, setPreviewState] = useState(currentAudio?.url===trackClass.track?.preview_url?(currentAudio?.audio?.paused?"#e56767":"#59b759"):null)
     const playPreviewAudio = (url)=>{
         const audio = new Audio(url)
+        setAudioDetails({
+            artist: trackClass.track.artists[0].name,
+            title: trackClass.track.name
+        })
 
         if(currentAudio===null){
             setPreviewState("#59b759")
-            audio?.play()
+            audio?.play().catch((e)=>{
+                console.log('Failed to play audio resource: ', e)
+            })
+
             setCurrentAudio({
                 url: url,
                 audio: audio})
@@ -87,11 +94,17 @@ useEffect(()=>{
         }
         if(currentAudio.url!==url){
             currentAudio.audio?.pause()
-            audio.play()
+            audio.play().catch((e)=>{
+                console.log('Failed to play audio resource: ', e)
+            })
             setPreviewState("#59b759")
             setCurrentAudio({
                 url: url,
                 audio: audio})
+            // setAudioDetails({
+            //     artist: trackClass.track.artists[0].name,
+            //     title: trackClass.track.name
+            // })
 
         }else{
             if(currentAudio.audio.paused === true){
@@ -105,8 +118,7 @@ useEffect(()=>{
 
 
             }
-            // console.log("PAUSED", currentAudio.audio.paused)
-            // setCurrentAudio(null)
+
         }
         
     }    // if(props.displayHidden){
