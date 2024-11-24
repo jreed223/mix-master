@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useState } from "react"
+import React, { createContext, useCallback, useMemo, useState } from "react"
 import TrackClass from "../models/Tracks"
 import { TrackData } from "../ui_components/DraftingPaneComponents/SelectedPlaylistArea"
 import { Features } from "../../server/types"
@@ -16,6 +16,7 @@ export default function TracklistProvider({children}){
     const [trackDataState, setTrackDataState] = useState<TrackData[]>(null) //{batch1: {Tracks = [], audioFeatures: false, categories: false}}
     const [selectedFeatures, setSelecetedFeatures] = useState<Record<string, number>>({})
     const [filteredTracks, setFilteredTracks] = useState<TrackClass[] | null>([])
+    const [loadingState, setLoadingState] = useState<string>(null)
 
     
     const setAudioFeatures = async (trackClassList: TrackClass[]) => {
@@ -87,12 +88,12 @@ export default function TracklistProvider({children}){
 
     }, [allTracks, selectedFeatures, setFilteredTracks, trackDataState]);
 
-
+const context = useMemo(()=>({allTracks, setAllTracks, trackDataState, setTrackDataState, selectedFeatures, setSelecetedFeatures, filteredTracks, setFilteredTracks, filterFeatures, loadingState, setLoadingState}),[allTracks, filterFeatures, filteredTracks, loadingState, selectedFeatures, trackDataState])
 
 
 
     return(
-        <TracklistContext.Provider value={{allTracks, setAllTracks, trackDataState, setTrackDataState, selectedFeatures, setSelecetedFeatures, filteredTracks, setFilteredTracks, filterFeatures}}>
+        <TracklistContext.Provider value={context}>
             {children}
         </TracklistContext.Provider>
     )

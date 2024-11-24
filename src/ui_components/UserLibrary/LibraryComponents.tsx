@@ -1,8 +1,8 @@
 import { CircularProgress } from "@mui/material";
-import React, { Suspense, useContext } from "react"
+import React, { Suspense, useContext, useMemo } from "react"
 import { useEffect, useState } from "react"
 import { LibraryItemsView } from "./LibraryCollectionsWindow";
-import { NavigationContext } from "../../state_management/NavigationProvider";
+import { NavigationContext, NavigationContextType } from "../../state_management/NavigationProvider";
 
 interface LibraryComponentsProps {
   userId: string
@@ -10,7 +10,7 @@ interface LibraryComponentsProps {
 
 export const LibraryComponents: React.FC<LibraryComponentsProps> = (props: LibraryComponentsProps) => {
 
-  const {activeView, isSearching} = useContext(NavigationContext)
+  const {activeView, isSearching, primaryView} = useContext<NavigationContextType>(NavigationContext)
 
   const fetchAllPlaylists = () => {
     console.log("FETCHING PLAYLISTS")
@@ -64,8 +64,8 @@ export const LibraryComponents: React.FC<LibraryComponentsProps> = (props: Libra
   }
 
 
-  const fetchedPlaylistsResource = suspensify(fetchAllPlaylists())
-  const fetchedAlbumsResource = suspensify(fetchLikedAlbums())
+  const fetchedPlaylistsResource = useMemo(()=>suspensify(fetchAllPlaylists()),[])
+  const fetchedAlbumsResource = useMemo(()=>suspensify(fetchLikedAlbums()),[])
 
 
   const [primaryViewStyle, setPrimaryViewStyle] = useState<{ width: string, transition: string }>(null)
@@ -86,7 +86,7 @@ export const LibraryComponents: React.FC<LibraryComponentsProps> = (props: Libra
           transition: "1s"
         })
         break;
-      case "User Playlists":
+      case primaryView:
         if (!isSearching) {
           setSecondaryViewStyle({
             width: "0%",
@@ -101,21 +101,7 @@ export const LibraryComponents: React.FC<LibraryComponentsProps> = (props: Libra
         })
 
         break;
-      case "Liked Playlists":
-
-
-        setSecondaryViewStyle({
-          width: "100%",
-
-          transition: "1s"
-        })
-        setPrimaryViewStyle({
-          width: "0%",
-
-          transition: "1s"
-        })
-        break;
-      case "Liked Albums":
+      default:
 
 
         setSecondaryViewStyle({
@@ -133,7 +119,7 @@ export const LibraryComponents: React.FC<LibraryComponentsProps> = (props: Libra
     }
 
 
-  }, [isSearching, activeView])
+  }, [isSearching, activeView, primaryView])
 
 
 
@@ -142,7 +128,7 @@ export const LibraryComponents: React.FC<LibraryComponentsProps> = (props: Libra
     <div style={{ flexGrow: 1 }} className="library-container" id="library-container">
       <div className="user-library-items" style={primaryViewStyle}>
         <Suspense fallback={<CircularProgress />}>
-          <LibraryItemsView  fetchedLibraryResource={fetchedPlaylistsResource} userId={props.userId}  viewName={"User Playlists"} ></LibraryItemsView>
+          <LibraryItemsView  fetchedLibraryResource={fetchedPlaylistsResource} userId={props.userId}  viewName={primaryView} ></LibraryItemsView>
         </Suspense>
       </div>
       <div className="liked-library-items" style={secondaryViewStyle}>

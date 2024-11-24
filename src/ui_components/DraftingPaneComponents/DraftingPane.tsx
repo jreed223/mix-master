@@ -33,7 +33,7 @@ export default function DraftingArea(){
     return(
         <TracklistProvider>
         <div ref={creationContainer} className={"playlist-creation-container-hidden"}style={isMaxDraftView?{width: "100%", overflowX: "clip"}:stagingState==="open"?{width:"50%", overflowX: "clip"}:{width:"0%", overflowX: "clip"}} id="creation-container">
-        <div style={{width:isMaxDraftView?"100vw":"50vw", height: "100%", transition: '1s'}}>
+        <div style={{width:isMaxDraftView?"100vw":"50vw", height: "100%", transition: '1s', backgroundColor: "#141414"}}>
         <PlaylistMenuBar draftingPaneContainer={creationContainer} ></PlaylistMenuBar>
 
             <div className="playlist-items-containers" style={{position: "relative"}}>

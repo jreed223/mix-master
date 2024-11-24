@@ -48,9 +48,9 @@ const PlaylistMenuBar: React.FC<PlaylistMenuProps> = (props: PlaylistMenuProps) 
 
     return (
         <div className="playlist-creation-menu-bar" >
-            <button onClick={() => closeCreationContainer()}>Close</button>
-            <button onClick={() => { toggleFeatures() }}>Audio Features</button>
-            <button onClick={() => toggleFullScreen()}>Full Screen</button>
+            <button className='draft-pane-button' onClick={() => closeCreationContainer()}>Close</button>
+            <button className='draft-pane-button' onClick={() => { toggleFeatures() }}>Audio Features</button>
+            <button className='draft-pane-button' onClick={() => toggleFullScreen()}>Full Screen</button>
 
         </div>
     )

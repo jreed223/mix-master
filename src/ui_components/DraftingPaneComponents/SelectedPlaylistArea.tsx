@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useState } from "react"
 // import { LibraryItem } from '../../models/libraryItems';
 import Tracklist from "./TrackComponents/Tracklist";
 import TrackClass from "../../models/Tracks";
-import { NavigationContext } from "../../state_management/NavigationProvider";
+import { AudioState, NavigationContext } from "../../state_management/NavigationProvider";
 import { DraftingContext } from "../../state_management/DraftingPaneProvider";
 import { TracklistContext } from "../../state_management/TracklistProvider";
 interface SelectedPlaylistContainerProps {
@@ -21,15 +21,16 @@ export interface TrackData {
 
 const SelectedPlaylistContainer: React.FC<SelectedPlaylistContainerProps> = () => {
 
-    const {stagingState} = useContext(NavigationContext)
+    const {stagingState, currentAudio, setCurrentAudio} = useContext(NavigationContext)
 
     const {isMaxDraftView, 
-        setStagedPlaylist,
-        stagedPlaylistState,
-        setStagedPlaylistState,
+
         displayFeatureMenu, 
-        selectedLibraryItem, 
-        stagedPlaylist} = useContext(DraftingContext)
+} = useContext(DraftingContext)
+
+const {selectedLibraryItem, stagedPlaylist, setStagedPlaylist, stagedPlaylistState,
+    setStagedPlaylistState,} = useContext(NavigationContext)
+
 
     const {allTracks,
         setAllTracks,
@@ -38,11 +39,11 @@ const SelectedPlaylistContainer: React.FC<SelectedPlaylistContainerProps> = () =
         selectedFeatures,
         filteredTracks,
         setFilteredTracks,
-        filterFeatures} = useContext(TracklistContext)
+        filterFeatures, loadingState, setLoadingState} = useContext(TracklistContext)
 
     const [selectedTracks, setSelectedTracks] = useState<TrackClass[]>([])
     const [nextTracks, setNextTracks] = useState<TrackClass[]>(null)
-    const [loadingState, setLoadingState] = useState<String>(null)
+    // const [loadingState, setLoadingState] = useState<String>(null)
 
     const addStagedItems =(items:TrackClass[])=>{
         const newStagedPlaylist = stagedPlaylist.concat(items)
@@ -76,8 +77,24 @@ const SelectedPlaylistContainer: React.FC<SelectedPlaylistContainerProps> = () =
                 setAllTracks(allTracks)
                 setLoadingState(null)
 
-            }
-            )
+            })
+            // .then(()=>{
+            //     if(!currentAudio){
+            //         const audio = new Audio(selectedLibraryItem?.tracks?.at(0).track.preview_url)
+            //         const initAudioState: AudioState = {
+            //             url:selectedLibraryItem?.tracks?.at(0).track.preview_url,
+            //             audio: audio,
+            //             audioDetails: {
+            //                 trackId: selectedLibraryItem?.tracks?.at(0).track.id,
+            //                 artist: selectedLibraryItem?.tracks?.at(0).track.artists[0].name,
+            //                 title: selectedLibraryItem?.tracks?.at(0).track.name,
+            //                 collection: selectedLibraryItem
+            
+            //             }
+            //         }
+            //         setCurrentAudio(initAudioState)
+            //     }
+            // })
         } else if (selectedLibraryItem && selectedLibraryItem?.trackDataState) {
             console.log("setcurrent tracks block 5: ", selectedLibraryItem.tracks)
 
@@ -86,9 +103,26 @@ const SelectedPlaylistContainer: React.FC<SelectedPlaylistContainerProps> = () =
             setAllTracks(allTracks)
             setLoadingState(null)
 
+            // if(!currentAudio){
+            //     const audio = new Audio(selectedLibraryItem?.tracks?.at(0).track.preview_url)
+            //     const initAudioState: AudioState = {
+            //         url:selectedLibraryItem?.tracks?.at(0).track.preview_url,
+            //         audio: audio,
+            //         audioDetails: {
+            //             trackId: selectedLibraryItem?.tracks?.at(0).track.id,
+            //             artist: selectedLibraryItem?.tracks?.at(0).track.artists[0].name,
+            //             title: selectedLibraryItem?.tracks?.at(0).track.name,
+            //             collection: selectedLibraryItem
+        
+            //         }
+            //     }
+            //     setCurrentAudio(initAudioState)
+            // }
         }
 
-    }, [selectedLibraryItem, setAllTracks, setFilteredTracks, setTrackDataState])
+
+
+    }, [selectedLibraryItem, setAllTracks, setFilteredTracks, setLoadingState, setTrackDataState])
 
 
     let isFeatureFilterSelected = Object.values(selectedFeatures).some(featureVal => typeof featureVal === "number")
@@ -106,10 +140,29 @@ const SelectedPlaylistContainer: React.FC<SelectedPlaylistContainerProps> = () =
         } else {
             setFilteredTracks(allTracks)
         }
+        
 
 
 
-    }, [selectedFeatures, trackDataState, filterFeatures, allTracks, isFeatureFilterSelected, setFilteredTracks])
+    }, [selectedFeatures, trackDataState, filterFeatures, allTracks, isFeatureFilterSelected, setFilteredTracks, setLoadingState])
+
+    useEffect(()=>{
+        if(allTracks&&!currentAudio){
+            const audio = new Audio(selectedLibraryItem?.tracks?.at(0).track.preview_url)
+            const initAudioState: AudioState = {
+                url:selectedLibraryItem?.tracks?.at(0).track.preview_url,
+                audio: audio,
+                audioDetails: {
+                    trackId: selectedLibraryItem?.tracks?.at(0).track.id,
+                    artist: selectedLibraryItem?.tracks?.at(0).track.artists[0].name,
+                    title: selectedLibraryItem?.tracks?.at(0).track.name,
+                    track: selectedLibraryItem?.tracks.at(0)
+    
+                }
+            }
+            setCurrentAudio(initAudioState)
+        }
+    },[allTracks, currentAudio, selectedLibraryItem, setCurrentAudio])
 
 
     useEffect(() => {
@@ -126,8 +179,8 @@ const SelectedPlaylistContainer: React.FC<SelectedPlaylistContainerProps> = () =
     let displayedItems: TrackClass[]
 
     allTracks ? displayedItems = allTracks.filter(trackClass => {
-        const staged = stagedPlaylist.some(item => item.track.id === trackClass.track.id)
-        const filtered = isFeatureFilterSelected ? !filteredTracks.some(filteredTrackClass => filteredTrackClass.track.id === trackClass.track.id) : false
+        const staged = stagedPlaylist?.some(item => item.track.id === trackClass.track.id)
+        const filtered = isFeatureFilterSelected ? !filteredTracks?.some(filteredTrackClass => filteredTrackClass.track.id === trackClass.track.id) : false
         // console.log(`staged: ${staged}, filtered: ${filtered}`)
         return !staged && !filtered
     }) : displayedItems = []
@@ -169,24 +222,34 @@ const SelectedPlaylistContainer: React.FC<SelectedPlaylistContainerProps> = () =
 
 
         return (
-            <div className="search-filter-container new-playlist" style={stagingState === "open" ? { borderRight: "2px solid #141414", transition: "1s", flex: displayFeatureMenu && !isMaxDraftView ? 2 : 1 } : { borderRight: "0px solid #141414", transition: "1s" }} id="search-filter-div" >
+            <div className="search-filter-container new-playlist" style={stagingState === "open" ? { borderRight: "2px solid #141414", transition: "1s", flex: displayFeatureMenu && !isMaxDraftView ? 2 : 1, display: 'flex', flexDirection:"column" } : { borderRight: "0px solid #141414", transition: "1s" }} id="search-filter-div" >
                 <div style={{
                     position: "sticky",
                     top: 0,
                     backgroundColor: "#141414",
-                    zIndex: 1
+                    zIndex: 1,
+                    display:"flex",
+                    flexDirection:"column"
+                    
                 }}>
-                    <button onClick={() => { selectAllclicked(); }} value={"SelectAll"}>Select All</button>
-                    <button onClick={() => { deselectAllClicked() }}>Deselect All</button>
-                    <button onClick={() => { stageSelectedDisplayedTracks(); }}>Add Items</button>
-                    {isFeatureFilterSelected && loadingState === "filtering" 
+                    <div style={{margin:"auto", flex: "1"}}>
+                    <button style={{margin:"auto 10px", flex: "1", borderRadius:'15px'}} onClick={() => { selectAllclicked(); }} value={"SelectAll"}>Select All</button>
+                    <button style={{margin:"auto 10px", flex: "1", borderRadius:'15px'}} onClick={() => { deselectAllClicked() }}>Deselect All</button>
+                    <button style={{margin:"auto 10px", flex: "1", borderRadius:'15px'}} onClick={() => { stageSelectedDisplayedTracks(); }}>Add Items</button>
+                    {/* {isFeatureFilterSelected && loadingState === "filtering" 
                     ?(<p>Filtering Tracks...</p>) 
-                    : (<></>)}
+                    : (<></>)} */}
+                    </div>
+                    <h3 style={{margin:"5px 15px", textAlign:'center'}}>{selectedLibraryItem?.name}</h3>
                 </div>{loadingState==="loading"
                     ?<div className="search-filter-container new-playlist" id="search-filter-div" >
                         <p>loading...</p>
                     </div>
-                    :<Tracklist tracklistArea="selected-playlist" selectedLibraryItems={selectedTracks} setSelectedLibraryItems={setSelectedTracks} draftTracks={addStagedItems}></Tracklist>}
+                    :<div style={{overflowY: 'auto'}}>
+                        
+                        <Tracklist tracklistArea="selected-playlist" selectedLibraryItems={selectedTracks} setSelectedLibraryItems={setSelectedTracks} draftTracks={addStagedItems}></Tracklist>
+                        
+                    </div>}
                 {selectedLibraryItem?.next ?
                     <div style={{}}>
                         {
