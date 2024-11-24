@@ -160,7 +160,7 @@ const DraftPlaylistContainer: React.FC<DraftPlaylistContainerProps> = (props: Dr
                     <input placeholder="Playlist Draft..." type="text" style={{margin:"8px 15px", textAlign:'center', minWidth:"50%", alignSelf:"center", width:"fit-content"}}></input>
                 </div>
             }
-            <div style={{flex: 1, overflowY: "auto"}}>
+            <div style={{flex: 1, overflowY: "auto", overflowX: "clip"}}>
             {trackCards}
             </div>
         </div>
