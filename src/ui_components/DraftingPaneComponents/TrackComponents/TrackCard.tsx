@@ -130,7 +130,7 @@ useEffect(()=>{
         
     }    // if(props.displayHidden){
 
-    const trackImgUrl = trackClass.track?.album?.images[0]?.url||trackClass.track?.images[0]?.url||trackClass?.getCollection()?.image.url
+    const trackImgUrl = trackClass.track?.album?.images[0]?.url||trackClass?.getCollection()?.image.url||trackClass.track?.images[0]?.url
     return(
         <div className={`${tracklistArea} track-card`} id={trackClass?.track?.id} style={displayStyle}>
             

@@ -20,7 +20,7 @@ export default function NavBar({currentUser}:navProps){
     // const [stagingState, setStagingState] = useState<string>("closed")
     // const {selectedLibraryItem, setSelectedLibraryItem, stagedPlaylist, setStagedPlaylist} = useContext(NavigationContext)
 
-    const {setActiveView, activeView, setIsSearching, isSearching, stagingState, setStagingState, currentAudio, selectedLibraryItem, setSelectedLibraryItem, stagedPlaylist, setStagedPlaylist, setCurrentAudio, unstageTracks, stageTracks } = useContext(NavigationContext)
+    const {setActiveView, activeView, setIsSearching, isSearching, stagingState, setStagingState, currentAudio, currentAudioColor, selectedLibraryItem, setSelectedLibraryItem, stagedPlaylist, setStagedPlaylist, setCurrentAudio, unstageTracks, stageTracks } = useContext(NavigationContext)
     const mixMasterButton = useCallback(()=>{
             if(stagingState==='closed'){
                 if(activeView.at(-1)==="Dashboard"){
@@ -71,21 +71,28 @@ export default function NavBar({currentUser}:navProps){
     },[currentAudio, selectedLibraryItem])
 
     const prevAudio = useCallback(()=>{
+        let audioPromise = currentAudio.audio.play()
+
         const currentTrack = selectedLibraryItem?.tracks?.at(audioIdx-1)
 
         if(!currentAudio.audio.paused||!currentAudio.audio.ended){
-            currentAudio.audio.pause()
+            if(audioPromise!==undefined){
+                audioPromise.then(()=>
+                    currentAudio.audio.pause()
+                ).catch(e=>console.log(e))
+            }
+            // currentAudio.audio.pause()
         }
 
-        const audio = new Audio(selectedLibraryItem?.tracks?.at(audioIdx-1).track.preview_url)
+        const audio = new Audio(currentTrack.track.preview_url)
 
         const nextAudioState: AudioState = {
-            url:selectedLibraryItem?.tracks?.at(audioIdx-1).track.preview_url,
+            url:currentTrack.track.preview_url,
             audio: audio,
             audioDetails: {
-                trackId: selectedLibraryItem?.tracks?.at(audioIdx-1).track.id,
-                artist: selectedLibraryItem?.tracks?.at(audioIdx-1).track.artists[0].name,
-                title: selectedLibraryItem?.tracks?.at(audioIdx-1).track.name,
+                trackId: currentTrack.track.id,
+                artist: currentTrack.track.artists[0].name,
+                title: currentTrack.track.name,
                 track: currentTrack
 
             }
@@ -96,37 +103,43 @@ export default function NavBar({currentUser}:navProps){
     },[audioIdx, currentAudio?.audio, selectedLibraryItem, setCurrentAudio])
 
 
-    const nextAudio = useCallback(()=>{
-        
+    const nextAudio = useCallback(async ()=>{
+        let audioPromise = currentAudio.audio.play()
+
         if(!currentAudio.audio.paused||!currentAudio.audio.ended){
-            currentAudio.audio.pause()
+            if(audioPromise!==undefined){
+                audioPromise.then(()=>
+                    currentAudio.audio.pause()
+                ).catch(e=>console.log(e))
+            }
+            // await currentAudio.audio.pause()
         }
         let nextAudioState: AudioState;
     if(audioIdx+1>=selectedLibraryItem.tracks.length||audioIdx===null){
         const currentTrack = selectedLibraryItem?.tracks?.at(0)
 
-        const audio = new Audio(selectedLibraryItem?.tracks?.at(0).track.preview_url)
+        const audio = new Audio(currentTrack.track.preview_url)
         nextAudioState = {
-            url:selectedLibraryItem?.tracks?.at(0).track.preview_url,
+            url:currentTrack.track.preview_url,
             audio: audio,
             audioDetails: {
-                trackId: selectedLibraryItem?.tracks?.at(0).track.id,
-                artist: selectedLibraryItem?.tracks?.at(0).track.artists[0].name,
-                title: selectedLibraryItem?.tracks?.at(0).track.name,
+                trackId: currentTrack.track.id,
+                artist: currentTrack.track.artists[0].name,
+                title: currentTrack.track.name,
                 track: currentTrack
 
             }
         }
     }else{
         const currentTrack = selectedLibraryItem?.tracks?.at(audioIdx+1)
-        const audio = new Audio(selectedLibraryItem?.tracks?.at(audioIdx+1).track.preview_url)
+        const audio = new Audio(currentTrack.track.preview_url)
         nextAudioState = {
-            url:selectedLibraryItem?.tracks?.at(audioIdx+1).track.preview_url,
+            url:currentTrack.track.preview_url,
             audio: audio,
             audioDetails: {
-                trackId: selectedLibraryItem?.tracks?.at(audioIdx+1).track.id,
-                artist: selectedLibraryItem?.tracks?.at(audioIdx+1).track.artists[0].name,
-                title: selectedLibraryItem?.tracks?.at(audioIdx+1).track.name,
+                trackId: currentTrack.track.id,
+                artist: currentTrack.track.artists[0].name,
+                title: currentTrack.track.name,
                 track: currentTrack
             }
         }
@@ -152,30 +165,37 @@ export default function NavBar({currentUser}:navProps){
             <div style={{overflow: 'clip'}}>
                 <span style={{color: "rgb(135, 135, 135)", overflow:"clip"}}className="navbar">
                    
-                        <div  style={{width:"calc(50% - 50px)",textAlign:"center", margin: '0px 25px', alignItems:"center", display: "flex", position: 'relative'}}>
+                        <div  style={{width:"calc(50% - 50px)", margin: '0px 25px', alignItems:"center", display: "flex", position: 'relative'}}>
                         <h2 style={{margin: 0}} onClick={()=>{mixMasterButton()}} >Mix Master</h2>
                         {/* <div></div> */}
                         {currentAudio
                         ?(
-                            <div style={{flex:1, display: "flex", justifyContent: 'center', position: 'absolute', left:"50%", transform: "translateX(-50%)"}}>
-                            <div style={{ textAlign:"center", margin: 0, alignItems:"center", display: "flex", flexDirection:"column"}}>
-                            <div style={{}}>{currentAudio?(<p style={{margin: 0, textWrap:'nowrap'}}>{`${currentAudio.audioDetails.title} by ${currentAudio.audioDetails?.artist}`}</p>):<></>}</div>
-                        <div style={{display:"flex"}}>       
+                            <>
+                            <div style={{margin:"0px 10px 0px 25px"}}>
+                                <button style={{width: "30px", height:'30px', borderRadius:"50%"}} disabled={!(selectedLibraryItem && currentAudio)} onClick={()=>prevAudio()}>&lt;</button>
+                                <button style={{width: "50px", height:'50px', borderRadius:"50%", margin:'0px 10px'}} disabled={!(currentAudio)} onClick={()=>toggleAudio()}>{currentAudioColor==="#59b759"?'Pause':'Play'}</button>
+                                <button style={{width: "30px", height:'30px', borderRadius:"50%"}} disabled={!(selectedLibraryItem && currentAudio)} onClick={()=>nextAudio()}>&gt;</button>
+                                
+                            </div>
+                            <button style={{width: "40px", height:'25px', borderRadius:"25px", marginRight: '10px'}}disabled={!(currentAudio)} onClick={()=>!stagedPlaylist?.some(track=>track?.track?.id===currentAudio?.audioDetails?.trackId)?stageTracks([currentAudio.audioDetails.track]):unstageTracks([currentAudio.audioDetails.track])}>
+                                    {!stagedPlaylist?.some(track=>track?.track?.id===currentAudio?.audioDetails?.trackId)?'+':'X'}
+                                </button>
+                            <div style={{flex:1, width:"70%", display: "flex", margin: 0, alignItems:"center", overflow:'hidden'}}>
+                            {/* <div style={{ width: "100%", display: "flex"}}> */}
+     
+                            <div style={{width:"100%"}}>{currentAudio?(<p style={{margin: 0, textWrap:'nowrap', textOverflow:'ellipsis', overflow:'hidden'}}>{`${currentAudio.audioDetails.title} by ${currentAudio.audioDetails?.artist}`}</p>):<></>}</div>
                             {/* <button disabled={!(currentAudio)||!stagedPlaylist.some(track=>track.track.id===currentAudio.audioDetails.trackId)} onClick={()=>unstageTracks([currentAudio.audioDetails.track])}></button> */}
-                            <button disabled={!(selectedLibraryItem && currentAudio)} onClick={()=>prevAudio()}></button>           
-                            <button disabled={!(currentAudio)} onClick={()=>toggleAudio()}>play</button>
-                            <button disabled={!(selectedLibraryItem && currentAudio)} onClick={()=>nextAudio()}></button>
+                            
                             
 
                             {/* {currentAudio.audioDetails.collection?currentAudio.audioDetails.collection.tracks.findIndex((track)=>track.track.id===currentAudio.audioDetails.trackId)} */}
-                        </div>
                         
+                        {/* </div> */}
+                       
                         </div>
-                        <button disabled={!(currentAudio)} onClick={()=>!stagedPlaylist?.some(track=>track.track.id===currentAudio.audioDetails.trackId)?stageTracks([currentAudio.audioDetails.track]):unstageTracks([currentAudio.audioDetails.track])}>
-                                {!stagedPlaylist?.some(track=>track.track.id===currentAudio.audioDetails.trackId)?'+':'X'}
-                            </button>
-                        </div>
+                        </>
                         // <p>{`${currentAudio.audioDetails.title} by ${currentAudio.audioDetails?.artist}`}</p>
+                        
                         )
                         :<></>
                         }
@@ -183,9 +203,9 @@ export default function NavBar({currentUser}:navProps){
                         </div>
                     <div style={{position: "absolute", left:"50%", transform: "translateY(-50%)", top: "50%", height: "100%", alignItems: "end", width: "40%", display: "flex",  gap:"25px" }}>
                     {/* <button style={{width:"calc(25% - 18.75px)", height: "70%"}} disabled={disabledDashboard} onClick={()=>{setActiveView((prev)=>[prev.at(-2),prev.at(-1),"Dashboard"])}}>Your Library</button> */}
-                    <button disabled={activeView.at(-1)==="User Playlists"&&!(isSearching&&stagingState==='open')} style={{width:"calc(25% - 18.75px)", height: "70%"}} onClick={()=>{setActiveView((prev)=>[prev.at(-2),prev.at(-1), "User Playlists"]); stagingState==="open"?setIsSearching(false):setIsSearching(prev=>prev)}}>My Playlists</button>
-                    <button disabled={activeView.at(-1)==="Liked Playlists"&&!(isSearching&&stagingState==='open')} style={{width:"calc(25% - 18.75px)", height: "70%"}} onClick={()=>{setActiveView((prev)=>[prev.at(-2), prev.at(-1), "Liked Playlists"]); stagingState==="open"?setIsSearching(false):setIsSearching(prev=>prev)}}>Liked Playlists</button>
-                    <button disabled={activeView.at(-1)==="Liked Albums"&&!(isSearching&&stagingState==='open')} style={{width:"calc(25% - 18.75px)", height: "70%"}} onClick={()=>{setActiveView((prev)=>[prev.at(-2),prev.at(-1),"Liked Albums"]); stagingState==="open"?setIsSearching(false):setIsSearching(prev=>prev)}}>Liked Albums</button>
+                    <button disabled={activeView.at(-1)==="User Playlists"&&!(isSearching&&stagingState==='open')} style={{width:"calc(25% - 18.75px)", height: "70%", borderTopLeftRadius: '7px', borderTopRightRadius: '7px' }} onClick={()=>{setActiveView((prev)=>[prev.at(-2),prev.at(-1), "User Playlists"]); stagingState==="open"?setIsSearching(false):setIsSearching(prev=>prev)}}>My Playlists</button>
+                    <button disabled={activeView.at(-1)==="Liked Playlists"&&!(isSearching&&stagingState==='open')} style={{width:"calc(25% - 18.75px)", height: "70%", borderTopLeftRadius: '7px', borderTopRightRadius: '7px'}} onClick={()=>{setActiveView((prev)=>[prev.at(-2), prev.at(-1), "Liked Playlists"]); stagingState==="open"?setIsSearching(false):setIsSearching(prev=>prev)}}>Liked Playlists</button>
+                    <button disabled={activeView.at(-1)==="Liked Albums"&&!(isSearching&&stagingState==='open')} style={{width:"calc(25% - 18.75px)", height: "70%", borderTopLeftRadius: '7px', borderTopRightRadius: '7px'}} onClick={()=>{setActiveView((prev)=>[prev.at(-2),prev.at(-1),"Liked Albums"]); stagingState==="open"?setIsSearching(false):setIsSearching(prev=>prev)}}>Liked Albums</button>
                     </div>
                     <p>Welcome, {currentUser.display_name}</p>
                 </span>

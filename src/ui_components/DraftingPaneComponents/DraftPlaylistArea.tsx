@@ -130,7 +130,7 @@ const DraftPlaylistContainer: React.FC<DraftPlaylistContainerProps> = (props: Dr
 
 
     return (
-        <div className="playlist-draft-container new-playlist" style={stagingState === "open" ? { borderRight: "2px solid #141414", transition: "1s" } : { borderRight: "0px solid #141414", transition: "1s" }} id="drafting-div">
+        <div className="playlist-draft-container new-playlist" style={stagingState === "open" ? { borderRight: "2px solid #141414", transition: "1s", display: "flex", flexDirection: 'column' } : { borderRight: "0px solid #141414", transition: "1s", display: "flex", flexDirection: 'column' }} id="drafting-div">
             {
                 <div style={{
                     position: "sticky",
@@ -144,9 +144,9 @@ const DraftPlaylistContainer: React.FC<DraftPlaylistContainerProps> = (props: Dr
                     <div style={{margin:"auto", flex: "1"}}>
 
                     {/* <input type="checkbox" readOnly checked={} onClick={()=>{toggleSelectAll()}}/><label>Check all</label> */}
-                        <button style={{margin:"auto 10px", flex: "1"}} onClick={() => { deselectAllClicked() }}>Deselect All</button>
-                        <button style={{margin:"auto 10px", flex: "1"}} onClick={() => { selectAllClicked() }}>Select All</button>
-                        <button style={{margin:"auto 10px", flex: "1"}} onClick={() => { removeStagedItems(selectedTracks); setSelectedTracks([]) }}>Remove Items</button>
+                        <button style={{margin:"auto 10px", flex: "1", borderRadius:'15px'}} onClick={() => { deselectAllClicked() }}>Deselect All</button>
+                        <button style={{margin:"auto 10px", flex: "1", borderRadius:'15px'}} onClick={() => { selectAllClicked() }}>Select All</button>
+                        <button style={{margin:"auto 10px", flex: "1", borderRadius:'15px'}} onClick={() => { removeStagedItems(selectedTracks); setSelectedTracks([]) }}>Remove Items</button>
                     
 
                     {stagedPlaylistState.length > 0 ?
@@ -160,7 +160,9 @@ const DraftPlaylistContainer: React.FC<DraftPlaylistContainerProps> = (props: Dr
                     <input placeholder="Playlist Draft..." type="text" style={{margin:"8px 15px", textAlign:'center', minWidth:"50%", alignSelf:"center", width:"fit-content"}}></input>
                 </div>
             }
+            <div style={{flex: 1, overflowY: "auto"}}>
             {trackCards}
+            </div>
         </div>
     )
 

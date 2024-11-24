@@ -222,7 +222,7 @@ const {selectedLibraryItem, stagedPlaylist, setStagedPlaylist, stagedPlaylistSta
 
 
         return (
-            <div className="search-filter-container new-playlist" style={stagingState === "open" ? { borderRight: "2px solid #141414", transition: "1s", flex: displayFeatureMenu && !isMaxDraftView ? 2 : 1 } : { borderRight: "0px solid #141414", transition: "1s" }} id="search-filter-div" >
+            <div className="search-filter-container new-playlist" style={stagingState === "open" ? { borderRight: "2px solid #141414", transition: "1s", flex: displayFeatureMenu && !isMaxDraftView ? 2 : 1, display: 'flex', flexDirection:"column" } : { borderRight: "0px solid #141414", transition: "1s" }} id="search-filter-div" >
                 <div style={{
                     position: "sticky",
                     top: 0,
@@ -233,9 +233,9 @@ const {selectedLibraryItem, stagedPlaylist, setStagedPlaylist, stagedPlaylistSta
                     
                 }}>
                     <div style={{margin:"auto", flex: "1"}}>
-                    <button style={{margin:"auto 10px", flex: "1"}} onClick={() => { selectAllclicked(); }} value={"SelectAll"}>Select All</button>
-                    <button style={{margin:"auto 10px", flex: "1"}} onClick={() => { deselectAllClicked() }}>Deselect All</button>
-                    <button style={{margin:"auto 10px", flex: "1"}} onClick={() => { stageSelectedDisplayedTracks(); }}>Add Items</button>
+                    <button style={{margin:"auto 10px", flex: "1", borderRadius:'15px'}} onClick={() => { selectAllclicked(); }} value={"SelectAll"}>Select All</button>
+                    <button style={{margin:"auto 10px", flex: "1", borderRadius:'15px'}} onClick={() => { deselectAllClicked() }}>Deselect All</button>
+                    <button style={{margin:"auto 10px", flex: "1", borderRadius:'15px'}} onClick={() => { stageSelectedDisplayedTracks(); }}>Add Items</button>
                     {/* {isFeatureFilterSelected && loadingState === "filtering" 
                     ?(<p>Filtering Tracks...</p>) 
                     : (<></>)} */}
@@ -245,7 +245,11 @@ const {selectedLibraryItem, stagedPlaylist, setStagedPlaylist, stagedPlaylistSta
                     ?<div className="search-filter-container new-playlist" id="search-filter-div" >
                         <p>loading...</p>
                     </div>
-                    :<Tracklist tracklistArea="selected-playlist" selectedLibraryItems={selectedTracks} setSelectedLibraryItems={setSelectedTracks} draftTracks={addStagedItems}></Tracklist>}
+                    :<div style={{overflowY: 'auto'}}>
+                        
+                        <Tracklist tracklistArea="selected-playlist" selectedLibraryItems={selectedTracks} setSelectedLibraryItems={setSelectedTracks} draftTracks={addStagedItems}></Tracklist>
+                        
+                    </div>}
                 {selectedLibraryItem?.next ?
                     <div style={{}}>
                         {

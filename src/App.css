@@ -580,12 +580,27 @@ button{
 .playlist-creation-menu-bar{
   background-color: #141414;
   top:50px;
-  width : 100%;
+  width : calc(100% - 10px);
   height: 40px;
   transition: width 1s;
   overflow-x: hidden;
   display: flex;
   flex-wrap: wrap;
+  gap: 25px;
+  padding-left: 10px;
+  justify-content: center;
+
+}
+
+.draft-pane-button{
+  min-width: 80px;
+  height: 80%;
+  border-radius: 15px;
+  transform: translateX(-10px);
+}
+
+.draft-playlist-button{
+  border-radius: 15px;
 
 }
 
