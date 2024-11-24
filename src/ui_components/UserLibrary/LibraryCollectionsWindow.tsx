@@ -28,9 +28,9 @@ export const LibraryItemsView: React.FC<LibraryItemsViewProps> = (props: Library
   const [heightThreshold, setHeightThreshold] = useState(null)
   const [widthThreshold, setWidthThreshold] = useState(null)
 
-  const {activeView, setActiveView, isSearching, setIsSearching, stagingState, setStagingState, primaryView} = useContext<NavigationContextType>(NavigationContext)
+  const {activeView, setActiveView, isSearching, setIsSearching, stagingState, setStagingState, primaryView, selectedLibraryItem} = useContext<NavigationContextType>(NavigationContext)
 
-  const {selectedLibraryItem} = useContext(DraftingContext)
+  // const {selectedLibraryItem} = useContext(DraftingContext)
 
   const libraryItemsContainer = useRef(null)
 

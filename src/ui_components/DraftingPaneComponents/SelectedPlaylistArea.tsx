@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useState } from "react"
 // import { LibraryItem } from '../../models/libraryItems';
 import Tracklist from "./TrackComponents/Tracklist";
 import TrackClass from "../../models/Tracks";
-import { NavigationContext } from "../../state_management/NavigationProvider";
+import { AudioState, NavigationContext } from "../../state_management/NavigationProvider";
 import { DraftingContext } from "../../state_management/DraftingPaneProvider";
 import { TracklistContext } from "../../state_management/TracklistProvider";
 interface SelectedPlaylistContainerProps {
@@ -21,15 +21,16 @@ export interface TrackData {
 
 const SelectedPlaylistContainer: React.FC<SelectedPlaylistContainerProps> = () => {
 
-    const {stagingState} = useContext(NavigationContext)
+    const {stagingState, currentAudio, setCurrentAudio} = useContext(NavigationContext)
 
     const {isMaxDraftView, 
-        setStagedPlaylist,
-        stagedPlaylistState,
-        setStagedPlaylistState,
+
         displayFeatureMenu, 
-        selectedLibraryItem, 
-        stagedPlaylist} = useContext(DraftingContext)
+} = useContext(DraftingContext)
+
+const {selectedLibraryItem, stagedPlaylist, setStagedPlaylist, stagedPlaylistState,
+    setStagedPlaylistState,} = useContext(NavigationContext)
+
 
     const {allTracks,
         setAllTracks,
@@ -76,8 +77,24 @@ const SelectedPlaylistContainer: React.FC<SelectedPlaylistContainerProps> = () =
                 setAllTracks(allTracks)
                 setLoadingState(null)
 
-            }
-            )
+            })
+            // .then(()=>{
+            //     if(!currentAudio){
+            //         const audio = new Audio(selectedLibraryItem?.tracks?.at(0).track.preview_url)
+            //         const initAudioState: AudioState = {
+            //             url:selectedLibraryItem?.tracks?.at(0).track.preview_url,
+            //             audio: audio,
+            //             audioDetails: {
+            //                 trackId: selectedLibraryItem?.tracks?.at(0).track.id,
+            //                 artist: selectedLibraryItem?.tracks?.at(0).track.artists[0].name,
+            //                 title: selectedLibraryItem?.tracks?.at(0).track.name,
+            //                 collection: selectedLibraryItem
+            
+            //             }
+            //         }
+            //         setCurrentAudio(initAudioState)
+            //     }
+            // })
         } else if (selectedLibraryItem && selectedLibraryItem?.trackDataState) {
             console.log("setcurrent tracks block 5: ", selectedLibraryItem.tracks)
 
@@ -86,7 +103,24 @@ const SelectedPlaylistContainer: React.FC<SelectedPlaylistContainerProps> = () =
             setAllTracks(allTracks)
             setLoadingState(null)
 
+            // if(!currentAudio){
+            //     const audio = new Audio(selectedLibraryItem?.tracks?.at(0).track.preview_url)
+            //     const initAudioState: AudioState = {
+            //         url:selectedLibraryItem?.tracks?.at(0).track.preview_url,
+            //         audio: audio,
+            //         audioDetails: {
+            //             trackId: selectedLibraryItem?.tracks?.at(0).track.id,
+            //             artist: selectedLibraryItem?.tracks?.at(0).track.artists[0].name,
+            //             title: selectedLibraryItem?.tracks?.at(0).track.name,
+            //             collection: selectedLibraryItem
+        
+            //         }
+            //     }
+            //     setCurrentAudio(initAudioState)
+            // }
         }
+
+
 
     }, [selectedLibraryItem, setAllTracks, setFilteredTracks, setLoadingState, setTrackDataState])
 
@@ -106,10 +140,29 @@ const SelectedPlaylistContainer: React.FC<SelectedPlaylistContainerProps> = () =
         } else {
             setFilteredTracks(allTracks)
         }
+        
 
 
 
     }, [selectedFeatures, trackDataState, filterFeatures, allTracks, isFeatureFilterSelected, setFilteredTracks, setLoadingState])
+
+    useEffect(()=>{
+        if(allTracks&&!currentAudio){
+            const audio = new Audio(selectedLibraryItem?.tracks?.at(0).track.preview_url)
+            const initAudioState: AudioState = {
+                url:selectedLibraryItem?.tracks?.at(0).track.preview_url,
+                audio: audio,
+                audioDetails: {
+                    trackId: selectedLibraryItem?.tracks?.at(0).track.id,
+                    artist: selectedLibraryItem?.tracks?.at(0).track.artists[0].name,
+                    title: selectedLibraryItem?.tracks?.at(0).track.name,
+                    track: selectedLibraryItem?.tracks.at(0)
+    
+                }
+            }
+            setCurrentAudio(initAudioState)
+        }
+    },[allTracks, currentAudio, selectedLibraryItem, setCurrentAudio])
 
 
     useEffect(() => {
@@ -126,8 +179,8 @@ const SelectedPlaylistContainer: React.FC<SelectedPlaylistContainerProps> = () =
     let displayedItems: TrackClass[]
 
     allTracks ? displayedItems = allTracks.filter(trackClass => {
-        const staged = stagedPlaylist.some(item => item.track.id === trackClass.track.id)
-        const filtered = isFeatureFilterSelected ? !filteredTracks.some(filteredTrackClass => filteredTrackClass.track.id === trackClass.track.id) : false
+        const staged = stagedPlaylist?.some(item => item.track.id === trackClass.track.id)
+        const filtered = isFeatureFilterSelected ? !filteredTracks?.some(filteredTrackClass => filteredTrackClass.track.id === trackClass.track.id) : false
         // console.log(`staged: ${staged}, filtered: ${filtered}`)
         return !staged && !filtered
     }) : displayedItems = []

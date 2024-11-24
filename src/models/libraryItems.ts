@@ -26,6 +26,7 @@ export default class TrackCollection {
         console.log("Library Item type in constructor: ",collection)
         this.audioFeaturesSet = false;
         this.type = collection.type
+        this.setTracks = this.setTracks.bind(this)
 
         switch (collection.type) {
 
@@ -161,7 +162,7 @@ export default class TrackCollection {
                 console.log("set tracks response: ", items)
                 return items
             })
-            const tracks = playlistItems.items.map(item=>new TrackClass(item.track))
+            const tracks = playlistItems.items.map(item=>{const track = new TrackClass(item.track, this); return track; })
             // const tracks1 = playlistItems.items.map(item=>item.track)
             this.trackDataState = [
                     {tracks: tracks, 

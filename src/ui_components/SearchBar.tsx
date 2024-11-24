@@ -13,7 +13,7 @@ import TrackCard from "./DraftingPaneComponents/TrackComponents/TrackCard";
 
 export default function SearchBar() {
 
-    const { setSelectedLibraryItem, stagedPlaylist, setStagedPlaylist, } = useContext(DraftingContext)
+    const {setSelectedLibraryItem, stagedPlaylist, setStagedPlaylist} = useContext(NavigationContext)
 
     const { activeView,
         setActiveView,

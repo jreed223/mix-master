@@ -18,11 +18,12 @@ const DraftPlaylistContainer: React.FC<DraftPlaylistContainerProps> = (props: Dr
     const [stagedHistory] = useState<TrackClass[][]>([[]])
     const [undoRedoController, setUndoRedoController] = useState<number>(null)    // const [selectAllState, setSelectAllState] =useState<boolean[]>([])
 
-    const { stagingState } = useContext(NavigationContext)
-    const { stagedPlaylistState,
-        setStagedPlaylistState,
-        setStagedPlaylist,
-        stagedPlaylist,
+    // const { stagingState } = useContext(NavigationContext)
+    const {selectedLibraryItem, setSelectedLibraryItem, stagedPlaylist, setStagedPlaylist, stagingState, stagedPlaylistState,
+        setStagedPlaylistState,} = useContext(NavigationContext)
+
+    const { 
+
         
          } = useContext(DraftingContext)
 

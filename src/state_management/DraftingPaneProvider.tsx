@@ -1,23 +1,24 @@
-import React, { createContext, useCallback, useMemo, useState } from "react"
+import React, { createContext, useCallback, useContext, useMemo, useState } from "react"
 // import { UserProfile } from '@spotify/web-api-ts-sdk';
 import TrackClass from "../models/Tracks";
 import TrackCollection from "../models/libraryItems";
+import { NavigationContext } from "./NavigationProvider";
 // import { Button } from "@mui/material";
 
 
 export type ViewName = 'Dashboard'|"Liked Playlists"|"User Playlists"|"Liked Albums"
 
 export type DraftingContextType = {
-    stagedPlaylistState:TrackClass[][], 
-    setStagedPlaylistState: React.Dispatch<React.SetStateAction<TrackClass[][]>>,
+    // stagedPlaylistState:TrackClass[][], 
+    // setStagedPlaylistState: React.Dispatch<React.SetStateAction<TrackClass[][]>>,
     isMaxDraftView:boolean, 
     setIsMaxDraftView: React.Dispatch<React.SetStateAction<boolean>>,
     displayFeatureMenu: boolean, 
     setDisplayFeatureMenu: React.Dispatch<React.SetStateAction<boolean>>,
-    selectedLibraryItem: TrackCollection, 
-    setSelectedLibraryItem:React.Dispatch<React.SetStateAction<TrackCollection>>,
-    stagedPlaylist: TrackClass[], 
-    setStagedPlaylist: React.Dispatch<React.SetStateAction<TrackClass[]>>,
+    // selectedLibraryItem: TrackCollection, 
+    // setSelectedLibraryItem:React.Dispatch<React.SetStateAction<TrackCollection>>,
+    // stagedPlaylist: TrackClass[], 
+    // setStagedPlaylist: React.Dispatch<React.SetStateAction<TrackClass[]>>,
     displayTracks: (selection: TrackCollection) => void}
     const DraftingContext = createContext<DraftingContextType>(null)
 
@@ -25,8 +26,10 @@ export default function DraftingProvider({setStagingState, children}){
     const [displayFeatureMenu, setDisplayFeatureMenu] = useState(false)
     const [stagedPlaylistState, setStagedPlaylistState] = useState<TrackClass[][]>([[]])
     const [isMaxDraftView, setIsMaxDraftView] = useState(false)
-    const [selectedLibraryItem, setSelectedLibraryItem] = useState<TrackCollection | null>(null)
-    const [stagedPlaylist, setStagedPlaylist] = useState<TrackClass[]>([])
+    // const [selectedLibraryItem, setSelectedLibraryItem] = useState<TrackCollection | null>(null)
+    // const [stagedPlaylist, setStagedPlaylist] = useState<TrackClass[]>([])
+
+    const {selectedLibraryItem, setSelectedLibraryItem, stagedPlaylist, setStagedPlaylist} = useContext(NavigationContext)
 
     const displayTracks = useCallback((selection: TrackCollection) => {
         setStagingState("open")
@@ -37,7 +40,9 @@ export default function DraftingProvider({setStagingState, children}){
         if (selection.id !== selectedLibraryItem?.id) {
             setSelectedLibraryItem(selection)
         }
-    },[selectedLibraryItem?.id, setStagingState])
+
+
+    },[selectedLibraryItem?.id, setSelectedLibraryItem, setStagingState])
 
     const context = useMemo(()=>({
         stagedPlaylistState, setStagedPlaylistState,
@@ -45,7 +50,7 @@ export default function DraftingProvider({setStagingState, children}){
         displayFeatureMenu, setDisplayFeatureMenu,
         selectedLibraryItem, setSelectedLibraryItem,
         stagedPlaylist, setStagedPlaylist,
-        displayTracks}),[ displayFeatureMenu, displayTracks, isMaxDraftView, selectedLibraryItem, stagedPlaylist, stagedPlaylistState])
+        displayTracks}),[displayFeatureMenu, displayTracks, isMaxDraftView, selectedLibraryItem, setSelectedLibraryItem, setStagedPlaylist, stagedPlaylist, stagedPlaylistState])
 
     return(
         <DraftingContext.Provider

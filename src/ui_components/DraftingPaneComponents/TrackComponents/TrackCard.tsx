@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import TrackClass from "../../../models/Tracks";
 import { DraftingContext } from "../../../state_management/DraftingPaneProvider";
-import { NavigationContext } from "../../../state_management/NavigationProvider";
+import { NavigationContext, NavigationContextType } from "../../../state_management/NavigationProvider";
 
 export interface TrackCardProps{
     tracklistArea: string
@@ -27,10 +27,7 @@ const TrackCard: React.FC<TrackCardProps> = ({
 
 })=>{
 
-    const {
-        
-        
-        currentAudio, setCurrentAudio, currentAudioColor, setAudioDetails} = useContext(NavigationContext)
+    const {currentAudio, setCurrentAudio, currentAudioColor} = useContext<NavigationContextType>(NavigationContext)
 
     const [isChecked, setIsChecked]= useState(false)
 
@@ -60,34 +57,38 @@ useEffect(()=>{
             {
                 display: 'flex',
                 alignItems: 'center',
-                width: tracklistArea==="search-bar-card"?"50%":"unset"
+                width: tracklistArea==="search-bar-card"?"calc(50% - 10px)":"unset",
+                backgroundColor: isChecked?"#00000061":"inherit"
             }
 
-    useEffect(()=>{
-        if(trackClass?.track?.preview_url!==currentAudio?.url){
-            setPreviewState(null)
-        }else{
-            setPreviewState(currentAudioColor)
+    // useEffect(()=>{
+    //     if(trackClass?.track?.id!==currentAudio?.audioDetails.trackId){
+    //         setPreviewState(null)
+    //     }else{
+    //         setPreviewState(currentAudioColor)
 
-        }
-    }, [trackClass?.track?.preview_url, currentAudio?.url, currentAudioColor])
+    //     }
+    // }, [currentAudio?.audioDetails.trackId, currentAudioColor, trackClass?.track?.id])
 
    
-    const [previewState, setPreviewState] = useState(currentAudio?.url===trackClass.track?.preview_url?(currentAudio?.audio?.paused?"#e56767":"#59b759"):null)
+    // const [previewState, setPreviewState] = useState(currentAudio?.url===trackClass.track?.preview_url?(currentAudio?.audio?.paused?"#e56767":"#59b759"):null)
     const playPreviewAudio = (url)=>{
         const audio = new Audio(url)
-        setAudioDetails({
-            artist: trackClass.track.artists[0].name,
-            title: trackClass.track.name
-        })
+
 
         if(currentAudio===null){
-            setPreviewState("#59b759")
+            // setPreviewState("#59b759")
             audio?.play().catch((e)=>{
                 console.log('Failed to play audio resource: ', e)
             })
 
             setCurrentAudio({
+                audioDetails:{
+                    trackId: trackClass.track?.id,
+                    artist: trackClass.track.artists[0].name,
+                    title: trackClass.track.name,
+                    track: trackClass
+                },
                 url: url,
                 audio: audio})
                 return
@@ -97,8 +98,14 @@ useEffect(()=>{
             audio.play().catch((e)=>{
                 console.log('Failed to play audio resource: ', e)
             })
-            setPreviewState("#59b759")
+            // setPreviewState("#59b759")
             setCurrentAudio({
+                audioDetails:{
+                    trackId: trackClass.track?.id,
+                    artist: trackClass.track.artists[0].name,
+                    title: trackClass.track.name,
+                    track: trackClass
+                },
                 url: url,
                 audio: audio})
             // setAudioDetails({
@@ -109,11 +116,11 @@ useEffect(()=>{
         }else{
             if(currentAudio.audio.paused === true){
                 currentAudio.audio?.play()
-                setPreviewState("#59b759")
+                // setPreviewState("#59b759")
 
             }else{
                 currentAudio.audio?.pause()
-                setPreviewState("#e56767")
+                // setPreviewState("#e56767")
 
 
 
@@ -123,7 +130,7 @@ useEffect(()=>{
         
     }    // if(props.displayHidden){
 
-    const trackImgUrl = trackClass?.getCollection()?.image.url||trackClass.track?.album?.images[0]?.url||trackClass.track?.images[0]?.url
+    const trackImgUrl = trackClass.track?.album?.images[0]?.url||trackClass.track?.images[0]?.url||trackClass?.getCollection()?.image.url
     return(
         <div className={`${tracklistArea} track-card`} id={trackClass?.track?.id} style={displayStyle}>
             
@@ -134,22 +141,22 @@ useEffect(()=>{
             </button>
 
                         <div style={{position: "relative", textAlign:"right",display:"flex", flexDirection:"column", flexGrow: '1', width: "0%", textWrap:'nowrap', height:"100%", justifyContent:'center'}}>
-                        <p style={{margin:"0px"}} className="track-card-text">{trackClass.track.name}</p>
-                        <p style={{ margin:"0px"}} className="track-card-text">{trackClass.track.artists[0].name}</p>
-                        <div onClick={()=>handleCheck()} style={{backgroundColor: isChecked?"#00000061":"inherit",top:0, left:0,width:"100%", height:"100%", position:"absolute",  }}></div>
+                        <p style={{margin:"0px", color: isChecked?"rgb(135, 135, 135, 0.35)":"inherit"}} className="track-card-text">{trackClass.track.name}</p>
+                        <p style={{ margin:"0px", color: isChecked?"rgb(135, 135, 135, 0.35)":"inherit"}} className="track-card-text">{trackClass.track.artists[0].name}</p>
+                        <div onClick={()=>handleCheck()} style={{top:0, left:0,width:"100%", height:"100%", position:"absolute",  }}></div>
                         </div>
                         </>
                 :<></>}
             <div style={{position: "relative",height: "100%", aspectRatio: "1 / 1"}}>
             <img loading="lazy" style={{position:"relative", height: "100%", aspectRatio: "1 / 1"}}onClick={()=>handleCheck()} src={trackImgUrl}alt={`${trackClass.track.name} cover`}></img>
-            <div onClick={()=>playPreviewAudio(trackClass?.track?.preview_url||null)} style={{color: !previewState?"inherit":previewState,top:0, left:0,width:"100%", height:"100%", position:"absolute"}}>preview</div>
+            <div onClick={()=>playPreviewAudio(trackClass?.track?.preview_url||null)} style={{color: trackClass?.track?.id===currentAudio?.audioDetails.trackId?currentAudioColor:"inherit",top:0, left:0,width:"100%", height:"100%", position:"absolute"}}>preview</div>
             </div>
             {tracklistArea==="selected-playlist"||tracklistArea==="search-bar-card"?
             <>
                         <div style={{position: "relative", display:"flex", flexDirection:"column",  overflow: 'hidden', flexGrow: '1', width: "0%", height:"100%", justifyContent:'center'}}>
-                        <p style={{margin:"0px"}} className="track-card-text">{trackClass.track.name}</p>
-                        <p style={{ margin:"0px"}} className="track-card-text">{trackClass.track.artists[0].name}</p>
-                        <div onClick={()=>handleCheck()} style={{backgroundColor: isChecked?"#00000061":"inherit",top:0, left:0,width:"100%", height:"100%", position:"absolute",  }}></div>
+                        <p style={{margin:"0px", color: isChecked?"rgb(135, 135, 135, 0.35)":"inherit"}} className="track-card-text">{trackClass.track.name}</p>
+                        <p style={{ margin:"0px", color: isChecked?"rgb(135, 135, 135, 0.35)":"inherit"}} className="track-card-text">{trackClass.track.artists[0].name}</p>
+                        <div onClick={()=>handleCheck()} style={{top:0, left:0,width:"100%", height:"100%", position:"absolute",  }}></div>
                         </div>
 
                         <button style={{width:"40px", height: "100%", borderRadius: "10%"}} onClick={()=>{draftTrack([trackClass]); deselectTrack(trackClass.track.id)}}>+
@@ -158,7 +165,7 @@ useEffect(()=>{
                         </>
         
                 : <></>}
-
+            
         </div>
     )
 

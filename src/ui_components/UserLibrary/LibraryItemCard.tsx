@@ -12,8 +12,8 @@ export interface LibraryItemCardProps{
 }
 
 const LibraryItemCard: React.FC<LibraryItemCardProps> = (props: LibraryItemCardProps)=>{
-    const {setActiveView, setIsSearching} = useContext<NavigationContextType>(NavigationContext)
-    const {selectedLibraryItem, displayTracks} = useContext(DraftingContext)
+    const {setActiveView, setIsSearching, selectedLibraryItem} = useContext<NavigationContextType>(NavigationContext)
+    const { displayTracks} = useContext(DraftingContext)
 
 
 
