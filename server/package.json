@@ -7,7 +7,9 @@
     "express": "^4.21.1",
     "itty-router": "^5.0.18",
     "react-scripts": "^5.0.1",
-    "nodemon": "^3.1.0"
+    "nodemon": "^3.1.0",
+    "ts-node": "^10.9.2"
+
 
   },
   "devDependencies": {
@@ -22,7 +24,7 @@
   },
   "main": "app.ts",
   "scripts": {
-    "start": "nodemon app.ts",
+    "start": "ts-node app.ts",
     "build": "",
     "dev": "nodemon app.ts"
   },
