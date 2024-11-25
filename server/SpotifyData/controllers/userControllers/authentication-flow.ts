@@ -23,7 +23,7 @@ export async function generateCodeChallenge(codeVerifier: string) {
 
 
 export const authLink = async (req: expressRequest, res: expressResponse)=>{
-    const clientId = "002130106d174cc495fc8443cac019f2";
+    const clientId = process.env.CLIENT_ID||"";
 
     //console.log("Authorizing the Application");
     // res.cookie('authorizing', 'true');

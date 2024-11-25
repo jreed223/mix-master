@@ -2,7 +2,7 @@ import { Request as expressRequest, Response as expressResponse} from 'express';
 type FetchResponse = Response;  //Fetch API Response
 
 export async function getAccessToken(code: string, verifier:string):Promise<FetchResponse> {
-    const clientId = "002130106d174cc495fc8443cac019f2";
+    const clientId = process.env.CLIENT_ID||"";
 
     // let verifier = getData("verifier");
     let params = new URLSearchParams();

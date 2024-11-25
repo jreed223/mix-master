@@ -3,7 +3,6 @@ import { Album, AlbumList, SearchResults, Track } from '../../../types';
 type FetchResponse = Response;  //Fetch API Response
 
 export async function fetchArtistAlbums(accessToken:string, id: string): Promise<FetchResponse> {
-    // const clientId = "002130106d174cc495fc8443cac019f2";
     // const token = getData("token")
     // const refreshToken = getData("refresh_token");
     const albumTypes=['single', 'album', 'appears_on', 'compilation']
