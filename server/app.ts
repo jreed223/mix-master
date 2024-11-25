@@ -35,6 +35,7 @@ app.get('/', (_req, _res) => {
 	_res.send("TypeScript With Express");
 });
 
+
 /** Send POST request to Spotify API to retrieve new tokens. Should only run if access token has expired. */
 export async function getRefreshToken(clientId: string, refreshToken: string) : Promise<FetchResponse> {
     console.log("refreshing tokens with: ", refreshToken)
@@ -70,7 +71,7 @@ export async function refreshTokens (req: expressRequest, res: expressResponse, 
             // console.log("response from refreshTokens: ",response)
 
             if(response.ok){
-                const tokens = await response.json()
+                const tokens:{access_token: string, refresh_token: string, expires_in: number} = await response.json()
                 console.log("tokens refreshed: ", tokens)
 
                 const access_token = tokens.access_token
@@ -80,7 +81,7 @@ export async function refreshTokens (req: expressRequest, res: expressResponse, 
                 res.cookie("access_token", access_token, {maxAge:tokens.expires_in*1000})
                 res.locals.access_token = access_token
                 res.cookie("refresh_token", refresh_token, {maxAge:2592000*1000})
-                res.cookie("expires",expiration, {maxAge:tokens.expires_in*1000})
+                res.cookie("expires",expiration, {maxAge: tokens.expires_in*1000})
 
                 // res.send(tokens)
                 next()
@@ -100,14 +101,14 @@ export async function refreshTokens (req: expressRequest, res: expressResponse, 
 }
 
 
-app.use(express.static("build"))
+app.use(express.static(".././build"))
 app.use(cors())
 app.use(cookieParser());
 app.use(express.json({limit: '50mb'}));
 
 
 
-app.use(express.static("build"))
+app.use(express.static(".././build"))
 
 userRoutes(app)
 // supplementalRoutes(app)
