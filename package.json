@@ -27,8 +27,9 @@
     "nodemon": "^3.1.0"
   },
   "scripts": {
-    "start": "cd server && npm i && npm run dev",
-    "build": "npm i && react-scripts build",
+    "dev": "react-scripts start && cd server && npm run dev",
+    "start": "react-scripts start",
+    "build": "npm i && react-scripts build && cd server",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
