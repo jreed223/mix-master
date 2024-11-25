@@ -28,8 +28,8 @@
   },
   "scripts": {
     "dev": "react-scripts start && cd server && npm run dev",
-    "start": "react-scripts start",
-    "build": "npm i && react-scripts build && cd server",
+    "start": "nodemon server/app.ts",
+    "build": "npm i && react-scripts build ",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
