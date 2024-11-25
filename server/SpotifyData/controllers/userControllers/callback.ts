@@ -9,7 +9,7 @@ export async function getAccessToken(code: string, verifier:string):Promise<Fetc
     params.append("client_id", clientId);
     params.append("grant_type", "authorization_code");
     params.append("code", code);
-    params.append("redirect_uri", "http://localhost:8080/callback");
+    params.append("redirect_uri", "https://mix-master-fg4z.onrender.com/callback");
     params.append("code_verifier", verifier!);
 
     //Grabs token after user verifies access
