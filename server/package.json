@@ -17,7 +17,8 @@
   },
   "main": "app.ts",
   "scripts": {
-    "start": "node app.ts",
+    "start": "nodemon app.ts",
+    "build": "npm i",
     "dev": "nodemon app.ts"
   },
   "keywords": []

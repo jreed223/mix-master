@@ -100,14 +100,14 @@ export async function refreshTokens (req: expressRequest, res: expressResponse, 
 }
 
 
-app.use(express.static(".././build"))
+app.use(express.static("build"))
 app.use(cors())
 app.use(cookieParser());
 app.use(express.json({limit: '50mb'}));
 
 
 
-app.use(express.static(".././build"))
+app.use(express.static("build"))
 
 userRoutes(app)
 // supplementalRoutes(app)
