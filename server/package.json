@@ -20,6 +20,7 @@
   "main": "app.ts",
   "scripts": {
     "start": "ts-node app.ts",
+    "build": "",
     "dev": "nodemon app.ts"
   },
   "keywords": []
