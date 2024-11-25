@@ -24,7 +24,7 @@
     "window": "^4.2.7"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "react-scripts start && nodemon ./server/app.ts",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
