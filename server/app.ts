@@ -31,9 +31,9 @@ app.listen(PORT, () => {
 		http://localhost:${PORT}/`);
 });
 
-app.get('/', (_req, _res) => {
-	_res.send("TypeScript With Express");
-});
+// app.get('/', (_req, _res) => {
+// 	_res.send("TypeScript With Express");
+// });
 
 /** Send POST request to Spotify API to retrieve new tokens. Should only run if access token has expired. */
 export async function getRefreshToken(clientId: string, refreshToken: string) : Promise<FetchResponse> {
