@@ -8,12 +8,13 @@ import TrackClass from "../models/Tracks";
 import { NavigationContext } from "../state_management/NavigationProvider";
 import { DraftingContext } from "../state_management/DraftingPaneProvider";
 import TrackCard from "./DraftingPaneComponents/TrackComponents/TrackCard";
+import { album } from '../../server/SpotifyData/controllers/supplementalControllers/album';
 
 
 
 export default function SearchBar() {
 
-    const {setSelectedLibraryItem, stagedPlaylist, setStagedPlaylist} = useContext(NavigationContext)
+    const {setSelectedLibraryItem, stagedPlaylist, setStagedPlaylist, stageTracks} = useContext(NavigationContext)
 
     const { activeView,
         setActiveView,
@@ -67,6 +68,7 @@ export default function SearchBar() {
 
     useEffect(()=>{
         const draftTrack = ( trackClass: TrackClass) => {
+            console.log(" TRACK TRACKCKLASS: ", trackClass)
             setStagedPlaylist(prev => prev ? prev.concat([trackClass]) : [trackClass])
             setStagingState("open")
         }
@@ -128,10 +130,11 @@ export default function SearchBar() {
     
 
             const trackCards = searchResults.tracks.items.map((track) => {
-                const trackClass = new TrackClass(track)
+                const collection = new TrackCollection(track.album)
+                const trackClass = new TrackClass(track, collection)
                 trackClass.track.name==="Good Life"?(console.log("GOOD LIFE: ", track)):console.log("...")
     
-                return <TrackCard key={track?.id} tracklistArea={"search-bar-card"} onSelectedTrack={()=>{}} trackClass={trackClass} displayHidden={false} selectedLibraryItems={[]} draftTrack={draftTrack} deselectTrack={()=>{}}></TrackCard>
+                return <TrackCard key={track?.id} tracklistArea={"search-bar-card"} onSelectedTrack={()=>{}} trackClass={trackClass} displayHidden={false} selectedLibraryItems={[]} draftTrack={stageTracks} deselectTrack={()=>{}}></TrackCard>
             })
     
             setTrackCards(trackCards)
@@ -155,7 +158,7 @@ export default function SearchBar() {
             setArtistCards(artistCards)
         }
 
-    },[expandedArtistId, searchResults, setSelectedLibraryItem, setStagedPlaylist, setStagingState, stagedPlaylist])
+    },[expandedArtistId, searchResults, setSelectedLibraryItem, setStagedPlaylist, setStagingState, stageTracks, stagedPlaylist])
 
     useEffect(()=>{
         type ResultTypes = SearchResults['albums']['items'] | SearchResults['playlists']['items'] | SearchResults['artists']['items'] | SearchResults['tracks']['items']
