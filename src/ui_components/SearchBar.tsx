@@ -253,13 +253,15 @@ export default function SearchBar() {
 
                 <div className={"search-bar"} style={isSearching ? { height: "100%", width: "50%", overflowX: 'clip' } : { height: "100%", width: "0%", overflowX: 'clip' }}>
                     <div style={{ width: "50vw", height: "100%" }}>
-                        <div style={{ height: "40px" }}>
-                            <button style={{ paddingTop: "15px", paddingLeft: "15px" }} onKeyDown={(e) => e.preventDefault()} onClick={(e) => { closeSearch(e) }}>Close</button>
-                            <button style={{ paddingTop: "15px", paddingLeft: "15px" }} onKeyDown={(e) => e.preventDefault()} onClick={(e)=>{e.preventDefault();setSearchView("Artists")}}>Artists</button>
-                            <button style={{ paddingTop: "15px", paddingLeft: "15px" }} onKeyDown={(e) => e.preventDefault()} onClick={ (e)=>{e.preventDefault(); setSearchView("Playlists")} }>Playlists</button>
-                            <button style={{ paddingTop: "15px", paddingLeft: "15px" }} onKeyDown={(e) => e.preventDefault()} onClick={ (e)=>{e.preventDefault(); setSearchView("Albums")}}>Albums</button>
-                            <button style={{ paddingTop: "15px", paddingLeft: "15px" }} onKeyDown={(e) => e.preventDefault()} onClick={ (e)=>{e.preventDefault(); setSearchView("Tracks")} }>Tracks</button>
-                            <input type="text" placeholder="Search..." value={searchQuery} onKeyDown={(e) => { onEnter(e) }} onChange={(e) => { e.preventDefault(); isSearching ? setSearchQuery(e.target.value) : (setSearchQuery(null)) }}></input>
+                        <div style={{ height: "50px", alignContent: "center", display: "flex"}}>
+                                <input style={{color:"#878787", fontSize: "1.5em", backgroundColor: "#141414", border: "none", height:"calc(100% - 10px)", width: "35%", margin: "5px"}}type="text" placeholder="Search..." value={searchQuery} onKeyDown={(e) => { onEnter(e) }} onChange={(e) => { e.preventDefault(); isSearching ? setSearchQuery(e.target.value) : (setSearchQuery(null)) }}></input>
+                                <div style={{ display: "inline-flex", alignItems: "flex-end", flex: 1, gap: "15px", justifyContent: "center"}}>
+                                    <button style={{ borderRadius: "25px", height: "25px" }} onKeyDown={(e) => e.preventDefault()} onClick={ (e)=>{e.preventDefault(); setSearchView("Albums")}}>Albums</button>
+                                    <button style={{ borderRadius: "25px", height: "25px" }} onKeyDown={(e) => e.preventDefault()} onClick={(e)=>{e.preventDefault();setSearchView("Artists")}}>Artists</button>
+                                    <button style={{ borderRadius: "25px", height: "25px" }} onKeyDown={(e) => e.preventDefault()} onClick={ (e)=>{e.preventDefault(); setSearchView("Playlists")} }>Playlists</button>
+                                    <button style={{ borderRadius: "25px", height: "25px" }} onKeyDown={(e) => e.preventDefault()} onClick={ (e)=>{e.preventDefault(); setSearchView("Tracks")} }>Tracks</button>
+                                    <button style={{ borderRadius: "25px", height: "25px" }} onKeyDown={(e) => e.preventDefault()} onClick={(e) => { closeSearch(e) }}>Close</button>
+                            </div>
                         </div>
                         <div className="search-results" style={{ height: "calc(100% - 40px)", overflowY: "hidden", position: "relative" }}>
 
@@ -286,7 +288,7 @@ export default function SearchBar() {
                         </div>
                     </div>
                 </div>
-                <button style={{ position: "absolute", right: "15px", top: "15px", borderRadius: "25px", height: "25px" }} type="submit" onClick={(e: React.MouseEvent<HTMLButtonElement>) => { handleSearchButton(e)}}>search</button>
+                <button style={{ position: "absolute", right: "15px", top: "15px", borderRadius: "25px", height: "25px", opacity: isSearching?0:1, transition: isSearching?"1s": "2s"}} type="submit" onClick={(e: React.MouseEvent<HTMLButtonElement>) => { handleSearchButton(e)}}>search</button>
 
 
             </form>

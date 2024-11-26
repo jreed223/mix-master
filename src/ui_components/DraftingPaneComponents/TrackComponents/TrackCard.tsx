@@ -142,9 +142,8 @@ useEffect(()=>{
         }
         
     }    // if(props.displayHidden){
-    console.log(props.trackClass.collection)
-    const collection = props.trackClass.getCollection()
-    const trackImgUrl = props.trackClass.track?.album?.images[0]?.url||props.trackClass.track?.images[0]?.url||collection.image.url
+  
+    const trackImgUrl = props.trackClass.track?.album?.images[0]?.url||props.trackClass.getCollection().image.url||props.trackClass.track?.images[0]?.url
     return(
         <div className={`${props.tracklistArea} track-card`} id={props.trackClass?.track?.id} style={displayStyle}>
             
@@ -157,20 +156,20 @@ useEffect(()=>{
                         <div style={{position: "relative", textAlign:"right",display:"flex", flexDirection:"column", flexGrow: '1', width: "0%", textWrap:'nowrap', height:"100%", justifyContent:'center'}}>
                         <p style={{margin:"0px", color: isChecked?"rgb(135, 135, 135, 0.35)":"inherit"}} className="track-card-text">{props.trackClass.track.name}</p>
                         <p style={{ margin:"0px", color: isChecked?"rgb(135, 135, 135, 0.35)":"inherit"}} className="track-card-text">{props.trackClass.track.artists[0].name}</p>
-                        <div onClick={()=>handleCheck()} style={{top:0, left:0,width:"100%", height:"100%", position:"absolute",  }}></div>
+                        <div onClick={()=>handleCheck()} style={{cursor:"pointer", top:0, left:0,width:"100%", height:"100%", position:"absolute",  }}></div>
                         </div>
                         </>
                 :<></>}
             <div style={{position: "relative",height: "100%", aspectRatio: "1 / 1"}}>
             <img loading="lazy" style={{position:"relative", height: "100%", aspectRatio: "1 / 1"}}onClick={()=>handleCheck()} src={trackImgUrl}alt={`${props.trackClass.track.name} cover`}></img>
-            <div onClick={()=>playPreviewAudio(props.trackClass?.track?.preview_url||null)} style={{color: props.trackClass?.track?.id===currentAudio?.audioDetails.trackId?currentAudioColor:"inherit",top:0, left:0,width:"100%", height:"100%", position:"absolute"}}>preview</div>
+            <div onClick={props.trackClass?.track?.preview_url?()=>playPreviewAudio(props.trackClass?.track?.preview_url):()=>{}} style={{cursor:props.trackClass?.track?.preview_url?"pointer":"default", color: props.trackClass?.track?.id===currentAudio?.audioDetails.trackId?currentAudioColor:"inherit",top:0, left:0,width:"100%", height:"100%", position:"absolute"}}>preview</div>
             </div>
             {props.tracklistArea==="selected-playlist"||props.tracklistArea==="search-bar-card"?
             <>
                         <div style={{position: "relative", display:"flex", flexDirection:"column",  overflow: 'hidden', flexGrow: '1', width: "0%", height:"100%", justifyContent:'center'}}>
                         <p style={{margin:"0px", color: isChecked?"rgb(135, 135, 135, 0.35)":"inherit"}} className="track-card-text">{props.trackClass.track.name}</p>
                         <p style={{ margin:"0px", color: isChecked?"rgb(135, 135, 135, 0.35)":"inherit"}} className="track-card-text">{props.trackClass.track.artists[0].name}</p>
-                        <div onClick={props.tracklistArea!=="search-bar-card"?()=>handleCheck():()=>{}} style={{top:0, left:0,width:"100%", height:"100%", position:"absolute",  }}></div>
+                        <div onClick={props.tracklistArea!=="search-bar-card"?()=>handleCheck():()=>{}} style={{cursor:props.tracklistArea!=="search-bar-card"?"pointer":"default",top:0, left:0,width:"100%", height:"100%", position:"absolute",  }}></div>
                         </div>
 
                         {props.tracklistArea==="search-bar-card"?<button disabled={stagedPlaylist.some(track=>track.track.id===props.trackClass.track.id)}style={{width:"40px", height: "100%", borderRadius: "10%"}} onClick={(e)=>{e.preventDefault(); stageTracks([props.trackClass]);}}>+

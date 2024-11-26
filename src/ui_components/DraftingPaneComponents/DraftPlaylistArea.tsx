@@ -157,7 +157,7 @@ const DraftPlaylistContainer: React.FC<DraftPlaylistContainerProps> = (props: Dr
                         : <></>}
                         </div>
 
-                    <input placeholder="Playlist Draft..." type="text" style={{margin:"8px 15px", textAlign:'center', minWidth:"50%", alignSelf:"center", width:"fit-content"}}></input>
+                    <input placeholder="Playlist Draft..." type="text" style={{textOverflow: "ellipsis", margin:"4px 15px", fontSize:"1.25em", fontWeight:"bold", border:"none", padding: "0 auto", backgroundColor: "#141414", textAlign:'center', minWidth:"50%", alignSelf:"center", width:"calc(100% - 30px)",}}></input>
                 </div>
             }
             <div style={{flex: 1, overflowY: "auto", overflowX: "clip"}}>

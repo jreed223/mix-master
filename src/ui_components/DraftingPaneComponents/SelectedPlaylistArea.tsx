@@ -118,7 +118,11 @@ const {selectedLibraryItem, stagedPlaylist, setStagedPlaylist, stagedPlaylistSta
             //     }
             //     setCurrentAudio(initAudioState)
             // }
+        }else{
+            setLoadingState(null)
+
         }
+
 
 
 
@@ -240,7 +244,9 @@ const {selectedLibraryItem, stagedPlaylist, setStagedPlaylist, stagedPlaylistSta
                     ?(<p>Filtering Tracks...</p>) 
                     : (<></>)} */}
                     </div>
-                    <h3 style={{margin:"5px 15px", textAlign:'center'}}>{selectedLibraryItem?.name}</h3>
+                    {/* <h3 style={{margin:"5px 15px", textAlign:'center'}}>{selectedLibraryItem?.name}</h3> */}
+                    <input disabled={true} placeholder={selectedLibraryItem?selectedLibraryItem?.name:"Select an Item from your library"} type="text" style={{textOverflow: "ellipsis", margin:"4px 15px", fontSize:"1.25em", fontWeight:"bold", border:"none", padding: "0 auto", backgroundColor: "#141414", textAlign:'center', minWidth:"50%", alignSelf:"center", width:"calc(100% - 30px)",}}></input>
+
                 </div>{loadingState==="loading"
                     ?<div className="search-filter-container new-playlist" id="search-filter-div" >
                         <p>loading...</p>
@@ -248,23 +254,23 @@ const {selectedLibraryItem, stagedPlaylist, setStagedPlaylist, stagedPlaylistSta
                     :<div style={{overflowY: 'auto'}}>
                         
                         <Tracklist tracklistArea="selected-playlist" selectedLibraryItems={selectedTracks} setSelectedLibraryItems={setSelectedTracks} draftTracks={addStagedItems}></Tracklist>
-                        
-                    </div>}
-                {selectedLibraryItem?.next ?
+                        {selectedLibraryItem?.next ?
                     <div style={{}}>
                         {
                             loadingState === "loadingNext" ?
-                                <button disabled={true} style={{ width: `100%`, overflowX: "hidden", padding: 0 }}>Loading...</button> :
+                                <button disabled={true} style={{ fontSize:"16px", width: `100%`, overflowX: "hidden", padding: 0 }}>Loading...</button> :
                                 <button onClick={() => {
                                     setLoadingState("loadingNext")
                                     selectedLibraryItem?.getNextTracks().then((newTracks) => { setNextTracks(newTracks); setLoadingState(null) })
                                 }}
-                                    style={{ width: `100%`, overflowX: "hidden", padding: 0 }}>
+                                    style={{ fontSize:"16px", width: `100%`, overflowX: "hidden", padding: 0 }}>
                                     More
                                 </button>
                         }
                     </div> :
                     <></>}
+                    </div>}
+               
             </div>
         )
 

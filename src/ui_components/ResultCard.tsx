@@ -140,7 +140,7 @@ const ResultCard: React.FC<ResultCardProps> = (props: ResultCardProps) => {
 
             return (
                 <>
-                <div style={{ background: "#141414", width: expanded?"100%":"50%", height: "80px", position:expanded?'fixed':'relative', top:expanded?'90px':'0px', zIndex:artistProps.expandedArtistId===albumProps.item.id? 1000 : 'unset', overflowY: 'auto' }}>
+                <div style={{ background: "#141414", width: expanded?"100%":"50%", height: "80px", position:expanded?'fixed':'relative', top:expanded?'100px':'0px', zIndex:artistProps.expandedArtistId===albumProps.item.id? 1000 : 'unset', overflowY: 'auto' }}>
                     <div style={{ display: "flex" }} className="track-card">
                         <div style={{ display: "inline-flex", position: "relative", height: "100%", aspectRatio: "1 / 1" }}>
                             <img loading="lazy" style={{ borderRadius: "50%", position: "relative", height: "100%", aspectRatio: "1 / 1" }} src={props.result.item?.images[0]?.url} alt={`${props.result.item?.name||"Unknown"} cover`}></img>
