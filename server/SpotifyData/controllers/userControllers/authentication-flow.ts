@@ -24,6 +24,7 @@ export async function generateCodeChallenge(codeVerifier: string) {
 
 export const authLink = async (req: expressRequest, res: expressResponse)=>{
     const clientId = process.env.CLIENT_ID||"";
+    const redirectUri  = process.env.REDIRECT_URI||"http://localhost:8080/callback"
 
     //console.log("Authorizing the Application");
     // res.cookie('authorizing', 'true');
@@ -35,7 +36,7 @@ export const authLink = async (req: expressRequest, res: expressResponse)=>{
         const params = new URLSearchParams();
         params.append("client_id", clientId);
         params.append("response_type", "code");
-        params.append("redirect_uri", "https://mix-master-fg4z.onrender.com/callback");
+        params.append("redirect_uri", redirectUri);
         params.append("scope", "user-read-private user-read-email playlist-read-private playlist-read-collaborative playlist-modify-private playlist-modify-public user-top-read user-library-read");
         params.append("code_challenge_method", "S256");
         params.append("code_challenge", challenge);
