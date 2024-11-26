@@ -2,14 +2,14 @@ import { Request as expressRequest, Response as expressResponse} from 'express';
 type FetchResponse = Response;  //Fetch API Response
 
 export async function getAccessToken(code: string, verifier:string):Promise<FetchResponse> {
-    const clientId = "002130106d174cc495fc8443cac019f2";
+    const clientId = process.env.CLIENT_ID||"";
 
     // let verifier = getData("verifier");
     let params = new URLSearchParams();
     params.append("client_id", clientId);
     params.append("grant_type", "authorization_code");
     params.append("code", code);
-    params.append("redirect_uri", "http://localhost:8080/callback");
+    params.append("redirect_uri", process.env.REDIRECT_URI||"http://localhost:8080/callback");
     params.append("code_verifier", verifier!);
 
     //Grabs token after user verifies access

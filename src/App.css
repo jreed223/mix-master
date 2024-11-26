@@ -487,7 +487,7 @@
   bottom: 0;
   height: 100%;
   width: 50%;
-  background-color: aquamarine;
+  background-color: rgb(20, 20, 20);
   transition: width 1s;
 
   /* animation: grow-staging 1s; */
@@ -501,7 +501,7 @@
   top:50px;
   bottom: 0;
   width: 0%;
-  background-color: aquamarine;
+  background-color:  rgb(20, 20, 20);
   transition: width 1s;
 
   /* animation: shrink-staging 1s;  */
@@ -718,7 +718,9 @@ button{
 }
 .search-filter-container{
   background-color:#212121;
-  flex: 1
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 
 }
 
@@ -727,7 +729,7 @@ button{
 }
 
 .shrink-staging {
-  animation: shrink-staging 1s;
+  /* animation: shrink-staging 1s; */
 }
 
 .grow-library {

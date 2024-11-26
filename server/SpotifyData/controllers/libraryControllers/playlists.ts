@@ -4,7 +4,6 @@ import { Playlist } from '../../../types';
 type FetchResponse = Response;  //Fetch API Response
 
 export async function fetchPlaylists(accessToken:string): Promise<Response> {
-    // const clientId = "002130106d174cc495fc8443cac019f2";
     // const token = getData("token")
     // const refreshToken = getData("refresh_token");
 

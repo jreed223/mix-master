@@ -1,6 +1,8 @@
 
 // Import the express in typescript file
 import express, { Request as expressRequest, Response as expressResponse, NextFunction } from 'express';
+import dotenv from 'dotenv';
+
 
 // import { Playlist } from '../../types';
 // import express, { NextFunction } from 'express';
@@ -12,14 +14,15 @@ import { userRoutes } from './SpotifyData/routers/userRouter';
 import { draftingPaneRoutes, searchBarRoutes } from './SpotifyData/routers/supplementalRouter';
 import { libraryRoutes } from './SpotifyData/routers/libraryRouter';
 
+
 type FetchResponse = Response;  //Fetch API Response
 
 // import { Tracklist, Playlist } from './types';
 
 // Initialize the express engine
 const app: express.Application = express();
-const clientId = "002130106d174cc495fc8443cac019f2";
-
+const clientId : string =  process.env.CLIENT_ID || "";
+dotenv.config();
 // Take a port 3000 for running server.
 // const PORT: number|string = process.env.PORT || 8080;
 
@@ -31,9 +34,9 @@ app.listen(PORT, () => {
 		http://localhost:${PORT}/`);
 });
 
-app.get('/', (_req, _res) => {
-	_res.send("TypeScript With Express");
-});
+// app.get('/', (_req, _res) => {
+// 	_res.send("TypeScript With Express");
+// });
 
 /** Send POST request to Spotify API to retrieve new tokens. Should only run if access token has expired. */
 export async function getRefreshToken(clientId: string, refreshToken: string) : Promise<FetchResponse> {
@@ -100,14 +103,14 @@ export async function refreshTokens (req: expressRequest, res: expressResponse, 
 }
 
 
-app.use(express.static("build"))
+app.use(express.static(".././build"))
 app.use(cors())
 app.use(cookieParser());
 app.use(express.json({limit: '50mb'}));
 
 
 
-app.use(express.static("build"))
+app.use(express.static(".././build"))
 
 userRoutes(app)
 // supplementalRoutes(app)
