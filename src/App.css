@@ -558,8 +558,10 @@ button{
 }
 .track-card{
   height: 70px;
-  /* margin: 5px 0px; */
-  padding: 5px;
+  margin: 8px 5px;
+  overflow: clip;
+
+  /* padding: 5px; */
 }
 
 .draft-playlist{

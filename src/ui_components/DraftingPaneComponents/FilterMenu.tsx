@@ -16,7 +16,7 @@ const FilterMenu:React.FC<PlaylistMenuProps>=()=>{
     useContext(NavigationContext)
     const {
         displayFeatureMenu, isMaxDraftView} = useContext(DraftingContext)
-        const {selectedFeatures, setSelecetedFeatures} = useContext(TracklistContext)
+        const {selectedFeatures, setSelecetedFeatures, setPopularityFilter, popularityFilter} = useContext(TracklistContext)
 
 
         const inputControls = [
@@ -36,7 +36,7 @@ const FilterMenu:React.FC<PlaylistMenuProps>=()=>{
     
         
         
-          const handleInput = (index)=>{
+          const handleAudioFeatures = (index)=>{
             const { checkboxRef, sliderRef, audioFeature } = inputControls[index];
             sliderRef.current.disabled = checkboxRef.current.checked;
             const currentSelection = {...selectedFeatures}
@@ -63,23 +63,55 @@ const FilterMenu:React.FC<PlaylistMenuProps>=()=>{
         
         
         }
+        const popularityCheckbox = useRef(null)
+        const popularitySlider = useRef(null)
+
+        const handlePopularityFilter = ()=>{
+
+            if(popularityCheckbox.current.checked){
+                popularitySlider.current.disabled = true
+                setPopularityFilter(null)
+        
+                // setSelecetedFeatures(currentSelection)
+                // props.onFilterSet(currentSelection)
+        
+                // console.log(selectedFeatures)
+        
+            }else{
+                popularitySlider.current.disabled = false
+          
+                const selectedPopularity = parseInt(popularitySlider.current.value)
+        
+                setPopularityFilter(selectedPopularity)
+                // props.onFilterSet(currentSelection)
+        
+            }
+
+        }
 
 
 
         return (
             <div style={{display: "flex", overflowX:"hidden", flexDirection:"column", flex:displayFeatureMenu?"1":"0"}} className="new-playlist">
-            {inputControls.map((inputControl, index)=>{
+            {
+            //TODO: Uncomment the below code when application is given a production license, this will allow filetring using audio features endpoint
+            /* {inputControls.map((inputControl, index)=>{
 
             return(   
             <div key={inputControl.audioFeature+"-div"} style={{width: isMaxDraftView?"33.3vw":"12.5vw", transition: "1s"}}>  
-                <input key={inputControl.audioFeature+"-checkbox"}ref={inputControl.checkboxRef} onChange={()=>handleInput(index)} type="checkbox" defaultChecked={true}/>
+                <input key={inputControl.audioFeature+"-checkbox"}ref={inputControl.checkboxRef} onChange={()=>handleAudioFeatures(index)} type="checkbox" defaultChecked={true}/>
                 <label>{inputControl.audioFeature}</label><div className="tooltip"> ? <span className="tooltip-text">{inputControl.tooltipText}</span></div>
-                <input key={inputControl.audioFeature+"-slider"} style={{width: "80%"}} ref={inputControl.sliderRef} id={`${inputControl.audioFeature}-slider`} onChange={()=>handleInput(index)} type={inputControl.inputType} min={inputControl.min} max={inputControl.max} defaultValue={inputControl.default} className="slider" disabled={true}/>
+                <input key={inputControl.audioFeature+"-slider"} style={{width: "80%"}} ref={inputControl.sliderRef} id={`${inputControl.audioFeature}-slider`} onChange={()=>handleAudioFeatures(index)} type={inputControl.inputType} min={inputControl.min} max={inputControl.max} defaultValue={inputControl.default} className="slider" disabled={true}/>
             </div>
             )
         })
 
-            }
+            } */}
+             <div key={"popularity-div"} style={{width: isMaxDraftView?"33.3vw":"12.5vw", transition: "1s"}}>  
+                <input key={"popularity-checkbox"} ref={popularityCheckbox} onChange={()=>handlePopularityFilter()} type="checkbox" defaultChecked={true}/>
+                <label>popularity</label><div className="tooltip"> ? <span className="tooltip-text">{}</span></div>
+                <input key={"popularity-slider"} ref={popularitySlider} style={{width: "80%"}} id={`popularity-slider`} onChange={()=>handlePopularityFilter()} type={"range"} min={0} max={100} defaultValue={50} className="slider" disabled={true}/>
+            </div>
 
         </div>
         )

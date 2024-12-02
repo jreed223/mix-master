@@ -30,6 +30,7 @@ const SelectedPlaylistContainer: React.FC<SelectedPlaylistContainerProps> = () =
 
 const {selectedLibraryItem, stagedPlaylist, setStagedPlaylist, stagedPlaylistState,
     setStagedPlaylistState,} = useContext(NavigationContext)
+const {popularityFilter} = useContext(TracklistContext)
 
 
     const {allTracks,
@@ -129,7 +130,7 @@ const {selectedLibraryItem, stagedPlaylist, setStagedPlaylist, stagedPlaylistSta
     }, [selectedLibraryItem, setAllTracks, setFilteredTracks, setLoadingState, setTrackDataState])
 
 
-    let isFeatureFilterSelected = Object.values(selectedFeatures).some(featureVal => typeof featureVal === "number")
+    let isFeatureFilterSelected = Object.values(selectedFeatures).some(featureVal => typeof featureVal === "number")||popularityFilter
 
     //** FIlters the selected playlist if the audio featrues have been set*/
     useEffect(() => {
@@ -150,23 +151,26 @@ const {selectedLibraryItem, stagedPlaylist, setStagedPlaylist, stagedPlaylistSta
 
     }, [selectedFeatures, trackDataState, filterFeatures, allTracks, isFeatureFilterSelected, setFilteredTracks, setLoadingState])
 
-    useEffect(()=>{
-        if(allTracks&&!currentAudio){
-            const audio = new Audio(selectedLibraryItem?.tracks?.at(0).track.preview_url)
-            const initAudioState: AudioState = {
-                url:selectedLibraryItem?.tracks?.at(0).track.preview_url,
-                audio: audio,
-                audioDetails: {
-                    trackId: selectedLibraryItem?.tracks?.at(0).track.id,
-                    artist: selectedLibraryItem?.tracks?.at(0).track.artists[0].name,
-                    title: selectedLibraryItem?.tracks?.at(0).track.name,
-                    track: selectedLibraryItem?.tracks.at(0)
+
     
-                }
-            }
-            setCurrentAudio(initAudioState)
-        }
-    },[allTracks, currentAudio, selectedLibraryItem, setCurrentAudio])
+// TODO: The below use effect can be used when a production license is assigned to the application. It will enable preview audio in the application
+    // useEffect(()=>{
+    //     if(allTracks&&!currentAudio){
+    //         const audio = new Audio(selectedLibraryItem?.tracks?.at(0).track.preview_url)
+    //         const initAudioState: AudioState = {
+    //             url:selectedLibraryItem?.tracks?.at(0).track.preview_url,
+    //             audio: audio,
+    //             audioDetails: {
+    //                 trackId: selectedLibraryItem?.tracks?.at(0).track.id,
+    //                 artist: selectedLibraryItem?.tracks?.at(0).track.artists[0].name,
+    //                 title: selectedLibraryItem?.tracks?.at(0).track.name,
+    //                 track: selectedLibraryItem?.tracks.at(0)
+    
+    //             }
+    //         }
+    //         setCurrentAudio(initAudioState)
+    //     }
+    // },[allTracks, currentAudio, selectedLibraryItem, setCurrentAudio])
 
 
     useEffect(() => {

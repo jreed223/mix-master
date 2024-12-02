@@ -71,7 +71,12 @@ useEffect(()=>{
                 display: 'flex',
                 alignItems: 'center',
                 width: props.tracklistArea==="search-bar-card"?"calc(50% - 10px)":"unset",
-                backgroundColor: isChecked?"#00000061":"inherit"
+                backgroundColor: isChecked?"#00000061":"inherit",
+                borderBottomLeftRadius: props.tracklistArea!=="draft-playlist"? "7px": "0",
+                borderTopLeftRadius: props.tracklistArea!=="draft-playlist"? "7px": "0",
+                borderBottomRightRadius: props.tracklistArea==="draft-playlist"? "7px": "0",
+                borderTopRightRadius: props.tracklistArea==="draft-playlist"? "7px": "0",
+                
             }
 
     // useEffect(()=>{
@@ -161,8 +166,11 @@ useEffect(()=>{
                         </>
                 :<></>}
             <div style={{position: "relative",height: "100%", aspectRatio: "1 / 1"}}>
-            <img loading="lazy" style={{position:"relative", height: "100%", aspectRatio: "1 / 1"}}onClick={()=>handleCheck()} src={trackImgUrl}alt={`${props.trackClass.track.name} cover`}></img>
-            <div onClick={props.trackClass?.track?.preview_url?()=>playPreviewAudio(props.trackClass?.track?.preview_url):()=>{}} style={{cursor:props.trackClass?.track?.preview_url?"pointer":"default", color: props.trackClass?.track?.id===currentAudio?.audioDetails.trackId?currentAudioColor:"inherit",top:0, left:0,width:"100%", height:"100%", position:"absolute"}}>preview</div>
+            <img loading="lazy" style={{position:"relative", height: "100%", aspectRatio: "1 / 1", cursor: "pointer"}}onClick={()=>handleCheck()} src={trackImgUrl}alt={`${props.trackClass.track.name} cover`}></img>
+            {props.trackClass?.track?.preview_url?
+                <div onClick={props.trackClass?.track?.preview_url?()=>playPreviewAudio(props.trackClass?.track?.preview_url):()=>{console.log(`${props.trackClass.track.name} PREVIEW_URL: ${props.trackClass.track.preview_url}`)}} style={{cursor:props.trackClass?.track?.preview_url?"pointer":"default", color: props.trackClass?.track?.id===currentAudio?.audioDetails.trackId?currentAudioColor:"inherit",top:0, left:0,width:"100%", height:"100%", position:"absolute"}}>preview</div>
+                :<></>
+            }
             </div>
             {props.tracklistArea==="selected-playlist"||props.tracklistArea==="search-bar-card"?
             <>

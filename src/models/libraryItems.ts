@@ -25,10 +25,10 @@ export default class TrackCollection {
     ){
         console.log("Library Item type in constructor: ",collection)
         this.audioFeaturesSet = false;
-        this.type = collection.type
+        this.type = collection?.type||null
         this.setTracks = this.setTracks.bind(this)
 
-        switch (collection.type) {
+        switch (collection?.type) {
 
             case 'playlist':
                 this.name = collection.name;

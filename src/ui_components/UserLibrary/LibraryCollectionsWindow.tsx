@@ -59,7 +59,7 @@ export const LibraryItemsView: React.FC<LibraryItemsViewProps> = (props: Library
       case 'Liked Playlists':
         const playlists1: Playlist[] = props.fetchedLibraryResource.read()
         const likedPlaylists = playlists1.filter((playlistObject: Playlist) =>
-          playlistObject.owner.id !== props.userId
+          playlistObject && playlistObject.owner?.id !== props.userId
         )
 
         libraryCollections = likedPlaylists.map((playlistObject: Playlist) => {
@@ -73,7 +73,7 @@ export const LibraryItemsView: React.FC<LibraryItemsViewProps> = (props: Library
       case 'User Playlists':
         const playlists2: Playlist[] = props.fetchedLibraryResource.read()
         const userPlaylists = playlists2.filter((playlistObject: Playlist) =>
-          playlistObject.owner.id === props.userId
+          playlistObject && playlistObject.owner?.id === props.userId
         )
 
         libraryCollections = userPlaylists.map((playlistObject: Playlist) =>{
