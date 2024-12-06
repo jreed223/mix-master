@@ -48,6 +48,7 @@ export default function SearchBar() {
 
     const queryRef = useRef(null)
     useEffect(()=>{
+        if(isSearching){
             const timer = setTimeout(()=>{
                 setFinalQuery(searchQuery)
                 
@@ -55,7 +56,10 @@ export default function SearchBar() {
 
         return()=>clearTimeout(timer)
 
-    },[searchQuery])
+        }
+
+
+    },[isSearching, searchQuery])
     
     useEffect(()=>{
         if(!isSearching){
@@ -172,11 +176,8 @@ export default function SearchBar() {
         }
     
         const handleSearch = async () => {
-            // event.preventDefault()
-            setIsLoading(true)
-
-            if (isSearching) {
-    
+   
+                setIsLoading(true)
                 const results = await fetch("/spotify-data/search-results", {
                     method: "POST",
                     headers: {
@@ -190,21 +191,12 @@ export default function SearchBar() {
                 setSearchresults(newResults)
                 resultList(newResults)
                 setIsLoading(false)
-    
-            } else {
-                // setIsSearching(true)
-                // props.setDisabledDashboard(true)
-                if (activeView.at(-1) === "Dashboard") {
-                    setActiveView(["User Playlists"])
-    
-                }
-            }
         }
     
-        if(isSearching && finalQuery){
+        if(finalQuery){
             handleSearch()
         }
-    },[activeView, finalQuery, isSearching, setActiveView, setIsSearching])
+    },[ finalQuery])
 
     useEffect(()=>{
         switch(searchView){
@@ -271,7 +263,6 @@ export default function SearchBar() {
                                     <div style={{ height: "100%", display: "flex", flexDirection: "row", overflow: "auto" }}>
                                         <div style={{ width: "calc(100%)", height: "100%", flexDirection: "column", gap: "10px", }} >
 
-                                            {/* <div style={{ display: "flex", flexFlow: "row wrap", overflowY: "auto" }}>{artistCards}</div> */}
                                             <div style={{ flex: 2, display: "flex", flexFlow: "row wrap" }}>
                                                 {currentCards}
                                                 </div>
