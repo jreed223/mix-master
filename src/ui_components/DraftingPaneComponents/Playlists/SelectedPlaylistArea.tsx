@@ -1,11 +1,11 @@
 import React, { useContext, useEffect, useState } from "react"
 // import PlaylistClass from "../../models/playlistClass"
 // import { LibraryItem } from '../../models/libraryItems';
-import Tracklist from "./TrackComponents/Tracklist";
-import TrackClass from "../../models/Tracks";
-import { AudioState, NavigationContext } from "../../state_management/NavigationProvider";
-import { DraftingContext } from "../../state_management/DraftingPaneProvider";
-import { TracklistContext } from "../../state_management/TracklistProvider";
+import Tracklist from "../TrackComponents/Tracklist";
+import TrackClass from "../../../models/Tracks";
+import { NavigationContext } from "../../../state_management/NavigationProvider";
+import { DraftingContext } from "../../../state_management/DraftingPaneProvider";
+import { TracklistContext } from "../../../state_management/TracklistProvider";
 interface SelectedPlaylistContainerProps {
 
 
@@ -79,23 +79,7 @@ const {popularityFilter} = useContext(TracklistContext)
                 setLoadingState(null)
 
             })
-            // .then(()=>{
-            //     if(!currentAudio){
-            //         const audio = new Audio(selectedLibraryItem?.tracks?.at(0).track.preview_url)
-            //         const initAudioState: AudioState = {
-            //             url:selectedLibraryItem?.tracks?.at(0).track.preview_url,
-            //             audio: audio,
-            //             audioDetails: {
-            //                 trackId: selectedLibraryItem?.tracks?.at(0).track.id,
-            //                 artist: selectedLibraryItem?.tracks?.at(0).track.artists[0].name,
-            //                 title: selectedLibraryItem?.tracks?.at(0).track.name,
-            //                 collection: selectedLibraryItem
-            
-            //             }
-            //         }
-            //         setCurrentAudio(initAudioState)
-            //     }
-            // })
+
         } else if (selectedLibraryItem && selectedLibraryItem?.trackDataState) {
             console.log("setcurrent tracks block 5: ", selectedLibraryItem.tracks)
 
@@ -104,29 +88,10 @@ const {popularityFilter} = useContext(TracklistContext)
             setAllTracks(allTracks)
             setLoadingState(null)
 
-            // if(!currentAudio){
-            //     const audio = new Audio(selectedLibraryItem?.tracks?.at(0).track.preview_url)
-            //     const initAudioState: AudioState = {
-            //         url:selectedLibraryItem?.tracks?.at(0).track.preview_url,
-            //         audio: audio,
-            //         audioDetails: {
-            //             trackId: selectedLibraryItem?.tracks?.at(0).track.id,
-            //             artist: selectedLibraryItem?.tracks?.at(0).track.artists[0].name,
-            //             title: selectedLibraryItem?.tracks?.at(0).track.name,
-            //             collection: selectedLibraryItem
-        
-            //         }
-            //     }
-            //     setCurrentAudio(initAudioState)
-            // }
         }else{
             setLoadingState(null)
 
         }
-
-
-
-
     }, [selectedLibraryItem, setAllTracks, setFilteredTracks, setLoadingState, setTrackDataState])
 
 

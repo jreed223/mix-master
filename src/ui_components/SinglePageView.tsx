@@ -3,10 +3,10 @@ import React from "react";
 import { UserProfile } from '../../server/types';
 
 import DraftingArea from "./DraftingPaneComponents/DraftingPane";
-import SearchBar from "./SearchBar";
 import { LibraryComponents } from "./UserLibrary/LibraryComponents";
 import { NavigationContext } from "../state_management/NavigationProvider";
 import DraftingProvider from "../state_management/DraftingPaneProvider";
+import SearchBar from "./SearchPane/SearchBar";
 
 
 
@@ -24,7 +24,6 @@ export default function UserLibrary(props: UserLibraryProps) {
             <div className="main-content-area" style={{ position: "relative" }}>
                 <DraftingArea ></DraftingArea>
                 <LibraryComponents  userId={props.currentUser.id} ></LibraryComponents>
-                {/* <ErrorBoundary></ErrorBoundary> */}
                 <SearchBar ></SearchBar>
             </div>
         </DraftingProvider>

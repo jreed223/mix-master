@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useRef } from "react"
 // import { UserProfile } from '@spotify/web-api-ts-sdk';
 import PlaylistMenuBar from "./PlaylistMenu";
-import SelectedPlaylistContainer from "./SelectedPlaylistArea";
-import DraftPlaylistContainer from "./DraftPlaylistArea";
+import SelectedPlaylistContainer from "./Playlists/SelectedPlaylistArea";
+import DraftPlaylistContainer from "./Playlists/DraftPlaylistArea";
 import { NavigationContext } from "../../state_management/NavigationProvider";
 import { DraftingContext } from "../../state_management/DraftingPaneProvider";
 import FilterMenu from "./FilterMenu";

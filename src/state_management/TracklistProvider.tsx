@@ -1,6 +1,6 @@
 import React, { createContext, useCallback, useMemo, useState } from "react"
 import TrackClass from "../models/Tracks"
-import { TrackData } from "../ui_components/DraftingPaneComponents/SelectedPlaylistArea"
+import { TrackData } from "../ui_components/DraftingPaneComponents/Playlists/SelectedPlaylistArea"
 import { Features } from "../../server/types"
 // import { UserProfile } from '@spotify/web-api-ts-sdk';
 // import { Button } from "@mui/material";

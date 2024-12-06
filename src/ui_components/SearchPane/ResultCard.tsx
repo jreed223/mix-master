@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Album, Artist, Playlist, SearchResults } from "../../server/types";
-import TrackClass from '../models/Tracks';
+import { Album, Artist, Playlist, SearchResults } from "../../../server/types";
+import TrackClass from '../../models/Tracks';
 
 type TrackResult = {
     type: "track"

@@ -1,14 +1,12 @@
 import React, { useContext, useEffect, useRef, useState } from "react"
 // import { UserProfile } from '@spotify/web-api-ts-sdk';
-import { Album, Playlist, SearchResults, Artist } from '../../server/types';
+import { Album, Playlist, SearchResults } from "../../../server/types";
 import ResultCard from "./ResultCard";
 // import { Button } from "@mui/material";
-import TrackCollection from "../models/libraryItems";
-import TrackClass from "../models/Tracks";
-import { NavigationContext } from "../state_management/NavigationProvider";
-import { DraftingContext } from "../state_management/DraftingPaneProvider";
-import TrackCard from "./DraftingPaneComponents/TrackComponents/TrackCard";
-import { album } from '../../server/SpotifyData/controllers/supplementalControllers/album';
+import TrackCollection from "../../models/libraryItems";
+import TrackClass from "../../models/Tracks";
+import { NavigationContext } from "../../state_management/NavigationProvider";
+import TrackCard from "../DraftingPaneComponents/TrackComponents/TrackCard";
 
 
 

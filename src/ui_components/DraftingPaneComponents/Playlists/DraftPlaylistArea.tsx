@@ -1,8 +1,8 @@
 import React, { useCallback, useContext, useEffect, useState } from "react"
-import TrackCard from "./TrackComponents/TrackCard";
-import TrackClass from "../../models/Tracks";
-import { NavigationContext } from "../../state_management/NavigationProvider";
-import { DraftingContext } from "../../state_management/DraftingPaneProvider";
+import TrackCard from "../TrackComponents/TrackCard";
+import TrackClass from "../../../models/Tracks";
+import { NavigationContext } from "../../../state_management/NavigationProvider";
+import { DraftingContext } from "../../../state_management/DraftingPaneProvider";
 
 interface DraftPlaylistContainerProps {
 
@@ -22,10 +22,6 @@ const DraftPlaylistContainer: React.FC<DraftPlaylistContainerProps> = (props: Dr
     const {selectedLibraryItem, setSelectedLibraryItem, stagedPlaylist, setStagedPlaylist, stagingState, stagedPlaylistState,
         setStagedPlaylistState,} = useContext(NavigationContext)
 
-    const { 
-
-        
-         } = useContext(DraftingContext)
 
     const deselectTrack = useCallback((trackId: string) => {
         setSelectedTracks(prev => prev.filter(selectedTrack => selectedTrack.track.id !== trackId))
@@ -151,8 +147,8 @@ const DraftPlaylistContainer: React.FC<DraftPlaylistContainerProps> = (props: Dr
 
                     {stagedPlaylistState.length > 0 ?
                         <>
-                            {undoRedoController !== 1 && stagedHistory.length > 1 ? <button onClick={() => { undoClicked() }}>Undo</button> : <></>}
-                            {undoRedoController ? <button onClick={() => { redoClicked() }}>Redo</button> : <></>}
+                            {undoRedoController !== 1 && stagedHistory.length > 1 ? <button style={{margin:"auto 10px", flex: "1", borderRadius:'15px'}} onClick={() => { undoClicked() }}>Undo</button> : <></>}
+                            {undoRedoController ? <button style={{margin:"auto 10px", flex: "1", borderRadius:'15px'}} onClick={() => { redoClicked() }}>Redo</button> : <></>}
                         </>
                         : <></>}
                         </div>
