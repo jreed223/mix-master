@@ -13,17 +13,17 @@ import NavigationProvider from './state_management/NavigationProvider';
 function App() {
    
 
-    const [user, setUser] = useState<UserProfile|null>(null);
+    const [currentUser, setCurrentUser] = useState<UserProfile|null>(null);
     const [isLoading, setLoading] = useState<boolean>(true)
 
     useEffect(()=>{
       // console.log("Use effect block running")
         console.log("attempting to load user")
       fetch("/spotify-data/user").then(async user=>{
-        setUser(await user.json())
+        setCurrentUser(await user.json())
         setLoading(false)
       }).catch(()=>{
-        setUser(null)
+        setCurrentUser(null)
         setLoading(false)
       }) //fetch and set user
 
@@ -45,11 +45,11 @@ function App() {
     return(
       <div><h1>Loading Profile...</h1></div>
     )
-  }else if(user){
+  }else if(currentUser){
     return(
     <NavigationProvider>
       <div>
-        <NavBar currentUser={user}></NavBar>
+        <NavBar currentUser={currentUser}></NavBar>
       </div>
     </NavigationProvider>)
   }else{ //If no user found and not authorizing user

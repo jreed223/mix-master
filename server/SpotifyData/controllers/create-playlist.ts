@@ -1,4 +1,5 @@
 import { Request as expressRequest, Response as expressResponse} from 'express';
+import { Playlist } from '../../types';
 type FetchResponse = Response;  //Fetch API Response
 
 export async function createPlaylist(accessToken:string, userId:string, playlistName: string, description?:string): Promise<Response> {
@@ -7,9 +8,9 @@ export async function createPlaylist(accessToken:string, userId:string, playlist
     const newPlaylistEndpoint = "https://api.spotify.com/v1/users/" + userId + "/playlists"
 
     const data = {
-        "name": playlistName,
-        "description": description?description:"A playlist created using MixMaster!",
-        "public": false
+        name: playlistName,
+        description: "A playlist created using MixMaster!",
+        public: false
     }
 
     const res = await fetch(newPlaylistEndpoint, {
@@ -32,11 +33,14 @@ export const newPlaylist = (req: expressRequest, res: expressResponse)=>{
     
     if(accessToken){
 
-        createPlaylist(accessToken, userId, playlistName).then((response: FetchResponse)=>{
+        createPlaylist(accessToken, userId, playlistName).then(async (response: FetchResponse)=>{
             if(response.ok){
-                res.sendStatus(200)
+                const playlist:Playlist = await (response.json())
+                res.send(playlist)
+                // res.sendStatus(200)
             }else{
-                res.sendStatus(403)
+                console.log(response.json())
+                res.sendStatus(response.status)
             }
         }
 

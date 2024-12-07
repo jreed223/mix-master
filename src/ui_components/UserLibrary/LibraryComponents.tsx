@@ -6,24 +6,29 @@ import { NavigationContext, NavigationContextType } from "../../state_management
 
 interface LibraryComponentsProps {
   userId: string
+//   fetchedPlaylistsResource: {
+//     read(): any;
+// }
+// fetchedAlbumsResource: {
+//   read(): any;
+// }
+reloadKey: number
 }
 
 export const LibraryComponents: React.FC<LibraryComponentsProps> = (props: LibraryComponentsProps) => {
+  
 
   const {activeView, isSearching, primaryView} = useContext<NavigationContextType>(NavigationContext)
 
-  const fetchAllPlaylists = () => {
-    console.log("FETCHING PLAYLISTS")
+  const fetchAllPlaylists = (reloadKey) => {
     const playlistList = fetch("/spotify-data/playlists")
       .then(res => res.json()).then((playlists) => {
-        console.log("PLAYLISTS: ", playlists)
         return playlists
       })
     return playlistList
   }
 
   const fetchLikedAlbums = () => {
-    console.log("FETCHING PLAYLISTS")
     const res = fetch("/spotify-data/albums")
       .then(res => res.json())
       .then(albums => {
@@ -64,7 +69,7 @@ export const LibraryComponents: React.FC<LibraryComponentsProps> = (props: Libra
   }
 
 
-  const fetchedPlaylistsResource = useMemo(()=>suspensify(fetchAllPlaylists()),[])
+  const fetchedPlaylistsResource = useMemo(()=>suspensify(fetchAllPlaylists(props.reloadKey)),[props.reloadKey])
   const fetchedAlbumsResource = useMemo(()=>suspensify(fetchLikedAlbums()),[])
 
 
@@ -74,7 +79,6 @@ export const LibraryComponents: React.FC<LibraryComponentsProps> = (props: Libra
 
   useEffect(() => {
 
-    console.log("ACTIVE VIEW RAN!!!")
     switch (activeView.at(-1)) {
       case "Dashboard":
         setSecondaryViewStyle({
@@ -128,15 +132,15 @@ export const LibraryComponents: React.FC<LibraryComponentsProps> = (props: Libra
     <div style={{ flexGrow: 1 }} className="library-container" id="library-container">
       <div className="user-library-items" style={primaryViewStyle}>
         <Suspense fallback={<CircularProgress />}>
-          <LibraryItemsView  fetchedLibraryResource={fetchedPlaylistsResource} userId={props.userId}  viewName={primaryView} ></LibraryItemsView>
+          <LibraryItemsView  reloadKey={props.reloadKey} fetchedLibraryResource={fetchedPlaylistsResource} userId={props.userId} viewName={primaryView}  ></LibraryItemsView>
         </Suspense>
       </div>
       <div className="liked-library-items" style={secondaryViewStyle}>
         <Suspense fallback={<CircularProgress />}>
-          <LibraryItemsView   fetchedLibraryResource={fetchedPlaylistsResource}  userId={props.userId} viewName={"Liked Playlists"}></LibraryItemsView>
+          <LibraryItemsView   fetchedLibraryResource={fetchedPlaylistsResource} userId={props.userId} viewName={"Liked Playlists"} ></LibraryItemsView>
         </Suspense>
         <Suspense fallback={<CircularProgress />}>
-          <LibraryItemsView  fetchedLibraryResource={fetchedAlbumsResource} userId={props.userId}  viewName={"Liked Albums"} ></LibraryItemsView>
+          <LibraryItemsView  fetchedLibraryResource={fetchedAlbumsResource} userId={props.userId} viewName={"Liked Albums"}  ></LibraryItemsView>
         </Suspense>
       </div>
 

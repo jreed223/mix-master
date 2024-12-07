@@ -1,6 +1,8 @@
 import React, { createContext, useCallback, useEffect, useMemo, useState } from "react"
 import TrackCollection from "../models/libraryItems"
 import TrackClass from "../models/Tracks";
+import { LibraryItemCardProps } from "../ui_components/UserLibrary/LibraryItemCard";
+import { UserProfile } from "../../server/types";
 // import { UserProfile } from '@spotify/web-api-ts-sdk';
 // import { Button } from "@mui/material";
 
@@ -31,7 +33,13 @@ export type NavigationContextType = {
     stagedPlaylistState:TrackClass[][], 
     setStagedPlaylistState: React.Dispatch<React.SetStateAction<TrackClass[][]>>,
     stageTracks: (items: TrackClass[]) => void,
-    unstageTracks: (items: TrackClass[]) => void
+    unstageTracks: (items: TrackClass[]) => void,
+    setUser: React.Dispatch<React.SetStateAction<UserProfile>>,
+    user: UserProfile,
+    setUserLibraryItems: React.Dispatch<React.SetStateAction<TrackCollection[]>>,
+    userLibraryItems: TrackCollection[]
+
+
     // audioDetails: {artist: string, title: string}
     // setAudioDetails: React.Dispatch<React.SetStateAction<{
     //     artist: string;
@@ -48,7 +56,11 @@ export default function NavigationProvider({children}){
     const [currentAudioColor, setCurrentAudioColor] = useState<"#59b759"|"#e56767"|null>(null)
     const [selectedLibraryItem, setSelectedLibraryItem] = useState<TrackCollection | null>(null)
     const [stagedPlaylist, setStagedPlaylist] = useState<TrackClass[]>([])
+    const [userLibraryItems, setUserLibraryItems] = useState<TrackCollection[]>()
     const [stagedPlaylistState, setStagedPlaylistState] = useState<TrackClass[][]>([[]])
+    // const [userPlaylistCards, setUserPlaylistCards] = useState<React.ReactElement<LibraryItemCardProps>[]>()
+    const [user, setUser] = useState<UserProfile>(null);
+
 
     // const [audioDetails, setAudioDetails] = useState<{artist: string, title: string}>(null)
 
@@ -111,7 +123,7 @@ export default function NavigationProvider({children}){
 
     }, [setStagedPlaylist, setStagedPlaylistState, stagedPlaylist, stagedPlaylistState])
 
-    const context = useMemo(()=>({activeView, setActiveView, isSearching, setIsSearching, stagingState, setStagingState, primaryView, setPrimaryView, currentAudio, setCurrentAudio, currentAudioColor, selectedLibraryItem, setSelectedLibraryItem, stagedPlaylist, setStagedPlaylist, stagedPlaylistState, setStagedPlaylistState, stageTracks, unstageTracks }), [activeView, currentAudio, currentAudioColor, isSearching, primaryView, selectedLibraryItem, stageTracks, unstageTracks, stagedPlaylist, stagedPlaylistState, stagingState])
+    const context: NavigationContextType = useMemo(()=>({user, setUser, activeView, setActiveView, isSearching, setIsSearching, stagingState, setStagingState, primaryView, setPrimaryView, currentAudio, setCurrentAudio, currentAudioColor, selectedLibraryItem, setSelectedLibraryItem, stagedPlaylist, setStagedPlaylist, stagedPlaylistState, setStagedPlaylistState, stageTracks, unstageTracks, userLibraryItems, setUserLibraryItems }), [activeView, currentAudio, currentAudioColor, isSearching, primaryView, selectedLibraryItem, stageTracks, stagedPlaylist, stagedPlaylistState, stagingState, unstageTracks, user, userLibraryItems])
 
 
 

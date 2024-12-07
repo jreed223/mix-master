@@ -27,19 +27,50 @@ export async function addPlaylistsItems(accessToken:string, playlistId:string, u
 export const addTracks = (req: expressRequest, res: expressResponse)=>{
     const accessToken = req.cookies.access_token? req.cookies.access_token:res.locals.access_token
     const items = req.body.uriList? req.body.uriList: []
-    const playlistmId= req.body.id
+    const playlistId= req.body.id
 
     
     if(accessToken){
-        addPlaylistsItems(accessToken, playlistmId, items).then((response: FetchResponse)=>{
-            if(response.ok){
-                res.sendStatus(200)
-            }else{
-                res.sendStatus(403)
+        if(items.length<=100){
+            addPlaylistsItems(accessToken, playlistId, items).then((response: FetchResponse)=>{
+                if(response.ok){
+                    res.sendStatus(200)
+                }else{
+                    res.sendStatus(403)
+                }
+            }).catch(e=>
+                console.error("Fetch operation failed: ", e)
+            )
+
+        }else{
+            let itemsSubset= [...items];
+            while(itemsSubset.length>100 ){
+                addPlaylistsItems(accessToken, playlistId, itemsSubset.slice(0, 100)).then((response: FetchResponse)=>{
+                    if(response.ok){
+                        res.sendStatus(200)
+                    }else{
+                        res.sendStatus(403)
+                    }
+                }).catch(e=>
+                    console.error("Fetch operation failed: ", e)
+                )
+
+                itemsSubset=itemsSubset.slice(101)
             }
-        }).catch(e=>
-            console.error("Fetch operation failed: ", e)
-        )
+            if(itemsSubset.length> 0){
+                addPlaylistsItems(accessToken, playlistId, itemsSubset).then((response: FetchResponse)=>{
+                    if(response.ok){
+                        res.sendStatus(200)
+                    }else{
+                        res.sendStatus(403)
+                    }
+                }).catch(e=>
+                    console.error("Fetch operation failed: ", e)
+                )
+
+            }
+        }
+       
 
     }else{
         console.error("No access token found (/spotify-data/playlists)")

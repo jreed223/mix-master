@@ -3,10 +3,14 @@ import TrackCard from "../TrackComponents/TrackCard";
 import TrackClass from "../../../models/Tracks";
 import { NavigationContext } from "../../../state_management/NavigationProvider";
 import { DraftingContext } from "../../../state_management/DraftingPaneProvider";
+import { Playlist } from '../../../../server/types';
+import { newPlaylist } from '../../../../server/SpotifyData/controllers/create-playlist';
+import TrackCollection from "../../../models/libraryItems";
+import LibraryItemCard from "../../UserLibrary/LibraryItemCard";
+import io from 'socket.io-client';
 
 interface DraftPlaylistContainerProps {
-
-
+    setReloadKey: React.Dispatch<React.SetStateAction<number>>
 
 }
 
@@ -17,10 +21,11 @@ const DraftPlaylistContainer: React.FC<DraftPlaylistContainerProps> = (props: Dr
     const [trackCards, setTrackCards] = useState<React.JSX.Element[] | null>(null)
     const [stagedHistory] = useState<TrackClass[][]>([[]])
     const [undoRedoController, setUndoRedoController] = useState<number>(null)    // const [selectAllState, setSelectAllState] =useState<boolean[]>([])
+    const [playlistName, setPlaylistName] = useState<string>(null)
 
     // const { stagingState } = useContext(NavigationContext)
     const {selectedLibraryItem, setSelectedLibraryItem, stagedPlaylist, setStagedPlaylist, stagingState, stagedPlaylistState,
-        setStagedPlaylistState,} = useContext(NavigationContext)
+        setStagedPlaylistState,userLibraryItems, setUserLibraryItems, user} = useContext(NavigationContext)
 
 
     const deselectTrack = useCallback((trackId: string) => {
@@ -123,6 +128,90 @@ const DraftPlaylistContainer: React.FC<DraftPlaylistContainerProps> = (props: Dr
 
     }
 
+    const submitDraftPlaylist = async () : Promise<boolean>=>{
+        // fetch("spotify-data/create-playlist")
+        const createPlaylist = async (): Promise<TrackCollection>  => {
+            // console.log(artistProps.item.id)
+  
+                const newPlaylist: Playlist = await fetch("/spotify-data/create-playlist", {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ playlistName:playlistName, id:user.id })
+                    // headers: {"id" : `${this.id}` }
+                }).then(async (res) => {
+                    if(res.ok){console.log(res)
+                        const playlist = await res.json()
+                        return playlist
+                    }else{
+                        return null
+                    }
+                    
+                }).catch(e=>{
+                    console.log(e)
+                })
+                console.log(newPlaylist)
+                
+                const newCollection = new TrackCollection(newPlaylist)
+                
+                // setUserLibraryItems([newCollection].concat(userLibraryItems))
+                return newCollection
+                // const newPlaylistCard =  <LibraryItemCard key={newCollection.id}  libraryItem={newCollection} ownerId={user.id} view={"User Playlists"} ></LibraryItemCard>
+
+        }
+
+        const addItems = async (playlistId: string) : Promise<boolean>=>{
+            const uriList = stagedPlaylist.reverse().map(track=>track.track?.uri)
+
+            const itemSubmission = await fetch("/spotify-data/add-tracks", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ uriList:uriList, id: playlistId })
+                // headers: {"id" : `${this.id}` }
+            }).then(async (res) => {
+                if(res.ok){
+                    return true
+                    // const playlist = await res.json()
+                    // return playlist
+                }else{
+                    return false
+                }
+                
+            }).catch(e=>{
+                console.log(e)
+                return false
+            })
+
+            return itemSubmission
+
+        }
+
+
+        const newPlaylist = await createPlaylist()
+
+        if(!newPlaylist){
+            console.log('Failed to create playlist')
+            return false
+        }else{
+            const isPlaylistSubmitted = await addItems(newPlaylist.id)
+            if(isPlaylistSubmitted){
+                console.log("Items have been submitted")
+                setStagedPlaylist([])
+                setPlaylistName("")
+                setUserLibraryItems(null)
+                props.setReloadKey(prev=>prev+1)
+            }else{
+                console.log("Failed to submit items")
+            }
+            return isPlaylistSubmitted
+
+        }
+
+    }
+
 
 
     return (
@@ -153,11 +242,11 @@ const DraftPlaylistContainer: React.FC<DraftPlaylistContainerProps> = (props: Dr
                         : <></>}
 
                         {stagedPlaylist.length>0?
-                        <button style={{margin:"auto 10px", flex: "1", borderRadius:'15px'}}>Submit Playlist</button>
+                        <button style={{margin:"auto 10px", flex: "1", borderRadius:'15px'}} onClick={()=>submitDraftPlaylist()}>Submit Playlist</button>
                         :<></>}
                         </div>
 
-                    <input placeholder="Playlist Draft..." type="text" style={{textOverflow: "ellipsis", margin:"4px 15px", fontSize:"1.25em", fontWeight:"bold", border:"none", padding: "0 auto", backgroundColor: "#141414", textAlign:'center', minWidth:"50%", alignSelf:"center", width:"calc(100% - 30px)",}}></input>
+                    <input placeholder="Playlist Draft..." type="text" onChange={(e)=>setPlaylistName(e.target.value)} value={playlistName} style={{color:"#757575", textOverflow: "ellipsis", margin:"4px 15px", fontSize:"1.25em", fontWeight:"bold", border:"none", padding: "0 auto", backgroundColor: "#141414", textAlign:'center', minWidth:"50%", alignSelf:"center", width:"calc(100% - 30px)",}}></input>
                 </div>
             }
             <div style={{flex: 1, overflowY: "auto", overflowX: "clip"}}>
@@ -166,7 +255,7 @@ const DraftPlaylistContainer: React.FC<DraftPlaylistContainerProps> = (props: Dr
         </div>
     )
 
-    // }
+
 }
 
 export default DraftPlaylistContainer

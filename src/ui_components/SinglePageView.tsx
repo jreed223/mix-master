@@ -1,4 +1,4 @@
-import { useContext, } from "react";
+import { useContext, useEffect, useMemo, useState, } from "react";
 import React from "react";
 import { UserProfile } from '../../server/types';
 
@@ -16,14 +16,22 @@ interface UserLibraryProps {
 
 export default function UserLibrary(props: UserLibraryProps) {
 
-    const {setStagingState} = useContext(NavigationContext)
+    const {setStagingState, setUser} = useContext(NavigationContext)
+    const [reloadKey, setReloadKey] = useState<number>(0)
+
+    useEffect(()=>{
+        if(props.currentUser){
+            setUser(props.currentUser)
+        }
+    },[props.currentUser, setUser])
 
 
+    
     return (
         <DraftingProvider setStagingState={setStagingState}>
             <div className="main-content-area" style={{ position: "relative" }}>
-                <DraftingArea ></DraftingArea>
-                <LibraryComponents  userId={props.currentUser.id} ></LibraryComponents>
+                <DraftingArea setReloadKey={setReloadKey}></DraftingArea>
+                <LibraryComponents reloadKey={reloadKey} userId={props.currentUser.id}  ></LibraryComponents>
                 <SearchBar ></SearchBar>
             </div>
         </DraftingProvider>
