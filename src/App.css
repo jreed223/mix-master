@@ -194,7 +194,7 @@
   background-color: rgb(25, 83, 133);
   aspect-ratio: 1 / 1;
   /* height: 100%; */
-  min-width: calc((50vw - 100px) * 0.25);
+  min-width: 20vh;
     /* min-width:95px; */
 
   max-height: fit-content;
@@ -215,7 +215,7 @@
 .user-playlist-card{
   /* display: flex;
   flex-direction: column; */
-  min-width:95px;
+  min-width:20vh;
 
   background-color: rgb(25, 83, 133);
   aspect-ratio: 1 / 1;

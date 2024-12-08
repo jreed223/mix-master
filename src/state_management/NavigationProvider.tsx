@@ -60,6 +60,7 @@ export default function NavigationProvider({children}){
     const [stagedPlaylistState, setStagedPlaylistState] = useState<TrackClass[][]>([[]])
     // const [userPlaylistCards, setUserPlaylistCards] = useState<React.ReactElement<LibraryItemCardProps>[]>()
     const [user, setUser] = useState<UserProfile>(null);
+    const [isMobile, setIsMobile] = useState(false)
 
 
     // const [audioDetails, setAudioDetails] = useState<{artist: string, title: string}>(null)

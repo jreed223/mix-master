@@ -142,12 +142,12 @@ export const LibraryItemsView: React.FC<LibraryItemsViewProps> = (props: Library
 
   const [outterContainerStyle, setOutterContainerStyle] = useState({
     width: stagingState === "open" || isSearching ? "calc(25vw - 37.5px)" : "calc(50vw - 37.5px)",
-    height: "calc((50vw + 360px) * 0.25)",
+    height: "50%",
     transition: "1s",
   })
 
   const [innerContentStyle, setInnerContentStyle] = useState({
-    height: "80%",
+    height: "calc(20vh + 75px)",
     transition: "1s",
     overflowY: 'auto' as 'auto' | 'clip',
     position: 'relative' as 'relative',
@@ -169,12 +169,12 @@ export const LibraryItemsView: React.FC<LibraryItemsViewProps> = (props: Library
             stagingState === "open"
               ? {
                 width: "25vw",
-                height: "calc((50vw + 360px) * 0.25)",
+                height: "50%",
                 transition: "1s"
               }
               : {
                 width: "50vw",
-                height: "calc((50vw + 360px) * 0.25)",
+                height: "50%",
                 transition: "1s"
               }
 
@@ -314,7 +314,7 @@ export const LibraryItemsView: React.FC<LibraryItemsViewProps> = (props: Library
             if ((height < heightThreshold+50 ) && activeView.at(-1) === "Dashboard") {
 
               setInnerContentStyle({
-                height: "calc((50vw * 0.25) + 50px)",
+                height: "calc(20vh + 75px)",
                 transition: "1s",
                 overflowY: 'clip',
                 position: 'relative',
