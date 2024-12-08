@@ -29,7 +29,7 @@ export const LibraryItemsView: React.FC<LibraryItemsViewProps> = (props: Library
   const [heightThreshold, setHeightThreshold] = useState(null)
   const [widthThreshold, setWidthThreshold] = useState(null)
 
-  const {activeView, setActiveView, isSearching, setIsSearching, stagingState, setStagingState, primaryView, selectedLibraryItem, userLibraryItems, setUserLibraryItems} = useContext<NavigationContextType>(NavigationContext)
+  const {activeView, setActiveView, isSearching, setIsSearching, stagingState, setStagingState, primaryView, selectedLibraryItem, userLibraryItems, setUserLibraryItems, isMobile} = useContext<NavigationContextType>(NavigationContext)
 
   // const {selectedLibraryItem} = useContext(DraftingContext)
 
@@ -245,7 +245,7 @@ export const LibraryItemsView: React.FC<LibraryItemsViewProps> = (props: Library
     }
   }, [stagingState, activeView, isSearching, libraryItemCards, props.viewName, primaryView])
 
-  const [currentFlexFlow, setCurrentFlexFlow] = useState('row')
+  const [currentFlexFlow, setCurrentFlexFlow] = useState(isMobile?'row wrap':'row')
   useEffect(() => {
 
     if (props.viewName !== primaryView) {
@@ -307,7 +307,7 @@ export const LibraryItemsView: React.FC<LibraryItemsViewProps> = (props: Library
               // background: "#141414"
 
             })
-            setCurrentFlexFlow('row')
+            setCurrentFlexFlow(isMobile?'row wrap':'row')
             
             setCurrentCards(libraryItemCards.slice(0, 5))
 
@@ -335,7 +335,7 @@ export const LibraryItemsView: React.FC<LibraryItemsViewProps> = (props: Library
       };
     }
 
-  }, [libraryItemCards, innerContentStyle, heightThreshold, activeView, isSearching, stagingState, widthThreshold, props.viewName, primaryView])
+  }, [libraryItemCards, innerContentStyle, heightThreshold, activeView, isSearching, stagingState, widthThreshold, props.viewName, primaryView, isMobile])
 
 
 

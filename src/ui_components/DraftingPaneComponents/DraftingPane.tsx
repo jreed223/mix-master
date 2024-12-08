@@ -14,7 +14,7 @@ import TracklistProvider from "../../state_management/TracklistProvider";
 export default function DraftingArea({setReloadKey, setDialogText}){
 
 
-    const {activeView, isSearching, stagingState} = useContext(NavigationContext)
+    const {activeView, isSearching, stagingState, isMobile} = useContext(NavigationContext)
     const {isMaxDraftView, setIsMaxDraftView} = useContext(DraftingContext)
 
     useEffect(()=>{
@@ -34,8 +34,8 @@ export default function DraftingArea({setReloadKey, setDialogText}){
 
     return(
         <TracklistProvider>
-        <div ref={creationContainer} className={"playlist-creation-container-hidden"}style={isMaxDraftView?{width: "100%", overflowX: "clip"}:stagingState==="open"?{width:"50%", overflowX: "clip"}:{width:"0%", overflowX: "clip"}} id="creation-container">
-        <div style={{width:isMaxDraftView?"100vw":"50vw", height: "100%", transition: '1s', backgroundColor: "#141414"}}>
+        <div ref={creationContainer} className={"playlist-creation-container-hidden"}style={isMaxDraftView?{width: "100%", overflowX: "clip"}:stagingState==="open"?{width:isMobile?"100%":"50%", overflowX: "clip"}:{width:"0%", overflowX: "clip"}} id="creation-container">
+        <div style={{width:isMaxDraftView||isMobile?"100vw":"50vw", height: "100%", transition: '1s', backgroundColor: "#141414"}}>
         <PlaylistMenuBar  draftingPaneContainer={creationContainer} ></PlaylistMenuBar>
 
             <div className="playlist-items-containers" style={{position: "relative"}}>

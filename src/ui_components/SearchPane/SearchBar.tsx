@@ -19,13 +19,14 @@ export default function SearchBar() {
         isSearching,
         setIsSearching,
         stagingState,
-        setStagingState } = useContext(NavigationContext)
+        setStagingState,
+    isMobile } = useContext(NavigationContext)
 
 
     const closeSearch = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
         setIsSearching(false)
-        if (stagingState === "closed") {
+        if (stagingState === "closed"&& !isMobile) {
             setActiveView(["Dashboard"]);
         }
     }
@@ -198,6 +199,19 @@ export default function SearchBar() {
         }
     },[ finalQuery])
 
+    const [hideSrchBtn, setHideSrchBtn] = useState(false)
+    useEffect(()=>{
+        if(isSearching){
+            const hideButton = setTimeout(()=>{
+                setHideSrchBtn(true)
+            }, 1000)
+
+            return () => clearTimeout(hideButton)
+        }else{
+            setHideSrchBtn(false)
+        }
+    },[isSearching])
+
     useEffect(()=>{
         switch(searchView){
             case "Artists":
@@ -241,8 +255,8 @@ export default function SearchBar() {
         return (
             <form style={{ height: "100%" }}>
 
-                <div className={"search-bar"} style={isSearching ? { height: "100%", width: "50%", overflowX: 'clip' } : { height: "100%", width: "0%", overflowX: 'clip' }}>
-                    <div style={{ width: "50vw", height: "100%" }}>
+                <div className={"search-bar"} style={isSearching ? { height: "100%", width: isMobile?"100%":"50%", overflowX: 'clip' } : { height: "100%", width: "0%", overflowX: 'clip' }}>
+                    <div style={{ width: isMobile?"100vw":"50vw", height: "100%" }}>
                         <div style={{ height: "50px", alignContent: "center", display: "flex"}}>
                                 <input style={{color:"#878787", fontSize: "1.5em", backgroundColor: "#141414", border: "none", height:"calc(100% - 10px)", width: "35%", margin: "5px"}}type="text" placeholder="Search..." value={searchQuery} onKeyDown={(e) => { onEnter(e) }} onChange={(e) => { e.preventDefault(); isSearching ? setSearchQuery(e.target.value) : (setSearchQuery(null)) }}></input>
                                 <div style={{ display: "inline-flex", alignItems: "flex-end", flex: 1, gap: "15px", justifyContent: "center"}}>
@@ -253,23 +267,23 @@ export default function SearchBar() {
                                     <button style={{ borderRadius: "25px", height: "25px" }} onKeyDown={(e) => e.preventDefault()} onClick={(e) => { closeSearch(e) }}>Close</button>
                             </div>
                         </div>
-                        <div className="search-results" style={{ height: "calc(100% - 40px)", overflowY: "hidden", position: "relative" }}>
+                        <div className="search-results" style={{ height: "calc(100% - 40px)", overflowY: "hidden", overflowX:'clip', position: "relative" }}>
 
 
                             {isLoading?
                                 <div>Loading</div>:
                             searchResults ?
                                 <>
-                                    <div style={{ height: "100%", display: "flex", flexDirection: "row", overflow: "auto" }}>
-                                        <div style={{ width: "calc(100%)", height: "100%", flexDirection: "column", gap: "10px", }} >
+                                    {/* <div style={{ height: "100%", display: "flex", flexDirection: "row", overflow: "auto" }}> */}
+                                        {/* <div style={{ flex:1, height: "100%", flexDirection: "column", gap: "10px", }} > */}
 
-                                            <div style={{ flex: 2, display: "flex", flexFlow: "row wrap" }}>
+                                            <div style={{ flex: 1, display: "flex", flexFlow: "row wrap" }}>
                                                 {currentCards}
                                                 </div>
 
-                                        </div>
+                                        {/* </div> */}
 
-                                    </div>
+                                    {/* </div> */}
                                 </> : <></>
 
 
@@ -277,7 +291,7 @@ export default function SearchBar() {
                         </div>
                     </div>
                 </div>
-                <button style={{ position: "absolute", right: "15px", top: "15px", borderRadius: "25px", height: "25px", opacity: isSearching?0:1, transition: isSearching?"1s": "2s"}} type="submit" onClick={(e: React.MouseEvent<HTMLButtonElement>) => { handleSearchButton(e)}}>search</button>
+                <button style={{ display:hideSrchBtn?"none":"inline-block", position: "absolute", right: "15px", top: "15px", borderRadius: "25px", height: "25px", opacity: isSearching?0:1, transition: isSearching?"1s": "2s"}} type="submit" onClick={(e: React.MouseEvent<HTMLButtonElement>) => { handleSearchButton(e)}}>search</button>
 
 
             </form>

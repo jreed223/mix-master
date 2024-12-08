@@ -200,7 +200,6 @@ const {popularityFilter} = useContext(TracklistContext)
                     position: "sticky",
                     top: 0,
                     backgroundColor: "#141414",
-                    zIndex: 1,
                     display:"flex",
                     flexDirection:"column"
                     

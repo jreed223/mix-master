@@ -52,7 +52,7 @@ useEffect(()=>{
     }else{
         setIsChecked(false)
     }
-})
+},[props.trackClass.track.id, props.tracklistArea, stagedPlaylist])
 
 
     

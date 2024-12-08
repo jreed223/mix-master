@@ -12,14 +12,14 @@ interface PlaylistMenuProps {
 
 }
 const PlaylistMenuBar: React.FC<PlaylistMenuProps> = (props: PlaylistMenuProps) => {
-    const { setActiveView, isSearching, setIsSearching, setStagingState } = useContext(NavigationContext)
+    const { setActiveView, isSearching, setIsSearching, setStagingState, isMobile } = useContext(NavigationContext)
     const {isMaxDraftView, setIsMaxDraftView, displayFeatureMenu, setDisplayFeatureMenu } = useContext(DraftingContext)
 
     const closeCreationContainer = () => {
         setStagingState("closed")
         setIsMaxDraftView(false)
 
-        if (!isSearching) {
+        if (!isSearching && !isMobile) {
             setActiveView(["Dashboard"])
         }
         // console.log(stagingState)
