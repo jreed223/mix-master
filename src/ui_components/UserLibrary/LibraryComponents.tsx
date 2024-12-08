@@ -77,7 +77,7 @@ export const LibraryComponents: React.FC<LibraryComponentsProps> = (props: Libra
 
 
   const [primaryViewStyle, setPrimaryViewStyle] = useState<{ width: string, transition: string }>(null)
-  const [secondaryViewStyle, setSecondaryViewStyle] = useState<{ width: string, transition: string}>(null)
+  const [secondaryViewStyle, setSecondaryViewStyle] = useState<{ width: string, transition: string, marginTop: string, height: string}>(null)
   const [displayDialog, setDisplayDialog] = useState<boolean>(false)
 
 
@@ -88,7 +88,9 @@ export const LibraryComponents: React.FC<LibraryComponentsProps> = (props: Libra
       case "Dashboard":
         setSecondaryViewStyle({
           width: "50%",
-          transition: "1s"
+          transition: "1s",
+          marginTop: "30px",
+          height: "calc(100vh - 80px)"
         })
         setPrimaryViewStyle({
           width: "50%",
@@ -97,11 +99,13 @@ export const LibraryComponents: React.FC<LibraryComponentsProps> = (props: Libra
         break;
       case primaryView:
         if (!isSearching) {
-          setSecondaryViewStyle({
+          setSecondaryViewStyle(prev=>{return{
             width: "0%",
 
-            transition: "1s"
-          })
+            transition: "1s",
+                      marginTop: prev.marginTop,
+          height: prev.height
+          }})
         }
 
         setPrimaryViewStyle({
@@ -116,7 +120,9 @@ export const LibraryComponents: React.FC<LibraryComponentsProps> = (props: Libra
         setSecondaryViewStyle({
           width: "100%",
 
-          transition: "1s"
+          transition: "1s",
+          marginTop: "0px",
+          height: "calc(100vh - 50px)"
         })
         setPrimaryViewStyle({
           width: "0%",
@@ -154,7 +160,7 @@ export const LibraryComponents: React.FC<LibraryComponentsProps> = (props: Libra
 
   return (
     <div style={{ flexGrow: 1 }} className="library-container" id="library-container">
-      <dialog style={{width: "25vh", margin: "15px auto", backgroundColor: "#141414", color:"#757575", opacity:displayDialog?1:0, transition:'1s', position: 'absolute', zIndex:99, left:"calc(50% - 14.5px)"}} open>{props.dialogText?`${props.dialogText.status}: ${props.dialogText.text}`:""}</dialog>
+      <dialog style={{width: "25vh", margin: "15px auto", backgroundColor: "#141414", color:"#757575", opacity:displayDialog?1:0, transition:'1s', position: 'absolute', zIndex:99, left:"calc(50% - 14.5px)"}} open={props.dialogText?true:false}>{props.dialogText?`${props.dialogText.status}: ${props.dialogText.text}`:""}</dialog>
 
       <div className="user-library-items" style={primaryViewStyle}>
         <Suspense fallback={<CircularProgress />}>

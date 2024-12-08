@@ -45,7 +45,7 @@
   justify-content: flex-start; */
 }
 .library-content-container{
- height:50%;
+ /* height:50%; */
  width: 50vw;
  /* display: flex; */
  flex-direction: column;

@@ -142,7 +142,7 @@ export const LibraryItemsView: React.FC<LibraryItemsViewProps> = (props: Library
 
   const [outterContainerStyle, setOutterContainerStyle] = useState({
     width: stagingState === "open" || isSearching ? "calc(25vw - 37.5px)" : "calc(50vw - 37.5px)",
-    height: "50%",
+    height: "calc((50vw + 360px) * 0.25)",
     transition: "1s",
   })
 
@@ -169,12 +169,12 @@ export const LibraryItemsView: React.FC<LibraryItemsViewProps> = (props: Library
             stagingState === "open"
               ? {
                 width: "25vw",
-                height: "50%",
+                height: "calc((50vw + 360px) * 0.25)",
                 transition: "1s"
               }
               : {
                 width: "50vw",
-                height: "50%",
+                height: "calc((50vw + 360px) * 0.25)",
                 transition: "1s"
               }
 
