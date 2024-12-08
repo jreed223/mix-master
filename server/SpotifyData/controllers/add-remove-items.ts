@@ -33,11 +33,7 @@ export const addTracks = (req: expressRequest, res: expressResponse)=>{
     if(accessToken){
         if(items.length<=100){
             addPlaylistsItems(accessToken, playlistId, items).then((response: FetchResponse)=>{
-                if(response.ok){
-                    res.sendStatus(200)
-                }else{
-                    res.sendStatus(403)
-                }
+                res.sendStatus(response.status)
             }).catch(e=>
                 console.error("Fetch operation failed: ", e)
             )
@@ -47,9 +43,9 @@ export const addTracks = (req: expressRequest, res: expressResponse)=>{
             while(itemsSubset.length>100 ){
                 addPlaylistsItems(accessToken, playlistId, itemsSubset.slice(0, 100)).then((response: FetchResponse)=>{
                     if(response.ok){
-                        res.sendStatus(200)
+                        // res.sendStatus(200)
                     }else{
-                        res.sendStatus(403)
+                        res.sendStatus(response.status)
                     }
                 }).catch(e=>
                     console.error("Fetch operation failed: ", e)
@@ -58,17 +54,20 @@ export const addTracks = (req: expressRequest, res: expressResponse)=>{
                 itemsSubset=itemsSubset.slice(101)
             }
             if(itemsSubset.length> 0){
+                res.sendStatus(200)
+            }else{
                 addPlaylistsItems(accessToken, playlistId, itemsSubset).then((response: FetchResponse)=>{
                     if(response.ok){
                         res.sendStatus(200)
+
                     }else{
-                        res.sendStatus(403)
-                    }
+                        res.sendStatus(response.status)                    }
                 }).catch(e=>
                     console.error("Fetch operation failed: ", e)
                 )
 
             }
+
         }
        
 

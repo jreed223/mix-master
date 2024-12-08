@@ -13,6 +13,7 @@ interface DraftPlaylistContainerProps {
     setReloadKey: React.Dispatch<React.SetStateAction<number>>
 
 }
+type submissionStatusState = "pending"|"submitted"|"adding tracks"|"success"|"fail"
 
 const DraftPlaylistContainer: React.FC<DraftPlaylistContainerProps> = (props: DraftPlaylistContainerProps) => {
 
@@ -22,6 +23,8 @@ const DraftPlaylistContainer: React.FC<DraftPlaylistContainerProps> = (props: Dr
     const [stagedHistory] = useState<TrackClass[][]>([[]])
     const [undoRedoController, setUndoRedoController] = useState<number>(null)    // const [selectAllState, setSelectAllState] =useState<boolean[]>([])
     const [playlistName, setPlaylistName] = useState<string>(null)
+    const [submissionState, setSubmissionState] = useState<submissionStatusState[]>(null)
+    const [newPlaylistId, setNewplaylistId] = useState(null)
 
     // const { stagingState } = useContext(NavigationContext)
     const {selectedLibraryItem, setSelectedLibraryItem, stagedPlaylist, setStagedPlaylist, stagingState, stagedPlaylistState,
@@ -97,7 +100,14 @@ const DraftPlaylistContainer: React.FC<DraftPlaylistContainerProps> = (props: Dr
     }, [stagedPlaylist, stagedHistory, undoRedoController])
 
 
-
+useEffect(()=>{
+    if((newPlaylistId===selectedLibraryItem?.id)&&submissionState?.at(-1)==="success"){
+        setStagedPlaylist([])
+        setStagedPlaylistState([])
+        setPlaylistName("")
+        setSubmissionState(null)
+    }
+},[newPlaylistId, selectedLibraryItem?.id, setStagedPlaylist, setStagedPlaylistState, submissionState])
 
 
     const selectAllClicked = () => {
@@ -132,7 +142,7 @@ const DraftPlaylistContainer: React.FC<DraftPlaylistContainerProps> = (props: Dr
         // fetch("spotify-data/create-playlist")
         const createPlaylist = async (): Promise<TrackCollection>  => {
             // console.log(artistProps.item.id)
-  
+
                 const newPlaylist: Playlist = await fetch("/spotify-data/create-playlist", {
                     method: "POST",
                     headers: {
@@ -188,22 +198,30 @@ const DraftPlaylistContainer: React.FC<DraftPlaylistContainerProps> = (props: Dr
             return itemSubmission
 
         }
-
-
+        setSubmissionState(["pending"])
         const newPlaylist = await createPlaylist()
+        setNewplaylistId(newPlaylist.id)
 
         if(!newPlaylist){
+            setSubmissionState(prev=>prev.concat(["fail"]))
             console.log('Failed to create playlist')
             return false
         }else{
+            setSubmissionState(prev=>prev.concat(["submitted"]))
             const isPlaylistSubmitted = await addItems(newPlaylist.id)
             if(isPlaylistSubmitted){
-                console.log("Items have been submitted")
-                setStagedPlaylist([])
-                setPlaylistName("")
+                setSubmissionState(prev=>prev?prev.concat(["success"]):["success"])
+                console.log("Items have been added")
+                // if(submissionState && submissionState.length>1){
+                //     setStagedPlaylist([])
+                //     setStagedPlaylistState([])
+                // // setPlaylistName("")
+                // }
+                
                 setUserLibraryItems(null)
                 props.setReloadKey(prev=>prev+1)
             }else{
+                setSubmissionState(prev=>prev?prev.concat(["fail"]):["fail"])
                 console.log("Failed to submit items")
             }
             return isPlaylistSubmitted
@@ -234,14 +252,16 @@ const DraftPlaylistContainer: React.FC<DraftPlaylistContainerProps> = (props: Dr
                         <button style={{margin:"auto 10px", flex: "1", borderRadius:'15px'}} onClick={() => { removeStagedItems(selectedTracks); setSelectedTracks([]) }}>Remove Items</button>
                     
 
-                        {stagedPlaylistState.length > 0 ?
+                        {stagedPlaylistState.length > 0 &&!submissionState ?
                         <>
                             {undoRedoController !== 1 && stagedHistory.length > 1 ? <button style={{margin:"auto 10px", flex: "1", borderRadius:'15px'}} onClick={() => { undoClicked() }}>Undo</button> : <></>}
                             {undoRedoController ? <button style={{margin:"auto 10px", flex: "1", borderRadius:'15px'}} onClick={() => { redoClicked() }}>Redo</button> : <></>}
                         </>
                         : <></>}
 
-                        {stagedPlaylist.length>0?
+                        
+                        
+                        {stagedPlaylist.length>0 &&!submissionState?
                         <button style={{margin:"auto 10px", flex: "1", borderRadius:'15px'}} onClick={()=>submitDraftPlaylist()}>Submit Playlist</button>
                         :<></>}
                         </div>
@@ -250,7 +270,15 @@ const DraftPlaylistContainer: React.FC<DraftPlaylistContainerProps> = (props: Dr
                 </div>
             }
             <div style={{flex: 1, overflowY: "auto", overflowX: "clip"}}>
-            {trackCards}
+            {submissionState?.at(-1)==="submitted"
+                        ?<div>Playlist has been submitted! Tracks are being added. Your user library will reload once all tracks have been added.<button onClick={()=>{ setSubmissionState(null); setStagedPlaylist([]);setStagedPlaylistState([]); setPlaylistName("")}}>Close</button></div>
+                    :submissionState?.at(-1) ==="success" && submissionState.length>1
+                        ?<div>Playlist has been created successfully!<button onClick={()=>{ setSubmissionState(null); setStagedPlaylist([]);setStagedPlaylistState([]); setPlaylistName("")}}>Close</button></div>
+                    :submissionState?.at(-1)==="pending"
+                        ?<div>loading...</div>
+                    :submissionState?.at(-1)==="fail" && submissionState.length>1
+                        ?<div>Failure to submit playlist for creation!<button onClick={()=>{}}>Close</button></div>
+                    :!submissionState && trackCards?.length>0?trackCards:<div>Select a Tracklist to begin creating.</div>}
             </div>
         </div>
     )
