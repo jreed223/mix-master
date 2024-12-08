@@ -556,7 +556,8 @@ button{
 
 }
 .track-card{
-  height: 70px;
+  height: 7vh;
+  min-height: 80px;
   margin: 8px 5px;
   overflow: clip;
 
