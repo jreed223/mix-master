@@ -11,7 +11,7 @@ import TracklistProvider from "../../state_management/TracklistProvider";
 
 
 
-export default function DraftingArea({setReloadKey}){
+export default function DraftingArea({setReloadKey, setDialogText}){
 
 
     const {activeView, isSearching, stagingState} = useContext(NavigationContext)
@@ -41,7 +41,7 @@ export default function DraftingArea({setReloadKey}){
             <div className="playlist-items-containers" style={{position: "relative"}}>
                 <SelectedPlaylistContainer></SelectedPlaylistContainer>
                 <FilterMenu></FilterMenu>
-                <DraftPlaylistContainer setReloadKey={setReloadKey}></DraftPlaylistContainer>
+                <DraftPlaylistContainer setDialogText={setDialogText} setReloadKey={setReloadKey}></DraftPlaylistContainer>
             </div >
             </div>
         </div>

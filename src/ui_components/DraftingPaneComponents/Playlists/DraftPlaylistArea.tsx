@@ -11,9 +11,10 @@ import io from 'socket.io-client';
 
 interface DraftPlaylistContainerProps {
     setReloadKey: React.Dispatch<React.SetStateAction<number>>
-
+    setDialogText: React.Dispatch<React.SetStateAction<submissionStatusState>>
 }
-type submissionStatusState = "pending"|"submitted"|"adding tracks"|"success"|"fail"
+export type submissionStatusState = {status:"Pending"|"Success"|"Failed", text: string}
+
 
 const DraftPlaylistContainer: React.FC<DraftPlaylistContainerProps> = (props: DraftPlaylistContainerProps) => {
 
@@ -23,8 +24,12 @@ const DraftPlaylistContainer: React.FC<DraftPlaylistContainerProps> = (props: Dr
     const [stagedHistory] = useState<TrackClass[][]>([[]])
     const [undoRedoController, setUndoRedoController] = useState<number>(null)    // const [selectAllState, setSelectAllState] =useState<boolean[]>([])
     const [playlistName, setPlaylistName] = useState<string>(null)
-    const [submissionState, setSubmissionState] = useState<submissionStatusState[]>(null)
+    const [submissionState, setSubmissionState] = useState<submissionStatusState>(null)
+
     const [newPlaylistId, setNewplaylistId] = useState(null)
+    const [displayWarning, setDisplayWarning] = useState(false)
+    const [displaySubmsnProgress, setDisplaySubmsnProgress] = useState(false)
+    // const [displaySubmissionStatus, setDisplaySubmissionStatus] = useState(false)
 
     // const { stagingState } = useContext(NavigationContext)
     const {selectedLibraryItem, setSelectedLibraryItem, stagedPlaylist, setStagedPlaylist, stagingState, stagedPlaylistState,
@@ -70,6 +75,14 @@ const DraftPlaylistContainer: React.FC<DraftPlaylistContainerProps> = (props: Dr
         }
     }, [deselectTrack, removeStagedItems, stagedPlaylist, selectedTracks])
 
+    useEffect(()=>{
+        if(displayWarning){
+            setTimeout(()=>{
+                setDisplayWarning(false)
+            }, 3000)
+        }
+    },[displayWarning])
+
 
     useEffect(() => {
 
@@ -101,13 +114,20 @@ const DraftPlaylistContainer: React.FC<DraftPlaylistContainerProps> = (props: Dr
 
 
 useEffect(()=>{
-    if((newPlaylistId===selectedLibraryItem?.id)&&submissionState?.at(-1)==="success"){
+    if(((newPlaylistId===selectedLibraryItem?.id)&&submissionState?.status==="Success")||(stagingState==="closed" && submissionState?.status==="Success")){
         setStagedPlaylist([])
         setStagedPlaylistState([])
         setPlaylistName("")
         setSubmissionState(null)
+        setDisplaySubmsnProgress(false)
     }
-},[newPlaylistId, selectedLibraryItem?.id, setStagedPlaylist, setStagedPlaylistState, submissionState])
+},[newPlaylistId, selectedLibraryItem?.id, setStagedPlaylist, setStagedPlaylistState, stagingState, submissionState])
+
+useEffect(()=>{
+    if(submissionState?.status==="Pending"){
+        setDisplaySubmsnProgress(true)
+    }
+},[submissionState?.status])
 
 
     const selectAllClicked = () => {
@@ -139,6 +159,7 @@ useEffect(()=>{
     }
 
     const submitDraftPlaylist = async () : Promise<boolean>=>{
+        setDisplaySubmsnProgress(true)
         // fetch("spotify-data/create-playlist")
         const createPlaylist = async (): Promise<TrackCollection>  => {
             // console.log(artistProps.item.id)
@@ -198,42 +219,60 @@ useEffect(()=>{
             return itemSubmission
 
         }
-        setSubmissionState(["pending"])
+
+        if(!playlistName||playlistName.length===0){
+            setDisplayWarning(true)
+        }else{
+            const pending : submissionStatusState = {status: "Pending", text: "Your playlist is being created."}
+            setSubmissionState(pending)
+            setDisplaySubmsnProgress(true)
+
         const newPlaylist = await createPlaylist()
         setNewplaylistId(newPlaylist.id)
 
         if(!newPlaylist){
-            setSubmissionState(prev=>prev.concat(["fail"]))
+            // setSubmissionState(prev=>prev.concat(["fail"]))
+            const failed: submissionStatusState = {status: "Failed", text: "Failed to create a new playlist."}
+            setSubmissionState(failed)
+            props.setDialogText(failed)
             console.log('Failed to create playlist')
             return false
         }else{
-            setSubmissionState(prev=>prev.concat(["submitted"]))
+            // setSubmissionState(prev=>prev.concat(["submitted"]))
             const isPlaylistSubmitted = await addItems(newPlaylist.id)
             if(isPlaylistSubmitted){
-                setSubmissionState(prev=>prev?prev.concat(["success"]):["success"])
+                // setSubmissionState(prev=>prev?prev.concat(["success"]):["success"])
+                const success:submissionStatusState = {status: "Success", text: "Your playlist has been created!"}
+                setSubmissionState(success)
+                props.setDialogText(success)
+
                 console.log("Items have been added")
-                // if(submissionState && submissionState.length>1){
-                //     setStagedPlaylist([])
-                //     setStagedPlaylistState([])
-                // // setPlaylistName("")
-                // }
+   
                 
                 setUserLibraryItems(null)
                 props.setReloadKey(prev=>prev+1)
             }else{
-                setSubmissionState(prev=>prev?prev.concat(["fail"]):["fail"])
+                // setSubmissionState(prev=>prev?prev.concat(["fail"]):["fail"])
+                const failed: submissionStatusState = {status: "Failed", text: "Your playlist has been created. Failed to add all items."}
+                setSubmissionState(failed)
+                props.setDialogText(failed)
+
+
                 console.log("Failed to submit items")
             }
             return isPlaylistSubmitted
 
         }
 
+        }
     }
+
 
 
 
     return (
         <div className="playlist-draft-container new-playlist" style={stagingState === "open" ? { borderRight: "2px solid #141414", transition: "1s", display: "flex", flexDirection: 'column' } : { borderRight: "0px solid #141414", transition: "1s", display: "flex", flexDirection: 'column' }} id="drafting-div">
+            
             {
                 <div style={{
                     position: "sticky",
@@ -243,14 +282,13 @@ useEffect(()=>{
                      display:"flex",
                     flexDirection:"column"
                 }}>
-
+                    
                     <div style={{margin:"auto", flex: "1"}}>
+                    <dialog style={{width: "25vh", margin: "auto", backgroundColor: "#141414", color:"#757575"}}open={displayWarning}>Name your playlist before submitting!</dialog>
 
-                    {/* <input type="checkbox" readOnly checked={} onClick={()=>{toggleSelectAll()}}/><label>Check all</label> */}
                         <button style={{margin:"auto 10px", flex: "1", borderRadius:'15px'}} onClick={() => { deselectAllClicked() }}>Deselect All</button>
                         <button style={{margin:"auto 10px", flex: "1", borderRadius:'15px'}} onClick={() => { selectAllClicked() }}>Select All</button>
                         <button style={{margin:"auto 10px", flex: "1", borderRadius:'15px'}} onClick={() => { removeStagedItems(selectedTracks); setSelectedTracks([]) }}>Remove Items</button>
-                    
 
                         {stagedPlaylistState.length > 0 &&!submissionState ?
                         <>
@@ -259,26 +297,32 @@ useEffect(()=>{
                         </>
                         : <></>}
 
-                        
-                        
                         {stagedPlaylist.length>0 &&!submissionState?
                         <button style={{margin:"auto 10px", flex: "1", borderRadius:'15px'}} onClick={()=>submitDraftPlaylist()}>Submit Playlist</button>
                         :<></>}
                         </div>
 
+                    
                     <input placeholder="Playlist Draft..." type="text" onChange={(e)=>setPlaylistName(e.target.value)} value={playlistName} style={{color:"#757575", textOverflow: "ellipsis", margin:"4px 15px", fontSize:"1.25em", fontWeight:"bold", border:"none", padding: "0 auto", backgroundColor: "#141414", textAlign:'center', minWidth:"50%", alignSelf:"center", width:"calc(100% - 30px)",}}></input>
                 </div>
             }
             <div style={{flex: 1, overflowY: "auto", overflowX: "clip"}}>
-            {submissionState?.at(-1)==="submitted"
-                        ?<div>Playlist has been submitted! Tracks are being added. Your user library will reload once all tracks have been added.<button onClick={()=>{ setSubmissionState(null); setStagedPlaylist([]);setStagedPlaylistState([]); setPlaylistName("")}}>Close</button></div>
-                    :submissionState?.at(-1) ==="success" && submissionState.length>1
-                        ?<div>Playlist has been created successfully!<button onClick={()=>{ setSubmissionState(null); setStagedPlaylist([]);setStagedPlaylistState([]); setPlaylistName("")}}>Close</button></div>
-                    :submissionState?.at(-1)==="pending"
-                        ?<div>loading...</div>
-                    :submissionState?.at(-1)==="fail" && submissionState.length>1
-                        ?<div>Failure to submit playlist for creation!<button onClick={()=>{}}>Close</button></div>
-                    :!submissionState && trackCards?.length>0?trackCards:<div>Select a Tracklist to begin creating.</div>}
+                
+            {displaySubmsnProgress && submissionState?
+            <div style={{display: "flex"}}>
+                <div >
+                    <h4>{submissionState.status}</h4>
+                    <p>{submissionState.text}</p>
+                    <div>
+                    <button onClick={submissionState.status==="Success"?()=>{setDisplaySubmsnProgress(false); setSubmissionState(null); setStagedPlaylist([]);setStagedPlaylistState([]); setPlaylistName("");}:()=>{setDisplaySubmsnProgress(false); setSubmissionState(null);}}>Close</button>
+                    </div>
+                </div>
+                {submissionState.status==="Pending"?<div style={{margin: "auto"}}>Loading...</div>:<></>}
+
+            </div>
+            :trackCards?.length>0
+                ?trackCards
+                :<div>{selectedLibraryItem?"Select a track to begin creating.":"Search for tracks or select a library item to begin."}</div>}
             </div>
         </div>
     )

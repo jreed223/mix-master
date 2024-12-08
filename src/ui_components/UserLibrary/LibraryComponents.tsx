@@ -3,9 +3,12 @@ import React, { Suspense, useContext, useMemo } from "react"
 import { useEffect, useState } from "react"
 import { LibraryItemsView } from "./LibraryCollectionsWindow";
 import { NavigationContext, NavigationContextType } from "../../state_management/NavigationProvider";
+import { submissionStatusState } from "../DraftingPaneComponents/Playlists/DraftPlaylistArea";
 
 interface LibraryComponentsProps {
   userId: string
+  dialogText:submissionStatusState
+  setDialogText: React.Dispatch<React.SetStateAction<submissionStatusState>>
 //   fetchedPlaylistsResource: {
 //     read(): any;
 // }
@@ -74,7 +77,9 @@ export const LibraryComponents: React.FC<LibraryComponentsProps> = (props: Libra
 
 
   const [primaryViewStyle, setPrimaryViewStyle] = useState<{ width: string, transition: string }>(null)
-  const [secondaryViewStyle, setSecondaryViewStyle] = useState<{ width: string, transition: string }>(null)
+  const [secondaryViewStyle, setSecondaryViewStyle] = useState<{ width: string, transition: string}>(null)
+  const [displayDialog, setDisplayDialog] = useState<boolean>(false)
+
 
 
   useEffect(() => {
@@ -125,11 +130,32 @@ export const LibraryComponents: React.FC<LibraryComponentsProps> = (props: Libra
 
   }, [isSearching, activeView, primaryView])
 
+  useEffect(()=>{
+    if(props.dialogText){
+      setDisplayDialog(true)
+    }
+  },[props.dialogText])
+
+  useEffect(()=>{
+    if(displayDialog){
+      const hideDialog = setTimeout(()=>{
+        setDisplayDialog(false)
+        setTimeout(()=>{
+          props.setDialogText(null)
+        }, 1000)
+      },3000)
+
+      return () => clearTimeout(hideDialog)
+
+    }
+  }, [displayDialog, props])
 
 
 
   return (
     <div style={{ flexGrow: 1 }} className="library-container" id="library-container">
+      <dialog style={{width: "25vh", margin: "15px auto", backgroundColor: "#141414", color:"#757575", opacity:displayDialog?1:0, transition:'1s', position: 'absolute', zIndex:99, left:"calc(50% - 14.5px)"}} open>{props.dialogText?`${props.dialogText.status}: ${props.dialogText.text}`:""}</dialog>
+
       <div className="user-library-items" style={primaryViewStyle}>
         <Suspense fallback={<CircularProgress />}>
           <LibraryItemsView  reloadKey={props.reloadKey} fetchedLibraryResource={fetchedPlaylistsResource} userId={props.userId} viewName={primaryView}  ></LibraryItemsView>

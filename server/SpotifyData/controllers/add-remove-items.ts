@@ -51,9 +51,9 @@ export const addTracks = (req: expressRequest, res: expressResponse)=>{
                     console.error("Fetch operation failed: ", e)
                 )
 
-                itemsSubset=itemsSubset.slice(101)
+                itemsSubset=itemsSubset.slice(100)
             }
-            if(itemsSubset.length> 0){
+            if(itemsSubset.length=== 0){
                 res.sendStatus(200)
             }else{
                 addPlaylistsItems(accessToken, playlistId, itemsSubset).then((response: FetchResponse)=>{

@@ -392,7 +392,7 @@ export const LibraryItemsView: React.FC<LibraryItemsViewProps> = (props: Library
               </button>}
           </div>
           <div style={innerContentStyle}>
-            <div className="playlist-content" style={{ flexFlow: currentFlexFlow, height: isPreview ? "calc(100% - 50px)" : 'fit-content' }} >
+            <div className="playlist-content" style={{ flexFlow: currentFlexFlow}} >
               {currentCards}
             </div>
           </div>
