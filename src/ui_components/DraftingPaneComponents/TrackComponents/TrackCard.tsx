@@ -36,11 +36,15 @@ const TrackCard: React.FC<TrackCardProps> = (
 
 
 useEffect(()=>{
-    if(props.selectedLibraryItems.some((libraryItem)=>libraryItem?.track?.id===props.trackClass?.track?.id)){
-        setIsChecked(true)
-    }else{
-        setIsChecked(false)
+    if(props.tracklistArea!=="search-bar-card"){
+        if(props.selectedLibraryItems.some((libraryItem)=>libraryItem?.track?.id===props.trackClass?.track?.id)){
+            setIsChecked(true)
+        }else{
+            setIsChecked(false)
+        }
+
     }
+   
 
 }, [props.selectedLibraryItems, props.trackClass?.track?.id, props.tracklistArea])  
 
@@ -180,8 +184,12 @@ useEffect(()=>{
                         <div onClick={props.tracklistArea!=="search-bar-card"?()=>handleCheck():()=>{}} style={{cursor:props.tracklistArea!=="search-bar-card"?"pointer":"default",top:0, left:0,width:"100%", height:"100%", position:"absolute",  }}></div>
                         </div>
 
-                        {props.tracklistArea==="search-bar-card"?<button disabled={stagedPlaylist.some(track=>track.track.id===props.trackClass.track.id)}style={{width:"40px", height: "100%", borderRadius: "10%"}} onClick={(e)=>{e.preventDefault(); stageTracks([props.trackClass]);}}>+
-                        </button>:<button style={{width:"40px", height: "100%", borderRadius: "10%"}} onClick={(e)=>{e.preventDefault(); stageTracks([props.trackClass]); props.deselectTrack(props.trackClass.track.id)}}>+
+                        {props.tracklistArea==="search-bar-card"
+                        ?<button disabled={stagedPlaylist.some(track=>track.track.id===props.trackClass.track.id)}style={{width:"40px", height: "100%", borderRadius: "10%"}} onClick={(e)=>{e.preventDefault(); stageTracks([props.trackClass]);}}>
+                            +
+                        </button>
+                        :<button style={{width:"40px", height: "100%", borderRadius: "10%"}} onClick={(e)=>{e.preventDefault(); stageTracks([props.trackClass]); props.deselectTrack(props.trackClass.track.id)}}>
+                            +
                         </button>
                         }
                         </>

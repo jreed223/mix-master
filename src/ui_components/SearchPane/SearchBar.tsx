@@ -267,7 +267,7 @@ export default function SearchBar() {
                                     <button style={{ borderRadius: "25px", height: "25px" }} onKeyDown={(e) => e.preventDefault()} onClick={(e) => { closeSearch(e) }}>Close</button>
                             </div>
                         </div>
-                        <div className="search-results" style={{ height: "calc(100% - 40px)", overflowY: "hidden", overflowX:'clip', position: "relative" }}>
+                        <div className="search-results" style={{ height: "calc(100% - 40px)", overflowY: "auto", overflowX:'clip', position: "relative" }}>
 
 
                             {isLoading?

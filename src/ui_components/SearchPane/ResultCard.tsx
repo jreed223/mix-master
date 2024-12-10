@@ -91,7 +91,7 @@ const ResultCard: React.FC<ResultCardProps> = (props: ResultCardProps) => {
 
 
             return (
-                <div style={{ display: "flex", width: "calc(50% - 20px)", height: "80px" }} className="track-card">
+                <div style={{ display: "flex", width: "calc(50% - 20px)", minHeight: "80px" }} className="track-card">
                     <div style={{ display: "inline-flex", position: "relative", height: "100%", aspectRatio: "1 / 1" }}>
                         <img loading="lazy" style={{ position: "relative", height: "100%", aspectRatio: "1 / 1" }} src={props.result.item?.images[0]?.url} alt={`${props.result.item?.name||"Unknown"} cover`}></img>
                         <div onClick={() =>{ isMobile?setIsSearching(false):setIsSearching(prev=>prev); albumProps.displayTracks(albumProps.item)}} style={{ top: 0, left: 0, width: "100%", height: "100%", position: "absolute" }}></div>
@@ -143,7 +143,7 @@ const ResultCard: React.FC<ResultCardProps> = (props: ResultCardProps) => {
 
             return (
                 <>
-                <div style={{ background: "#141414", width: expanded?"100%":"50%", height: "80px", position:expanded?'fixed':'relative', top:expanded?'100px':'0px', zIndex:artistProps.expandedArtistId===albumProps.item.id? 1000 : 'unset', overflowY: 'auto' }}>
+                <div style={{ background: "#141414", width: expanded?"100%":"50%", minHeight: "80px", position:expanded?'fixed':'relative', top:expanded?'100px':'0px', zIndex:artistProps.expandedArtistId===albumProps.item.id? 1000 : 'unset', overflowY: 'auto' }}>
                     <div style={{ display: "flex", margin: 0, padding: "5px" }} className="track-card">
                         <div style={{ display: "inline-flex", position: "relative", height: "100%", aspectRatio: "1 / 1" }}>
                             <img loading="lazy" style={{ borderRadius: "50%", position: "relative", height: "100%", aspectRatio: "1 / 1" }} src={props.result.item?.images[0]?.url} alt={`${props.result.item?.name||"Unknown"} cover`}></img>
@@ -195,7 +195,7 @@ const ResultCard: React.FC<ResultCardProps> = (props: ResultCardProps) => {
                         {/* <div onClick={()=>playPreviewAudio(track.preview_url)} style={{color: !previewState?"inherit":previewState,top:0, left:0,width:"100%", height:"100%", position:"absolute"}}>preview</div> */}
                     </div>
                     <p style={{ display: 'inline' }} className={"track-card-text"}>Track: {trackProps.item?.track?.name||"Unknown"}</p>
-                    <button style={{width:"40px", height: "100%", borderRadius: "10%"}} disabled={trackProps.isDrafted(trackProps.item.track.id)} onClick={(e) => trackProps.draftTrack(e, trackProps.item)}>+</button>
+                    <button style={{width:"40px", height: "100%", borderRadius: "10%"}} disabled={trackProps.isDrafted(trackProps.item.track.id)} onClick={(e) => {e.preventDefault(); trackProps.draftTrack(e, trackProps.item)}}>+</button>
 
 
                 </div>

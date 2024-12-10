@@ -6,6 +6,7 @@ import TrackClass from "../../../models/Tracks";
 import { NavigationContext } from "../../../state_management/NavigationProvider";
 import { DraftingContext } from "../../../state_management/DraftingPaneProvider";
 import { TracklistContext } from "../../../state_management/TracklistProvider";
+import { Artist } from "../../../../server/types";
 interface SelectedPlaylistContainerProps {
 
 
@@ -30,7 +31,10 @@ const SelectedPlaylistContainer: React.FC<SelectedPlaylistContainerProps> = () =
 
 const {selectedLibraryItem, stagedPlaylist, setStagedPlaylist, stagedPlaylistState,
     setStagedPlaylistState,} = useContext(NavigationContext)
-const {popularityFilter} = useContext(TracklistContext)
+const {popularityFilter, dateRange, setSelectedArtistFilters, artistQuery, artistsList, setArtistsList} = useContext(TracklistContext)
+
+// const [artistsList, setArtistsList] = useState<Artist[]>(null)
+// const [artistQuery, setArtistQuery] = useState<string>(null)
 
 
     const {allTracks,
@@ -40,7 +44,7 @@ const {popularityFilter} = useContext(TracklistContext)
         selectedFeatures,
         filteredTracks,
         setFilteredTracks,
-        filterFeatures, loadingState, setLoadingState} = useContext(TracklistContext)
+        filterFeatures, loadingState, setLoadingState, selectedArtistFilters, setArtistQuery} = useContext(TracklistContext)
 
     const [selectedTracks, setSelectedTracks] = useState<TrackClass[]>([])
     const [nextTracks, setNextTracks] = useState<TrackClass[]>(null)
@@ -57,6 +61,37 @@ const {popularityFilter} = useContext(TracklistContext)
 
     }
 
+    
+//TODO: TROUBLESHOOT BELOW ERROR
+    // useEffect(()=>{
+    // if(allTracks){
+    //     if(artistQuery?.trim().length===0){
+
+    //         console.log("artistQuery?.trim().length:", artistQuery?.trim().length)
+    //         const consolidatedList : Artist[] = []
+    //         const completeArtistList  =  allTracks.flatMap((item)=>item.track.artists)
+    //         completeArtistList.map((artist)=>{
+    //             if(!consolidatedList.some((item)=>item.id===artist.id)){
+    //                 consolidatedList.push(artist)
+                   
+    //             }
+    //             return artist
+    //         })
+    //         setArtistsList(consolidatedList)
+    //     }else
+
+    //     if(artistQuery && artistQuery?.trim().length>0){
+    //         const filteredArtists = artistsList.filter((artist)=>artist.name.toLowerCase().startsWith(artistQuery.toLowerCase()))
+    //         setArtistsList(filteredArtists)
+
+    //     }
+    // }
+
+    // },[allTracks, artistQuery, artistsList, setArtistsList])
+
+
+
+
     //**Fetches selected playlists tracks if not already fetched*/
     useEffect(() => {
         // setSelectAllChecked(false)
@@ -64,8 +99,13 @@ const {popularityFilter} = useContext(TracklistContext)
         setFilteredTracks([])
         setSelectedTracks([])
         setLoadingState("loading")
+        setArtistQuery("")
+        setSelectedArtistFilters([])
+        setArtistsList(null)
 
         let allTracks: TrackClass[] = []
+        
+
         console.log("ITEMMMM: ",selectedLibraryItem)
         
 
@@ -76,6 +116,18 @@ const {popularityFilter} = useContext(TracklistContext)
                 setTrackDataState(selectedLibraryItem.trackDataState)
                 allTracks = selectedLibraryItem.trackDataState.flatMap(trackData => trackData.tracks)
                 setAllTracks(allTracks)
+                let consolidatedList : Artist[] = []
+                const completeArtistList  =  allTracks.flatMap((item)=>item.track.artists)
+                completeArtistList.map((artist)=>{
+                    if(!consolidatedList.some((item)=>item.id===artist.id)){
+                        consolidatedList.push(artist)
+                    }
+                    return artist
+                })
+                console.log("completeArtistList: ", completeArtistList)
+                setArtistsList(consolidatedList)
+                // const artistsInTracklist = Array.from(new Set (allTracks.flatMap((item)=>item.track.artists)))
+                // setArtistsList(artistsInTracklist)
                 setLoadingState(null)
 
             })
@@ -86,20 +138,33 @@ const {popularityFilter} = useContext(TracklistContext)
             setTrackDataState(selectedLibraryItem.trackDataState)
             allTracks = selectedLibraryItem.trackDataState.flatMap(track => track.tracks)
             setAllTracks(allTracks)
-            setLoadingState(null)
+            let consolidatedList : Artist[] = []
+
+            const completeArtistList  =  allTracks.flatMap((item)=>item.track.artists)
+                completeArtistList.map((artist)=>{
+                    if(!consolidatedList.some((item)=>item.id===artist.id)){
+                        consolidatedList.push(artist)
+                    }
+                    return artist
+                })
+                console.log("completeArtistList: ", completeArtistList)
+                setArtistsList(consolidatedList)
+                // const artistsInTracklist = Array.from(new Set (allTracks.flatMap((item)=>item.track.artists)))
+                // setArtistsList(artistsInTracklist)
+                setLoadingState(null)
 
         }else{
             setLoadingState(null)
 
         }
-    }, [selectedLibraryItem, setAllTracks, setFilteredTracks, setLoadingState, setTrackDataState])
+    }, [selectedLibraryItem, setAllTracks, setArtistQuery, setArtistsList, setFilteredTracks, setLoadingState, setSelectedArtistFilters, setTrackDataState])
 
 
     let isFeatureFilterSelected = Object.values(selectedFeatures).some(featureVal => typeof featureVal === "number")||popularityFilter
 
     //** FIlters the selected playlist if the audio featrues have been set*/
     useEffect(() => {
-        if (trackDataState != null && isFeatureFilterSelected) {
+        if (trackDataState != null||(selectedArtistFilters||popularityFilter) ) {
             setLoadingState("filtering")
             // console.log(featureFilters.at(-1))
             console.log("useEffect run for filtFeatures")
@@ -114,7 +179,8 @@ const {popularityFilter} = useContext(TracklistContext)
 
 
 
-    }, [selectedFeatures, trackDataState, filterFeatures, allTracks, isFeatureFilterSelected, setFilteredTracks, setLoadingState])
+    }, [selectedFeatures, trackDataState, filterFeatures, allTracks, isFeatureFilterSelected, setFilteredTracks, setLoadingState, dateRange, selectedArtistFilters, popularityFilter])
+
 
 
     

@@ -21,7 +21,7 @@ interface tracklistProps{
 export default function Tracklist(props:tracklistProps){
 
   
-        const {allTracks, filteredTracks, loadingState, setLoadingState} = useContext(TracklistContext)
+        const {allTracks, filteredTracks, loadingState} = useContext(TracklistContext)
         const {stagedPlaylist, stageTracks} = useContext(NavigationContext)
 
 const [displayedTracks, setDisplayedTracks] = useState<ReactElement<TrackCardProps>[]>([])

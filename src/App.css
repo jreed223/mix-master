@@ -57,6 +57,24 @@
   
 }
 
+  /* Custom styles for the selected date range */
+  .react-calendar__tile--active {
+    background-color: #3b82f6; /* Blue background for selected date */
+    color: white;
+  }
+
+  .react-calendar__tile--range {
+    background-color: #bfdbfe; /* Light blue background for the range */
+    color: black;
+  }
+
+  .react-calendar__tile--rangeStart,
+  .react-calendar__tile--rangeEnd {
+    background-color: #60a5fa; /* Darker blue for start and end of range */
+    color: white;
+  }
+
+
 
 .track-card-text{
   /* display: -webkit-box;
@@ -554,6 +572,9 @@ button{
   /* padding-left: 25px;
   padding-right: 12.5px; */
 
+}
+button{
+  cursor: pointer;
 }
 .track-card{
   height: 7vh;
