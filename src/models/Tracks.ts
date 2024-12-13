@@ -3,7 +3,7 @@ import { audioFeatures } from '../../server/SpotifyData/controllers/supplemental
 import TrackCollection, { Collection } from './libraryItems';
 
 export default class TrackClass{
-    private collection?:TrackCollection|null
+    collection?:TrackCollection|null
     track: Track
     audio_features?: Features|null
 

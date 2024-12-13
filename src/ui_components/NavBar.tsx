@@ -4,12 +4,13 @@ import UserLibrary from './SinglePageView';
 import { UserProfile } from "../../server/types";
 import { AudioState, NavigationContext } from "../state_management/NavigationProvider";
 import TrackClass from "../models/Tracks";
+import MainContent from "./MainContent";
 // import { Button } from "@mui/material";
 
 interface navProps{
     currentUser: UserProfile
 }
-export type ViewName = 'Dashboard'|"Liked Playlists"|"User Playlists"|"Liked Albums"
+export type ViewName = 'Dashboard'|"Liked Playlists"|"User Playlists"|"Liked Albums"|"All Playlists"
 
 
 
@@ -19,8 +20,14 @@ export default function NavBar({currentUser}:navProps){
     // const [isSearching, setIsSearching] = useState(false)
     // const [stagingState, setStagingState] = useState<string>("closed")
     // const {selectedLibraryItem, setSelectedLibraryItem, stagedPlaylist, setStagedPlaylist} = useContext(NavigationContext)
+    const {setIsPlaylistsView, isPlaylistsView, isMobile, setActiveView, activeView, setIsSearching, isSearching, stagingState, setStagingState, currentAudio, currentAudioColor, selectedLibraryItem, setSelectedLibraryItem, stagedPlaylist, setStagedPlaylist, setCurrentAudio, unstageTracks, stageTracks } = useContext(NavigationContext)
 
-    const {setActiveView, activeView, setIsSearching, isSearching, stagingState, setStagingState, currentAudio, currentAudioColor, selectedLibraryItem, setSelectedLibraryItem, stagedPlaylist, setStagedPlaylist, setCurrentAudio, unstageTracks, stageTracks } = useContext(NavigationContext)
+    const closeSearchAndCreation = useCallback(() =>{
+        setStagingState('closed')
+        setIsSearching(false)
+        setActiveView(isMobile?["User Playlists"]:['Dashboard'])
+    },[isMobile, setActiveView, setIsSearching, setStagingState])
+
     const mixMasterButton = useCallback(()=>{
             if(stagingState==='closed'){
                 if(activeView.at(-1)==="Dashboard"){
@@ -28,12 +35,10 @@ export default function NavBar({currentUser}:navProps){
                 }
                 setStagingState("open")
             }else{
-                setStagingState('closed')
-                setIsSearching(false)
-                setActiveView(['Dashboard'])
+                closeSearchAndCreation()
             }
 
-    },[activeView, setActiveView, setIsSearching, setStagingState, stagingState])
+    },[activeView, closeSearchAndCreation, setActiveView, setStagingState, stagingState])
 
     const toggleAudio = ()=>{
         if(currentAudio.audio.paused === true){
@@ -156,7 +161,12 @@ export default function NavBar({currentUser}:navProps){
 
     const handleNav = (viewName: ViewName)=>{
         setActiveView((prev)=>[prev.at(-2),prev.at(-1), viewName])
-        stagingState==="open"?setIsSearching(false):setIsSearching(prev=>prev)
+        if(stagingState==="open"){
+            setIsSearching(false)
+        }
+        if(isMobile){
+            setStagingState("closed")
+        }
 
     }
 
@@ -166,7 +176,7 @@ export default function NavBar({currentUser}:navProps){
                 <span style={{color: "rgb(135, 135, 135)", overflow:"clip"}}className="navbar">
                    
                         <div  style={{width:"calc(50% - 50px)", margin: '0px 25px', alignItems:"center", display: "flex", position: 'relative'}}>
-                        <h2 style={{margin: 0}} onClick={()=>{mixMasterButton()}} >Mix Master</h2>
+                        <h2 style={{margin: 0, cursor: "pointer"}} onClick={()=>{mixMasterButton()}} >Mix Master</h2>
                         {/* <div></div> */}
                         {currentAudio
                         ?(
@@ -201,15 +211,13 @@ export default function NavBar({currentUser}:navProps){
                         }
                         
                         </div>
-                    <div style={{position: "absolute", left:"50%", transform: "translateY(-50%)", top: "50%", height: "100%", alignItems: "end", width: "40%", display: "flex",  gap:"25px" }}>
-                    {/* <button style={{width:"calc(25% - 18.75px)", height: "70%"}} disabled={disabledDashboard} onClick={()=>{setActiveView((prev)=>[prev.at(-2),prev.at(-1),"Dashboard"])}}>Your Library</button> */}
-                    <button disabled={activeView.at(-1)==="User Playlists"&&!(isSearching&&stagingState==='open')} style={{width:"calc(25% - 18.75px)", height: "70%", borderTopLeftRadius: '7px', borderTopRightRadius: '7px' }} onClick={()=>{setActiveView((prev)=>[prev.at(-2),prev.at(-1), "User Playlists"]); stagingState==="open"?setIsSearching(false):setIsSearching(prev=>prev)}}>My Playlists</button>
-                    <button disabled={activeView.at(-1)==="Liked Playlists"&&!(isSearching&&stagingState==='open')} style={{width:"calc(25% - 18.75px)", height: "70%", borderTopLeftRadius: '7px', borderTopRightRadius: '7px'}} onClick={()=>{setActiveView((prev)=>[prev.at(-2), prev.at(-1), "Liked Playlists"]); stagingState==="open"?setIsSearching(false):setIsSearching(prev=>prev)}}>Liked Playlists</button>
-                    <button disabled={activeView.at(-1)==="Liked Albums"&&!(isSearching&&stagingState==='open')} style={{width:"calc(25% - 18.75px)", height: "70%", borderTopLeftRadius: '7px', borderTopRightRadius: '7px'}} onClick={()=>{setActiveView((prev)=>[prev.at(-2),prev.at(-1),"Liked Albums"]); stagingState==="open"?setIsSearching(false):setIsSearching(prev=>prev)}}>Liked Albums</button>
+                    <div style={{position: "absolute", left:"50%", transform: "translateY(-50%)", top: "50%", height: "100%", alignItems: "center", width: "40%", display: "flex",  gap:"25px" }}>
+                    <button disabled={(isPlaylistsView&&stagingState==="closed")} style={{width:"calc(25% - 18.75px)", height: "70%", borderRadius:"25px" }} onClick={stagingState==="open"&&isPlaylistsView?()=>{setStagingState("closed"); setIsPlaylistsView(true)}:()=>{setIsPlaylistsView(true)}}>My Playlists</button>
                     </div>
                     <p>Welcome, {currentUser.display_name}</p>
                 </span>
-                <UserLibrary  currentUser={currentUser} ></UserLibrary>
+                <MainContent currentUser={currentUser}></MainContent>
+                {/* <UserLibrary  currentUser={currentUser} ></UserLibrary> */}
             </div>
     )
 }

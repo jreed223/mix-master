@@ -21,7 +21,7 @@ interface tracklistProps{
 export default function Tracklist(props:tracklistProps){
 
   
-        const {allTracks, filteredTracks, loadingState, setLoadingState} = useContext(TracklistContext)
+        const {allTracks, filteredTracks, loadingState} = useContext(TracklistContext)
         const {stagedPlaylist, stageTracks} = useContext(NavigationContext)
 
 const [displayedTracks, setDisplayedTracks] = useState<ReactElement<TrackCardProps>[]>([])
@@ -31,13 +31,11 @@ const [hiddenTracks, setHiddenTracks] = useState<ReactElement<TrackCardProps>[]>
 const editSelectedItemList2 = useCallback((checked: boolean ,selectedItem: TrackClass)=>{
     if(checked){
         // const lst = selectedLibraryItems.concat([selectedItem])
-        console.log("track card checked: ", console.log(props.selectedLibraryItems))
 
         props.setSelectedLibraryItems(props.selectedLibraryItems.concat([selectedItem]))
 
     }else{
 
-        console.log("track card unchecked: ", console.log(props.selectedLibraryItems.filter(item=>item!== selectedItem)))
         props.setSelectedLibraryItems(props.selectedLibraryItems.filter(item=>item!== selectedItem))
     }
     // console.log(selectedPlaylistItems)

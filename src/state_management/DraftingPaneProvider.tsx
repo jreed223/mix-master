@@ -6,7 +6,6 @@ import { NavigationContext } from "./NavigationProvider";
 // import { Button } from "@mui/material";
 
 
-export type ViewName = 'Dashboard'|"Liked Playlists"|"User Playlists"|"Liked Albums"
 
 export type DraftingContextType = {
     // stagedPlaylistState:TrackClass[][], 

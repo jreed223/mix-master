@@ -23,12 +23,12 @@ export default class TrackCollection {
         
 
     ){
-        console.log("Library Item type in constructor: ",collection)
+        // console.log("Library Item type in constructor: ",collection)
         this.audioFeaturesSet = false;
-        this.type = collection.type
+        this.type = collection?.type||null
         this.setTracks = this.setTracks.bind(this)
 
-        switch (collection.type) {
+        switch (collection?.type) {
 
             case 'playlist':
                 this.name = collection.name;
@@ -41,7 +41,7 @@ export default class TrackCollection {
                 this.tracks = null
               break;
             case 'album':
-                const tracklist = collection.tracks.items.map((item)=>{
+                const tracklist = collection.tracks?.items?.map((item)=>{
                     const track = new TrackClass(item, this)
                     return track
                 })
@@ -53,7 +53,7 @@ export default class TrackCollection {
                 this.artists = collection.artists
                 this.uri = collection.uri
                 this.totalTracks = collection.total_tracks
-                this.tracks = collection.tracks.items.map(item=>new TrackClass(item, this))
+                this.tracks = collection.tracks?.items?.map(item=>new TrackClass(item, this))
                 //TODO:Should this be this.tracks?
 
                 this.trackDataState = [{tracks:tracklist, audioFeatures: false, categories: false}]

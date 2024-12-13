@@ -1,4 +1,4 @@
-import React, { useContext } from "react"
+import React, { useContext, useEffect } from "react"
 import { NavigationContext } from "../../state_management/NavigationProvider"
 import { DraftingContext } from "../../state_management/DraftingPaneProvider"
 // import { Features, PlaylistItem } from "../../../server/types";
@@ -12,14 +12,14 @@ interface PlaylistMenuProps {
 
 }
 const PlaylistMenuBar: React.FC<PlaylistMenuProps> = (props: PlaylistMenuProps) => {
-    const { setActiveView, isSearching, setIsSearching, setStagingState } = useContext(NavigationContext)
+    const { setActiveView, isSearching, setIsSearching, setStagingState, isMobile } = useContext(NavigationContext)
     const {isMaxDraftView, setIsMaxDraftView, displayFeatureMenu, setDisplayFeatureMenu } = useContext(DraftingContext)
 
     const closeCreationContainer = () => {
         setStagingState("closed")
         setIsMaxDraftView(false)
 
-        if (!isSearching) {
+        if (!isSearching && !isMobile) {
             setActiveView(["Dashboard"])
         }
         // console.log(stagingState)
@@ -44,13 +44,19 @@ const PlaylistMenuBar: React.FC<PlaylistMenuProps> = (props: PlaylistMenuProps) 
         }
     }
 
+    useEffect(()=>{
+        if(isMobile){
+            setIsMaxDraftView(false)
+        }
+    },[isMobile, setIsMaxDraftView])
+
 
 
     return (
         <div className="playlist-creation-menu-bar" >
             <button className='draft-pane-button' onClick={() => closeCreationContainer()}>Close</button>
             <button className='draft-pane-button' onClick={() => { toggleFeatures() }}>Audio Features</button>
-            <button className='draft-pane-button' onClick={() => toggleFullScreen()}>Full Screen</button>
+            <button disabled={isMobile} className='draft-pane-button' style={{opacity:isMobile?0:1, transition:'1s'}} onClick={() => toggleFullScreen()}>Full Screen</button>
 
         </div>
     )

@@ -1,11 +1,13 @@
 import React, { createContext, useCallback, useEffect, useMemo, useState } from "react"
 import TrackCollection from "../models/libraryItems"
 import TrackClass from "../models/Tracks";
+import { LibraryItemCardProps } from "../ui_components/UserLibrary/LibraryItemCard";
+import { UserProfile } from "../../server/types";
 // import { UserProfile } from '@spotify/web-api-ts-sdk';
 // import { Button } from "@mui/material";
 
 
-export type ViewName = 'Dashboard'|"Liked Playlists"|"User Playlists"|"Liked Albums"
+export type ViewName = 'Dashboard'|"Liked Playlists"|"User Playlists"|"Liked Albums"|"All Playlists"
 export type AudioState = {url:string, audio: HTMLAudioElement, audioDetails: {
     trackId: string;
     artist: string;
@@ -31,7 +33,18 @@ export type NavigationContextType = {
     stagedPlaylistState:TrackClass[][], 
     setStagedPlaylistState: React.Dispatch<React.SetStateAction<TrackClass[][]>>,
     stageTracks: (items: TrackClass[]) => void,
-    unstageTracks: (items: TrackClass[]) => void
+    unstageTracks: (items: TrackClass[]) => void,
+    setUser: React.Dispatch<React.SetStateAction<UserProfile>>,
+    user: UserProfile,
+    setUserLibraryItems: React.Dispatch<React.SetStateAction<TrackCollection[]>>,
+    userLibraryItems: TrackCollection[],
+    setIsMobile: React.Dispatch<React.SetStateAction<boolean>>,
+    isMobile: boolean
+    setIsPlaylistsView: React.Dispatch<React.SetStateAction<boolean>>,
+
+    isPlaylistsView: boolean
+
+
     // audioDetails: {artist: string, title: string}
     // setAudioDetails: React.Dispatch<React.SetStateAction<{
     //     artist: string;
@@ -42,13 +55,23 @@ export type NavigationContextType = {
 
 
 export default function NavigationProvider({children}){
-    const [activeView, setActiveView] = useState<ViewName[]>(["Dashboard"])
     const [primaryView, setPrimaryView] = useState<ViewName>("User Playlists")
     const [currentAudio, setCurrentAudio] = useState<AudioState>(null)
     const [currentAudioColor, setCurrentAudioColor] = useState<"#59b759"|"#e56767"|null>(null)
     const [selectedLibraryItem, setSelectedLibraryItem] = useState<TrackCollection | null>(null)
     const [stagedPlaylist, setStagedPlaylist] = useState<TrackClass[]>([])
+    const [userLibraryItems, setUserLibraryItems] = useState<TrackCollection[]>()
     const [stagedPlaylistState, setStagedPlaylistState] = useState<TrackClass[][]>([[]])
+    // const [userPlaylistCards, setUserPlaylistCards] = useState<React.ReactElement<LibraryItemCardProps>[]>()
+    const [user, setUser] = useState<UserProfile>(null);
+    const [isMobile, setIsMobile] = useState(false)
+    const [windowSize, setWindowSize] = useState({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    const [activeView, setActiveView] = useState<ViewName[]>(isMobile?["User Playlists"]:["Dashboard"])
+    const [isPlaylistsView, setIsPlaylistsView] = useState(true)
+
 
     // const [audioDetails, setAudioDetails] = useState<{artist: string, title: string}>(null)
 
@@ -85,14 +108,44 @@ export default function NavigationProvider({children}){
 
         }
 
-
-
     },[currentAudio, currentAudio?.audio])
+
+
+
+    useEffect(()=>{
+        const setViewStyle = ()=>{
+            setWindowSize({
+                width: window.innerWidth,
+                height: window.innerHeight,
+              });
+          
+        }
+        setViewStyle()
+        window.addEventListener('resize', setViewStyle)
+
+        return () => {
+          window.removeEventListener('resize', setViewStyle);
+        };
+    },[])
+    useEffect(()=>{
+        if((windowSize.width<900)||((windowSize.width/2)-125 < windowSize.height/4)){
+            setIsMobile(true)
+        }else{
+            setIsMobile(false)
+        }
+    },[windowSize.height, windowSize.width])
+
+    useEffect(()=>{
+        if(isMobile && activeView.at(-1)==="Dashboard"){
+            setActiveView(["User Playlists"])
+        }
+    })
 
     const stageTracks =useCallback((items:TrackClass[])=>{
         const newStagedPlaylist = stagedPlaylist.concat(items)
         setStagedPlaylist(newStagedPlaylist)
         setStagedPlaylistState(stagedPlaylistState.concat([newStagedPlaylist]))
+        setStagingState("open")
         console.log("Added items: ",items)
         console.log("new Staged Playlist: ",newStagedPlaylist)
         console.log(stagedPlaylistState)
@@ -110,7 +163,7 @@ export default function NavigationProvider({children}){
 
     }, [setStagedPlaylist, setStagedPlaylistState, stagedPlaylist, stagedPlaylistState])
 
-    const context = useMemo(()=>({activeView, setActiveView, isSearching, setIsSearching, stagingState, setStagingState, primaryView, setPrimaryView, currentAudio, setCurrentAudio, currentAudioColor, selectedLibraryItem, setSelectedLibraryItem, stagedPlaylist, setStagedPlaylist, stagedPlaylistState, setStagedPlaylistState, stageTracks, unstageTracks }), [activeView, currentAudio, currentAudioColor, isSearching, primaryView, selectedLibraryItem, stageTracks, unstageTracks, stagedPlaylist, stagedPlaylistState, stagingState])
+    const context: NavigationContextType = useMemo(()=>({setIsPlaylistsView, isPlaylistsView, isMobile, setIsMobile, user, setUser, activeView, setActiveView, isSearching, setIsSearching, stagingState, setStagingState, primaryView, setPrimaryView, currentAudio, setCurrentAudio, currentAudioColor, selectedLibraryItem, setSelectedLibraryItem, stagedPlaylist, setStagedPlaylist, stagedPlaylistState, setStagedPlaylistState, stageTracks, unstageTracks, userLibraryItems, setUserLibraryItems }), [activeView, currentAudio, currentAudioColor, isMobile, isPlaylistsView, isSearching, primaryView, selectedLibraryItem, stageTracks, stagedPlaylist, stagedPlaylistState, stagingState, unstageTracks, user, userLibraryItems])
 
 
 

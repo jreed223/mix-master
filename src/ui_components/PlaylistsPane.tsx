@@ -1,9 +1,11 @@
 import { CircularProgress } from "@mui/material";
 import React, { Suspense, useContext, useMemo } from "react"
 import { useEffect, useState } from "react"
-import { LibraryItemsView } from "./LibraryCollectionsWindow";
-import { NavigationContext, NavigationContextType } from "../../state_management/NavigationProvider";
-import { submissionStatusState } from "../DraftingPaneComponents/Playlists/DraftPlaylistArea";
+import { submissionStatusState } from "./DraftingPaneComponents/Playlists/DraftPlaylistArea";
+import { NavigationContext, NavigationContextType } from "../state_management/NavigationProvider";
+import { LibraryItemsView } from "./UserLibrary/LibraryCollectionsWindow";
+import SearchAndPlaylists from "./SearchAndContent";
+import { PlaylistsView } from "./LibraryCollectionsWindow";
 
 interface LibraryComponentsProps {
   userId: string
@@ -18,7 +20,7 @@ interface LibraryComponentsProps {
 reloadKey: number
 }
 
-export const LibraryComponents: React.FC<LibraryComponentsProps> = (props: LibraryComponentsProps) => {
+export const PlaylistsPane: React.FC<LibraryComponentsProps> = (props: LibraryComponentsProps) => {
   
 
   const {activeView, isSearching, primaryView} = useContext<NavigationContextType>(NavigationContext)
@@ -155,26 +157,33 @@ export const LibraryComponents: React.FC<LibraryComponentsProps> = (props: Libra
 
     }
   }, [displayDialog, props])
+  const playlists = (    
+
+    <Suspense fallback={<CircularProgress />}>
+      <PlaylistsView  fetchedLibraryResource={fetchedPlaylistsResource} userId={props.userId} viewName={"All Playlists"}  ></PlaylistsView>
+    </Suspense>
+  )
 
 
 
   return (
-    <div style={{ flexGrow: 1 }} className="library-container" id="library-container">
+    <div style={{ flexGrow: 1, overflowY: "hidden" }} className="library-container" id="library-container">
       <dialog style={{width: "25vh", margin: "15px auto", backgroundColor: "#141414", color:"#757575", opacity:displayDialog?1:0, transition:'1s', position: 'absolute', zIndex:99, left:"calc(50% - 14.5px)"}} open={props.dialogText?true:false}>{props.dialogText?`${props.dialogText.status}: ${props.dialogText.text}`:""}</dialog>
 
-      <div className="user-library-items" style={primaryViewStyle}>
+      {/* <div className="user-library-items" style={primaryViewStyle}>
         <Suspense fallback={<CircularProgress />}>
           <LibraryItemsView  reloadKey={props.reloadKey} fetchedLibraryResource={fetchedPlaylistsResource} userId={props.userId} viewName={primaryView}  ></LibraryItemsView>
         </Suspense>
-      </div>
-      <div className="liked-library-items" style={secondaryViewStyle}>
+      </div> */}
+      <SearchAndPlaylists children={playlists}></SearchAndPlaylists>
+      {/* <div className="liked-library-items" style={secondaryViewStyle}>
         <Suspense fallback={<CircularProgress />}>
           <LibraryItemsView   fetchedLibraryResource={fetchedPlaylistsResource} userId={props.userId} viewName={"Liked Playlists"} ></LibraryItemsView>
         </Suspense>
         <Suspense fallback={<CircularProgress />}>
           <LibraryItemsView  fetchedLibraryResource={fetchedAlbumsResource} userId={props.userId} viewName={"Liked Albums"}  ></LibraryItemsView>
         </Suspense>
-      </div>
+      </div> */}
 
     </div>
   )

@@ -1,32 +1,32 @@
 import React, { useContext, useEffect, useRef, useState } from "react"
 // import { UserProfile } from '@spotify/web-api-ts-sdk';
-import { Album, Playlist, SearchResults, Artist } from '../../server/types';
+import { Album, Playlist, SearchResults } from "../../../server/types";
 import ResultCard from "./ResultCard";
 // import { Button } from "@mui/material";
-import TrackCollection from "../models/libraryItems";
-import TrackClass from "../models/Tracks";
-import { NavigationContext } from "../state_management/NavigationProvider";
-import { DraftingContext } from "../state_management/DraftingPaneProvider";
-import TrackCard from "./DraftingPaneComponents/TrackComponents/TrackCard";
+import TrackCollection from "../../models/libraryItems";
+import TrackClass from "../../models/Tracks";
+import { NavigationContext } from "../../state_management/NavigationProvider";
+import TrackCard from "../DraftingPaneComponents/TrackComponents/TrackCard";
 
 
 
 export default function SearchBar() {
 
-    const {setSelectedLibraryItem, stagedPlaylist, setStagedPlaylist} = useContext(NavigationContext)
+    const {setSelectedLibraryItem, stagedPlaylist, setStagedPlaylist, stageTracks} = useContext(NavigationContext)
 
     const { activeView,
         setActiveView,
         isSearching,
         setIsSearching,
         stagingState,
-        setStagingState } = useContext(NavigationContext)
+        setStagingState,
+    isMobile } = useContext(NavigationContext)
 
 
     const closeSearch = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
         setIsSearching(false)
-        if (stagingState === "closed") {
+        if (stagingState === "closed"&& !isMobile) {
             setActiveView(["Dashboard"]);
         }
     }
@@ -49,6 +49,7 @@ export default function SearchBar() {
 
     const queryRef = useRef(null)
     useEffect(()=>{
+        if(isSearching){
             const timer = setTimeout(()=>{
                 setFinalQuery(searchQuery)
                 
@@ -56,7 +57,10 @@ export default function SearchBar() {
 
         return()=>clearTimeout(timer)
 
-    },[searchQuery])
+        }
+
+
+    },[isSearching, searchQuery])
     
     useEffect(()=>{
         if(!isSearching){
@@ -67,6 +71,7 @@ export default function SearchBar() {
 
     useEffect(()=>{
         const draftTrack = ( trackClass: TrackClass) => {
+            console.log(" TRACK TRACKCKLASS: ", trackClass)
             setStagedPlaylist(prev => prev ? prev.concat([trackClass]) : [trackClass])
             setStagingState("open")
         }
@@ -128,10 +133,11 @@ export default function SearchBar() {
     
 
             const trackCards = searchResults.tracks.items.map((track) => {
-                const trackClass = new TrackClass(track)
+                const collection = new TrackCollection(track.album)
+                const trackClass = new TrackClass(track, collection)
                 trackClass.track.name==="Good Life"?(console.log("GOOD LIFE: ", track)):console.log("...")
     
-                return <TrackCard key={track?.id} tracklistArea={"search-bar-card"} onSelectedTrack={()=>{}} trackClass={trackClass} displayHidden={false} selectedLibraryItems={[]} draftTrack={draftTrack} deselectTrack={()=>{}}></TrackCard>
+                return <TrackCard key={track?.id} tracklistArea={"search-bar-card"} onSelectedTrack={()=>{}} trackClass={trackClass} displayHidden={false} selectedLibraryItems={[]} draftTrack={stageTracks} deselectTrack={()=>{}}></TrackCard>
             })
     
             setTrackCards(trackCards)
@@ -155,7 +161,7 @@ export default function SearchBar() {
             setArtistCards(artistCards)
         }
 
-    },[expandedArtistId, searchResults, setSelectedLibraryItem, setStagedPlaylist, setStagingState, stagedPlaylist])
+    },[expandedArtistId, searchResults, setSelectedLibraryItem, setStagedPlaylist, setStagingState, stageTracks, stagedPlaylist])
 
     useEffect(()=>{
         type ResultTypes = SearchResults['albums']['items'] | SearchResults['playlists']['items'] | SearchResults['artists']['items'] | SearchResults['tracks']['items']
@@ -171,11 +177,8 @@ export default function SearchBar() {
         }
     
         const handleSearch = async () => {
-            // event.preventDefault()
-            setIsLoading(true)
-
-            if (isSearching) {
-    
+   
+                setIsLoading(true)
                 const results = await fetch("/spotify-data/search-results", {
                     method: "POST",
                     headers: {
@@ -189,21 +192,25 @@ export default function SearchBar() {
                 setSearchresults(newResults)
                 resultList(newResults)
                 setIsLoading(false)
-    
-            } else {
-                // setIsSearching(true)
-                // props.setDisabledDashboard(true)
-                if (activeView.at(-1) === "Dashboard") {
-                    setActiveView(["User Playlists"])
-    
-                }
-            }
         }
     
-        if(isSearching && finalQuery){
+        if(finalQuery){
             handleSearch()
         }
-    },[activeView, finalQuery, isSearching, setActiveView, setIsSearching])
+    },[ finalQuery])
+
+    const [hideSrchBtn, setHideSrchBtn] = useState(false)
+    useEffect(()=>{
+        if(isSearching){
+            const hideButton = setTimeout(()=>{
+                setHideSrchBtn(true)
+            }, 1000)
+
+            return () => clearTimeout(hideButton)
+        }else{
+            setHideSrchBtn(false)
+        }
+    },[isSearching])
 
     useEffect(()=>{
         switch(searchView){
@@ -248,34 +255,35 @@ export default function SearchBar() {
         return (
             <form style={{ height: "100%" }}>
 
-                <div className={"search-bar"} style={isSearching ? { height: "100%", width: "50%", overflowX: 'clip' } : { height: "100%", width: "0%", overflowX: 'clip' }}>
-                    <div style={{ width: "50vw", height: "100%" }}>
-                        <div style={{ height: "40px" }}>
-                            <button style={{ paddingTop: "15px", paddingLeft: "15px" }} onKeyDown={(e) => e.preventDefault()} onClick={(e) => { closeSearch(e) }}>Close</button>
-                            <button style={{ paddingTop: "15px", paddingLeft: "15px" }} onKeyDown={(e) => e.preventDefault()} onClick={(e)=>{e.preventDefault();setSearchView("Artists")}}>Artists</button>
-                            <button style={{ paddingTop: "15px", paddingLeft: "15px" }} onKeyDown={(e) => e.preventDefault()} onClick={ (e)=>{e.preventDefault(); setSearchView("Playlists")} }>Playlists</button>
-                            <button style={{ paddingTop: "15px", paddingLeft: "15px" }} onKeyDown={(e) => e.preventDefault()} onClick={ (e)=>{e.preventDefault(); setSearchView("Albums")}}>Albums</button>
-                            <button style={{ paddingTop: "15px", paddingLeft: "15px" }} onKeyDown={(e) => e.preventDefault()} onClick={ (e)=>{e.preventDefault(); setSearchView("Tracks")} }>Tracks</button>
-                            <input type="text" placeholder="Search..." value={searchQuery} onKeyDown={(e) => { onEnter(e) }} onChange={(e) => { e.preventDefault(); isSearching ? setSearchQuery(e.target.value) : (setSearchQuery(null)) }}></input>
+                <div className={"search-bar"} style={isSearching ? { height: "100%", width: isMobile?"100%":"50%", overflowX: 'clip' } : { height: "100%", width: "0%", overflowX: 'clip' }}>
+                    <div style={{ width: isMobile?"100vw":"50vw", height: "100%" }}>
+                        <div style={{ height: "50px", alignContent: "center", display: "flex"}}>
+                                <input style={{color:"#878787", fontSize: "1.5em", backgroundColor: "#141414", border: "none", height:"calc(100% - 10px)", width: "35%", margin: "5px"}}type="text" placeholder="Search..." value={searchQuery} onKeyDown={(e) => { onEnter(e) }} onChange={(e) => { e.preventDefault(); isSearching ? setSearchQuery(e.target.value) : (setSearchQuery(null)) }}></input>
+                                <div style={{ display: "inline-flex", alignItems: "flex-end", flex: 1, gap: "15px", justifyContent: "center"}}>
+                                    <button style={{ borderRadius: "25px", height: "25px" }} onKeyDown={(e) => e.preventDefault()} onClick={ (e)=>{e.preventDefault(); setSearchView("Albums")}}>Albums</button>
+                                    <button style={{ borderRadius: "25px", height: "25px" }} onKeyDown={(e) => e.preventDefault()} onClick={(e)=>{e.preventDefault();setSearchView("Artists")}}>Artists</button>
+                                    <button style={{ borderRadius: "25px", height: "25px" }} onKeyDown={(e) => e.preventDefault()} onClick={ (e)=>{e.preventDefault(); setSearchView("Playlists")} }>Playlists</button>
+                                    <button style={{ borderRadius: "25px", height: "25px" }} onKeyDown={(e) => e.preventDefault()} onClick={ (e)=>{e.preventDefault(); setSearchView("Tracks")} }>Tracks</button>
+                                    <button style={{ borderRadius: "25px", height: "25px" }} onKeyDown={(e) => e.preventDefault()} onClick={(e) => { closeSearch(e) }}>Close</button>
+                            </div>
                         </div>
-                        <div className="search-results" style={{ height: "calc(100% - 40px)", overflowY: "hidden", position: "relative" }}>
+                        <div className="search-results" style={{ height: "calc(100% - 40px)", overflowY: "auto", overflowX:'clip', position: "relative" }}>
 
 
                             {isLoading?
                                 <div>Loading</div>:
                             searchResults ?
                                 <>
-                                    <div style={{ height: "100%", display: "flex", flexDirection: "row", overflow: "auto" }}>
-                                        <div style={{ width: "calc(100%)", height: "100%", flexDirection: "column", gap: "10px", }} >
+                                    {/* <div style={{ height: "100%", display: "flex", flexDirection: "row", overflow: "auto" }}> */}
+                                        {/* <div style={{ flex:1, height: "100%", flexDirection: "column", gap: "10px", }} > */}
 
-                                            {/* <div style={{ display: "flex", flexFlow: "row wrap", overflowY: "auto" }}>{artistCards}</div> */}
-                                            <div style={{ flex: 2, display: "flex", flexFlow: "row wrap" }}>
+                                            <div style={{ flex: 1, display: "flex", flexFlow: "row wrap" }}>
                                                 {currentCards}
                                                 </div>
 
-                                        </div>
+                                        {/* </div> */}
 
-                                    </div>
+                                    {/* </div> */}
                                 </> : <></>
 
 
@@ -283,7 +291,7 @@ export default function SearchBar() {
                         </div>
                     </div>
                 </div>
-                <button style={{ position: "absolute", right: "15px", top: "15px", borderRadius: "25px", height: "25px" }} type="submit" onClick={(e: React.MouseEvent<HTMLButtonElement>) => { handleSearchButton(e)}}>search</button>
+                <button style={{ display:hideSrchBtn?"none":"inline-block", position: "absolute", right: "15px", top: "15px", borderRadius: "25px", height: "25px", opacity: isSearching?0:1, transition: isSearching?"1s": "2s"}} type="submit" onClick={(e: React.MouseEvent<HTMLButtonElement>) => { handleSearchButton(e)}}>search</button>
 
 
             </form>

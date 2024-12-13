@@ -45,7 +45,7 @@
   justify-content: flex-start; */
 }
 .library-content-container{
- height:50%;
+ /* height:50%; */
  width: 50vw;
  /* display: flex; */
  flex-direction: column;
@@ -56,6 +56,24 @@
   /* flex: 0 0 auto; */
   
 }
+
+  /* Custom styles for the selected date range */
+  .react-calendar__tile--active {
+    background-color: #3b82f6; /* Blue background for selected date */
+    color: white;
+  }
+
+  .react-calendar__tile--range {
+    background-color: #bfdbfe; /* Light blue background for the range */
+    color: black;
+  }
+
+  .react-calendar__tile--rangeStart,
+  .react-calendar__tile--rangeEnd {
+    background-color: #60a5fa; /* Darker blue for start and end of range */
+    color: white;
+  }
+
 
 
 .track-card-text{
@@ -77,6 +95,19 @@
   right: 0;
    height:100%; 
    color: rgb(135, 135, 135);
+   transition: 1s;
+}
+.search-bar2{
+  background-color: rgb(20, 20, 20);
+ 
+   height:100%; 
+   color: rgb(135, 135, 135);
+   transition: 1s;
+}
+.search-bar-container2{
+  background-color: rgb(20, 20, 20);
+  position:absolute;
+   height:100%; 
    transition: 1s;
 }
 .search-bar-container{
@@ -115,13 +146,12 @@
   max-width: calc(100% - 100px);
   /* height: fit-content; */
 
-  height: calc(100% - 50px);
   /* align-items: center; */
   justify-content: space-evenly;
   /* overflow-y: auto; */
   /* justify-content: flex-start; */
-  /* margin: 0 25px 0px 25px; */
-  margin:auto;
+  margin: 0 25px 25px 25px;
+  /* margin:auto; */
   overflow-x: auto;
   gap: 25px;
   padding: 25px;
@@ -195,7 +225,7 @@
   background-color: rgb(25, 83, 133);
   aspect-ratio: 1 / 1;
   /* height: 100%; */
-  min-width: calc((50vw - 100px) * 0.25);
+  min-width: 20vh;
     /* min-width:95px; */
 
   max-height: fit-content;
@@ -216,7 +246,7 @@
 .user-playlist-card{
   /* display: flex;
   flex-direction: column; */
-  min-width:95px;
+  min-width:20vh;
 
   background-color: rgb(25, 83, 133);
   aspect-ratio: 1 / 1;
@@ -556,10 +586,16 @@ button{
   padding-right: 12.5px; */
 
 }
+button{
+  cursor: pointer;
+}
 .track-card{
-  height: 70px;
-  /* margin: 5px 0px; */
-  padding: 5px;
+  height: 7vh;
+  min-height: 80px;
+  margin: 8px 5px;
+  overflow: clip;
+
+  /* padding: 5px; */
 }
 
 .draft-playlist{
@@ -588,7 +624,7 @@ button{
   flex-wrap: wrap;
   gap: 25px;
   padding-left: 10px;
-  justify-content: center;
+  /* justify-content: center; */
 
 }
 

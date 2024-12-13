@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef, useContext } from "react"
 import { Album, Playlist } from "../../../server/types";
 import TrackCollection from "../../models/libraryItems";
-import LibraryItemCard from "./LibraryItemCard";
+import LibraryItemCard, { LibraryItemCardProps } from "./LibraryItemCard";
 import { ViewName } from "../NavBar";
 import { NavigationContext, NavigationContextType } from "../../state_management/NavigationProvider";
 import { DraftingContext } from "../../state_management/DraftingPaneProvider";
@@ -15,6 +15,7 @@ interface LibraryItemsViewProps {
   fetchedLibraryResource: {
     read(): any;
   }
+  reloadKey?: number
 }
 
 
@@ -22,19 +23,19 @@ interface LibraryItemsViewProps {
 
 
 export const LibraryItemsView: React.FC<LibraryItemsViewProps> = (props: LibraryItemsViewProps) => {
-  const [libraryItems, setLibraryItems] = useState(null)
-  const [currentCards, setCurrentCards] = useState<[]>(null)
-  const [libraryItemCards, setLibraryItemCards] = useState(null)
+  const [libraryItems, setLibraryItems] = useState<TrackCollection[]>(null)
+  const [currentCards, setCurrentCards] = useState<React.ReactElement<LibraryItemCardProps>[]>(null)
+  const [libraryItemCards, setLibraryItemCards] = useState<React.ReactElement<LibraryItemCardProps>[]>(null)
   const [heightThreshold, setHeightThreshold] = useState(null)
   const [widthThreshold, setWidthThreshold] = useState(null)
 
-  const {activeView, setActiveView, isSearching, setIsSearching, stagingState, setStagingState, primaryView, selectedLibraryItem} = useContext<NavigationContextType>(NavigationContext)
+  const {activeView, setActiveView, isSearching, setIsSearching, stagingState, setStagingState, primaryView, selectedLibraryItem, userLibraryItems, setUserLibraryItems, isMobile} = useContext<NavigationContextType>(NavigationContext)
 
   // const {selectedLibraryItem} = useContext(DraftingContext)
 
   const libraryItemsContainer = useRef(null)
 
-  let libraryCollections;
+  let libraryCollections: TrackCollection[];
   const preloadImage = (src) => {
     const link = document.createElement('link');
     link.rel = 'preload';
@@ -43,7 +44,7 @@ export const LibraryItemsView: React.FC<LibraryItemsViewProps> = (props: Library
     document.head.appendChild(link);
   };
 
-  if (!libraryItems) {
+  if (!libraryItems && props.viewName!=="User Playlists") {
     switch (props.viewName) {
       case 'Liked Albums':
         const albums: Album[] = props.fetchedLibraryResource.read()
@@ -54,12 +55,13 @@ export const LibraryItemsView: React.FC<LibraryItemsViewProps> = (props: Library
           }
           return albumCollection
         })
+        setLibraryItems(libraryCollections)
 
         break;
       case 'Liked Playlists':
         const playlists1: Playlist[] = props.fetchedLibraryResource.read()
         const likedPlaylists = playlists1.filter((playlistObject: Playlist) =>
-          playlistObject.owner.id !== props.userId
+          playlistObject && playlistObject.owner?.id !== props.userId
         )
 
         libraryCollections = likedPlaylists.map((playlistObject: Playlist) => {
@@ -69,33 +71,73 @@ export const LibraryItemsView: React.FC<LibraryItemsViewProps> = (props: Library
           }
           return likedPlaylistCollection
         })
-        break;
-      case 'User Playlists':
-        const playlists2: Playlist[] = props.fetchedLibraryResource.read()
-        const userPlaylists = playlists2.filter((playlistObject: Playlist) =>
-          playlistObject.owner.id === props.userId
-        )
+        setLibraryItems(libraryCollections)
 
-        libraryCollections = userPlaylists.map((playlistObject: Playlist) =>{
-          const userPlaylistCollection = new TrackCollection(playlistObject)
-          if(userPlaylists.length>0){
-            preloadImage(userPlaylistCollection.image.url)
-          }
-          return userPlaylistCollection
-        } )
         break;
+      // case 'User Playlists':
+      //   const playlists2: Playlist[] = props.fetchedLibraryResource.read()
+      //   const userPlaylists = playlists2.filter((playlistObject: Playlist) =>
+      //     playlistObject && playlistObject.owner?.id === props.userId
+      //   )
+
+      //   libraryCollections = userPlaylists.map((playlistObject: Playlist) =>{
+      //     const userPlaylistCollection = new TrackCollection(playlistObject)
+      //     if(userPlaylists.length>0){
+      //       preloadImage(userPlaylistCollection.image.url)
+      //     }
+      //     return userPlaylistCollection
+      //   } )
+      //   setUserLibraryItems(libraryCollections)
+      //   break;
     }
 
-    setLibraryItems(libraryCollections)
   }
 
+  if(!userLibraryItems && props.viewName==="User Playlists"){
+    const playlists2: Playlist[] = props.fetchedLibraryResource.read()
+    console.log("LENGTH OF PLAYLIST resource: ", playlists2.length)
+    const userPlaylists = playlists2.filter((playlistObject: Playlist) =>
+      playlistObject && playlistObject.owner?.id === props.userId
+    )
+    console.log("LENGTH OF user PLAYLISTs: ", userPlaylists.length)
+
+
+    libraryCollections = userPlaylists.map((playlistObject: Playlist) =>{
+      const userPlaylistCollection = new TrackCollection(playlistObject)
+      if(userPlaylists.length>0){
+        preloadImage(userPlaylistCollection.image.url)
+      }
+      return userPlaylistCollection
+    } )
+
+    console.log("LENGTH OF user user track Colllections: ", libraryCollections.length)
+
+    setUserLibraryItems(libraryCollections)
+
+  }
+
+  useEffect(()=>{
+    if(userLibraryItems && props.viewName==="User Playlists"){
+      const cards = userLibraryItems.map(item =>
+        <LibraryItemCard key={item.id}  libraryItem={item} ownerId={props.userId} view={props.viewName} ></LibraryItemCard>)
+      setLibraryItemCards(cards)
+      console.log("LENGTH OF user user playlist cards: ", cards.length)
+
+      return
+
+    }
+  },[props.userId, props.viewName, userLibraryItems])
+
   useEffect(() => {
-    if (libraryItems) {
+    if (libraryItems && props.viewName!=="User Playlists" ) {
       const cards = libraryItems.map(item =>
         <LibraryItemCard key={item.id}  libraryItem={item} ownerId={props.userId} view={props.viewName} ></LibraryItemCard>)
       setLibraryItemCards(cards)
+      return
+   
     }
-  }, [setIsSearching, selectedLibraryItem?.id, libraryItems, props.viewName, props.userId])
+    
+  }, [setIsSearching, selectedLibraryItem?.id, props.viewName, props.userId, libraryItems])
 
 
   const [outterContainerStyle, setOutterContainerStyle] = useState({
@@ -105,7 +147,7 @@ export const LibraryItemsView: React.FC<LibraryItemsViewProps> = (props: Library
   })
 
   const [innerContentStyle, setInnerContentStyle] = useState({
-    height: "80%",
+    height: "calc(20vh + 75px)",
     transition: "1s",
     overflowY: 'auto' as 'auto' | 'clip',
     position: 'relative' as 'relative',
@@ -192,7 +234,7 @@ export const LibraryItemsView: React.FC<LibraryItemsViewProps> = (props: Library
         transition: "1s",
         overflowY: "auto"
       }
-      console.log(activeView.at(-1) !== "User Playlists")
+      // console.log(activeView.at(-1) !== "User Playlists")
       if (activeView.at(-1) === "Dashboard") {
         setPrimaryContentStyle(shrinkToDefault)
       } else if (activeView.at(-1) === "User Playlists") {
@@ -203,7 +245,7 @@ export const LibraryItemsView: React.FC<LibraryItemsViewProps> = (props: Library
     }
   }, [stagingState, activeView, isSearching, libraryItemCards, props.viewName, primaryView])
 
-  const [currentFlexFlow, setCurrentFlexFlow] = useState('row')
+  const [currentFlexFlow, setCurrentFlexFlow] = useState(isMobile?'row wrap':'row')
   useEffect(() => {
 
     if (props.viewName !== primaryView) {
@@ -265,14 +307,14 @@ export const LibraryItemsView: React.FC<LibraryItemsViewProps> = (props: Library
               // background: "#141414"
 
             })
-            setCurrentFlexFlow('row')
-
+            setCurrentFlexFlow(isMobile?'row wrap':'row')
+            
             setCurrentCards(libraryItemCards.slice(0, 5))
 
             if ((height < heightThreshold+50 ) && activeView.at(-1) === "Dashboard") {
 
               setInnerContentStyle({
-                height: "calc((50vw * 0.25) + 50px)",
+                height: "calc(20vh + 75px)",
                 transition: "1s",
                 overflowY: 'clip',
                 position: 'relative',
@@ -293,14 +335,13 @@ export const LibraryItemsView: React.FC<LibraryItemsViewProps> = (props: Library
       };
     }
 
-  }, [libraryItemCards, innerContentStyle, heightThreshold, activeView, isSearching, stagingState, widthThreshold, props.viewName, primaryView])
+  }, [libraryItemCards, innerContentStyle, heightThreshold, activeView, isSearching, stagingState, widthThreshold, props.viewName, primaryView, isMobile])
 
 
 
 
 
-  if ((props.viewName === primaryView) && libraryItems) {
-
+  if ((props.viewName === primaryView) && (libraryItems||userLibraryItems) ) {
 
     return (
       <>
@@ -330,7 +371,7 @@ export const LibraryItemsView: React.FC<LibraryItemsViewProps> = (props: Library
         </div>
       </>
     )
-  } else if (libraryItems) {
+  } else if ((libraryItems||userLibraryItems) ) {
 
     return (
       <>
@@ -351,7 +392,7 @@ export const LibraryItemsView: React.FC<LibraryItemsViewProps> = (props: Library
               </button>}
           </div>
           <div style={innerContentStyle}>
-            <div className="playlist-content" style={{ flexFlow: currentFlexFlow, height: isPreview ? "calc(100% - 50px)" : 'fit-content' }} >
+            <div className="playlist-content" style={{ flexFlow: currentFlexFlow}} >
               {currentCards}
             </div>
           </div>
