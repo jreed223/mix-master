@@ -7,7 +7,7 @@ import { UserProfile } from "../../server/types";
 // import { Button } from "@mui/material";
 
 
-export type ViewName = 'Dashboard'|"Liked Playlists"|"User Playlists"|"Liked Albums"
+export type ViewName = 'Dashboard'|"Liked Playlists"|"User Playlists"|"Liked Albums"|"All Playlists"
 export type AudioState = {url:string, audio: HTMLAudioElement, audioDetails: {
     trackId: string;
     artist: string;
@@ -40,6 +40,9 @@ export type NavigationContextType = {
     userLibraryItems: TrackCollection[],
     setIsMobile: React.Dispatch<React.SetStateAction<boolean>>,
     isMobile: boolean
+    setIsPlaylistsView: React.Dispatch<React.SetStateAction<boolean>>,
+
+    isPlaylistsView: boolean
 
 
     // audioDetails: {artist: string, title: string}
@@ -67,6 +70,7 @@ export default function NavigationProvider({children}){
         height: window.innerHeight,
       });
     const [activeView, setActiveView] = useState<ViewName[]>(isMobile?["User Playlists"]:["Dashboard"])
+    const [isPlaylistsView, setIsPlaylistsView] = useState(true)
 
 
     // const [audioDetails, setAudioDetails] = useState<{artist: string, title: string}>(null)
@@ -105,6 +109,8 @@ export default function NavigationProvider({children}){
         }
 
     },[currentAudio, currentAudio?.audio])
+
+
 
     useEffect(()=>{
         const setViewStyle = ()=>{
@@ -157,7 +163,7 @@ export default function NavigationProvider({children}){
 
     }, [setStagedPlaylist, setStagedPlaylistState, stagedPlaylist, stagedPlaylistState])
 
-    const context: NavigationContextType = useMemo(()=>({isMobile, setIsMobile, user, setUser, activeView, setActiveView, isSearching, setIsSearching, stagingState, setStagingState, primaryView, setPrimaryView, currentAudio, setCurrentAudio, currentAudioColor, selectedLibraryItem, setSelectedLibraryItem, stagedPlaylist, setStagedPlaylist, stagedPlaylistState, setStagedPlaylistState, stageTracks, unstageTracks, userLibraryItems, setUserLibraryItems }), [activeView, currentAudio, currentAudioColor, isMobile, isSearching, primaryView, selectedLibraryItem, stageTracks, stagedPlaylist, stagedPlaylistState, stagingState, unstageTracks, user, userLibraryItems])
+    const context: NavigationContextType = useMemo(()=>({setIsPlaylistsView, isPlaylistsView, isMobile, setIsMobile, user, setUser, activeView, setActiveView, isSearching, setIsSearching, stagingState, setStagingState, primaryView, setPrimaryView, currentAudio, setCurrentAudio, currentAudioColor, selectedLibraryItem, setSelectedLibraryItem, stagedPlaylist, setStagedPlaylist, stagedPlaylistState, setStagedPlaylistState, stageTracks, unstageTracks, userLibraryItems, setUserLibraryItems }), [activeView, currentAudio, currentAudioColor, isMobile, isPlaylistsView, isSearching, primaryView, selectedLibraryItem, stageTracks, stagedPlaylist, stagedPlaylistState, stagingState, unstageTracks, user, userLibraryItems])
 
 
 

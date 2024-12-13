@@ -274,9 +274,8 @@ useEffect(()=>{
 
 
     return (
-        <div className="playlist-draft-container new-playlist" style={stagingState === "open" ? { flex: displayFeatureMenu&&!isMaxDraftView?"0": "1" ,borderRight: "2px solid #141414", transition: "1s", display: "flex", flexDirection: 'column' } : { flex: displayFeatureMenu?isMaxDraftView?"1":"0 1 0px":"1 1 0px" , borderRight: "0px solid #141414", transition: "1s", display: "flex", flexDirection: 'column' }} id="drafting-div">
+        <div className="playlist-draft-container new-playlist" style={stagingState === "open" ? { flex: isMaxDraftView?"1":displayFeatureMenu?"0 1 0px":"1 1 0px"  ,borderRight: "2px solid #141414", transition: "1s", display: "flex", flexDirection: 'column' } : { flex: displayFeatureMenu?"0 1 0px":isMaxDraftView?"1":"1 1 0px" , borderRight: "0px solid #141414", transition: "1s", display: "flex", flexDirection: 'column' }} id="drafting-div">
             
-            <div style={{width: isMaxDraftView?"33vw": isMobile?"50vw":"25vw", transition: "1s"}}>
                 {
                     <div style={{
                         position: "sticky",
@@ -321,7 +320,6 @@ useEffect(()=>{
                     :<div style={{display: "flex", justifyItems: "center", alignItems: "center", margin:"33% 5px auto 5px", textAlign:'center' }}>
                         <p style={{margin: "auto", fontSize: "24px"}}>{selectedLibraryItem?"Add a track to get started.":"Search for tracks or select a library item to begin creating."}</p></div>}
                 </div>
-            </div>
         </div>
     )
 

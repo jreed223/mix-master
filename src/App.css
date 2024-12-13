@@ -97,6 +97,19 @@
    color: rgb(135, 135, 135);
    transition: 1s;
 }
+.search-bar2{
+  background-color: rgb(20, 20, 20);
+ 
+   height:100%; 
+   color: rgb(135, 135, 135);
+   transition: 1s;
+}
+.search-bar-container2{
+  background-color: rgb(20, 20, 20);
+  position:absolute;
+   height:100%; 
+   transition: 1s;
+}
 .search-bar-container{
   background-color: rgb(20, 20, 20);
   position:absolute;
@@ -611,7 +624,7 @@ button{
   flex-wrap: wrap;
   gap: 25px;
   padding-left: 10px;
-  justify-content: center;
+  /* justify-content: center; */
 
 }
 

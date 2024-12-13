@@ -138,7 +138,7 @@ const FilterMenu: React.FC<PlaylistMenuProps> = () => {
 
 
     return (
-        <div style={{ display: "flex", overflowX: "hidden", flexDirection: "column", flex: displayFeatureMenu ? isMaxDraftView?"1":"2" : "0" }} className="new-playlist">
+        <div style={{ display: "flex", overflowX: "hidden", flexDirection: "column", flex: isMaxDraftView&&displayFeatureMenu?"1":displayFeatureMenu?"1":"0"  }} className="new-playlist">
             {
             //TODO: Uncomment the below code when application is given a production license, this will allow filetring using audio features endpoint
             /* {inputControls.map((inputControl, index)=>{
@@ -153,7 +153,7 @@ const FilterMenu: React.FC<PlaylistMenuProps> = () => {
         })
 
             } */}
-            <div style={{width: isMaxDraftView?"33vw": isMobile?"calc(50vw - 5%)":"calc(25vw - 5%)", transition: "1s", margin: "2% auto 0"}}>
+            <div style={{width: isMaxDraftView?"33.3vw": isMobile?"calc(50vw - 3px)":"calc(25vw - 3px)", transition: "1s", margin: "2% auto 0"}}>
                 <div key={"popularity-div"} style={{ width: "100%", transition: "1s" }}>
                     <label style={{}}>popularity</label>
                     <div className="tooltip"> ? <span className="tooltip-text">{'tooltip Text!!'}</span></div>

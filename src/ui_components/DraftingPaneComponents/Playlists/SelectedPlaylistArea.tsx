@@ -261,7 +261,7 @@ const {popularityFilter, dateRange, setSelectedArtistFilters, artistQuery, artis
 
 
         return (
-            <div className="search-filter-container new-playlist" style={stagingState === "open" ? { borderRight: "2px solid #141414", transition: "1s", flex: displayFeatureMenu && !isMaxDraftView ? 2 : 1, display: 'flex', flexDirection:"column" } : { borderRight: "0px solid #141414", transition: "1s" }} id="search-filter-div" >
+            <div className="search-filter-container new-playlist" style={stagingState === "open" ? { borderRight: "2px solid #141414", transition: "1s", flex:1, display: 'flex', flexDirection:"column" } : { borderRight: "0px solid #141414", transition: "1s", flex:1, display: 'flex', flexDirection:"column"  }} id="search-filter-div" >
                 <div style={{
                     position: "sticky",
                     top: 0,

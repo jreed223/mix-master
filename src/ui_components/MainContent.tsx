@@ -16,7 +16,7 @@ interface UserLibraryProps {
     currentUser: UserProfile
 }
 
-export default function UserLibrary(props: UserLibraryProps) {
+export default function MainContent(props: UserLibraryProps) {
 
     const {setStagingState, setUser} = useContext(NavigationContext)
     const [reloadKey, setReloadKey] = useState<number>(0)
@@ -34,9 +34,9 @@ export default function UserLibrary(props: UserLibraryProps) {
         <DraftingProvider setStagingState={setStagingState}>
             <div className="main-content-area" style={{ position: "relative" }}>
                 <DraftingArea setDialogText={setDialogText} setReloadKey={setReloadKey}></DraftingArea>
-                {/* <PlaylistsPane dialogText={dialogText} setDialogText={setDialogText} reloadKey={reloadKey} userId={props.currentUser.id}  ></PlaylistsPane> */}
-                <LibraryComponents dialogText={dialogText} setDialogText={setDialogText} reloadKey={reloadKey} userId={props.currentUser.id}  ></LibraryComponents>
-                <SearchBar ></SearchBar>
+                <PlaylistsPane dialogText={dialogText} setDialogText={setDialogText} reloadKey={reloadKey} userId={props.currentUser.id}></PlaylistsPane>
+                {/* <LibraryComponents dialogText={dialogText} setDialogText={setDialogText} reloadKey={reloadKey} userId={props.currentUser.id}  ></LibraryComponents> */}
+                {/* <SearchBar ></SearchBar> */}
             </div>
         </DraftingProvider>
         )

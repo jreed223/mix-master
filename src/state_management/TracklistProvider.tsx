@@ -6,7 +6,6 @@ import { Artist, Features } from "../../server/types"
 // import { Button } from "@mui/material";
 
 
-export type ViewName = 'Dashboard'|"Liked Playlists"|"User Playlists"|"Liked Albums"
 
 export type TracklistContextType = {
     allTracks: TrackClass[]
