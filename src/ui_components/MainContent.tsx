@@ -3,12 +3,12 @@ import React from "react";
 import { UserProfile } from '../../server/types';
 
 import DraftingArea from "./DraftingPaneComponents/DraftingPane";
-import { LibraryComponents } from "./UserLibrary/LibraryComponents";
+// import { LibraryComponents } from "./UserLibrary/LibraryComponents";
 import { NavigationContext } from "../state_management/NavigationProvider";
 import DraftingProvider from "../state_management/DraftingPaneProvider";
-import SearchBar from "./SearchPane/SearchBar";
+// import SearchBar from "./SearchPane/SearchBar";
 import { submissionStatusState } from "./DraftingPaneComponents/Playlists/DraftPlaylistArea";
-import { PlaylistsPane } from "./PlaylistsPane";
+import { LibrarySelectionPane } from "./LibrarySelectionComponents/LibrarySelectionPane";
 
 
 
@@ -34,9 +34,7 @@ export default function MainContent(props: UserLibraryProps) {
         <DraftingProvider setStagingState={setStagingState}>
             <div className="main-content-area" style={{ position: "relative" }}>
                 <DraftingArea setDialogText={setDialogText} setReloadKey={setReloadKey}></DraftingArea>
-                <PlaylistsPane dialogText={dialogText} setDialogText={setDialogText} reloadKey={reloadKey} userId={props.currentUser.id}></PlaylistsPane>
-                {/* <LibraryComponents dialogText={dialogText} setDialogText={setDialogText} reloadKey={reloadKey} userId={props.currentUser.id}  ></LibraryComponents> */}
-                {/* <SearchBar ></SearchBar> */}
+                <LibrarySelectionPane dialogText={dialogText} setDialogText={setDialogText} reloadKey={reloadKey} userId={props.currentUser.id}></LibrarySelectionPane>
             </div>
         </DraftingProvider>
         )

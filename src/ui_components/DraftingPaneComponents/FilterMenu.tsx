@@ -16,9 +16,9 @@ interface PlaylistMenuProps {
 
 }
 const FilterMenu: React.FC<PlaylistMenuProps> = () => {
-    const {isMobile}= useContext(NavigationContext)
+    const {isMobile, isMaxDraftView}= useContext(NavigationContext)
     const {
-        displayFeatureMenu, isMaxDraftView } = useContext(DraftingContext)
+        displayFeatureMenu  } = useContext(DraftingContext)
         // const {allTracks}= useContext
     const {allTracks, selectedFeatures, setSelecetedFeatures, setPopularityFilter, popularityFilter, dateRange, setDateRange, artistQuery, setArtistQuery, artistsList, setArtistsList, setSelectedArtistFilters, selectedArtistFilters } = useContext(TracklistContext)
     const [currentList, setCurrentList] = useState<Artist[]>(null)

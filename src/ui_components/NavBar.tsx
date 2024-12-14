@@ -1,6 +1,5 @@
 import React, { useCallback, useContext, useEffect, useState } from "react"
 // import { UserProfile } from '@spotify/web-api-ts-sdk';
-import UserLibrary from './SinglePageView';
 import { UserProfile } from "../../server/types";
 import { AudioState, NavigationContext } from "../state_management/NavigationProvider";
 import TrackClass from "../models/Tracks";
@@ -15,30 +14,21 @@ export type ViewName = 'Dashboard'|"Liked Playlists"|"User Playlists"|"Liked Alb
 
 
 export default function NavBar({currentUser}:navProps){
-    // const [activeView, setActiveView] = useState<ViewName[]>(["Dashboard"])
-    // const [,setDisabledDashboard] = useState(false)
-    // const [isSearching, setIsSearching] = useState(false)
-    // const [stagingState, setStagingState] = useState<string>("closed")
-    // const {selectedLibraryItem, setSelectedLibraryItem, stagedPlaylist, setStagedPlaylist} = useContext(NavigationContext)
-    const {setIsPlaylistsView, isPlaylistsView, isMobile, setActiveView, activeView, setIsSearching, isSearching, stagingState, setStagingState, currentAudio, currentAudioColor, selectedLibraryItem, setSelectedLibraryItem, stagedPlaylist, setStagedPlaylist, setCurrentAudio, unstageTracks, stageTracks } = useContext(NavigationContext)
+    const {setIsPlaylistsView, isPlaylistsView, isMobile,  stagingState, setStagingState, currentAudio, currentAudioColor, selectedLibraryItem, stagedPlaylist,  setCurrentAudio, unstageTracks, stageTracks, isMaxDraftView, setIsMaxDraftView } = useContext(NavigationContext)
 
     const closeSearchAndCreation = useCallback(() =>{
         setStagingState('closed')
-        setIsSearching(false)
-        setActiveView(isMobile?["User Playlists"]:['Dashboard'])
-    },[isMobile, setActiveView, setIsSearching, setStagingState])
+    },[ setStagingState])
 
     const mixMasterButton = useCallback(()=>{
             if(stagingState==='closed'){
-                if(activeView.at(-1)==="Dashboard"){
-                    setActiveView(["User Playlists"])
-                }
+                
                 setStagingState("open")
             }else{
                 closeSearchAndCreation()
             }
 
-    },[activeView, closeSearchAndCreation, setActiveView, setStagingState, stagingState])
+    },[closeSearchAndCreation, setStagingState, stagingState])
 
     const toggleAudio = ()=>{
         if(currentAudio.audio.paused === true){
@@ -62,12 +52,9 @@ export default function NavBar({currentUser}:navProps){
 
 
     useEffect(()=>{
-        // const collection = currentAudio?.audioDetails?.track?.getCollection()
-        // console.log("collection: ",collection)
 
         if(currentAudio&&selectedLibraryItem&& currentAudio.audioDetails.track.getCollection()?.id===selectedLibraryItem?.id){
             console.log(currentAudio.audioDetails.track.getCollection()?.id)
-            // setCurrentCollection(selectedLibraryItem?.tracks)
             const currentIdx = selectedLibraryItem?.tracks?.findIndex((track)=>track.track?.id===currentAudio.audioDetails?.trackId)
             console.log("CURRENTIDX: ", currentIdx)
             setAudioIdx(currentIdx)
@@ -159,16 +146,6 @@ export default function NavBar({currentUser}:navProps){
 
     },[audioIdx, currentAudio?.audio, selectedLibraryItem, setCurrentAudio])
 
-    const handleNav = (viewName: ViewName)=>{
-        setActiveView((prev)=>[prev.at(-2),prev.at(-1), viewName])
-        if(stagingState==="open"){
-            setIsSearching(false)
-        }
-        if(isMobile){
-            setStagingState("closed")
-        }
-
-    }
 
     return(
 
@@ -212,7 +189,7 @@ export default function NavBar({currentUser}:navProps){
                         
                         </div>
                     <div style={{position: "absolute", left:"50%", transform: "translateY(-50%)", top: "50%", height: "100%", alignItems: "center", width: "40%", display: "flex",  gap:"25px" }}>
-                    <button disabled={(isPlaylistsView&&stagingState==="closed")} style={{width:"calc(25% - 18.75px)", height: "70%", borderRadius:"25px" }} onClick={stagingState==="open"&&isPlaylistsView?()=>{setStagingState("closed"); setIsPlaylistsView(true)}:()=>{setIsPlaylistsView(true)}}>My Playlists</button>
+                    <button disabled={(isPlaylistsView&&stagingState==="closed")} style={{width:"calc(25% - 18.75px)", height: "70%", borderRadius:"25px" }} onClick={isMaxDraftView?()=>{setIsMaxDraftView(false)}:(stagingState==="open"&&isPlaylistsView)?()=>{setStagingState("closed"); setIsPlaylistsView(true)}:()=>{setIsPlaylistsView(true)}}>My Playlists</button>
                     </div>
                     <p>Welcome, {currentUser.display_name}</p>
                 </span>

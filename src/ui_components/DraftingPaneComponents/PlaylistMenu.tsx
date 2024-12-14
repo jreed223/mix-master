@@ -12,16 +12,14 @@ interface PlaylistMenuProps {
 
 }
 const PlaylistMenuBar: React.FC<PlaylistMenuProps> = (props: PlaylistMenuProps) => {
-    const { setActiveView, isSearching, setIsSearching, setStagingState, isMobile } = useContext(NavigationContext)
-    const {isMaxDraftView, setIsMaxDraftView, displayFeatureMenu, setDisplayFeatureMenu } = useContext(DraftingContext)
+    const {  setStagingState, isMobile, isMaxDraftView, setIsMaxDraftView } = useContext(NavigationContext)
+    const { displayFeatureMenu, setDisplayFeatureMenu } = useContext(DraftingContext)
 
     const closeCreationContainer = () => {
         setStagingState("closed")
         setIsMaxDraftView(false)
 
-        if (!isSearching && !isMobile) {
-            setActiveView(["Dashboard"])
-        }
+  
         // console.log(stagingState)
         props.draftingPaneContainer.current.classList = "playlist-creation-container-hidden shrink-staging"
         // libraryContainer.current.classList = "library-container grow-library"
@@ -29,19 +27,11 @@ const PlaylistMenuBar: React.FC<PlaylistMenuProps> = (props: PlaylistMenuProps) 
     }
 
     const toggleFullScreen = () => {
-        if (!isMaxDraftView && isSearching) {
-            setIsSearching(false)
-        }
         setIsMaxDraftView(prev => !prev)
-
     }
 
     const toggleFeatures = () => {
-        if (displayFeatureMenu === true) {
-            setDisplayFeatureMenu(false)
-        } else {
-            setDisplayFeatureMenu(true)
-        }
+        setDisplayFeatureMenu(prev => !prev)
     }
 
     useEffect(()=>{

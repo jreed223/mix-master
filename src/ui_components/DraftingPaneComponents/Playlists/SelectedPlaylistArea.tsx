@@ -22,9 +22,9 @@ export interface TrackData {
 
 const SelectedPlaylistContainer: React.FC<SelectedPlaylistContainerProps> = () => {
 
-    const {stagingState, currentAudio, setCurrentAudio} = useContext(NavigationContext)
+    const {stagingState, currentAudio, setCurrentAudio, isMaxDraftView,} = useContext(NavigationContext)
 
-    const {isMaxDraftView, 
+    const { 
 
         displayFeatureMenu, 
 } = useContext(DraftingContext)

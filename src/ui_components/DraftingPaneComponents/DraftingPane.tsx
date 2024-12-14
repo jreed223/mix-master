@@ -14,20 +14,13 @@ import TracklistProvider from "../../state_management/TracklistProvider";
 export default function DraftingArea({setReloadKey, setDialogText}){
 
 
-    const {activeView, isSearching, stagingState, isMobile} = useContext(NavigationContext)
-    const {isMaxDraftView, setIsMaxDraftView} = useContext(DraftingContext)
+    const {isPlaylistsView, stagingState, isMobile, isMaxDraftView, setIsMaxDraftView} = useContext(NavigationContext)
 
     useEffect(()=>{
-        if(activeView){
+        if(stagingState==="closed"){
             setIsMaxDraftView(false)
         }
-    },[activeView, setIsMaxDraftView])
-
-    useEffect(()=>{
-        if(isSearching){
-            setIsMaxDraftView(false)
-        }
-    },[isSearching, setIsMaxDraftView])
+    },[stagingState, setIsMaxDraftView])
 
     const creationContainer = useRef(null)
 
