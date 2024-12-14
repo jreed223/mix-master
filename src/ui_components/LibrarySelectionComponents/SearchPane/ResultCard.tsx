@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Album, Artist, Playlist, SearchResults } from "../../../server/types";
-import TrackClass from '../../models/Tracks';
-import { NavigationContext } from "../../state_management/NavigationProvider";
+import { Album, Artist, Playlist, SearchResults } from "../../../../server/types";
+import TrackClass from '../../../models/Tracks';
+import { NavigationContext } from "../../../state_management/NavigationProvider";
 
 type TrackResult = {
     type: "track"

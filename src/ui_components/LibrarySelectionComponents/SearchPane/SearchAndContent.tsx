@@ -1,11 +1,11 @@
 import { useContext, useEffect, useRef, useState } from "react"
-import { NavigationContext } from "../../state_management/NavigationProvider"
-import TrackClass from "../../models/Tracks"
-import { Album, Playlist, SearchResults } from "../../../server/types"
-import TrackCollection from "../../models/libraryItems"
+import { NavigationContext } from "../../../state_management/NavigationProvider"
+import TrackClass from "../../../models/Tracks"
+import { Album, Playlist, SearchResults } from "../../../../server/types"
+import TrackCollection from "../../../models/libraryItems"
 import ResultCard from "./ResultCard"
 import React from "react"
-import TrackCard from "../DraftingPaneComponents/TrackComponents/TrackCard"
+import TrackCard from "../../DraftingPaneComponents/TrackComponents/TrackCard"
 
 
 

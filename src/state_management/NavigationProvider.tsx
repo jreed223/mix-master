@@ -1,7 +1,7 @@
 import React, { createContext, useCallback, useEffect, useMemo, useState } from "react"
 import TrackCollection from "../models/libraryItems"
 import TrackClass from "../models/Tracks";
-import { LibraryItemCardProps } from "../ui_components/SearchPane/UserLibrary/LibraryItemCard";
+import { LibraryItemCardProps } from "../ui_components/LibrarySelectionComponents/UserLibrary/LibraryItemCard";
 import { UserProfile } from "../../server/types";
 // import { UserProfile } from '@spotify/web-api-ts-sdk';
 // import { Button } from "@mui/material";

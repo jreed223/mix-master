@@ -8,7 +8,7 @@ import { NavigationContext } from "../state_management/NavigationProvider";
 import DraftingProvider from "../state_management/DraftingPaneProvider";
 // import SearchBar from "./SearchPane/SearchBar";
 import { submissionStatusState } from "./DraftingPaneComponents/Playlists/DraftPlaylistArea";
-import { LibrarySelectionPane } from "./LibrarySelectionPane";
+import { LibrarySelectionPane } from "./LibrarySelectionComponents/LibrarySelectionPane";
 
 
 

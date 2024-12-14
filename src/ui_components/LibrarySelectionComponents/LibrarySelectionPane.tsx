@@ -1,11 +1,11 @@
 import { CircularProgress } from "@mui/material";
 import React, { Suspense, useContext, useMemo } from "react"
 import { useEffect, useState } from "react"
-import { submissionStatusState } from "./DraftingPaneComponents/Playlists/DraftPlaylistArea";
-import { NavigationContext, NavigationContextType } from "../state_management/NavigationProvider";
+import { submissionStatusState } from "../DraftingPaneComponents/Playlists/DraftPlaylistArea";
+import { NavigationContext, NavigationContextType } from "../../state_management/NavigationProvider";
 // import { LibraryItemsView } from "./UserLibrary/LibraryCollectionsWindow";
 import SearchAndPlaylists from "./SearchPane/SearchAndContent";
-import { PlaylistsView } from "./SearchPane/UserLibrary/PlaylistsView";
+import { PlaylistsView } from "./UserLibrary/PlaylistsView";
 
 interface LibraryComponentsProps {
   userId: string
