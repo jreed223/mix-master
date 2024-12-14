@@ -45,7 +45,7 @@ const ResultCard: React.FC<ResultCardProps> = (props: ResultCardProps) => {
     const [artistAlbumsCards, setArtistAlbumsCards] = useState<React.JSX.Element[]>(null)
     const [expanded, setExpanded] = useState(false)
 
-    const {setIsSearching, isMobile, stagingState} = useContext(NavigationContext)
+    const { isMobile, stagingState} = useContext(NavigationContext)
 
     const albumProps = props.result as AlbumResult
     const artistProps = props.result as ArtistResult
@@ -94,7 +94,7 @@ const ResultCard: React.FC<ResultCardProps> = (props: ResultCardProps) => {
                 <div style={{ display: "flex", width: "calc(50% - 20px)", minHeight: "80px" }} className="track-card">
                     <div style={{ display: "inline-flex", position: "relative", height: "100%", aspectRatio: "1 / 1" }}>
                         <img loading="lazy" style={{ position: "relative", height: "100%", aspectRatio: "1 / 1" }} src={props.result.item?.images[0]?.url} alt={`${props.result.item?.name||"Unknown"} cover`}></img>
-                        <div onClick={() =>{ isMobile?setIsSearching(false):setIsSearching(prev=>prev); albumProps.displayTracks(albumProps.item)}} style={{ top: 0, left: 0, width: "100%", height: "100%", position: "absolute" }}></div>
+                        <div onClick={() =>{  albumProps.displayTracks(albumProps.item)}} style={{ top: 0, left: 0, width: "100%", height: "100%", position: "absolute" }}></div>
                     </div>
                     <p style={{ display: 'inline' }} className={"track-card-text"}>Album: {props.result?.item?.name||"Unknown"}</p>
 
@@ -165,7 +165,7 @@ const ResultCard: React.FC<ResultCardProps> = (props: ResultCardProps) => {
                 <div style={{ display: "flex", width: "calc(50% - 20px)", height: "80px" }} className="track-card" >
                     <div style={{ display: "inline-flex", position: "relative", height: "100%", aspectRatio: "1 / 1" }}>
                         <img loading="lazy" style={{ position: "relative", height: "100%", aspectRatio: "1 / 1" }} src={props.result.item?.images[0]?.url} alt={`${props.result.item?.name||"unknown"} cover`}></img>
-                        <div onClick={() =>{ isMobile?setIsSearching(false):setIsSearching(prev=>prev); playlistProps.displayTracks(playlistProps.item)}} style={{ top: 0, left: 0, width: "100%", height: "100%", position: "absolute" }}></div>
+                        <div onClick={() =>{ playlistProps.displayTracks(playlistProps.item)}} style={{ top: 0, left: 0, width: "100%", height: "100%", position: "absolute" }}></div>
                     </div>
                     <p style={{ display: 'inline' }} className={"track-card-text"}>Playlist: {props.result?.item?.name||"Untitled"}</p>
                 </div>

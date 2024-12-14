@@ -10,8 +10,8 @@ import { NavigationContext } from "./NavigationProvider";
 export type DraftingContextType = {
     // stagedPlaylistState:TrackClass[][], 
     // setStagedPlaylistState: React.Dispatch<React.SetStateAction<TrackClass[][]>>,
-    isMaxDraftView:boolean, 
-    setIsMaxDraftView: React.Dispatch<React.SetStateAction<boolean>>,
+    // isMaxDraftView:boolean, 
+    // setIsMaxDraftView: React.Dispatch<React.SetStateAction<boolean>>,
     displayFeatureMenu: boolean, 
     setDisplayFeatureMenu: React.Dispatch<React.SetStateAction<boolean>>,
     // selectedLibraryItem: TrackCollection, 
@@ -24,7 +24,7 @@ export type DraftingContextType = {
 export default function DraftingProvider({setStagingState, children}){
     const [displayFeatureMenu, setDisplayFeatureMenu] = useState(false)
     const [stagedPlaylistState, setStagedPlaylistState] = useState<TrackClass[][]>([[]])
-    const [isMaxDraftView, setIsMaxDraftView] = useState(false)
+    // const [isMaxDraftView, setIsMaxDraftView] = useState(false)
     // const [selectedLibraryItem, setSelectedLibraryItem] = useState<TrackCollection | null>(null)
     // const [stagedPlaylist, setStagedPlaylist] = useState<TrackClass[]>([])
 
@@ -45,11 +45,11 @@ export default function DraftingProvider({setStagingState, children}){
 
     const context = useMemo(()=>({
         stagedPlaylistState, setStagedPlaylistState,
-        isMaxDraftView: isMaxDraftView, setIsMaxDraftView: setIsMaxDraftView,
+        // isMaxDraftView: isMaxDraftView, setIsMaxDraftView: setIsMaxDraftView,
         displayFeatureMenu, setDisplayFeatureMenu,
         selectedLibraryItem, setSelectedLibraryItem,
         stagedPlaylist, setStagedPlaylist,
-        displayTracks}),[displayFeatureMenu, displayTracks, isMaxDraftView, selectedLibraryItem, setSelectedLibraryItem, setStagedPlaylist, stagedPlaylist, stagedPlaylistState])
+        displayTracks}),[displayFeatureMenu, displayTracks, selectedLibraryItem, setSelectedLibraryItem, setStagedPlaylist, stagedPlaylist, stagedPlaylistState])
 
     return(
         <DraftingContext.Provider

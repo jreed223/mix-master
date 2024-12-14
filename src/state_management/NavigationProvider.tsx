@@ -42,7 +42,10 @@ export type NavigationContextType = {
     isMobile: boolean
     setIsPlaylistsView: React.Dispatch<React.SetStateAction<boolean>>,
 
-    isPlaylistsView: boolean
+    isPlaylistsView: boolean,
+    setIsMaxDraftView: React.Dispatch<React.SetStateAction<boolean>>,
+
+    isMaxDraftView: boolean
 
 
     // audioDetails: {artist: string, title: string}
@@ -71,6 +74,7 @@ export default function NavigationProvider({children}){
       });
     const [activeView, setActiveView] = useState<ViewName[]>(isMobile?["User Playlists"]:["Dashboard"])
     const [isPlaylistsView, setIsPlaylistsView] = useState(true)
+    const [isMaxDraftView, setIsMaxDraftView] = useState(false)
 
 
     // const [audioDetails, setAudioDetails] = useState<{artist: string, title: string}>(null)
@@ -135,11 +139,7 @@ export default function NavigationProvider({children}){
         }
     },[windowSize.height, windowSize.width])
 
-    useEffect(()=>{
-        if(isMobile && activeView.at(-1)==="Dashboard"){
-            setActiveView(["User Playlists"])
-        }
-    })
+
 
     const stageTracks =useCallback((items:TrackClass[])=>{
         const newStagedPlaylist = stagedPlaylist.concat(items)
@@ -163,7 +163,7 @@ export default function NavigationProvider({children}){
 
     }, [setStagedPlaylist, setStagedPlaylistState, stagedPlaylist, stagedPlaylistState])
 
-    const context: NavigationContextType = useMemo(()=>({setIsPlaylistsView, isPlaylistsView, isMobile, setIsMobile, user, setUser, activeView, setActiveView, isSearching, setIsSearching, stagingState, setStagingState, primaryView, setPrimaryView, currentAudio, setCurrentAudio, currentAudioColor, selectedLibraryItem, setSelectedLibraryItem, stagedPlaylist, setStagedPlaylist, stagedPlaylistState, setStagedPlaylistState, stageTracks, unstageTracks, userLibraryItems, setUserLibraryItems }), [activeView, currentAudio, currentAudioColor, isMobile, isPlaylistsView, isSearching, primaryView, selectedLibraryItem, stageTracks, stagedPlaylist, stagedPlaylistState, stagingState, unstageTracks, user, userLibraryItems])
+    const context: NavigationContextType = useMemo(()=>({isMaxDraftView, setIsMaxDraftView, setIsPlaylistsView, isPlaylistsView, isMobile, setIsMobile, user, setUser, activeView, setActiveView, isSearching, setIsSearching, stagingState, setStagingState, primaryView, setPrimaryView, currentAudio, setCurrentAudio, currentAudioColor, selectedLibraryItem, setSelectedLibraryItem, stagedPlaylist, setStagedPlaylist, stagedPlaylistState, setStagedPlaylistState, stageTracks, unstageTracks, userLibraryItems, setUserLibraryItems }), [activeView, currentAudio, currentAudioColor, isMaxDraftView, isMobile, isPlaylistsView, isSearching, primaryView, selectedLibraryItem, stageTracks, stagedPlaylist, stagedPlaylistState, stagingState, unstageTracks, user, userLibraryItems])
 
 
 

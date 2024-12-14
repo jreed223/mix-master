@@ -14,21 +14,15 @@ export default function SearchAndPlaylists({children}) {
 
     const {setSelectedLibraryItem, stagedPlaylist, setStagedPlaylist, stageTracks, setIsPlaylistsView, isPlaylistsView} = useContext(NavigationContext)
 
-    const { activeView,
-        setActiveView,
-        isSearching,
-        setIsSearching,
-        stagingState,
+    const {
         setStagingState,
     isMobile } = useContext(NavigationContext)
 
 
-    const closeSearch = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const clearSearch = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
-        setIsSearching(false)
-        if (stagingState === "closed"&& !isMobile) {
-            setActiveView(["Dashboard"]);
-        }
+        setSearchQuery(null)
+        setSearchresults(null)
     }
 
 
@@ -46,9 +40,10 @@ export default function SearchAndPlaylists({children}) {
     const [albumCards, setAlbumCards] = useState(null)
     const [playlistCards, setPlaylistCards] = useState(null)
     const [trackCards, setTrackCards] = useState(null)
-    const [viewChild, setViewChild] = useState(true)
 
-    const queryRef = useRef(null)
+    // const queryRef = useRef(null)
+
+    //**If a search query has been set, the final query is set if the query is unchanged after .75 secs */
     useEffect(()=>{
         if(searchQuery&&searchQuery.trim().length>0){
             const timer = setTimeout(()=>{
@@ -64,11 +59,6 @@ export default function SearchAndPlaylists({children}) {
 
     },[searchQuery, searchView])
     
-    // useEffect(()=>{
-    //     if(!isSearching){
-    //         queryRef.current=finalQuery
-    //     }
-    // },[finalQuery, isSearching])
 
 
     useEffect(()=>{
@@ -167,18 +157,10 @@ export default function SearchAndPlaylists({children}) {
 
     },[expandedArtistId, searchResults, setSelectedLibraryItem, setStagedPlaylist, setStagingState, stageTracks, stagedPlaylist])
 
+
+    //**Fetches and sets search results if a final query has been set */
     useEffect(()=>{
-        type ResultTypes = SearchResults['albums']['items'] | SearchResults['playlists']['items'] | SearchResults['artists']['items'] | SearchResults['tracks']['items']
-        const resultList = (resultsObject: SearchResults) => {
-            let fullItemList: ResultTypes[] = []
-    
-            fullItemList = fullItemList.concat(resultsObject?.albums.items)
-            fullItemList = fullItemList.concat(resultsObject?.artists.items)
-            fullItemList = fullItemList.concat(resultsObject?.tracks.items)
-            fullItemList = fullItemList.concat(resultsObject?.playlists.items)
-            // }
-            console.log("FILL ITEM LIST: ", fullItemList)
-        }
+
     
         const handleSearch = async () => {
    
@@ -194,7 +176,6 @@ export default function SearchAndPlaylists({children}) {
                 const newResults = await results.json()
                 console.log(newResults)
                 setSearchresults(newResults)
-                resultList(newResults)
                 setIsLoading(false)
         }
     
@@ -203,26 +184,15 @@ export default function SearchAndPlaylists({children}) {
         }
     },[ finalQuery])
 
-    const [hideSrchBtn, setHideSrchBtn] = useState(false)
 
+    //**UseEffect clears the search results if the search query is null or an empty string */
       useEffect(()=>{
         if(!searchQuery||searchQuery?.trim().length<=0||(searchQuery&&searchQuery==="")){
             setSearchresults(null)
             setIsPlaylistsView(true)
         }
-    },[searchQuery])
+    },[searchQuery, setIsPlaylistsView])
 
-    // useEffect(()=>{
-    //     if(isSearching){
-    //         const hideButton = setTimeout(()=>{
-    //             setHideSrchBtn(true)
-    //         }, 1000)
-
-    //         return () => clearTimeout(hideButton)
-    //     }else{
-    //         setHideSrchBtn(false)
-    //     }
-    // },[isSearching])
 
   
 
@@ -240,42 +210,12 @@ export default function SearchAndPlaylists({children}) {
             case "Albums":
                 setCurrentCards(albumCards)
                 break;
+            default:
+                setCurrentCards(playlistCards)
         }
     }, [searchView, artistCards, playlistCards, trackCards, albumCards])
 
-    const handleSearchButton = (e: React.MouseEvent<HTMLButtonElement>) => { 
-        e.preventDefault(); 
-       
-
-        if(isSearching){
-            setFinalQuery(searchQuery)
-        }else{
-            setIsSearching(true)
-            setActiveView(prev=>prev.at(-1)==="Dashboard"?['User Playlists']:prev)
-        }
-
-    }
     const searchInputRef = useRef(null)
-
-    // useEffect(() => {
-    
-   
-    //     const searchInput = searchInputRef.current;
-    
-    //     // Attach event listeners if the ref is correctly assigned to the input element
-    //     if (searchInput) {
-    //       searchInput.addEventListener('focus', setIsSearching(true));
-    //       searchInput.addEventListener('blur', setIsSearching(false));
-    //     }
-    
-    //     // Clean up event listeners when the component unmounts
-    //     return () => {
-    //       if (searchInput) {
-    //         searchInput.removeEventListener('focus', setIsSearching(true));
-    //         searchInput.removeEventListener('blur', setIsSearching(false));
-    //       }
-    //     };
-    //   }, [setIsSearching]); 
 
     useEffect(()=>{
         if(searchResults){
@@ -283,10 +223,6 @@ export default function SearchAndPlaylists({children}) {
             // setViewChild(false)
         }
     },[searchResults, setIsPlaylistsView])
-
-
-
-
 
         const onEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
             if (e.key === "Enter") {
@@ -299,7 +235,7 @@ export default function SearchAndPlaylists({children}) {
         return (
             <form style={{ height: "100%", width:"100%" }}>
 
-                <div className={"search-bar2"} style={isSearching ? { height: "100%", width:"100%", overflowX: 'clip' } : { height: "100%", width:"100%", overflowX: 'clip' }}>
+                <div className={"search-bar2"} style={{ height: "100%", width:"100%", overflowX: 'clip' }}>
                     <div style={isMobile?{ width: "100%", height: "100%" }:{width: "75%", minWidth:"50vw", height: "100%", margin: "auto"}}>
                         <div style={{ height: "50px", alignContent: "center", display: "flex"}}>
                                 <div style={{flex: 1, display:"flex", justifyContent:"center"}}><input ref={searchInputRef} style={{color:"#878787", fontSize: "1.5em",borderRadius:"25px", paddingLeft: "15px",  backgroundColor: "rgb(33 33 33)", border: "none", height:"calc(100% - 10px)", width: "75%", margin: "5px"}}type="text" placeholder="Search..." value={searchQuery} onKeyDown={(e) => { onEnter(e) }} onChange={(e) => { e.preventDefault(); setSearchQuery(e.target.value) }}></input></div>
@@ -320,17 +256,11 @@ export default function SearchAndPlaylists({children}) {
                                 <div>Loading</div>:
                                 isPlaylistsView?children:searchResults&&searchQuery?
                                 <>
-                                    {/* <div style={{ height: "100%", display: "flex", flexDirection: "row", overflow: "auto" }}> */}
-                                        {/* <div style={{ flex:1, height: "100%", flexDirection: "column", gap: "10px", }} > */}
 
                                             <div style={{ flex: 1, display: "flex", flexFlow: "row wrap" }}>
                                                 {currentCards}
-                                                {/* {currentCards} */}
                                                 </div>
 
-                                        {/* </div> */}
-
-                                    {/* </div> */}
                                 </> : children
 
 

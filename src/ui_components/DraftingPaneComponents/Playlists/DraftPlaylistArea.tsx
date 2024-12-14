@@ -4,11 +4,7 @@ import TrackClass from "../../../models/Tracks";
 import { NavigationContext } from "../../../state_management/NavigationProvider";
 import { DraftingContext } from "../../../state_management/DraftingPaneProvider";
 import { Playlist } from '../../../../server/types';
-import { newPlaylist } from '../../../../server/SpotifyData/controllers/create-playlist';
 import TrackCollection from "../../../models/libraryItems";
-import LibraryItemCard from "../../UserLibrary/LibraryItemCard";
-import io from 'socket.io-client';
-import { TracklistContext } from "../../../state_management/TracklistProvider";
 
 interface DraftPlaylistContainerProps {
     setReloadKey: React.Dispatch<React.SetStateAction<number>>
@@ -33,11 +29,11 @@ const DraftPlaylistContainer: React.FC<DraftPlaylistContainerProps> = (props: Dr
     // const [displaySubmissionStatus, setDisplaySubmissionStatus] = useState(false)
 
     // const { stagingState } = useContext(NavigationContext)
-    const {selectedLibraryItem, setSelectedLibraryItem, stagedPlaylist, setStagedPlaylist, stagingState, stagedPlaylistState,
-        setStagedPlaylistState,userLibraryItems, setUserLibraryItems, user, isMobile} = useContext(NavigationContext)
+    const {selectedLibraryItem, stagedPlaylist, setStagedPlaylist, stagingState, stagedPlaylistState,
+        setStagedPlaylistState, setUserLibraryItems, user, isMaxDraftView} = useContext(NavigationContext)
         // const {selectedFeatures} = useContext(TracklistContext)
         const {
-            displayFeatureMenu, isMaxDraftView } = useContext(DraftingContext)
+            displayFeatureMenu,  } = useContext(DraftingContext)
 
     const deselectTrack = useCallback((trackId: string) => {
         setSelectedTracks(prev => prev.filter(selectedTrack => selectedTrack.track.id !== trackId))

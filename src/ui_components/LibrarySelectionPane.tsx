@@ -3,27 +3,20 @@ import React, { Suspense, useContext, useMemo } from "react"
 import { useEffect, useState } from "react"
 import { submissionStatusState } from "./DraftingPaneComponents/Playlists/DraftPlaylistArea";
 import { NavigationContext, NavigationContextType } from "../state_management/NavigationProvider";
-import { LibraryItemsView } from "./UserLibrary/LibraryCollectionsWindow";
+// import { LibraryItemsView } from "./UserLibrary/LibraryCollectionsWindow";
 import SearchAndPlaylists from "./SearchAndContent";
-import { PlaylistsView } from "./LibraryCollectionsWindow";
+import { PlaylistsView } from "./PlaylistsView";
 
 interface LibraryComponentsProps {
   userId: string
   dialogText:submissionStatusState
   setDialogText: React.Dispatch<React.SetStateAction<submissionStatusState>>
-//   fetchedPlaylistsResource: {
-//     read(): any;
-// }
-// fetchedAlbumsResource: {
-//   read(): any;
-// }
 reloadKey: number
 }
 
-export const PlaylistsPane: React.FC<LibraryComponentsProps> = (props: LibraryComponentsProps) => {
+export const LibrarySelectionPane: React.FC<LibraryComponentsProps> = (props: LibraryComponentsProps) => {
   
 
-  const {activeView, isSearching, primaryView} = useContext<NavigationContextType>(NavigationContext)
 
   const fetchAllPlaylists = (reloadKey) => {
     const playlistList = fetch("/spotify-data/playlists")
@@ -75,68 +68,9 @@ export const PlaylistsPane: React.FC<LibraryComponentsProps> = (props: LibraryCo
 
 
   const fetchedPlaylistsResource = useMemo(()=>suspensify(fetchAllPlaylists(props.reloadKey)),[props.reloadKey])
-  const fetchedAlbumsResource = useMemo(()=>suspensify(fetchLikedAlbums()),[])
-
-
-  const [primaryViewStyle, setPrimaryViewStyle] = useState<{ width: string, transition: string }>(null)
-  const [secondaryViewStyle, setSecondaryViewStyle] = useState<{ width: string, transition: string, marginTop: string, height: string}>(null)
   const [displayDialog, setDisplayDialog] = useState<boolean>(false)
 
 
-
-  useEffect(() => {
-
-    switch (activeView.at(-1)) {
-      case "Dashboard":
-        setSecondaryViewStyle({
-          width: "50%",
-          transition: "1s",
-          marginTop: "30px",
-          height: "calc(100vh - 80px)"
-        })
-        setPrimaryViewStyle({
-          width: "50%",
-          transition: "1s"
-        })
-        break;
-      case primaryView:
-        if (!isSearching) {
-          setSecondaryViewStyle(prev=>{return{
-            width: "0%",
-
-            transition: "1s",
-                      marginTop: prev.marginTop,
-          height: prev.height
-          }})
-        }
-
-        setPrimaryViewStyle({
-          width: "100%",
-          transition: "1s"
-        })
-
-        break;
-      default:
-
-
-        setSecondaryViewStyle({
-          width: "100%",
-
-          transition: "1s",
-          marginTop: "0px",
-          height: "calc(100vh - 50px)"
-        })
-        setPrimaryViewStyle({
-          width: "0%",
-
-          transition: "1s"
-        })
-        break;
-
-    }
-
-
-  }, [isSearching, activeView, primaryView])
 
   useEffect(()=>{
     if(props.dialogText){
@@ -157,6 +91,7 @@ export const PlaylistsPane: React.FC<LibraryComponentsProps> = (props: LibraryCo
 
     }
   }, [displayDialog, props])
+
   const playlists = (    
 
     <Suspense fallback={<CircularProgress />}>
@@ -169,22 +104,7 @@ export const PlaylistsPane: React.FC<LibraryComponentsProps> = (props: LibraryCo
   return (
     <div style={{ flexGrow: 1, overflowY: "hidden" }} className="library-container" id="library-container">
       <dialog style={{width: "25vh", margin: "15px auto", backgroundColor: "#141414", color:"#757575", opacity:displayDialog?1:0, transition:'1s', position: 'absolute', zIndex:99, left:"calc(50% - 14.5px)"}} open={props.dialogText?true:false}>{props.dialogText?`${props.dialogText.status}: ${props.dialogText.text}`:""}</dialog>
-
-      {/* <div className="user-library-items" style={primaryViewStyle}>
-        <Suspense fallback={<CircularProgress />}>
-          <LibraryItemsView  reloadKey={props.reloadKey} fetchedLibraryResource={fetchedPlaylistsResource} userId={props.userId} viewName={primaryView}  ></LibraryItemsView>
-        </Suspense>
-      </div> */}
       <SearchAndPlaylists children={playlists}></SearchAndPlaylists>
-      {/* <div className="liked-library-items" style={secondaryViewStyle}>
-        <Suspense fallback={<CircularProgress />}>
-          <LibraryItemsView   fetchedLibraryResource={fetchedPlaylistsResource} userId={props.userId} viewName={"Liked Playlists"} ></LibraryItemsView>
-        </Suspense>
-        <Suspense fallback={<CircularProgress />}>
-          <LibraryItemsView  fetchedLibraryResource={fetchedAlbumsResource} userId={props.userId} viewName={"Liked Albums"}  ></LibraryItemsView>
-        </Suspense>
-      </div> */}
-
     </div>
   )
 
