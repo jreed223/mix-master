@@ -14,7 +14,7 @@ export type ViewName = 'Dashboard'|"Liked Playlists"|"User Playlists"|"Liked Alb
 
 
 export default function NavBar({currentUser}:navProps){
-    const {setIsPlaylistsView, isPlaylistsView, isMobile, setActiveView, setIsSearching,  stagingState, setStagingState, currentAudio, currentAudioColor, selectedLibraryItem, stagedPlaylist,  setCurrentAudio, unstageTracks, stageTracks, isMaxDraftView, setIsMaxDraftView } = useContext(NavigationContext)
+    const {setIsPlaylistsView, isPlaylistsView, isMobile, setIsSearching,  stagingState, setStagingState, currentAudio, currentAudioColor, selectedLibraryItem, stagedPlaylist,  setCurrentAudio, unstageTracks, stageTracks, isMaxDraftView, setIsMaxDraftView } = useContext(NavigationContext)
 
     const closeSearchAndCreation = useCallback(() =>{
         setStagingState('closed')
@@ -147,20 +147,6 @@ export default function NavBar({currentUser}:navProps){
 
     },[audioIdx, currentAudio?.audio, selectedLibraryItem, setCurrentAudio])
 
-    const handleNav = (viewName: ViewName)=>{
-        setActiveView((prev)=>[prev.at(-2),prev.at(-1), viewName])
-        if(stagingState==="open"){
-            setIsSearching(false)
-        }
-        if(isMobile){
-            setStagingState("closed")
-        }
-
-    }
-
-    const handleView=()=>{
-
-    }
 
     return(
 

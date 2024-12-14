@@ -16,12 +16,6 @@ export default function DraftingArea({setReloadKey, setDialogText}){
 
     const {isPlaylistsView, isSearching, stagingState, isMobile, isMaxDraftView, setIsMaxDraftView} = useContext(NavigationContext)
 
-    // useEffect(()=>{
-    //     if(isPlaylistsView){
-    //         setIsMaxDraftView(false)
-    //     }
-    // },[isPlaylistsView, setIsMaxDraftView])
-
     useEffect(()=>{
         if(stagingState==="closed"){
             setIsMaxDraftView(false)

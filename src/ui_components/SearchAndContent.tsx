@@ -258,7 +258,7 @@ export default function SearchAndPlaylists({children}) {
                                 <>
 
                                             <div style={{ flex: 1, display: "flex", flexFlow: "row wrap" }}>
-                                                {currentCards}
+                                                {currentCards.length>0?currentCards:<p>No items found from search</p>}
                                                 </div>
 
                                 </> : children
