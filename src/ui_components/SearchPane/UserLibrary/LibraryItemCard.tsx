@@ -1,8 +1,8 @@
 import React, { useContext } from "react";
-import TrackCollection from "../../models/libraryItems";
-import { ViewName } from "../NavBar";
-import { NavigationContext, NavigationContextType } from "../../state_management/NavigationProvider";
-import { DraftingContext } from "../../state_management/DraftingPaneProvider";
+import TrackCollection from "../../../models/libraryItems";
+import { ViewName } from "../../NavBar";
+import { NavigationContext, NavigationContextType } from "../../../state_management/NavigationProvider";
+import { DraftingContext } from "../../../state_management/DraftingPaneProvider";
 
 
 export interface LibraryItemCardProps{

@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useRef, useContext } from "react"
-import TrackCollection from "../models/libraryItems";
-import LibraryItemCard from "./UserLibrary/LibraryItemCard";
-import { ViewName } from "../state_management/NavigationProvider";
-import { NavigationContext } from "../state_management/NavigationProvider";
-import { NavigationContextType } from '../state_management/NavigationProvider';
-import { LibraryItemCardProps } from './UserLibrary/LibraryItemCard';
-import { Playlist } from '../../server/types';
+import TrackCollection from "../../../models/libraryItems";
+import LibraryItemCard from "./LibraryItemCard";
+import { ViewName } from "../../../state_management/NavigationProvider";
+import { NavigationContext } from "../../../state_management/NavigationProvider";
+import { NavigationContextType } from '../../../state_management/NavigationProvider';
+import { LibraryItemCardProps } from './LibraryItemCard';
+import { Playlist } from '../../../../server/types';
 
 
 
@@ -26,7 +26,7 @@ export const PlaylistsView: React.FC<LibraryItemsViewProps> = (props: LibraryIte
   const [libraryItems, setLibraryItems] = useState<TrackCollection[]>(null)
   const [libraryItemCards, setLibraryItemCards] = useState<React.ReactElement<LibraryItemCardProps>[]>(null)
   
-  const { setIsSearching, selectedLibraryItem, } = useContext<NavigationContextType>(NavigationContext)
+  const {  selectedLibraryItem, } = useContext<NavigationContextType>(NavigationContext)
 
 
   // const libraryItemsContainer = useRef(null)
@@ -63,7 +63,7 @@ export const PlaylistsView: React.FC<LibraryItemsViewProps> = (props: LibraryIte
    
     }
     
-  }, [setIsSearching, selectedLibraryItem?.id, props.viewName, props.userId, libraryItems])
+  }, [ selectedLibraryItem?.id, props.viewName, props.userId, libraryItems])
 
 
 

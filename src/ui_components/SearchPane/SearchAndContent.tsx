@@ -1,11 +1,11 @@
 import { useContext, useEffect, useRef, useState } from "react"
-import { NavigationContext } from "../state_management/NavigationProvider"
-import TrackClass from "../models/Tracks"
-import { Album, Playlist, SearchResults } from "../../server/types"
-import TrackCollection from "../models/libraryItems"
-import ResultCard from "./SearchPane/ResultCard"
+import { NavigationContext } from "../../state_management/NavigationProvider"
+import TrackClass from "../../models/Tracks"
+import { Album, Playlist, SearchResults } from "../../../server/types"
+import TrackCollection from "../../models/libraryItems"
+import ResultCard from "./ResultCard"
 import React from "react"
-import TrackCard from "./DraftingPaneComponents/TrackComponents/TrackCard"
+import TrackCard from "../DraftingPaneComponents/TrackComponents/TrackCard"
 
 
 
@@ -190,6 +190,7 @@ export default function SearchAndPlaylists({children}) {
         if(!searchQuery||searchQuery?.trim().length<=0||(searchQuery&&searchQuery==="")){
             setSearchresults(null)
             setIsPlaylistsView(true)
+            setFinalQuery(null)
         }
     },[searchQuery, setIsPlaylistsView])
 
@@ -254,11 +255,11 @@ export default function SearchAndPlaylists({children}) {
 
                             {isLoading?
                                 <div>Loading</div>:
-                                isPlaylistsView?children:searchResults&&searchQuery?
+                                isPlaylistsView?children:currentCards&&searchQuery?
                                 <>
 
                                             <div style={{ flex: 1, display: "flex", flexFlow: "row wrap" }}>
-                                                {currentCards.length>0?currentCards:<p>No items found from search</p>}
+                                                {currentCards?.length>0?currentCards:<p>No items found from search</p>}
                                                 </div>
 
                                 </> : children

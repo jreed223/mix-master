@@ -30,7 +30,7 @@ const DraftPlaylistContainer: React.FC<DraftPlaylistContainerProps> = (props: Dr
 
     // const { stagingState } = useContext(NavigationContext)
     const {selectedLibraryItem, stagedPlaylist, setStagedPlaylist, stagingState, stagedPlaylistState,
-        setStagedPlaylistState, setUserLibraryItems, user, isMaxDraftView} = useContext(NavigationContext)
+        setStagedPlaylistState, user, isMaxDraftView} = useContext(NavigationContext)
         // const {selectedFeatures} = useContext(TracklistContext)
         const {
             displayFeatureMenu,  } = useContext(DraftingContext)
@@ -248,7 +248,7 @@ useEffect(()=>{
                 console.log("Items have been added")
    
                 
-                setUserLibraryItems(null)
+                // setUserLibraryItems(null)
                 props.setReloadKey(prev=>prev+1)
             }else{
                 // setSubmissionState(prev=>prev?prev.concat(["fail"]):["fail"])

@@ -14,12 +14,11 @@ export type ViewName = 'Dashboard'|"Liked Playlists"|"User Playlists"|"Liked Alb
 
 
 export default function NavBar({currentUser}:navProps){
-    const {setIsPlaylistsView, isPlaylistsView, isMobile, setIsSearching,  stagingState, setStagingState, currentAudio, currentAudioColor, selectedLibraryItem, stagedPlaylist,  setCurrentAudio, unstageTracks, stageTracks, isMaxDraftView, setIsMaxDraftView } = useContext(NavigationContext)
+    const {setIsPlaylistsView, isPlaylistsView, isMobile,  stagingState, setStagingState, currentAudio, currentAudioColor, selectedLibraryItem, stagedPlaylist,  setCurrentAudio, unstageTracks, stageTracks, isMaxDraftView, setIsMaxDraftView } = useContext(NavigationContext)
 
     const closeSearchAndCreation = useCallback(() =>{
         setStagingState('closed')
-        setIsSearching(false)
-    },[setIsSearching, setStagingState])
+    },[ setStagingState])
 
     const mixMasterButton = useCallback(()=>{
             if(stagingState==='closed'){

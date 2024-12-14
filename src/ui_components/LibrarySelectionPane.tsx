@@ -4,8 +4,8 @@ import { useEffect, useState } from "react"
 import { submissionStatusState } from "./DraftingPaneComponents/Playlists/DraftPlaylistArea";
 import { NavigationContext, NavigationContextType } from "../state_management/NavigationProvider";
 // import { LibraryItemsView } from "./UserLibrary/LibraryCollectionsWindow";
-import SearchAndPlaylists from "./SearchAndContent";
-import { PlaylistsView } from "./PlaylistsView";
+import SearchAndPlaylists from "./SearchPane/SearchAndContent";
+import { PlaylistsView } from "./SearchPane/UserLibrary/PlaylistsView";
 
 interface LibraryComponentsProps {
   userId: string

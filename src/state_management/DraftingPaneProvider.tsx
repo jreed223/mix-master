@@ -8,10 +8,7 @@ import { NavigationContext } from "./NavigationProvider";
 
 
 export type DraftingContextType = {
-    // stagedPlaylistState:TrackClass[][], 
-    // setStagedPlaylistState: React.Dispatch<React.SetStateAction<TrackClass[][]>>,
-    // isMaxDraftView:boolean, 
-    // setIsMaxDraftView: React.Dispatch<React.SetStateAction<boolean>>,
+
     displayFeatureMenu: boolean, 
     setDisplayFeatureMenu: React.Dispatch<React.SetStateAction<boolean>>,
     // selectedLibraryItem: TrackCollection, 
