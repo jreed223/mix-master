@@ -3,10 +3,11 @@ import React, { useContext, useEffect, useState } from "react"
 // import { LibraryItem } from '../../models/libraryItems';
 import Tracklist from "../TrackComponents/Tracklist";
 import TrackClass from "../../../models/Tracks";
-import { NavigationContext } from "../../../state_management/NavigationProvider";
+import { ViewContext } from "../../../state_management/ViewProvider";
 import { DraftingContext } from "../../../state_management/DraftingPaneProvider";
 import { TracklistContext } from "../../../state_management/TracklistProvider";
 import { Artist } from "../../../../server/types";
+import { AudioContext, AudioContextType } from "../../../state_management/AudioProvider";
 interface SelectedPlaylistContainerProps {
 
 
@@ -22,15 +23,16 @@ export interface TrackData {
 
 const SelectedPlaylistContainer: React.FC<SelectedPlaylistContainerProps> = () => {
 
-    const {stagingState, currentAudio, setCurrentAudio, isMaxDraftView,} = useContext(NavigationContext)
+    const { isMaxDraftView,} = useContext(ViewContext)
+    const {currentAudio, setCurrentAudio, } =  useContext<AudioContextType>(AudioContext)
 
     const { 
-
+        stagingState,
+        selectedLibraryItem, stagedPlaylist, setStagedPlaylist, stagedPlaylistState,
+    setStagedPlaylistState,
         displayFeatureMenu, 
 } = useContext(DraftingContext)
 
-const {selectedLibraryItem, stagedPlaylist, setStagedPlaylist, stagedPlaylistState,
-    setStagedPlaylistState,} = useContext(NavigationContext)
 const {popularityFilter, dateRange, setSelectedArtistFilters, artistQuery, artistsList, setArtistsList} = useContext(TracklistContext)
 
 // const [artistsList, setArtistsList] = useState<Artist[]>(null)
@@ -61,33 +63,7 @@ const {popularityFilter, dateRange, setSelectedArtistFilters, artistQuery, artis
 
     }
 
-    
-//TODO: TROUBLESHOOT BELOW ERROR
-    // useEffect(()=>{
-    // if(allTracks){
-    //     if(artistQuery?.trim().length===0){
 
-    //         console.log("artistQuery?.trim().length:", artistQuery?.trim().length)
-    //         const consolidatedList : Artist[] = []
-    //         const completeArtistList  =  allTracks.flatMap((item)=>item.track.artists)
-    //         completeArtistList.map((artist)=>{
-    //             if(!consolidatedList.some((item)=>item.id===artist.id)){
-    //                 consolidatedList.push(artist)
-                   
-    //             }
-    //             return artist
-    //         })
-    //         setArtistsList(consolidatedList)
-    //     }else
-
-    //     if(artistQuery && artistQuery?.trim().length>0){
-    //         const filteredArtists = artistsList.filter((artist)=>artist.name.toLowerCase().startsWith(artistQuery.toLowerCase()))
-    //         setArtistsList(filteredArtists)
-
-    //     }
-    // }
-
-    // },[allTracks, artistQuery, artistsList, setArtistsList])
 
 
 

@@ -3,8 +3,8 @@ import React, { useContext, useEffect, useRef } from "react"
 import PlaylistMenuBar from "./PlaylistMenu";
 import SelectedPlaylistContainer from "./Playlists/SelectedPlaylistArea";
 import DraftPlaylistContainer from "./Playlists/DraftPlaylistArea";
-import { NavigationContext } from "../../state_management/NavigationProvider";
-import { DraftingContext } from "../../state_management/DraftingPaneProvider";
+import { ViewContext } from "../../state_management/ViewProvider";
+import { DraftingContext, DraftingContextType } from "../../state_management/DraftingPaneProvider";
 import FilterMenu from "./FilterMenu";
 import TracklistProvider from "../../state_management/TracklistProvider";
 
@@ -14,7 +14,8 @@ import TracklistProvider from "../../state_management/TracklistProvider";
 export default function DraftingArea({setReloadKey, setDialogText}){
 
 
-    const {isPlaylistsView, stagingState, isMobile, isMaxDraftView, setIsMaxDraftView} = useContext(NavigationContext)
+    const {isPlaylistsView, isMobile, isMaxDraftView, setIsMaxDraftView} = useContext(ViewContext)
+    const {stagingState} = useContext<DraftingContextType>(DraftingContext)
 
     useEffect(()=>{
         if(stagingState==="closed"){

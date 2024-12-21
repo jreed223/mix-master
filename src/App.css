@@ -77,6 +77,7 @@
 
 
 .track-card-text{
+  /* pointer-events: all; */
   /* display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
@@ -89,6 +90,15 @@
     /* white-space: normal; */
 
 }
+.artist-text{
+  width:min-content;
+  max-width: "100%";
+}
+.artist-text:hover{
+  cursor: pointer;
+  color: green !important
+}
+
 .search-bar{
   background-color: rgb(20, 20, 20);
   position: absolute;
@@ -603,6 +613,7 @@ button{
   animation: grow-track .5s;
   overflow: hidden;
 }
+
 
 @keyframes grow-track {
   0%{

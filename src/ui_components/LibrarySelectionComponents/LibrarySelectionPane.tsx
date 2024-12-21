@@ -2,7 +2,7 @@ import { CircularProgress } from "@mui/material";
 import React, { Suspense, useContext, useMemo } from "react"
 import { useEffect, useState } from "react"
 import { submissionStatusState } from "../DraftingPaneComponents/Playlists/DraftPlaylistArea";
-import { NavigationContext, NavigationContextType } from "../../state_management/NavigationProvider";
+import { ViewContext, ViewContextType } from "../../state_management/ViewProvider";
 // import { LibraryItemsView } from "./UserLibrary/LibraryCollectionsWindow";
 import SearchAndPlaylists from "./SearchPane/SearchAndContent";
 import { PlaylistsView } from "./UserLibrary/PlaylistsView";

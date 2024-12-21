@@ -1,11 +1,12 @@
 import React, { useEffect, useState, useRef, useContext } from "react"
 import TrackCollection from "../../../models/libraryItems";
 import LibraryItemCard from "./LibraryItemCard";
-import { ViewName } from "../../../state_management/NavigationProvider";
-import { NavigationContext } from "../../../state_management/NavigationProvider";
-import { NavigationContextType } from '../../../state_management/NavigationProvider';
+import { ViewName } from "../../../state_management/ViewProvider";
+import { ViewContext } from "../../../state_management/ViewProvider";
+import { ViewContextType } from '../../../state_management/ViewProvider';
 import { LibraryItemCardProps } from './LibraryItemCard';
 import { Playlist } from '../../../../server/types';
+import { DraftingContext, DraftingContextType } from "../../../state_management/DraftingPaneProvider";
 
 
 
@@ -26,7 +27,7 @@ export const PlaylistsView: React.FC<LibraryItemsViewProps> = (props: LibraryIte
   const [libraryItems, setLibraryItems] = useState<TrackCollection[]>(null)
   const [libraryItemCards, setLibraryItemCards] = useState<React.ReactElement<LibraryItemCardProps>[]>(null)
   
-  const {  selectedLibraryItem, } = useContext<NavigationContextType>(NavigationContext)
+  const {  selectedLibraryItem, } = useContext<DraftingContextType>(DraftingContext)
 
 
   // const libraryItemsContainer = useRef(null)

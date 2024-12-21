@@ -1,7 +1,7 @@
 import React, { useCallback, useContext, useEffect, useState } from "react"
 import TrackCard from "../TrackComponents/TrackCard";
 import TrackClass from "../../../models/Tracks";
-import { NavigationContext } from "../../../state_management/NavigationProvider";
+import { ViewContext } from "../../../state_management/ViewProvider";
 import { DraftingContext } from "../../../state_management/DraftingPaneProvider";
 import { Playlist } from '../../../../server/types';
 import TrackCollection from "../../../models/libraryItems";
@@ -28,11 +28,11 @@ const DraftPlaylistContainer: React.FC<DraftPlaylistContainerProps> = (props: Dr
     const [displaySubmsnProgress, setDisplaySubmsnProgress] = useState(false)
     // const [displaySubmissionStatus, setDisplaySubmissionStatus] = useState(false)
 
-    // const { stagingState } = useContext(NavigationContext)
-    const {selectedLibraryItem, stagedPlaylist, setStagedPlaylist, stagingState, stagedPlaylistState,
-        setStagedPlaylistState, user, isMaxDraftView} = useContext(NavigationContext)
+    // const { stagingState } = useContext(ViewContext)
+    const { user, isMaxDraftView} = useContext(ViewContext)
         // const {selectedFeatures} = useContext(TracklistContext)
-        const {
+        const {selectedLibraryItem, stagedPlaylist, setStagedPlaylist, stagingState, stagedPlaylistState,
+            setStagedPlaylistState,
             displayFeatureMenu,  } = useContext(DraftingContext)
 
     const deselectTrack = useCallback((trackId: string) => {

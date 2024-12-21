@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from "react"
-import { NavigationContext } from "../../state_management/NavigationProvider"
+import { ViewContext } from "../../state_management/ViewProvider"
 import { DraftingContext } from "../../state_management/DraftingPaneProvider"
 import { TracklistContext } from "../../state_management/TracklistProvider"
 import Calendar from 'react-calendar';
@@ -16,7 +16,7 @@ interface PlaylistMenuProps {
 
 }
 const FilterMenu: React.FC<PlaylistMenuProps> = () => {
-    const {isMobile, isMaxDraftView}= useContext(NavigationContext)
+    const {isMobile, isMaxDraftView}= useContext(ViewContext)
     const {
         displayFeatureMenu  } = useContext(DraftingContext)
         // const {allTracks}= useContext
@@ -122,10 +122,10 @@ const FilterMenu: React.FC<PlaylistMenuProps> = () => {
         if (Array.isArray(dates)) {
             console.log("DATES: ", `\n Date 1: ${dates[0]} \n Date 2: ${dates[1]}`)
             // const dateList: [] = dates
+            if(dates.at(1)===null){
+                setDateRange(null)
+            }
             setDateRange(dates);
-        }else{
-            console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-            setDateRange(null)
         }
     };
 
@@ -167,7 +167,7 @@ const FilterMenu: React.FC<PlaylistMenuProps> = () => {
                     <div className="tooltip"> ? <span className="tooltip-text">{'tooltip Text!!'}</span></div>
                     <input key={"calendar-checkbox"} ref={null} onChange={() => { toggleCalendar() }} type="checkbox" defaultChecked={true} />
                     <div>
-                        <Calendar onChange={(date) => handleDateSelection(date)} value={dateRange} selectRange={true} tileDisabled={ calendarDisabled?()=>true:({ date }) => disableFutureDates(date)}></Calendar>
+                        <Calendar onChange={(date) => handleDateSelection(date)} value={dateRange} allowPartialRange selectRange={true}  tileDisabled={ calendarDisabled?()=>true:({ date }) => disableFutureDates(date)}></Calendar>
                         {/* <input key={"popularity-slider"} ref={popularitySlider} style={{width: "80%", margin:'auto'}} id={`popularity-slider`} onChange={()=>handlePopularityFilter()} type={"range"} min={0} max={100} defaultValue={50} className="slider" disabled={true}/> */}
                     </div>
                 </div>

@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from "react"
-import { NavigationContext } from "../../state_management/NavigationProvider"
+import { ViewContext } from "../../state_management/ViewProvider"
 import { DraftingContext } from "../../state_management/DraftingPaneProvider"
 // import { Features, PlaylistItem } from "../../../server/types";
 // import PlaylistClass from "../../models/playlistClass";
@@ -12,8 +12,8 @@ interface PlaylistMenuProps {
 
 }
 const PlaylistMenuBar: React.FC<PlaylistMenuProps> = (props: PlaylistMenuProps) => {
-    const {  setStagingState, isMobile, isMaxDraftView, setIsMaxDraftView } = useContext(NavigationContext)
-    const { displayFeatureMenu, setDisplayFeatureMenu } = useContext(DraftingContext)
+    const {  isMobile, isMaxDraftView, setIsMaxDraftView } = useContext(ViewContext)
+    const { displayFeatureMenu, setStagingState, setDisplayFeatureMenu } = useContext(DraftingContext)
 
     const closeCreationContainer = () => {
         setStagingState("closed")

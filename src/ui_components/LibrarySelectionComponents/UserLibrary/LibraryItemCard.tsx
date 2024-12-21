@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import TrackCollection from "../../../models/libraryItems";
 import { ViewName } from "../../NavBar";
-import { NavigationContext, NavigationContextType } from "../../../state_management/NavigationProvider";
+import { ViewContext, ViewContextType } from "../../../state_management/ViewProvider";
 import { DraftingContext } from "../../../state_management/DraftingPaneProvider";
 
 
@@ -12,8 +12,8 @@ export interface LibraryItemCardProps{
 }
 
 const LibraryItemCard: React.FC<LibraryItemCardProps> = (props: LibraryItemCardProps)=>{
-    const {selectedLibraryItem, isMobile, user} = useContext<NavigationContextType>(NavigationContext)
-    const { displayTracks} = useContext(DraftingContext)
+    const {isMobile, user} = useContext<ViewContextType>(ViewContext)
+    const { displayTracks, selectedLibraryItem} = useContext(DraftingContext)
 
 
 

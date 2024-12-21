@@ -1,22 +1,28 @@
 import { useContext, useEffect, useRef, useState } from "react"
-import { NavigationContext } from "../../../state_management/NavigationProvider"
+import { ViewContext } from "../../../state_management/ViewProvider"
 import TrackClass from "../../../models/Tracks"
 import { Album, Playlist, SearchResults } from "../../../../server/types"
 import TrackCollection from "../../../models/libraryItems"
 import ResultCard from "./ResultCard"
 import React from "react"
 import TrackCard from "../../DraftingPaneComponents/TrackComponents/TrackCard"
+import { DraftingContext } from "../../../state_management/DraftingPaneProvider"
 
 
 
 
 export default function SearchAndPlaylists({children}) {
 
-    const {setSelectedLibraryItem, stagedPlaylist, setStagedPlaylist, stageTracks, setIsPlaylistsView, isPlaylistsView} = useContext(NavigationContext)
+    const { setIsPlaylistsView, isPlaylistsView} = useContext(ViewContext)
 
     const {
+    isMobile } = useContext(ViewContext)
+
+    const {
+        setSelectedLibraryItem, stagedPlaylist, setStagedPlaylist, stageTracks,
         setStagingState,
-    isMobile } = useContext(NavigationContext)
+     } = useContext(DraftingContext)
+
 
 
     const clearSearch = (e: React.MouseEvent<HTMLButtonElement>) => {

@@ -1,7 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Album, Artist, Playlist, SearchResults } from "../../../../server/types";
 import TrackClass from '../../../models/Tracks';
-import { NavigationContext } from "../../../state_management/NavigationProvider";
+import { ViewContext } from "../../../state_management/ViewProvider";
+import { DraftingContext } from "../../../state_management/DraftingPaneProvider";
 
 type TrackResult = {
     type: "track"
@@ -40,12 +41,14 @@ export interface ResultCardProps {
 }
 
 const ResultCard: React.FC<ResultCardProps> = (props: ResultCardProps) => {
+    
 
     const [artistAlbums, setArtistAlbums] = useState<SearchResults['albums']>(null)
     const [artistAlbumsCards, setArtistAlbumsCards] = useState<React.JSX.Element[]>(null)
     const [expanded, setExpanded] = useState(false)
 
-    const { isMobile, stagingState} = useContext(NavigationContext)
+    const { isMobile} = useContext(ViewContext)
+    const {stagingState, selectedLibraryItem} = useContext(DraftingContext)
 
     const albumProps = props.result as AlbumResult
     const artistProps = props.result as ArtistResult
@@ -88,17 +91,30 @@ const ResultCard: React.FC<ResultCardProps> = (props: ResultCardProps) => {
         case ("album"):
 
             console.log(props.result.item)
+            // const albumProps = props.result as AlbumResult
+
 
 
             return (
-                <div style={{ display: "flex", width: "calc(50% - 20px)", minHeight: "80px" }} className="track-card">
+                <div style={{position: "relative", display: "flex", width: "calc(50% - 20px)", minHeight: "80px", height: "10vh",}} className="track-card">
                     <div style={{ display: "inline-flex", position: "relative", height: "100%", aspectRatio: "1 / 1" }}>
-                        <img loading="lazy" style={{ position: "relative", height: "100%", aspectRatio: "1 / 1" }} src={props.result.item?.images[0]?.url} alt={`${props.result.item?.name||"Unknown"} cover`}></img>
-                        <div onClick={() =>{  albumProps.displayTracks(albumProps.item)}} style={{ top: 0, left: 0, width: "100%", height: "100%", position: "absolute" }}></div>
-                    </div>
-                    <p style={{ display: 'inline' }} className={"track-card-text"}>Album: {props.result?.item?.name||"Unknown"}</p>
+                        <img onClick={() =>{  albumProps.displayTracks(albumProps.item)}} loading="lazy" style={{cursor: 'pointer', position: "relative", height: "100%", aspectRatio: "1 / 1" }} src={props.result.item?.images[0]?.url} alt={`${props.result.item?.name||"Unknown"} cover`}></img>
+                        {/* <div style={{margin:"auto"}}>
+                        <p style={{ margin:"0" }} className={"track-card-text"}>{props.result?.item?.name||"Unknown"}</p>
+                        <p style={{margin:"0" }} className={"track-card-text"}>{props.result?.item?.artists.at(0).name||"Unknown"}</p>
+                        </div> */}
 
-                </div>
+                    </div>
+                    <div onClick={() =>{  albumProps.displayTracks(albumProps.item)}} style={{cursor: 'pointer', overflow: "hidden", width: "100%"}}>
+                    <p style={{ margin:"0", color: selectedLibraryItem?.id===albumProps.item.id?"rgb(135, 135, 135, 0.35)":"inherit" }} className={"track-card-text"}>{props.result?.item?.name||"Unknown"}</p>
+                    <p style={{margin:"0", color: selectedLibraryItem?.id===albumProps.item.id?"rgb(135, 135, 135, 0.35)":"inherit" }} className={"track-card-text artist-text"}>{props.result?.item?.artists.at(0).name||"Unknown"}</p>
+                    </div>
+                    {/* <div onClick={() =>{  albumProps.displayTracks(albumProps.item)}} style={{cursor: "pointer", backgroundColor:'black', opacity:selectedLibraryItem?.id===albumProps.item.id?".5":"0", top: 0, left: 0, width: "100%", height: "100%", position: "absolute" }}>
+                        
+
+
+                    </div> */}
+             </div>
             )
                 ;
         case ("artist"):
@@ -136,16 +152,16 @@ const ResultCard: React.FC<ResultCardProps> = (props: ResultCardProps) => {
             return (
                 <>
                 <div style={{ maxWidth:expanded?'100vw':'450px',height:"calc(100% - 100px)",background: "#141414", transition: expanded?'width 1s':"none", width: expanded?isMobile?"100%":stagingState==="open"?"calc(50%)":"calc(75%)":"50%", minHeight: "80px", position:expanded?'fixed':'relative', top:expanded?'100px':'0px', zIndex:artistProps.expandedArtistId===albumProps.item.id? 1000 : 'unset', overflowY: 'hidden', display:"flex", flexDirection:'column' }}>
-                    <div style={{ display: "flex", margin: 0, padding: "5px"}} className="track-card">
+                    <div style={{ display: "flex", margin: 0, padding: "5px", height: (artistProps.expandedArtistId===albumProps.item.id) && expanded?"7vh":"10vh"}} className="track-card">
                         <div style={{ display: "inline-flex", position: "relative", height: "100%", aspectRatio: "1 / 1" }}>
                             <img loading="lazy" style={{ borderRadius: "50%", position: "relative", height: "100%", aspectRatio: "1 / 1" }} src={props.result.item?.images[0]?.url} alt={`${props.result.item?.name||"Unknown"} cover`}></img>
-                            <div onClick={() => displayAlbums()} style={{ top: 0, left: 0, width: "100%", height: "100%", position: "absolute" }}></div>
+                            <div onClick={() => displayAlbums()} style={{cursor: "pointer", top: 0, left: 0, width: "100%", height: "100%", position: "absolute" }}></div>
                         </div>
-                        <p style={{ display: 'inline' }} className={"track-card-text"}>Artist: {props.result?.item?.name||"Unknown"}</p>
+                        <p onClick={() => displayAlbums()} style={{ display: 'inline' }} className={"track-card-text artist-text"}>{props.result?.item?.name||"Unknown"}</p>
                       
         
                     </div>
-                    <div style={{ display: (artistProps.expandedArtistId===albumProps.item.id) && expanded?"block":"none", width:(artistProps.expandedArtistId===albumProps.item.id) && expanded?"100%":"50%",flex:'1' ,   background: "rgb(33 33 33)", overflowY:'auto', transition:expanded?"1s": "unset",  zIndex:artistProps.expandedArtistId===albumProps.item.id? 1000 : 'unset' }}>
+                    <div style={{ flexFlow:"row wrap", display: (artistProps.expandedArtistId===albumProps.item.id) && expanded?"flex":"none", width:(artistProps.expandedArtistId===albumProps.item.id) && expanded?"100%":"50%",flex:'1' ,   background: "rgb(33 33 33)", overflowY:'auto', transition:expanded?"1s": "unset",  zIndex:artistProps.expandedArtistId===albumProps.item.id? 1000 : 'unset' }}>
                    {artistAlbumsCards}
                </div>
    
@@ -162,25 +178,26 @@ const ResultCard: React.FC<ResultCardProps> = (props: ResultCardProps) => {
 
 
             return (
-                <div style={{ display: "flex", width: "calc(50% - 20px)", height: "80px" }} className="track-card" >
+                <div style={{position:'relative', display: "flex", width: "calc(50% - 20px)", height: "10vh" }} className="track-card" >
                     <div style={{ display: "inline-flex", position: "relative", height: "100%", aspectRatio: "1 / 1" }}>
                         <img loading="lazy" style={{ position: "relative", height: "100%", aspectRatio: "1 / 1" }} src={props.result.item?.images[0]?.url} alt={`${props.result.item?.name||"unknown"} cover`}></img>
-                        <div onClick={() =>{ playlistProps.displayTracks(playlistProps.item)}} style={{ top: 0, left: 0, width: "100%", height: "100%", position: "absolute" }}></div>
                     </div>
-                    <p style={{ display: 'inline' }} className={"track-card-text"}>Playlist: {props.result?.item?.name||"Untitled"}</p>
+                    <p style={{ display: 'inline' }} className={"track-card-text"}>{props.result?.item?.name||"Untitled"}</p>
+                    <div onClick={() =>{ playlistProps.displayTracks(playlistProps.item)}} style={{cursor: "pointer", backgroundColor:'black', opacity:selectedLibraryItem?.id===playlistProps.item.id?".5":"0", top: 0, left: 0, width: "100%", height: "100%", position: "absolute" }}></div>
+
                 </div>
             )
         case ("track"):
             const trackProps = props.result as TrackResult
 
             return (
-                <div style={{ display: "flex", width: "50%", height: "80px" }} className="track-card" >
+                <div style={{ display: "flex", width: "50%", minHeight: "80px", height: "10vh" }} className="track-card" >
                     <div style={{ display: "inline-flex", position: "relative", height: "100%", aspectRatio: "1 / 1" }}>
 
                         <img loading="lazy" style={{ position: "relative", height: "100%", aspectRatio: "1 / 1" }} src={props.result.item?.track.album?.images[0].url} alt={`${props.result.item.track.name} cover`}></img>
                         {/* <div onClick={()=>playPreviewAudio(track.preview_url)} style={{color: !previewState?"inherit":previewState,top:0, left:0,width:"100%", height:"100%", position:"absolute"}}>preview</div> */}
                     </div>
-                    <p style={{ display: 'inline' }} className={"track-card-text"}>Track: {trackProps.item?.track?.name||"Unknown"}</p>
+                    <p style={{ display: 'inline' }} className={"track-card-text"}> {trackProps.item?.track?.name||"Unknown"}</p>
                     <button style={{width:"40px", height: "100%", borderRadius: "10%"}} disabled={trackProps.isDrafted(trackProps.item.track.id)} onClick={(e) => {e.preventDefault(); trackProps.draftTrack(e, trackProps.item)}}>+</button>
 
 

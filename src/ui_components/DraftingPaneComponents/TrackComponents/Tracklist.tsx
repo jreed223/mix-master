@@ -3,7 +3,7 @@ import TrackCard, { TrackCardProps } from "./TrackCard"
 import TrackClass from "../../../models/Tracks"
 import { DraftingContext } from "../../../state_management/DraftingPaneProvider"
 import { TracklistContext } from "../../../state_management/TracklistProvider"
-import { NavigationContext } from "../../../state_management/NavigationProvider"
+import { ViewContext } from "../../../state_management/ViewProvider"
 
 
 interface tracklistProps{
@@ -22,7 +22,7 @@ export default function Tracklist(props:tracklistProps){
 
   
         const {allTracks, filteredTracks, loadingState} = useContext(TracklistContext)
-        const {stagedPlaylist, stageTracks} = useContext(NavigationContext)
+        const {stagedPlaylist, stageTracks} = useContext(DraftingContext)
 
 const [displayedTracks, setDisplayedTracks] = useState<ReactElement<TrackCardProps>[]>([])
 
@@ -89,77 +89,8 @@ useEffect(()=>{
 }, [editSelectedItemList2, allTracks, props.selectedLibraryItems, stagedPlaylist, filteredTracks, stageTracks, props.tracklistArea, props, deselectTrack])
 
 
-// useEffect(()=>{
-//     if(allTracks){
-//         const hiddenItems = allTracks.filter(trackClass=>{ //return all tracks that are hidden
-//             const staged  = stagedPlaylist.some(item=>item.track.id === trackClass.track.id)
-    
-//             // const staged2  = stagedPlaylist.includes(trackClass.track)
-//             const filteredOut = !filteredTracks.some(filteredTrack => filteredTrack.track.id === trackClass.track.id)
-//             // console.log(`staged: ${staged}, filtered: ${filteredOut}`)
-    
-    
-//             return staged||filteredOut
-//         })
-//         console.log("ALL TRACKS!!! ", allTracks)
-    
-//         let hiddenTracksList = []
-//         let displayedTrackList = []
-//         allTracks.map(trackClass=>{
-                        
-//             if(hiddenItems.includes(trackClass)){
-           
-//                 const trackCard =  <TrackCard deselectTrack={deselectTrack}  tracklistArea={props.tracklistArea} draftTrack={stageTracks} key={`selected-playlist-${trackClass.track.id}`} trackClass={trackClass} onSelectedTrack={editSelectedItemList2} displayHidden={true} selectedLibraryItems={props.selectedLibraryItems}></TrackCard>
-//                 hiddenTracksList.push(trackCard)
-//                 return TrackCard
-               
-//             }else
-      
-//             {
-              
-//                 const trackCard =  <TrackCard deselectTrack={deselectTrack} tracklistArea={props.tracklistArea}  draftTrack={stageTracks} key={`selected-playlist-${trackClass.track.id}`} trackClass={trackClass} onSelectedTrack={editSelectedItemList2} displayHidden={false}  selectedLibraryItems={props.selectedLibraryItems}></TrackCard>
-//                 displayedTrackList.push(trackCard)
-//                 // setDisplayedTracks(displayedTracks.concat([trackCard]))
-//                 return TrackCard
-                
-//             }})
-//         }
-
-// })
 
 if(displayedTracks&&hiddenTracks){
-    // const hiddenItems = allTracks.filter(trackClass=>{ //return all tracks that are hidden
-    //     const staged  = stagedPlaylist.some(item=>item.track.id === trackClass.track.id)
-
-    //     // const staged2  = stagedPlaylist.includes(trackClass.track)
-    //     const filteredOut = !filteredTracks.some(filteredTrack => filteredTrack.track.id === trackClass.track.id)
-    //     // console.log(`staged: ${staged}, filtered: ${filteredOut}`)
-
-
-    //     return staged||filteredOut
-    // })
-    // console.log("ALL TRACKS!!! ", allTracks)
-
-    // let hiddenTracksList = []
-    // let displayedTrackList = []
-    // allTracks.map(trackClass=>{
-                    
-    //     if(hiddenItems.includes(trackClass)){
-       
-    //         const trackCard =  <TrackCard deselectTrack={deselectTrack}  tracklistArea={props.tracklistArea} draftTrack={stageTracks} key={`selected-playlist-${trackClass.track.id}`} trackClass={trackClass} onSelectedTrack={editSelectedItemList2} displayHidden={true} selectedLibraryItems={props.selectedLibraryItems}></TrackCard>
-    //         hiddenTracksList.push(trackCard)
-    //         return TrackCard
-           
-    //     }else
-  
-    //     {
-          
-    //         const trackCard =  <TrackCard deselectTrack={deselectTrack} tracklistArea={props.tracklistArea}  draftTrack={stageTracks} key={`selected-playlist-${trackClass.track.id}`} trackClass={trackClass} onSelectedTrack={editSelectedItemList2} displayHidden={false}  selectedLibraryItems={props.selectedLibraryItems}></TrackCard>
-    //         displayedTrackList.push(trackCard)
-    //         // setDisplayedTracks(displayedTracks.concat([trackCard]))
-    //         return TrackCard
-            
-    //     }})
 
         if(loadingState === "filtering"){
             return(

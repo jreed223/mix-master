@@ -6,7 +6,9 @@ import LoginPage from './ui_components/LoginPage';
 
 import NavBar from './ui_components/NavBar';
 import { UserProfile } from '../server/types';
-import NavigationProvider from './state_management/NavigationProvider';
+import ViewProvider from './state_management/ViewProvider';
+import DraftingProvider from './state_management/DraftingPaneProvider';
+import AudioProvider from './state_management/AudioProvider';
 
 
 
@@ -47,11 +49,16 @@ function App() {
     )
   }else if(currentUser){
     return(
-    <NavigationProvider>
-      <div>
-        <NavBar currentUser={currentUser}></NavBar>
-      </div>
-    </NavigationProvider>)
+    <ViewProvider>
+      <DraftingProvider>
+        <AudioProvider>
+          <div>
+            <NavBar currentUser={currentUser}></NavBar>
+          </div>
+      </AudioProvider>
+      </DraftingProvider>
+    </ViewProvider>
+    )
   }else{ //If no user found and not authorizing user
     return <LoginPage></LoginPage>
         }

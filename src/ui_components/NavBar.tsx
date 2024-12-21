@@ -1,9 +1,11 @@
 import React, { useCallback, useContext, useEffect, useState } from "react"
 // import { UserProfile } from '@spotify/web-api-ts-sdk';
 import { UserProfile } from "../../server/types";
-import { AudioState, NavigationContext } from "../state_management/NavigationProvider";
+import { ViewContext } from "../state_management/ViewProvider";
 import TrackClass from "../models/Tracks";
 import MainContent from "./MainContent";
+import { DraftingContext } from "../state_management/DraftingPaneProvider";
+import { AudioContext, AudioContextType } from "../state_management/AudioProvider";
 // import { Button } from "@mui/material";
 
 interface navProps{
@@ -14,7 +16,9 @@ export type ViewName = 'Dashboard'|"Liked Playlists"|"User Playlists"|"Liked Alb
 
 
 export default function NavBar({currentUser}:navProps){
-    const {setIsPlaylistsView, isPlaylistsView, isMobile,  stagingState, setStagingState, currentAudio, currentAudioColor, selectedLibraryItem, stagedPlaylist,  setCurrentAudio, unstageTracks, stageTracks, isMaxDraftView, setIsMaxDraftView } = useContext(NavigationContext)
+    const {setIsPlaylistsView, isPlaylistsView, isMobile,   isMaxDraftView, setIsMaxDraftView } = useContext(ViewContext)
+    const {currentAudio} =  useContext<AudioContextType>(AudioContext)
+    const {stagingState, setStagingState, stagedPlaylist,  unstageTracks, stageTracks,  } = useContext(DraftingContext)
 
     const closeSearchAndCreation = useCallback(() =>{
         setStagingState('closed')
@@ -30,121 +34,121 @@ export default function NavBar({currentUser}:navProps){
 
     },[closeSearchAndCreation, setStagingState, stagingState])
 
-    const toggleAudio = ()=>{
-        if(currentAudio.audio.paused === true){
-            currentAudio.audio?.play()
+    // const toggleAudio = ()=>{
+    //     if(currentAudio.audio.paused === true){
+    //         currentAudio.audio?.play()
 
-        }else{
-            currentAudio.audio?.pause()
-        }
-    }
-    // const [currentCollection, setCurrentCollection] = useState<TrackClass[]>(null)
-    const [audioIdx, setAudioIdx] = useState(null)
-
-
-    useEffect(()=>{
-        if(selectedLibraryItem){
-            setAudioIdx(null)
-
-        }
-    },[selectedLibraryItem])
+    //     }else{
+    //         currentAudio.audio?.pause()
+    //     }
+    // }
+    // // const [currentCollection, setCurrentCollection] = useState<TrackClass[]>(null)
+    // const [audioIdx, setAudioIdx] = useState(null)
 
 
+    // useEffect(()=>{
+    //     if(selectedLibraryItem){
+    //         setAudioIdx(null)
 
-    useEffect(()=>{
+    //     }
+    // },[selectedLibraryItem])
 
-        if(currentAudio&&selectedLibraryItem&& currentAudio.audioDetails.track.getCollection()?.id===selectedLibraryItem?.id){
-            console.log(currentAudio.audioDetails.track.getCollection()?.id)
-            const currentIdx = selectedLibraryItem?.tracks?.findIndex((track)=>track.track?.id===currentAudio.audioDetails?.trackId)
-            console.log("CURRENTIDX: ", currentIdx)
-            setAudioIdx(currentIdx)
-        }
+
+
+    // useEffect(()=>{
+
+    //     if(currentAudio&&selectedLibraryItem&& currentAudio.audioDetails.track.getCollection()?.id===selectedLibraryItem?.id){
+    //         console.log(currentAudio.audioDetails.track.getCollection()?.id)
+    //         const currentIdx = selectedLibraryItem?.tracks?.findIndex((track)=>track.track?.id===currentAudio.audioDetails?.trackId)
+    //         console.log("CURRENTIDX: ", currentIdx)
+    //         setAudioIdx(currentIdx)
+    //     }
      
-    },[currentAudio, selectedLibraryItem])
+    // },[currentAudio, selectedLibraryItem])
 
-    const prevAudio = useCallback(()=>{
-        let audioPromise = currentAudio.audio.play()
+    // const prevAudio = useCallback(()=>{
+    //     let audioPromise = currentAudio.audio.play()
 
-        const currentTrack = selectedLibraryItem?.tracks?.at(audioIdx-1)
+    //     const currentTrack = selectedLibraryItem?.tracks?.at(audioIdx-1)
 
-        if(!currentAudio.audio.paused||!currentAudio.audio.ended){
-            if(audioPromise!==undefined){
-                audioPromise.then(()=>
-                    currentAudio.audio.pause()
-                ).catch(e=>console.log(e))
-            }
-            // currentAudio.audio.pause()
-        }
+    //     if(!currentAudio.audio.paused||!currentAudio.audio.ended){
+    //         if(audioPromise!==undefined){
+    //             audioPromise.then(()=>
+    //                 currentAudio.audio.pause()
+    //             ).catch(e=>console.log(e))
+    //         }
+    //         // currentAudio.audio.pause()
+    //     }
 
-        const audio = new Audio(currentTrack.track.preview_url)
+    //     const audio = new Audio(currentTrack.track.preview_url)
 
-        const nextAudioState: AudioState = {
-            url:currentTrack.track.preview_url,
-            audio: audio,
-            audioDetails: {
-                trackId: currentTrack.track.id,
-                artist: currentTrack.track.artists[0].name,
-                title: currentTrack.track.name,
-                track: currentTrack
+    //     const nextAudioState: AudioState = {
+    //         url:currentTrack.track.preview_url,
+    //         audio: audio,
+    //         audioDetails: {
+    //             trackId: currentTrack.track.id,
+    //             artist: currentTrack.track.artists[0].name,
+    //             title: currentTrack.track.name,
+    //             track: currentTrack
 
-            }
-        }
+    //         }
+    //     }
 
-        setCurrentAudio(nextAudioState)
-        nextAudioState.audio.play()
-    },[audioIdx, currentAudio?.audio, selectedLibraryItem, setCurrentAudio])
-
-
-    const nextAudio = useCallback(async ()=>{
-        let audioPromise = currentAudio.audio.play()
-
-        if(!currentAudio.audio.paused||!currentAudio.audio.ended){
-            if(audioPromise!==undefined){
-                audioPromise.then(()=>
-                    currentAudio.audio.pause()
-                ).catch(e=>console.log(e))
-            }
-            // await currentAudio.audio.pause()
-        }
-        let nextAudioState: AudioState;
-    if(audioIdx+1>=selectedLibraryItem.tracks.length||audioIdx===null){
-        const currentTrack = selectedLibraryItem?.tracks?.at(0)
-
-        const audio = new Audio(currentTrack.track.preview_url)
-        nextAudioState = {
-            url:currentTrack.track.preview_url,
-            audio: audio,
-            audioDetails: {
-                trackId: currentTrack.track.id,
-                artist: currentTrack.track.artists[0].name,
-                title: currentTrack.track.name,
-                track: currentTrack
-
-            }
-        }
-    }else{
-        const currentTrack = selectedLibraryItem?.tracks?.at(audioIdx+1)
-        const audio = new Audio(currentTrack.track.preview_url)
-        nextAudioState = {
-            url:currentTrack.track.preview_url,
-            audio: audio,
-            audioDetails: {
-                trackId: currentTrack.track.id,
-                artist: currentTrack.track.artists[0].name,
-                title: currentTrack.track.name,
-                track: currentTrack
-            }
-        }
-
-    }
+    //     setCurrentAudio(nextAudioState)
+    //     nextAudioState.audio.play()
+    // },[audioIdx, currentAudio?.audio, selectedLibraryItem, setCurrentAudio])
 
 
-        setCurrentAudio(nextAudioState)
-        nextAudioState.audio.play()
+    // const nextAudio = useCallback(async ()=>{
+    //     let audioPromise = currentAudio.audio.play()
+
+    //     if(!currentAudio.audio.paused||!currentAudio.audio.ended){
+    //         if(audioPromise!==undefined){
+    //             audioPromise.then(()=>
+    //                 currentAudio.audio.pause()
+    //             ).catch(e=>console.log(e))
+    //         }
+    //         // await currentAudio.audio.pause()
+    //     }
+    //     let nextAudioState: AudioState;
+    // if(audioIdx+1>=selectedLibraryItem.tracks.length||audioIdx===null){
+    //     const currentTrack = selectedLibraryItem?.tracks?.at(0)
+
+    //     const audio = new Audio(currentTrack.track.preview_url)
+    //     nextAudioState = {
+    //         url:currentTrack.track.preview_url,
+    //         audio: audio,
+    //         audioDetails: {
+    //             trackId: currentTrack.track.id,
+    //             artist: currentTrack.track.artists[0].name,
+    //             title: currentTrack.track.name,
+    //             track: currentTrack
+
+    //         }
+    //     }
+    // }else{
+    //     const currentTrack = selectedLibraryItem?.tracks?.at(audioIdx+1)
+    //     const audio = new Audio(currentTrack.track.preview_url)
+    //     nextAudioState = {
+    //         url:currentTrack.track.preview_url,
+    //         audio: audio,
+    //         audioDetails: {
+    //             trackId: currentTrack.track.id,
+    //             artist: currentTrack.track.artists[0].name,
+    //             title: currentTrack.track.name,
+    //             track: currentTrack
+    //         }
+    //     }
+
+    // }
+
+
+    //     setCurrentAudio(nextAudioState)
+    //     nextAudioState.audio.play()
 
     
 
-    },[audioIdx, currentAudio?.audio, selectedLibraryItem, setCurrentAudio])
+    // },[audioIdx, currentAudio?.audio, selectedLibraryItem, setCurrentAudio])
 
 
     return(
@@ -158,12 +162,12 @@ export default function NavBar({currentUser}:navProps){
                         {currentAudio
                         ?(
                             <>
-                            <div style={{margin:"0px 10px 0px 25px"}}>
+                            {/* <div style={{margin:"0px 10px 0px 25px"}}>
                                 <button style={{width: "30px", height:'30px', borderRadius:"50%"}} disabled={!(selectedLibraryItem && currentAudio)} onClick={()=>prevAudio()}>&lt;</button>
                                 <button style={{width: "50px", height:'50px', borderRadius:"50%", margin:'0px 10px'}} disabled={!(currentAudio)} onClick={()=>toggleAudio()}>{currentAudioColor==="#59b759"?'Pause':'Play'}</button>
                                 <button style={{width: "30px", height:'30px', borderRadius:"50%"}} disabled={!(selectedLibraryItem && currentAudio)} onClick={()=>nextAudio()}>&gt;</button>
                                 
-                            </div>
+                            </div> */}
                             <button style={{width: "40px", height:'25px', borderRadius:"25px", marginRight: '10px'}}disabled={!(currentAudio)} onClick={()=>!stagedPlaylist?.some(track=>track?.track?.id===currentAudio?.audioDetails?.trackId)?stageTracks([currentAudio.audioDetails.track]):unstageTracks([currentAudio.audioDetails.track])}>
                                     {!stagedPlaylist?.some(track=>track?.track?.id===currentAudio?.audioDetails?.trackId)?'+':'X'}
                                 </button>

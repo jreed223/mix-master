@@ -4,8 +4,7 @@ import { UserProfile } from '../../server/types';
 
 import DraftingArea from "./DraftingPaneComponents/DraftingPane";
 // import { LibraryComponents } from "./UserLibrary/LibraryComponents";
-import { NavigationContext } from "../state_management/NavigationProvider";
-import DraftingProvider from "../state_management/DraftingPaneProvider";
+import { ViewContext } from "../state_management/ViewProvider";
 // import SearchBar from "./SearchPane/SearchBar";
 import { submissionStatusState } from "./DraftingPaneComponents/Playlists/DraftPlaylistArea";
 import { LibrarySelectionPane } from "./LibrarySelectionComponents/LibrarySelectionPane";
@@ -18,7 +17,9 @@ interface UserLibraryProps {
 
 export default function MainContent(props: UserLibraryProps) {
 
-    const {setStagingState, setUser} = useContext(NavigationContext)
+    const { setUser} = useContext(ViewContext)
+    // const {setStagingState} = useContext(DraftingContext)
+
     const [reloadKey, setReloadKey] = useState<number>(0)
     const [dialogText, setDialogText]=useState<submissionStatusState>(null)
 
@@ -31,12 +32,12 @@ export default function MainContent(props: UserLibraryProps) {
 
     
     return (
-        <DraftingProvider setStagingState={setStagingState}>
+        // <DraftingProvider >
             <div className="main-content-area" style={{ position: "relative" }}>
                 <DraftingArea setDialogText={setDialogText} setReloadKey={setReloadKey}></DraftingArea>
                 <LibrarySelectionPane dialogText={dialogText} setDialogText={setDialogText} reloadKey={reloadKey} userId={props.currentUser.id}></LibrarySelectionPane>
             </div>
-        </DraftingProvider>
+        // </DraftingProvider>
         )
 
 

@@ -21,7 +21,7 @@ export type TracklistContextType = {
     popularityFilter: number
     setPopularityFilter: React.Dispatch<React.SetStateAction<number>>
     dateRange: [Date, Date]
-    setDateRange: React.Dispatch<React.SetStateAction<[Date, Date]>>
+    setDateRange: React.Dispatch<React.SetStateAction<Date|[Date, Date]>>
     artistsList: Artist[]
     setArtistsList: React.Dispatch<React.SetStateAction<Artist[]>>
     artistQuery: string
@@ -47,16 +47,16 @@ export default function TracklistProvider({children}){
     const [selectedArtistFilters, setSelectedArtistFilters] = useState<Artist[]>([])
 
 
-    const setAudioFeatures = async (trackClassList: TrackClass[]) => {
-        const response = await fetch("/spotify-data/audio-features", {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(trackClassList.map(trackClass => trackClass.track))
-        })
+    // const setAudioFeatures = async (trackClassList: TrackClass[]) => {
+    //     const response = await fetch("/spotify-data/audio-features", {
+    //         method: "POST",
+    //         headers: {
+    //             'Content-Type': 'application/json'
+    //         },
+    //         body: JSON.stringify(trackClassList.map(trackClass => trackClass.track))
+    //     })
 
-        if(response.ok){
+        // if(response.ok){
             // const features: Features[] = await response.json()
             // let startIdx = 0
     
@@ -65,11 +65,11 @@ export default function TracklistProvider({children}){
             //     startIdx += 1
             // }
             // console.log("tracks after changes: ", trackClassList)
-        }else{
-            //TODO: ERROR HANDLING
-        }
+    //     }else{
+         //TODO: ERROR HANDLING
+    //     }
        
-    }
+    // }
 
     // const filterArtistSearch = (tracklist: TrackClass[] )=>{
     //     const artistsInTracklist = Array.from(new Set (tracklist.flatMap((item)=>item.track.artists.flatMap((artist)=>artist.name))))
@@ -81,6 +81,54 @@ export default function TracklistProvider({children}){
     //     }
 
 
+    // }
+
+    // const audioFeatureFilter = (tracklist: TrackClass[])=>{
+                // if (!trackDataState) {
+        //     // setFilteredTracks(allTracks)
+        //     return
+        // }
+
+        //        let filterPlaylist = tracklist
+
+        //TODO: Uncomment the below code when application is given a production license, this will allow filetring using audio features endpoint
+        // if (trackDataState != null && trackDataState.length > 0) { //runs only TrackData has been initialized
+        //     for (let trackData of trackDataState) { //iterates through each TrackData object
+        //         if (trackData.audioFeatures) { //checks if audiofeatures have been fetched
+        //             console.log("audio features already set")
+
+        //         } else { //runs if audioFeatures have not been set for the tracks in a TrackData object
+        //             await setAudioFeatures(trackData.tracks)//fetches audio features for the trackData tracks
+        //             // setHasAudioFeatures(true)
+        //             trackData.audioFeatures = true
+        //             console.log("audio features set")
+        //         }
+        //     }
+        // }
+
+
+                //TODO: Uncomment the below code when application is given a production license, this will allow filetring using audio features endpoint
+        // for (let feature of currentFilters) { //iterates through keys to of filter names
+        //     if (typeof selectedFeatures[feature] === "number") {
+        //         if (feature === "key" || feature === "mode" || feature === "time_signature") {
+        //             const featureVal = selectedFeatures[feature]
+        //             filterPlaylist = filterPlaylist.filter(item => { //redeclares filterplaylist using the filter function
+        //                 return item.audio_features[feature] === featureVal  //returns tracks with feature value that are in range of +/-.1 of selecetd value
+        //             })
+        //         } else if (feature === "tempo" || feature === "loudness") {
+        //             const featureVal = selectedFeatures[feature]
+        //             filterPlaylist = filterPlaylist.filter(item => { //redeclares filterplaylist using the filter function
+        //                 return item.audio_features[feature] >= featureVal - 5 && item.audio_features[feature] <= featureVal + 5  //returns tracks with feature value that are in range of +/-.1 of selecetd value
+        //             })
+        //         } else {
+        //             const featureVal = selectedFeatures[feature] / 100 //sets value of the selected feature
+        //             // console.log("feature-val: ",featureVal)
+        //             filterPlaylist = filterPlaylist.filter(item => { //redeclares filterplaylist using the filter function
+        //                 return item.audio_features[feature] >= featureVal - .075 && item.audio_features[feature] <= featureVal + .075  //returns tracks with feature value that are in range of +/-.1 of selecetd value
+        //             })
+        //         }
+        //     }
+        // }
     // }
 
     const filterByArtist = useCallback((tracklist: TrackClass[] )=>{
@@ -149,28 +197,11 @@ export default function TracklistProvider({children}){
         }
     },[dateRange])
 
+
+
     const filterFeatures = useCallback(async () => {
 
-        // if (!trackDataState) {
-        //     // setFilteredTracks(allTracks)
-        //     return
-        // }
 
-
-        //TODO: Uncomment the below code when application is given a production license, this will allow filetring using audio features endpoint
-        // if (trackDataState != null && trackDataState.length > 0) { //runs only TrackData has been initialized
-        //     for (let trackData of trackDataState) { //iterates through each TrackData object
-        //         if (trackData.audioFeatures) { //checks if audiofeatures have been fetched
-        //             console.log("audio features already set")
-
-        //         } else { //runs if audioFeatures have not been set for the tracks in a TrackData object
-        //             await setAudioFeatures(trackData.tracks)//fetches audio features for the trackData tracks
-        //             // setHasAudioFeatures(true)
-        //             trackData.audioFeatures = true
-        //             console.log("audio features set")
-        //         }
-        //     }
-        // }
 
         let filterPlaylist: TrackClass[] = [];
         console.log("FILTER FEATURES")
@@ -193,28 +224,7 @@ export default function TracklistProvider({children}){
         
 
         
-        //TODO: Uncomment the below code when application is given a production license, this will allow filetring using audio features endpoint
-        // for (let feature of currentFilters) { //iterates through keys to of filter names
-        //     if (typeof selectedFeatures[feature] === "number") {
-        //         if (feature === "key" || feature === "mode" || feature === "time_signature") {
-        //             const featureVal = selectedFeatures[feature]
-        //             filterPlaylist = filterPlaylist.filter(item => { //redeclares filterplaylist using the filter function
-        //                 return item.audio_features[feature] === featureVal  //returns tracks with feature value that are in range of +/-.1 of selecetd value
-        //             })
-        //         } else if (feature === "tempo" || feature === "loudness") {
-        //             const featureVal = selectedFeatures[feature]
-        //             filterPlaylist = filterPlaylist.filter(item => { //redeclares filterplaylist using the filter function
-        //                 return item.audio_features[feature] >= featureVal - 5 && item.audio_features[feature] <= featureVal + 5  //returns tracks with feature value that are in range of +/-.1 of selecetd value
-        //             })
-        //         } else {
-        //             const featureVal = selectedFeatures[feature] / 100 //sets value of the selected feature
-        //             // console.log("feature-val: ",featureVal)
-        //             filterPlaylist = filterPlaylist.filter(item => { //redeclares filterplaylist using the filter function
-        //                 return item.audio_features[feature] >= featureVal - .075 && item.audio_features[feature] <= featureVal + .075  //returns tracks with feature value that are in range of +/-.1 of selecetd value
-        //             })
-        //         }
-        //     }
-        // }
+
         console.log("filtered playlist", filterPlaylist)
         
 

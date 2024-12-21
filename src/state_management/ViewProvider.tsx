@@ -1,0 +1,70 @@
+import React, { createContext, useEffect, useMemo, useState } from "react"
+import { UserProfile } from "../../server/types";
+// import { UserProfile } from '@spotify/web-api-ts-sdk';
+// import { Button } from "@mui/material";
+
+
+export type ViewName = 'Dashboard'|"Liked Playlists"|"User Playlists"|"Liked Albums"|"All Playlists"
+
+export type ViewContextType = {
+    setUser: React.Dispatch<React.SetStateAction<UserProfile>>,
+    user: UserProfile,
+    setIsMobile: React.Dispatch<React.SetStateAction<boolean>>,
+    isMobile: boolean
+    setIsPlaylistsView: React.Dispatch<React.SetStateAction<boolean>>,
+    isPlaylistsView: boolean,
+    setIsMaxDraftView: React.Dispatch<React.SetStateAction<boolean>>,
+    isMaxDraftView: boolean
+}
+    
+const ViewContext = createContext<ViewContextType>(null)
+
+
+export default function ViewProvider({children}){
+
+    const [user, setUser] = useState<UserProfile>(null);
+    const [isMobile, setIsMobile] = useState(false)
+    const [windowSize, setWindowSize] = useState({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    const [isPlaylistsView, setIsPlaylistsView] = useState(true)
+    const [isMaxDraftView, setIsMaxDraftView] = useState(false)
+
+    useEffect(()=>{
+        const setViewStyle = ()=>{
+            setWindowSize({
+                width: window.innerWidth,
+                height: window.innerHeight,
+              });
+          
+        }
+        setViewStyle()
+        window.addEventListener('resize', setViewStyle)
+
+        return () => {
+          window.removeEventListener('resize', setViewStyle);
+        };
+    },[])
+    useEffect(()=>{
+        if((windowSize.width<900)||((windowSize.width/2)-125 < windowSize.height/4)){
+            setIsMobile(true)
+        }else{
+            setIsMobile(false)
+        }
+    },[windowSize.height, windowSize.width])
+
+
+
+    const context: ViewContextType = useMemo(()=>({isMaxDraftView, setIsMaxDraftView, setIsPlaylistsView, isPlaylistsView, isMobile, setIsMobile, user, setUser }), [ isMaxDraftView, isMobile, isPlaylistsView, user])
+
+
+
+    return(
+        <ViewContext.Provider value={context}>
+            {children}
+        </ViewContext.Provider>
+    )
+}
+
+export {ViewContext}
