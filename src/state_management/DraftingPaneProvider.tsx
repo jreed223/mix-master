@@ -1,6 +1,7 @@
 import React, { createContext, useCallback,  useMemo, useState } from "react"
 import TrackClass from "../models/Tracks";
 import TrackCollection from "../models/libraryItems";
+import { Album, Playlist } from "../../server/types";
 
 
 
@@ -31,15 +32,44 @@ export default function DraftingProvider({ children}){
 
 
 
-    const displayTracks = useCallback((selection: TrackCollection) => {
+    const displayTracks = useCallback(async (selection: TrackCollection | Album['album'] | Playlist) => {
         setStagingState("open")
 
-        setSelectedLibraryItem(selection)
+        if(selection instanceof TrackCollection){
+            setSelectedLibraryItem(prev=>(selection.id !== selectedLibraryItem?.id)?selection:prev)
+
+        }else if (selection.type === "album") {
+            console.log(selection.href)
+            const albumObject: Album['album'] = await fetch("/spotify-data/album", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ id: selection.id })
+                // headers: {"id" : `${this.id}` }
+            }).then(async (res) => {
+                const album = await res.json()
+                return album
+            })
+            const tracklistClass = new TrackCollection(albumObject)
+            console.log('TRACKLIST CLASS: ', tracklistClass)
+            setSelectedLibraryItem(tracklistClass)
+            setStagingState('open')
+
+        } else if (selection.type === "playlist") {
+            const tracklistClass = new TrackCollection(selection)
+            setSelectedLibraryItem(tracklistClass)
+            setStagingState('open')
+
+        }
+        
+
+        // setSelectedLibraryItem(selection)
         console.log("ITEM SELECTED: ", selection)
 
-        if (selection.id !== selectedLibraryItem?.id) {
-            setSelectedLibraryItem(selection)
-        }
+        // if (selection.id !== selectedLibraryItem?.id) {
+        //     setSelectedLibraryItem(selection)
+        // }
 
 
     },[selectedLibraryItem?.id, setSelectedLibraryItem, setStagingState])

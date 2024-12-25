@@ -9,6 +9,10 @@ import { album } from '../controllers/supplementalControllers/album';
 import { artistAlbums } from '../controllers/supplementalControllers/artistAlbums';
 import { addTracks } from '../controllers/add-remove-items';
 import { newPlaylist } from '../controllers/create-playlist';
+import { artist } from '../controllers/supplementalControllers/artist';
+import { user } from '../controllers/supplementalControllers/user';
+import { likedTracks } from '../controllers/supplementalControllers/likedTracks';
+import { usersPlaylists } from '../controllers/supplementalControllers/userPlaylists';
 
 
 // export const supplementalRoutes = (app: Application)=>{
@@ -41,6 +45,12 @@ export const searchBarRoutes = (app: Application)=>{
     app.post("/spotify-data/search-results", refreshTokens, searchResults)
     app.post("/spotify-data/album",refreshTokens, album)
     app.post("/spotify-data/artistAlbums",refreshTokens, artistAlbums)
+    app.post("/spotify-data/artist", refreshTokens, artist)
+    app.post("/spotify-data/user", refreshTokens, user)
+    app.get("/spotify-data/liked-tracks", refreshTokens, likedTracks)
+    app.post("/spotify-data/users-playlists", refreshTokens, usersPlaylists)
+
+
 
     
 }

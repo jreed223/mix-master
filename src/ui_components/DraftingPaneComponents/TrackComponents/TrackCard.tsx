@@ -3,6 +3,7 @@ import TrackClass from '../../../models/Tracks';
 import { DraftingContext, DraftingContextType } from "../../../state_management/DraftingPaneProvider";
 import { ViewContext, ViewContextType } from "../../../state_management/ViewProvider";
 import { AudioContext, AudioContextType } from "../../../state_management/AudioProvider";
+import { minHeight } from "@mui/system";
 
 export interface TrackCardProps{
     tracklistArea: string
@@ -33,6 +34,7 @@ const TrackCard: React.FC<TrackCardProps> = (
 
     const {currentAudio, setCurrentAudio, currentAudioColor} = useContext<AudioContextType>(AudioContext)
     const {stageTracks, stagedPlaylist} = useContext<DraftingContextType>(DraftingContext)
+    const {isMobile, setSelectedProfile, setDisplayProfile} = useContext(ViewContext)
 
     const [isChecked, setIsChecked]= useState(false)
 
@@ -74,6 +76,8 @@ useEffect(()=>{
         color: "#878787"}:
 
             {
+                minHeight:isMobile?'unset':'80px',
+                height:isMobile?props.tracklistArea==="search-bar-card"?'8vh':'7vh':props.tracklistArea==="search-bar-card"?'12vh':'11vh',
                 display: 'flex',
                 alignItems: 'center',
                 width: props.tracklistArea==="search-bar-card"?"calc(50% - 10px)":"unset",
@@ -156,7 +160,7 @@ useEffect(()=>{
   
     const trackImgUrl = props.trackClass.track?.album?.images[0]?.url||props.trackClass.getCollection().image.url||props.trackClass.track?.images[0]?.url
     return(
-        <div className={`${props.tracklistArea} track-card`} id={props.trackClass?.track?.id} style={displayStyle}>
+        <div className={`${props.tracklistArea} track-card`}  id={props.trackClass?.track?.id} style={displayStyle}>
             
             {/* <input readOnly checked={isChecked} key={`checkbox-${track.id}`} type="checkbox" onClick={(e)=>handleCheck()}/> */}
             {props.tracklistArea==="draft-playlist"?
@@ -164,7 +168,7 @@ useEffect(()=>{
             <button style={{width:"40px", height: "100%", borderRadius: "10%"}} onClick={(e)=>{e.preventDefault(); props.draftTrack([props.trackClass]); props.deselectTrack(props.trackClass?.track?.id);}}>&#10006;
             </button>
 
-                        <div onClick={()=>handleCheck()}  style={{cursor:"pointer",position: "relative", textAlign:"right",display:"flex", flexDirection:"column", flexGrow: '1', width: "0%", textWrap:'nowrap', height:"100%", justifyContent:'center'}}>
+                        <div onClick={()=>handleCheck()}  style={{marginRight:"7px", cursor:"pointer",position: "relative", textAlign:"right",display:"flex", flexDirection:"column", flexGrow: '1', width: "0%", textWrap:'nowrap', height:"100%", justifyContent:'center'}}>
 
                         {/* <div onClick={()=>handleCheck()} style={{cursor:"pointer", top:0, left:0,width:"100%", height:"100%", position:"absolute",  }}> */}
                         <p style={{margin:"0px", color: isChecked?"rgb(135, 135, 135, 0.35)":"inherit"}} className="track-card-text">{props.trackClass.track.name}</p>
@@ -185,14 +189,14 @@ useEffect(()=>{
             </div>
             {props.tracklistArea==="selected-playlist"||props.tracklistArea==="search-bar-card"?
             <>
-                        <div onClick={props.tracklistArea!=="search-bar-card"?()=>handleCheck():()=>{}}  style={{cursor:props.tracklistArea!=="search-bar-card"?'pointer':"default", position: "relative", display:"flex", flexDirection:"column",  overflow: 'hidden', flexGrow: '1', width: "0%", height:"100%", justifyContent:'center'}}>
+                        <div onClick={props.tracklistArea!=="search-bar-card"?()=>handleCheck():()=>{}}  style={{marginLeft: "7px", cursor:props.tracklistArea!=="search-bar-card"?'pointer':"default", position: "relative", display:"flex", flexDirection:"column",  overflow: 'hidden', flexGrow: '1', width: "0%", height:"100%", justifyContent:'center'}}>
                         {/* <div onClick={props.tracklistArea!=="search-bar-card"?()=>handleCheck():()=>{}} style={{cursor:props.tracklistArea!=="search-bar-card"?"pointer":"default",top:0, left:0,width:"100%", height:"100%", position:"absolute",  }}> */}
 
                         <p style={{margin:"0px", color: isChecked?"rgb(135, 135, 135, 0.35)":"inherit"}} className="track-card-text">{props.trackClass.track.name}</p>
                         
                         <div style={{maxWidth:"100%",  width: 'min-content', textWrap:'nowrap', justifyContent:'center'}}>
 
-                        <p onClick={(e)=>{e.stopPropagation()}} style={{cursor:'pointer', margin:"0px", color: isChecked?"rgb(135, 135, 135, 0.35)":"inherit"}} className="track-card-text artist-text">{props.trackClass.track.artists[0].name}</p>
+                        <p onClick={(e)=>{e.stopPropagation(); setDisplayProfile(true); setSelectedProfile({type: 'artist', profileId: props.trackClass.track.artists.at(0).id });}} style={{cursor:'pointer', margin:"0px", color: isChecked?"rgb(135, 135, 135, 0.35)":"inherit"}} className="track-card-text artist-text">{props.trackClass.track.artists[0].name}</p>
                         </div>
 
                         {/* </div> */}

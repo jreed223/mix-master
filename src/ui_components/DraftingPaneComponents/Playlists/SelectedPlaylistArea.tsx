@@ -78,11 +78,12 @@ const {popularityFilter, dateRange, setSelectedArtistFilters, artistQuery, artis
         setArtistQuery("")
         setSelectedArtistFilters([])
         setArtistsList(null)
+        // setAllTracks([])
 
         let allTracks: TrackClass[] = []
         
 
-        console.log("ITEMMMM: ",selectedLibraryItem)
+        // console.log("ITEMMMM: ",selectedLibraryItem)
         
 
         if (selectedLibraryItem && !selectedLibraryItem?.trackDataState) {
@@ -106,6 +107,9 @@ const {popularityFilter, dateRange, setSelectedArtistFilters, artistQuery, artis
                 // setArtistsList(artistsInTracklist)
                 setLoadingState(null)
 
+            }).catch((e)=>{
+                //TODO: Error Handling
+                // setLoadingState("loading")
             })
 
         } else if (selectedLibraryItem && selectedLibraryItem?.trackDataState) {

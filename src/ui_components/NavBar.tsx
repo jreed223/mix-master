@@ -168,13 +168,13 @@ export default function NavBar({currentUser}:navProps){
                                 <button style={{width: "30px", height:'30px', borderRadius:"50%"}} disabled={!(selectedLibraryItem && currentAudio)} onClick={()=>nextAudio()}>&gt;</button>
                                 
                             </div> */}
-                            <button style={{width: "40px", height:'25px', borderRadius:"25px", marginRight: '10px'}}disabled={!(currentAudio)} onClick={()=>!stagedPlaylist?.some(track=>track?.track?.id===currentAudio?.audioDetails?.trackId)?stageTracks([currentAudio.audioDetails.track]):unstageTracks([currentAudio.audioDetails.track])}>
+                            {/* <button style={{width: "40px", height:'25px', borderRadius:"25px", marginRight: '10px'}}disabled={!(currentAudio)} onClick={()=>!stagedPlaylist?.some(track=>track?.track?.id===currentAudio?.audioDetails?.trackId)?stageTracks([currentAudio.audioDetails.track]):unstageTracks([currentAudio.audioDetails.track])}>
                                     {!stagedPlaylist?.some(track=>track?.track?.id===currentAudio?.audioDetails?.trackId)?'+':'X'}
-                                </button>
-                            <div style={{flex:1, width:"70%", display: "flex", margin: 0, alignItems:"center", overflow:'hidden'}}>
+                                </button> */}
+                            {/* <div style={{flex:1, width:"70%", display: "flex", margin: 0, alignItems:"center", overflow:'hidden'}}> */}
                             {/* <div style={{ width: "100%", display: "flex"}}> */}
      
-                            <div style={{width:"100%"}}>{currentAudio?(<p style={{margin: 0, textWrap:'nowrap', textOverflow:'ellipsis', overflow:'hidden'}}>{`${currentAudio.audioDetails.title} by ${currentAudio.audioDetails?.artist}`}</p>):<></>}</div>
+                            {/* <div style={{width:"100%"}}>{currentAudio?(<p style={{margin: 0, textWrap:'nowrap', textOverflow:'ellipsis', overflow:'hidden'}}>{`${currentAudio.audioDetails.title} by ${currentAudio.audioDetails?.artist}`}</p>):<></>}</div> */}
                             {/* <button disabled={!(currentAudio)||!stagedPlaylist.some(track=>track.track.id===currentAudio.audioDetails.trackId)} onClick={()=>unstageTracks([currentAudio.audioDetails.track])}></button> */}
                             
                             
@@ -183,7 +183,7 @@ export default function NavBar({currentUser}:navProps){
                         
                         {/* </div> */}
                        
-                        </div>
+                        {/* </div> */}
                         </>
                         // <p>{`${currentAudio.audioDetails.title} by ${currentAudio.audioDetails?.artist}`}</p>
                         

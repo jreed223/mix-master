@@ -21,7 +21,7 @@ function App() {
     useEffect(()=>{
       // console.log("Use effect block running")
         console.log("attempting to load user")
-      fetch("/spotify-data/user").then(async user=>{
+      fetch("/spotify-data/current-user").then(async user=>{
         setCurrentUser(await user.json())
         setLoading(false)
       }).catch(()=>{

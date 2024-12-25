@@ -1,0 +1,184 @@
+import React, { ReactElement, useCallback, useContext, useEffect, useState } from "react"
+import { ViewContext } from "../../../state_management/ViewProvider"
+import { DraftingContext } from "../../../state_management/DraftingPaneProvider"
+import { Artist, SearchResults, UserProfile } from '../../../../server/types';
+// import { Features, PlaylistItem } from "../../../server/types";
+// import PlaylistClass from "../../models/playlistClass";
+import { userProfile } from '../../../../server/SpotifyData/controllers/userControllers/currentUser';
+import ResultCard, { ResultCardProps } from "./ResultCard";
+import { playlists } from '../../../../server/SpotifyData/controllers/libraryControllers/playlists';
+export type ArtistProfileProps = {
+    type: 'artist'
+    profileId:string
+}
+
+export type UserProfileProps = {
+    type: 'user'
+    profileId:string
+}
+
+interface ProfileViewProps {
+
+type:'artist'|'user'
+profileId:string;
+
+
+
+}
+const ProfileView: React.FC<ProfileViewProps> = (props: ProfileViewProps) => {
+    const artistProps = props as ArtistProfileProps
+    const userProps = props as UserProfileProps
+    // const [fullProfile, setFullProfile] = useState<UserProfile|Artist>(null)
+    const [currentContentCards, setCurrentContentCards] = useState<ReactElement<ResultCardProps>[]>(null)
+
+    const [currentContentList, setCurrentContentList] = useState(null)
+    const [currentProfileCard, setCurrentProfileCard] = useState< React.JSX.Element>(null)
+
+    const {  isMobile, setDisplayProfile, setSelectedProfile  } = useContext(ViewContext)
+    const { displayFeatureMenu, setStagingState, setDisplayFeatureMenu, stagingState, displayTracks } = useContext(DraftingContext)
+
+    const  fetchFullArtist = useCallback(async ()=>{
+        if(props.type==="artist"){
+
+            const artistObject: Artist = await fetch("/spotify-data/artist", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ id: artistProps.profileId })
+                // headers: {"id" : `${this.id}` }
+            }).then(async (res) => {
+                const artist = await res.json()
+                return artist
+            })
+
+            console.log(artistObject)
+            // setFullProfile(artistObject)
+            return artistObject
+
+        }
+    },[artistProps.profileId, props.type])
+    
+    const fetchAlbums = useCallback(async () => {
+
+            const albumsObject: SearchResults['albums'] = await fetch("/spotify-data/artistAlbums", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ id: artistProps.profileId })
+                // headers: {"id" : `${this.id}` }
+            }).then(async (res) => {
+                const albums = await res.json()
+                return albums
+            })
+
+            console.log(albumsObject)
+            setCurrentContentList(albumsObject.items)
+
+    }, [artistProps.profileId])
+
+    const  fetchFullUser = useCallback(async ()=>{
+        if(props.type==='user'){
+
+            const userObject: UserProfile = await fetch("/spotify-data/user", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ id: userProps.profileId })
+                // headers: {"id" : `${this.id}` }
+            }).then(async (res) => {
+                const user = await res.json()
+                return user
+            })
+
+            console.log(userObject)
+            return userObject
+            // setCurrentContent(userObject)
+
+        }
+    }, [props.type, userProps.profileId])
+        
+    const fetchPlaylists = useCallback(async () => {
+
+            const playlists: SearchResults['playlists'] = await fetch("/spotify-data/users-playlists", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ id: userProps.profileId })
+                // headers: {"id" : `${this.id}` }
+            }).then(async (res) => {
+                const playlists = await res.json()
+                return playlists
+            })
+
+            console.log(playlists)
+            setCurrentContentList(playlists.items)
+
+    }, [userProps.profileId])
+
+
+    const profileCard = useCallback((fullProfile: Artist|UserProfile)=>(
+        <div onClick={() => {setDisplayProfile(false)}} style={{ cursor: "pointer", display: "flex", margin: 0, padding: "5px", height: isMobile?"8vh":"12vh",  minHeight:isMobile?'unset':'80px'}} className="track-card">
+        <div style={{  display: "inline-flex", position: "relative", height: "100%", aspectRatio: "1 / 1" }}>
+            <img loading="lazy" style={{ borderRadius: "50%", position: "relative", height: "100%", aspectRatio: "1 / 1" }} src={props.type==='artist'?(fullProfile as Artist).images?.at(0)?.url:props.type==='user'?(fullProfile as UserProfile).images?.at(0)?.url:"Unknown"} alt={`${props.type==='artist'?(fullProfile as Artist).name.at(0):props.type==='user'?(fullProfile as UserProfile).display_name:"Unknown"} cover`}></img>
+            <div  style={{ top: 0, left: 0, width: "100%", height: "100%", position: "absolute" }}></div>
+        </div>
+        <p style={{ display: 'inline', margin:'auto 7px' }} className={"track-card-text "}>{props.type==='artist'?(fullProfile as Artist).name:props.type==='user'?(fullProfile as UserProfile).display_name:"Unknown"}</p>
+    </div>
+
+    ), [isMobile, props.type, setDisplayProfile])
+
+    useEffect(()=>{
+        if(props.type==="artist"){
+            fetchFullArtist().then((fullProfile: Artist)=>{
+                setCurrentProfileCard(profileCard(fullProfile))
+                fetchAlbums()
+            })
+        }else if(props.type==="user"){
+            fetchFullUser().then((fullProfile: UserProfile)=>{
+                setCurrentProfileCard(profileCard(fullProfile))
+                fetchPlaylists()
+            })
+        }
+    }, [fetchAlbums, fetchFullArtist, fetchFullUser, fetchPlaylists, profileCard, props.type])
+
+    useEffect(()=>{
+        if(currentContentList){
+            setCurrentContentCards(
+                currentContentList.map((item)=>{
+                    return <ResultCard
+
+                                popularity={null}
+                                result={{
+                                    type: props.type==="artist"?"album":"playlist",
+                                    item: item,
+                                    displayTracks: displayTracks
+                                }}></ResultCard>
+                })
+            )
+        }
+    }, [currentContentList, displayTracks, setDisplayProfile, setSelectedProfile, props.type])
+
+
+
+
+    return (
+        <div style={{height:"calc(100% - 100px)",background: "#141414", transition: '1s', width: isMobile?"100%":stagingState==="open"?"calc(50%)":"calc(75%)", position:'fixed', top:'100px', overflowY: 'hidden', display:"flex", flexDirection:'column', zIndex:999 }}>
+        
+        {currentProfileCard?currentProfileCard:<></>}
+
+        <div style={{ alignContent:'baseline',justifyContent: 'center', flexFlow:"row wrap", display: "flex", width:"100%", flex:'1' ,   background: "rgb(33 33 33)", overflowY:'auto', transition:"1s" }}>
+       {currentContentCards?currentContentCards:<></>}
+        </div>
+
+    </div>
+    )
+
+
+
+}
+
+export default ProfileView

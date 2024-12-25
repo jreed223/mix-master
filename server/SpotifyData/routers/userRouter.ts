@@ -6,7 +6,7 @@ import { Application } from 'express';
 // import { getAccessToken, generateCodeChallenge, generateCodeVerifier } from '../authentication/AuthHandler';
 
 import { refreshTokens } from '../../app';
-import { userProfile } from '../controllers/userControllers/user';
+import { userProfile } from '../controllers/userControllers/currentUser';
 import { authLink } from '../controllers/userControllers/authentication-flow';
 import { logout } from '../controllers/userControllers/logout';
 import { callback } from '../controllers/userControllers/callback';
@@ -22,7 +22,7 @@ export const userRoutes = (app: Application)=>{
 
     app.get("/callback", callback)
 
-    app.get("/spotify-data/user", refreshTokens, userProfile)
+    app.get("/spotify-data/current-user", refreshTokens, userProfile)
 
 }
 

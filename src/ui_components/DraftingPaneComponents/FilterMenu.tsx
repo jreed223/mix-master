@@ -153,7 +153,7 @@ const FilterMenu: React.FC<PlaylistMenuProps> = () => {
         })
 
             } */}
-            <div style={{width: isMaxDraftView?"33.3vw": isMobile?"calc(50vw - 3px)":"calc(25vw - 3px)", transition: "1s", margin: "2% auto 0"}}>
+            <div style={{width: isMaxDraftView?"33.3vw": isMobile?"calc(50vw - 3px)":"calc(25vw - 3px)", transition: "1s"}}>
                 <div key={"popularity-div"} style={{ width: "100%", transition: "1s" }}>
                     <label style={{}}>popularity</label>
                     <div className="tooltip"> ? <span className="tooltip-text">{'tooltip Text!!'}</span></div>

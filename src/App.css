@@ -86,13 +86,13 @@
     text-wrap: nowrap;
     overflow: hidden;
   font-size: 20px;
-   margin:"0px";
+   /* margin: auto 10px; */
     /* white-space: normal; */
 
 }
 .artist-text{
   width:min-content;
-  max-width: "100%";
+  max-width: 100%;
 }
 .artist-text:hover{
   cursor: pointer;
@@ -288,6 +288,24 @@
   height: 100%;
 }
 
+.result-text-container{
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  flex-grow: 1;
+  width: 0%;
+  height: 100%;
+  justify-content: center;
+}
+
+.artist-text-container{
+  max-width: 100%;
+  width: min-content;
+  text-wrap: nowrap;
+  overflow: hidden;
+}
 
 .tooltip {
   position: relative;
@@ -601,9 +619,10 @@ button{
 }
 .track-card{
   height: 7vh;
-  min-height: 80px;
+  /* min-height: 80px; */
   margin: 8px 5px;
   overflow: clip;
+  border-radius: 7px 0px 0px 7px;
 
   /* padding: 5px; */
 }

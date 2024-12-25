@@ -7,6 +7,7 @@ import ResultCard from "./ResultCard"
 import React from "react"
 import TrackCard from "../../DraftingPaneComponents/TrackComponents/TrackCard"
 import { DraftingContext } from "../../../state_management/DraftingPaneProvider"
+import ProfileView, { ArtistProfileProps, UserProfileProps } from "./ProfileView"
 
 
 
@@ -16,7 +17,7 @@ export default function SearchAndPlaylists({children}) {
     const { setIsPlaylistsView, isPlaylistsView} = useContext(ViewContext)
 
     const {
-    isMobile } = useContext(ViewContext)
+    isMobile, selectedProfile, displayProfile } = useContext(ViewContext)
 
     const {
         setSelectedLibraryItem, stagedPlaylist, setStagedPlaylist, stageTracks,
@@ -46,6 +47,7 @@ export default function SearchAndPlaylists({children}) {
     const [albumCards, setAlbumCards] = useState(null)
     const [playlistCards, setPlaylistCards] = useState(null)
     const [trackCards, setTrackCards] = useState(null)
+
 
     // const queryRef = useRef(null)
 
@@ -107,6 +109,7 @@ export default function SearchAndPlaylists({children}) {
         if (searchResults) {
             const albumCards = searchResults.albums.items.filter(album=>album && album.id).map((album) => {
                 return <ResultCard
+
                     key={album?.id}
                     popularity={null}
                     result={{
@@ -119,6 +122,7 @@ export default function SearchAndPlaylists({children}) {
             setAlbumCards(albumCards)
             const playlistCards = searchResults.playlists.items.filter(playlist=>playlist && playlist.id).map((playlist) => {
                 return <ResultCard
+
                     key={playlist?.id}
                     popularity={null}
                     result={{
@@ -144,6 +148,7 @@ export default function SearchAndPlaylists({children}) {
             const artistCards = searchResults.artists.items.filter(artist=>artist && artist.id).map((artist) => {
     
                 return <ResultCard
+
                     key={artist?.id}
                     popularity={artist?.popularity}
                     result={{
@@ -154,8 +159,8 @@ export default function SearchAndPlaylists({children}) {
                         isDrafted: isDrafted,
                         expandedArtistId: expandedArtistId,
                         setExpandedArtistId: setExpandedArtistId
-    
-                    }}></ResultCard>
+                    }} 
+                    ></ResultCard>
                 
             })
             setArtistCards(artistCards)
@@ -257,6 +262,8 @@ export default function SearchAndPlaylists({children}) {
                             </div>
                         </div>
                         <div className="search-results" style={{ height: "calc(100% - 50px)", overflowY: "auto", overflowX:'clip', position: "relative" }}>
+
+                            {displayProfile?<ProfileView type={selectedProfile.type} profileId={selectedProfile.profileId}></ProfileView>:<></>}
 
 
                             {isLoading?
