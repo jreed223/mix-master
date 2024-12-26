@@ -52,7 +52,7 @@ const ResultCard: React.FC<ResultCardProps> = (props: ResultCardProps) => {
     const [artistAlbumsCards, setArtistAlbumsCards] = useState<React.JSX.Element[]>(null)
     const [expanded, setExpanded] = useState(false)
 
-    const { isMobile, setSelectedProfile, setDisplayProfile} = useContext(ViewContext)
+    const { isMobile, setSelectedProfile, setDisplayProfile, user} = useContext(ViewContext)
     const {stagingState, setStagingState, selectedLibraryItem} = useContext(DraftingContext)
 
     const albumProps = props.result as AlbumResult
@@ -97,53 +97,21 @@ const ResultCard: React.FC<ResultCardProps> = (props: ResultCardProps) => {
                     
                     <p style={{ margin:"0", color: selectedLibraryItem?.id===props.result?.item.id?"rgb(135, 135, 135, 0.35)":"inherit" }} className={"track-card-text"}>{props.result?.item?.name||"Unknown"}</p>
                     <div style={{width: "min-content", textWrap:'nowrap', maxWidth: "100%", overflow:'hidden'}} className="">
-                    <p onClick={(e)=>{e.stopPropagation(); setDisplayProfile(true); setSelectedProfile(props.result.type==="album"?{type: 'artist', profileId: albumProps.item.artists.at(0).id}:{type:"user", profileId:playlistProps.item.owner.id} as UserProfileProps)}} style={{cursor:'pointer', margin:"0", color: selectedLibraryItem?.id===props.result?.item.id?"rgb(135, 135, 135, 0.35)":"inherit" }} className={"track-card-text artist-text"}>{props.result.type==="album"?albumProps.item?.artists?.at(0).name||"Unknown":playlistProps?.item?.owner?.display_name}</p>
+                    <p onClick={(e)=>{e.stopPropagation(); setDisplayProfile(true); setSelectedProfile(props.result.type==="album"?{type: 'artist', profileId: albumProps.item.artists.at(0).id}:{type:"user", profileId:playlistProps.item.owner.id, profile: playlistProps.item.owner.id=== user.id?user:null} as UserProfileProps)}} style={{cursor:'pointer', margin:"0", color: selectedLibraryItem?.id===props.result?.item.id?"rgb(135, 135, 135, 0.35)":"inherit" }} className={"track-card-text artist-text"}>{props.result.type==="album"?albumProps.item?.artists?.at(0).name||"Unknown":playlistProps?.item?.owner?.display_name}</p>
 
                     </div>
 
                 </div>
-                {/* <div onClick={() =>{  albumProps.displayTracks(albumProps.item)}} style={{cursor: "pointer", backgroundColor:'black', opacity:selectedLibraryItem?.id===albumProps.item.id?".5":"0", top: 0, left: 0, width: "100%", height: "100%", position: "absolute" }}>
-                    
 
-
-                </div> */}
          </div>
         )
 
     }else if(props.result.type==="artist"){
-        const displayAlbums = async () => {
-            console.log(artistProps.item.id)
-            if (artistAlbums) {
-                artistProps.setExpandedArtistId(artistProps.item.id)
-
-                setExpanded(prev => !prev)
-            } else {
-                artistProps.setExpandedArtistId(artistProps.item.id)
-                setExpanded(true)
-
-                const albumsObject: SearchResults['albums'] = await fetch("/spotify-data/artistAlbums", {
-                    method: "POST",
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ id: artistProps.item.id })
-                    // headers: {"id" : `${this.id}` }
-                }).then(async (res) => {
-                    const albums = await res.json()
-                    return albums
-                })
-
-                console.log(albumsObject)
-                setArtistAlbums(albumsObject)
-
-            }
-        }
-
 
         return (
             <>
             <div style={{height:"calc(100% - 100px)",background: "#141414", transition: expanded?'width 1s':"none", width: isMobile?"100%":stagingState==="open"?"calc(50%)":"calc(75%)", overflowY: 'hidden', display:"flex", flexDirection:'column' }}>
-                <div onClick={() => {setDisplayProfile(true); setSelectedProfile({type: 'artist', profileId: artistProps.item.id})}} style={{ cursor: "pointer", display: "flex", margin: 0, padding: "5px", height: isMobile?"8vh":"12vh",  minHeight:isMobile?'unset':'80px'}} className="track-card">
+                <div onClick={() => {setDisplayProfile(true); setSelectedProfile({type: 'artist', profileId: artistProps.item.id, profile: artistProps.item} as ArtistProfileProps)}} style={{ cursor: "pointer", display: "flex", margin: 0, padding: "5px", height: isMobile?"8vh":"12vh",  minHeight:isMobile?'unset':'80px'}} className="track-card">
                     <div style={{  display: "inline-flex", position: "relative", height: "100%", aspectRatio: "1 / 1" }}>
                         <img loading="lazy" style={{ borderRadius: "50%", position: "relative", height: "100%", aspectRatio: "1 / 1" }} src={props.result.item?.images[0]?.url} alt={`${props.result.item?.name||"Unknown"} cover`}></img>
                         <div  style={{ top: 0, left: 0, width: "100%", height: "100%", position: "absolute" }}></div>

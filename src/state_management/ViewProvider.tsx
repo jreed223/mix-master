@@ -1,19 +1,12 @@
 import React, { createContext, useEffect, useMemo, useState } from "react"
 import { UserProfile } from "../../server/types";
+import { ArtistProfileProps, UserProfileProps } from "../ui_components/LibrarySelectionComponents/SearchPane/ProfileView";
 // import { UserProfile } from '@spotify/web-api-ts-sdk';
 // import { Button } from "@mui/material";
 
 
 export type ViewName = 'Dashboard'|"Liked Playlists"|"User Playlists"|"Liked Albums"|"All Playlists"
-export type ArtistProfileProps = {
-    type: 'artist'
-    profileId:string
-}
 
-export type UserProfileProps = {
-    type: 'user'
-    profileId:string
-}
 
 export type ViewContextType = {
     setUser: React.Dispatch<React.SetStateAction<UserProfile>>,

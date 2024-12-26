@@ -232,14 +232,12 @@ export default function SearchAndPlaylists({children}) {
     useEffect(()=>{
         if(searchResults){
             setIsPlaylistsView(false)
-            // setViewChild(false)
         }
     },[searchResults, setIsPlaylistsView])
 
         const onEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
             if (e.key === "Enter") {
                 e.preventDefault();
-                // handleSearch()
             }
         }
 
@@ -253,17 +251,16 @@ export default function SearchAndPlaylists({children}) {
                                 <div style={{flex: 1, display:"flex", justifyContent:"center"}}><input ref={searchInputRef} style={{color:"#878787", fontSize: "1.5em",borderRadius:"25px", paddingLeft: "15px",  backgroundColor: "rgb(33 33 33)", border: "none", height:"calc(100% - 10px)", width: "75%", margin: "5px"}}type="text" placeholder="Search..." value={searchQuery} onKeyDown={(e) => { onEnter(e) }} onChange={(e) => { e.preventDefault(); setSearchQuery(e.target.value) }}></input></div>
                                 <div style={{ display: "inline-flex", alignItems: "center", flex: 1, gap: "15px", justifyContent: "center"}}>
 
-                                    <button disabled={!searchResults} style={{ borderRadius: "25px", height: "30px", width: "15%",opacity:searchResults?1:0, transition:"1s" }} onKeyDown={(e) => e.preventDefault()} onClick={ (e)=>{e.preventDefault(); setSearchView("Albums"); setIsPlaylistsView(false);}}>Albums</button>
-                                    <button disabled={!searchResults} style={{ borderRadius: "25px", height: "30px", width: "15%",opacity:searchResults?1:0, transition:"1s" }} onKeyDown={(e) => e.preventDefault()} onClick={(e)=>{e.preventDefault();setSearchView("Artists"); setIsPlaylistsView(false)}}>Artists</button>
                                     <button disabled={!searchResults} style={{ borderRadius: "25px", height: "30px", width: "15%",opacity:searchResults?1:0, transition:"1s" }} onKeyDown={(e) => e.preventDefault()} onClick={ (e)=>{e.preventDefault(); setSearchView("Playlists"); setIsPlaylistsView(false)} }>Playlists</button>
                                     <button disabled={!searchResults} style={{ borderRadius: "25px", height: "30px", width: "15%",opacity:searchResults?1:0, transition:"1s" }} onKeyDown={(e) => e.preventDefault()} onClick={ (e)=>{e.preventDefault(); setSearchView("Tracks"); setIsPlaylistsView(false)} }>Tracks</button>
-                                    {/* <button style={{ borderRadius: "25px", height: "25px" }} onKeyDown={(e) => e.preventDefault()} onClick={ (e)=>{e.preventDefault(); setViewChild(true)} }>My Playlists</button> */}
-                                    {/* <button style={{ borderRadius: "25px", height: "25px" }} onKeyDown={(e) => e.preventDefault()} onClick={(e) => { closeSearch(e) }}>Close</button> */}
+                                    <button disabled={!searchResults} style={{ borderRadius: "25px", height: "30px", width: "15%",opacity:searchResults?1:0, transition:"1s" }} onKeyDown={(e) => e.preventDefault()} onClick={ (e)=>{e.preventDefault(); setSearchView("Albums"); setIsPlaylistsView(false);}}>Albums</button>
+                                    <button disabled={!searchResults} style={{ borderRadius: "25px", height: "30px", width: "15%",opacity:searchResults?1:0, transition:"1s" }} onKeyDown={(e) => e.preventDefault()} onClick={(e)=>{e.preventDefault();setSearchView("Artists"); setIsPlaylistsView(false)}}>Artists</button>
+
                             </div>
                         </div>
                         <div className="search-results" style={{ height: "calc(100% - 50px)", overflowY: "auto", overflowX:'clip', position: "relative" }}>
 
-                            {displayProfile?<ProfileView type={selectedProfile.type} profileId={selectedProfile.profileId}></ProfileView>:<></>}
+                            {displayProfile?<ProfileView type={selectedProfile.type} profileId={selectedProfile.profileId} profile={selectedProfile.profile||null}></ProfileView>:<></>}
 
 
                             {isLoading?

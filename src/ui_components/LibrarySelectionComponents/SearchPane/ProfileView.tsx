@@ -1,7 +1,7 @@
 import React, { ReactElement, useCallback, useContext, useEffect, useState } from "react"
 import { ViewContext } from "../../../state_management/ViewProvider"
 import { DraftingContext } from "../../../state_management/DraftingPaneProvider"
-import { Artist, SearchResults, UserProfile } from '../../../../server/types';
+import { Album, Artist, Playlist, SearchResults, UserProfile } from '../../../../server/types';
 // import { Features, PlaylistItem } from "../../../server/types";
 // import PlaylistClass from "../../models/playlistClass";
 import { userProfile } from '../../../../server/SpotifyData/controllers/userControllers/currentUser';
@@ -10,17 +10,22 @@ import { playlists } from '../../../../server/SpotifyData/controllers/libraryCon
 export type ArtistProfileProps = {
     type: 'artist'
     profileId:string
+    profile?:Artist
+
 }
 
 export type UserProfileProps = {
     type: 'user'
     profileId:string
+    profile?:UserProfile
+
 }
 
 interface ProfileViewProps {
 
 type:'artist'|'user'
 profileId:string;
+profile?:Artist|UserProfile
 
 
 
@@ -31,7 +36,7 @@ const ProfileView: React.FC<ProfileViewProps> = (props: ProfileViewProps) => {
     // const [fullProfile, setFullProfile] = useState<UserProfile|Artist>(null)
     const [currentContentCards, setCurrentContentCards] = useState<ReactElement<ResultCardProps>[]>(null)
 
-    const [currentContentList, setCurrentContentList] = useState(null)
+    const [currentContentList, setCurrentContentList] = useState<Album['album'][]|Playlist[]>(null)
     const [currentProfileCard, setCurrentProfileCard] = useState< React.JSX.Element>(null)
 
     const {  isMobile, setDisplayProfile, setSelectedProfile  } = useContext(ViewContext)
@@ -108,7 +113,7 @@ const ProfileView: React.FC<ProfileViewProps> = (props: ProfileViewProps) => {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({ id: userProps.profileId })
-                // headers: {"id" : `${this.id}` }
+
             }).then(async (res) => {
                 const playlists = await res.json()
                 return playlists
@@ -122,35 +127,49 @@ const ProfileView: React.FC<ProfileViewProps> = (props: ProfileViewProps) => {
 
     const profileCard = useCallback((fullProfile: Artist|UserProfile)=>(
         <div onClick={() => {setDisplayProfile(false)}} style={{ cursor: "pointer", display: "flex", margin: 0, padding: "5px", height: isMobile?"8vh":"12vh",  minHeight:isMobile?'unset':'80px'}} className="track-card">
-        <div style={{  display: "inline-flex", position: "relative", height: "100%", aspectRatio: "1 / 1" }}>
+        <div style={{  display: "inline", position: "relative", height: "100%", aspectRatio: "1 / 1" }}>
             <img loading="lazy" style={{ borderRadius: "50%", position: "relative", height: "100%", aspectRatio: "1 / 1" }} src={props.type==='artist'?(fullProfile as Artist).images?.at(0)?.url:props.type==='user'?(fullProfile as UserProfile).images?.at(0)?.url:"Unknown"} alt={`${props.type==='artist'?(fullProfile as Artist).name.at(0):props.type==='user'?(fullProfile as UserProfile).display_name:"Unknown"} cover`}></img>
             <div  style={{ top: 0, left: 0, width: "100%", height: "100%", position: "absolute" }}></div>
         </div>
-        <p style={{ display: 'inline', margin:'auto 7px' }} className={"track-card-text "}>{props.type==='artist'?(fullProfile as Artist).name:props.type==='user'?(fullProfile as UserProfile).display_name:"Unknown"}</p>
+            <p style={{ display: 'inline', margin:'auto 7px' }} className={"track-card-text "}>{props.type==='artist'?(fullProfile as Artist).name:props.type==='user'?(fullProfile as UserProfile).display_name:"Unknown"}</p>
+            <div style={{flex: 1, display: 'flex'}}>
+
+            <button onClick={() => {setDisplayProfile(false)}} style={{ margin: 'auto', }}>close</button>
+        </div>
     </div>
 
     ), [isMobile, props.type, setDisplayProfile])
 
     useEffect(()=>{
-        if(props.type==="artist"){
-            fetchFullArtist().then((fullProfile: Artist)=>{
-                setCurrentProfileCard(profileCard(fullProfile))
-                fetchAlbums()
-            })
+        if(props.profile){
+
+            setCurrentProfileCard(profileCard(props.profile))
+
+        }else if(props.type==="artist"){
+
+            console.log(`artist profile in props : ${props.profile} `)
+                fetchFullArtist().then((fullProfile: Artist)=>{
+                    setCurrentProfileCard(profileCard(fullProfile))
+                    fetchAlbums()
+                })
+
         }else if(props.type==="user"){
+
+                console.log(`user profile in props : ${props.profile} `)
+
             fetchFullUser().then((fullProfile: UserProfile)=>{
                 setCurrentProfileCard(profileCard(fullProfile))
                 fetchPlaylists()
             })
         }
-    }, [fetchAlbums, fetchFullArtist, fetchFullUser, fetchPlaylists, profileCard, props.type])
+    }, [fetchAlbums, fetchFullArtist, fetchFullUser, fetchPlaylists, profileCard, props, props.profile, props.type])
 
     useEffect(()=>{
         if(currentContentList){
             setCurrentContentCards(
-                currentContentList.map((item)=>{
+                currentContentList.map((item, idx)=>{
                     return <ResultCard
-
+                    key={idx}
                                 popularity={null}
                                 result={{
                                     type: props.type==="artist"?"album":"playlist",
