@@ -2,7 +2,7 @@ import { useContext, useEffect, useRef, useState } from "react"
 import { ViewContext } from "../../../state_management/ViewProvider"
 import TrackClass from "../../../models/Tracks"
 import { Album, Playlist, SearchResults } from "../../../../server/types"
-import TrackCollection from "../../../models/libraryItems"
+import TrackCollection from "../../../models/TrackCollection"
 import ResultCard from "./ResultCard"
 import React from "react"
 import TrackCard from "../../DraftingPaneComponents/TrackComponents/TrackCard"
@@ -251,10 +251,10 @@ export default function SearchAndPlaylists({children}) {
                                 <div style={{flex: 1, display:"flex", justifyContent:"center"}}><input ref={searchInputRef} style={{color:"#878787", fontSize: "1.5em",borderRadius:"25px", paddingLeft: "15px",  backgroundColor: "rgb(33 33 33)", border: "none", height:"calc(100% - 10px)", width: "75%", margin: "5px"}}type="text" placeholder="Search..." value={searchQuery} onKeyDown={(e) => { onEnter(e) }} onChange={(e) => { e.preventDefault(); setSearchQuery(e.target.value) }}></input></div>
                                 <div style={{ display: "inline-flex", alignItems: "center", flex: 1, gap: "15px", justifyContent: "center"}}>
 
-                                    <button disabled={!searchResults} style={{ borderRadius: "25px", height: "30px", width: "15%",opacity:searchResults?1:0, transition:"1s" }} onKeyDown={(e) => e.preventDefault()} onClick={ (e)=>{e.preventDefault(); setSearchView("Playlists"); setIsPlaylistsView(false)} }>Playlists</button>
-                                    <button disabled={!searchResults} style={{ borderRadius: "25px", height: "30px", width: "15%",opacity:searchResults?1:0, transition:"1s" }} onKeyDown={(e) => e.preventDefault()} onClick={ (e)=>{e.preventDefault(); setSearchView("Tracks"); setIsPlaylistsView(false)} }>Tracks</button>
-                                    <button disabled={!searchResults} style={{ borderRadius: "25px", height: "30px", width: "15%",opacity:searchResults?1:0, transition:"1s" }} onKeyDown={(e) => e.preventDefault()} onClick={ (e)=>{e.preventDefault(); setSearchView("Albums"); setIsPlaylistsView(false);}}>Albums</button>
-                                    <button disabled={!searchResults} style={{ borderRadius: "25px", height: "30px", width: "15%",opacity:searchResults?1:0, transition:"1s" }} onKeyDown={(e) => e.preventDefault()} onClick={(e)=>{e.preventDefault();setSearchView("Artists"); setIsPlaylistsView(false)}}>Artists</button>
+                                    <button disabled={!searchResults} style={{ borderRadius: "25px", height: "30px", minWidth: "15%",opacity:searchResults?1:0, transition:"1s" }} onKeyDown={(e) => e.preventDefault()} onClick={ (e)=>{e.preventDefault(); setSearchView("Playlists"); setIsPlaylistsView(false)} }>Playlists</button>
+                                    <button disabled={!searchResults} style={{ borderRadius: "25px", height: "30px", minWidth: "15%",opacity:searchResults?1:0, transition:"1s" }} onKeyDown={(e) => e.preventDefault()} onClick={ (e)=>{e.preventDefault(); setSearchView("Tracks"); setIsPlaylistsView(false)} }>Tracks</button>
+                                    <button disabled={!searchResults} style={{ borderRadius: "25px", height: "30px", minWidth: "15%",opacity:searchResults?1:0, transition:"1s" }} onKeyDown={(e) => e.preventDefault()} onClick={ (e)=>{e.preventDefault(); setSearchView("Albums"); setIsPlaylistsView(false);}}>Albums</button>
+                                    <button disabled={!searchResults} style={{ borderRadius: "25px", height: "30px", minWidth: "15%",opacity:searchResults?1:0, transition:"1s" }} onKeyDown={(e) => e.preventDefault()} onClick={(e)=>{e.preventDefault();setSearchView("Artists"); setIsPlaylistsView(false)}}>Artists</button>
 
                             </div>
                         </div>

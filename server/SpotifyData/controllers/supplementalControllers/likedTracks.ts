@@ -1,5 +1,5 @@
 import { Request as expressRequest, Response as expressResponse} from 'express';
-import { Album, AlbumList, LikedSongs, Track } from '../../../types';
+import { Album, AlbumList, LikedTracks, Track } from '../../../types';
 type FetchResponse = Response;  //Fetch API Response
 
 export async function fetchLikedTracks(accessToken:string): Promise<FetchResponse> {
@@ -35,7 +35,7 @@ export const likedTracks = (req: expressRequest, res: expressResponse)=>{
         fetchLikedTracks(accessToken).then(async (response:FetchResponse)=>{
             if(response.ok){
                 console.log("OK response from spotify-data/album")
-                const likedTracks:LikedSongs = await response.json();
+                const likedTracks:LikedTracks = await response.json();
                 
             
                 res.send(likedTracks)

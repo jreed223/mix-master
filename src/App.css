@@ -662,11 +662,17 @@ button{
   min-width: 80px;
   height: 80%;
   border-radius: 15px;
-  transform: translateX(-10px);
 }
 
 .draft-playlist-button{
   border-radius: 15px;
+
+}
+
+.playlist-buttons-container{
+  
+  overflow-x: auto ;
+  -webkit-overflow-scrolling: touch;
 
 }
 

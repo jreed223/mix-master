@@ -1,6 +1,6 @@
 import { Album, Artist, Features, Image, Track, Playlist } from '../../server/types';
 import { audioFeatures } from '../../server/SpotifyData/controllers/supplementalControllers/audioFeatures';
-import TrackCollection, { Collection } from './libraryItems';
+import TrackCollection, { Collection } from './TrackCollection';
 
 export default class TrackClass{
     collection?:TrackCollection|null

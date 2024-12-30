@@ -5,7 +5,7 @@ import { ViewContext } from "../../../state_management/ViewProvider";
 import { DraftingContext } from "../../../state_management/DraftingPaneProvider";
 import { Hidden } from "@mui/material";
 import { ArtistProfileProps, UserProfileProps } from "./ProfileView";
-import TrackCollection from "../../../models/libraryItems";
+import TrackCollection from "../../../models/TrackCollection";
 
 type TrackResult = {
     type: "track"
@@ -110,7 +110,7 @@ const ResultCard: React.FC<ResultCardProps> = (props: ResultCardProps) => {
 
         return (
             <>
-            <div style={{height:"calc(100% - 100px)",background: "#141414", transition: expanded?'width 1s':"none", width: isMobile?"100%":stagingState==="open"?"calc(50%)":"calc(75%)", overflowY: 'hidden', display:"flex", flexDirection:'column' }}>
+            <div style={{height:"calc(100% - 100px)",background: "#141414", transition: expanded?'width 1s':"none", width: isMobile?"100%":"50%", overflowY: 'hidden', display:"flex", flexDirection:'column' }}>
                 <div onClick={() => {setDisplayProfile(true); setSelectedProfile({type: 'artist', profileId: artistProps.item.id, profile: artistProps.item} as ArtistProfileProps)}} style={{ cursor: "pointer", display: "flex", margin: 0, padding: "5px", height: isMobile?"8vh":"12vh",  minHeight:isMobile?'unset':'80px'}} className="track-card">
                     <div style={{  display: "inline-flex", position: "relative", height: "100%", aspectRatio: "1 / 1" }}>
                         <img loading="lazy" style={{ borderRadius: "50%", position: "relative", height: "100%", aspectRatio: "1 / 1" }} src={props.result.item?.images[0]?.url} alt={`${props.result.item?.name||"Unknown"} cover`}></img>

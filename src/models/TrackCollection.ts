@@ -1,7 +1,7 @@
-import { CategorizedPlaylist, PlaylistItem, Tag, Track, Image, Features, Artist, Album, Playlist, LikedSongs, Tracklist } from "../../server/types";
+import { CategorizedPlaylist, PlaylistItem, Tag, Track, Image, Features, Artist, Album, Playlist, Tracklist, LikedTracks } from "../../server/types";
 import TrackClass from "./Tracks";
 
-export type Collection = Playlist | Album["album"] | LikedSongs
+export type Collection = Playlist | Album["album"] | LikedTracks
 export default class TrackCollection {
     type: string;
     id: string;
@@ -27,6 +27,7 @@ export default class TrackCollection {
         this.audioFeaturesSet = false;
         this.type = collection?.type||null
         this.setTracks = this.setTracks.bind(this)
+        
 
         switch (collection?.type) {
 
@@ -41,10 +42,7 @@ export default class TrackCollection {
                 this.tracks = null
               break;
             case 'album':
-                const tracklist = collection.tracks?.items?.map((item)=>{
-                    const track = new TrackClass(item, this)
-                    return track
-                })
+                const tracklist = collection.tracks?.items?.map(item=>new TrackClass(item, this))
 
                 this.name = collection.name;
                 this.id = collection.id
@@ -53,54 +51,32 @@ export default class TrackCollection {
                 this.artists = collection.artists
                 this.uri = collection.uri
                 this.totalTracks = collection.total_tracks
-                this.tracks = collection.tracks?.items?.map(item=>new TrackClass(item, this))
+                this.tracks = tracklist
                 //TODO:Should this be this.tracks?
 
                 this.trackDataState = [{tracks:tracklist, audioFeatures: false, categories: false}]
               break;
-            case 'liked songs':
-                this.name = "Liked Songs";
-                this.id = "Liked Songs";
-                this.tracks = collection.items.map(item=>new TrackClass(item.track, this))
+            case 'liked tracks':
+                const tracks = collection.items.map(item=>new TrackClass(item.track, this))
+
+                this.name = "Liked Tracks";
+                this.id = "UserLikedTracks";
+                this.owner = null
+                this.uri = null
+                this.artists = null
                 //this.image = libraryItem.images[0]
                 //this.owner = libraryItem.
                 //this.uri = libraryItem.
                 this.totalTracks = collection.total
+                this.tracks = tracks
+                this.trackDataState = [{tracks:tracks, audioFeatures: false, categories: false}]
 
               break;
             default:
               throw new Error('Invalid Library Item type');
     }
 }
-    // private isAlbum(libraryItem){
-    //     return libraryItem.type === "album"
-    // }
-    // constructor(
-    //     type: string,
-    //     id: string,
-    //     image: Image,
-    //     name: string,
-    //     uri: string,
-    //     totalTracks : number,
-    //     owner?: {display_name: string; external_urls: {spotify: string;}; href: string; id: string; type: string; uri: string;},
-    //     artists?: Artist[],
-    //     releaseDate?: Date,
-    //     tracks?: PlaylistItem[],
-    //     categories?: {tag_list: Tag[] | null, top_tags: Record<string, Track[]>|null}|null,
-    //     ){
-    //         this.type= type
-    //         this.id = id;
-    //         this.image = image;
-    //         this.name = name;
-    //         this.owner = owner;
-    //         this.artists = artists;
-    //         this.realeaseDate = releaseDate;
-    //         this.uri = uri;
-    //         this.totalTracks = totalTracks;
-    //         this.categories = categories?categories:{tag_list:[], top_tags:{}};
-    //         this.tracks = tracks?tracks:[];
-    //         this.audioFeaturesSet = false;
-    // }
+
 
     async setTracklist(){
         if(this.type==="playlist"){

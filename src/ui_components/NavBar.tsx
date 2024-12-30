@@ -193,7 +193,7 @@ export default function NavBar({currentUser}:navProps){
                         
                         </div>
                     <div style={{position: "absolute", left:"50%", transform: "translateY(-50%)", top: "50%", height: "100%", alignItems: "center", width: "40%", display: "flex",  gap:"25px" }}>
-                    <button disabled={(isPlaylistsView&&stagingState==="closed")} style={{width:"calc(25% - 18.75px)", height: "70%", borderRadius:"25px" }} onClick={isMaxDraftView?()=>{setIsMaxDraftView(false)}:(stagingState==="open"&&isPlaylistsView)?()=>{setStagingState("closed"); setIsPlaylistsView(true)}:()=>{setIsPlaylistsView(true)}}>My Playlists</button>
+                    <button disabled={(isPlaylistsView&&stagingState==="closed")} style={{minWidth:"20%", height: "70%", borderRadius:"25px" }} onClick={isMaxDraftView?()=>{setIsMaxDraftView(false)}:(stagingState==="open"&&isPlaylistsView)?()=>{setStagingState("closed"); setIsPlaylistsView(true)}:()=>{setIsPlaylistsView(true)}}>My Playlists</button>
                     </div>
                     <p>Welcome, {currentUser.display_name}</p>
                 </span>

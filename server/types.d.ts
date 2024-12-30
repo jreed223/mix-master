@@ -140,8 +140,8 @@ export interface AlbumList {
     items: Album[]
 }
 
-export interface LikedSongs{
-    type: "liked songs"
+export interface LikedTracks{
+    type: "liked tracks"
     href: string
     limit: number
     next: string|null

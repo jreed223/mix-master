@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useRef, useContext } from "react"
-import TrackCollection from "../../../models/libraryItems";
+import TrackCollection from "../../../models/TrackCollection";
 import LibraryItemCard from "./LibraryItemCard";
 import { ViewName } from "../../../state_management/ViewProvider";
 import { ViewContext } from "../../../state_management/ViewProvider";
 import { ViewContextType } from '../../../state_management/ViewProvider';
 import { LibraryItemCardProps } from './LibraryItemCard';
-import { Playlist } from '../../../../server/types';
+import { LikedTracks, Playlist } from '../../../../server/types';
 import { DraftingContext, DraftingContextType } from "../../../state_management/DraftingPaneProvider";
 
 
@@ -26,6 +26,7 @@ interface LibraryItemsViewProps {
 export const PlaylistsView: React.FC<LibraryItemsViewProps> = (props: LibraryItemsViewProps) => {
   const [libraryItems, setLibraryItems] = useState<TrackCollection[]>(null)
   const [libraryItemCards, setLibraryItemCards] = useState<React.ReactElement<LibraryItemCardProps>[]>(null)
+  const [usersLikedTracks, setUsersLikedTracks] = useState<TrackCollection>(null)
   
   const {  selectedLibraryItem, } = useContext<DraftingContextType>(DraftingContext)
 
@@ -53,6 +54,23 @@ export const PlaylistsView: React.FC<LibraryItemsViewProps> = (props: LibraryIte
       
 
   }
+
+
+const fetchLikedTracks = async ()=>{
+  const res = await fetch("/spotify-data/liked-tracks", {
+    method: "GET"
+})
+  if(res.ok){
+    const tracks:LikedTracks = await res.json()
+    
+    setUsersLikedTracks(new TrackCollection(tracks))
+  }else{
+    
+  }
+}
+if(!usersLikedTracks){
+  
+}
 
 
   useEffect(() => {

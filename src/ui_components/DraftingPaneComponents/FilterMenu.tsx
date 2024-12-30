@@ -155,8 +155,8 @@ const FilterMenu: React.FC<PlaylistMenuProps> = () => {
             } */}
             <div style={{width: isMaxDraftView?"33.3vw": isMobile?"calc(50vw - 3px)":"calc(25vw - 3px)", transition: "1s"}}>
                 <div key={"popularity-div"} style={{ width: "100%", transition: "1s" }}>
-                    <label style={{}}>popularity</label>
-                    <div className="tooltip"> ? <span className="tooltip-text">{'tooltip Text!!'}</span></div>
+                    <label style={{}}>Popularity</label>
+                    {/* <div className="tooltip"> ? <span className="tooltip-text">{'tooltip Text!!'}</span></div> */}
                     <div>
                         <input key={"popularity-checkbox"} ref={popularityCheckbox} onChange={() => handlePopularityFilter()} type="checkbox" defaultChecked={true} />
                         <input key={"popularity-slider"} ref={popularitySlider} style={{ width: "80%", margin: 'auto' }} id={`popularity-slider`} onChange={() => handlePopularityFilter()} type={"range"} min={0} max={100} defaultValue={50} className="slider" disabled={true} />
@@ -164,7 +164,7 @@ const FilterMenu: React.FC<PlaylistMenuProps> = () => {
                 </div>
                 <div key={"calendar-div"} style={{ width: "100%", transition: "1s" }}>
                     <p style={{display: "inline-block"}}>Date Range</p>
-                    <div className="tooltip"> ? <span className="tooltip-text">{'tooltip Text!!'}</span></div>
+                    {/* <div className="tooltip"> ? <span className="tooltip-text">{'tooltip Text!!'}</span></div> */}
                     <input key={"calendar-checkbox"} ref={null} onChange={() => { toggleCalendar() }} type="checkbox" defaultChecked={true} />
                     <div>
                         <Calendar onChange={(date) => handleDateSelection(date)} value={dateRange} allowPartialRange selectRange={true}  tileDisabled={ calendarDisabled?()=>true:({ date }) => disableFutureDates(date)}></Calendar>
@@ -172,8 +172,8 @@ const FilterMenu: React.FC<PlaylistMenuProps> = () => {
                     </div>
                 </div>
                 <div key={"artists-div"} style={{ width: "100%", transition: "1s" }}>
-                    <p style={{display: "inline-block"}}>Artist 1</p>
-                    <div className="tooltip"> ? <span className="tooltip-text">{'tooltip Text!!'}</span></div>
+                    <p style={{display: "inline-block"}}>Artist</p>
+                    {/* <div className="tooltip"> ? <span className="tooltip-text">{'tooltip Text!!'}</span></div> */}
                     <div>
                         {/* <input key={"artist-checkbox"} ref={null} onChange={() => handlePopularityFilter()} type="checkbox" defaultChecked={true} /> */}
                         <input key={"artist-search"} ref={artistSearch} style={{ width: "80%", margin: 'auto' }} id={`artist-searchr`} onChange={(e) => setArtistQuery(e.target.value)} value={artistQuery} type={"search"} placeholder={"Search Artists"} className="slider" disabled={false} />

@@ -4,7 +4,7 @@ import TrackClass from "../../../models/Tracks";
 import { ViewContext } from "../../../state_management/ViewProvider";
 import { DraftingContext } from "../../../state_management/DraftingPaneProvider";
 import { Playlist } from '../../../../server/types';
-import TrackCollection from "../../../models/libraryItems";
+import TrackCollection from "../../../models/TrackCollection";
 
 interface DraftPlaylistContainerProps {
     setReloadKey: React.Dispatch<React.SetStateAction<number>>
@@ -281,19 +281,19 @@ useEffect(()=>{
                         flexDirection:"column"
                     }}>
                 
-                        <div style={{margin:"auto", flex: "1"}}>
+                        <div className="playlist-buttons-container" style={{margin:"auto", flex: "1"}}>
                         <dialog style={{width: "25vh", margin: "auto", backgroundColor: "#141414", color:"#757575"}} open={displayWarning}>Name your playlist before submitting!</dialog>
-                            <button style={{margin:"auto 10px", flex: "1", borderRadius:'15px'}} onClick={() => { deselectAllClicked() }}>Deselect All</button>
-                            <button style={{margin:"auto 10px", flex: "1", borderRadius:'15px'}} onClick={() => { selectAllClicked() }}>Select All</button>
-                            <button style={{margin:"auto 10px", flex: "1", borderRadius:'15px'}} onClick={() => { removeStagedItems(selectedTracks); setSelectedTracks([]) }}>Remove Items</button>
+                            <button style={{margin:"auto 10px",  borderRadius:'15px'}} onClick={() => { deselectAllClicked() }}>Deselect All</button>
+                            <button style={{margin:"auto 10px",  borderRadius:'15px'}} onClick={() => { selectAllClicked() }}>Select All</button>
+                            <button style={{margin:"auto 10px",  borderRadius:'15px'}} onClick={() => { removeStagedItems(selectedTracks); setSelectedTracks([]) }}>Remove Items</button>
                             {stagedPlaylistState.length > 0 &&!submissionState ?
                             <>
-                                {undoRedoController !== 1 && stagedHistory.length > 1 ? <button style={{margin:"auto 10px", flex: "1", borderRadius:'15px'}} onClick={()=>{undoClicked()}}>Undo</button> : <></>}
-                                {undoRedoController ? <button style={{margin:"auto 10px", flex: "1", borderRadius:'15px'}} onClick={() => { redoClicked() }}>Redo</button> : <></>}
+                                {undoRedoController !== 1 && stagedHistory.length > 1 ? <button style={{margin:"auto 10px",  borderRadius:'15px'}} onClick={()=>{undoClicked()}}>Undo</button> : <></>}
+                                {undoRedoController ? <button style={{margin:"auto 10px", borderRadius:'15px'}} onClick={() => { redoClicked() }}>Redo</button> : <></>}
                             </>
                             : <></>}
                                 {stagedPlaylist.length>0 &&!submissionState
-                                ?<button style={{margin:"auto 10px", flex: "1", borderRadius:'15px'}} onClick={()=>submitDraftPlaylist()}>Submit Playlist</button>
+                                ?<button style={{margin:"auto 10px", borderRadius:'15px'}} onClick={()=>submitDraftPlaylist()}>Submit Playlist</button>
                                 :<></>}
                             </div>
                         <input placeholder="Playlist Draft..." type="text" onChange={(e)=>setPlaylistName(e.target.value)} value={playlistName} style={{color:"#757575", textOverflow: "ellipsis", margin:"4px 15px", fontSize:"1.25em", fontWeight:"bold", border:"none", padding: "0 auto", backgroundColor: "#141414", textAlign:'center', minWidth:"50%", alignSelf:"center", width:"calc(100% - 30px)",}}></input>

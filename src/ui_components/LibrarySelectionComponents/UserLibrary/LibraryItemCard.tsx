@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import TrackCollection from "../../../models/libraryItems";
+import TrackCollection from "../../../models/TrackCollection";
 import { ViewName } from "../../NavBar";
 import { ViewContext, ViewContextType } from "../../../state_management/ViewProvider";
 import { DraftingContext } from "../../../state_management/DraftingPaneProvider";
