@@ -127,7 +127,7 @@ export interface Tracklist {
     offset: number
     previous: string|null
     total: number
-    items: PlaylistItem[]
+    items: PlaylistItem[]|LikedTracks['items']
 }
 
 export interface AlbumList {
@@ -146,7 +146,7 @@ export interface LikedTracks{
     limit: number
     next: string|null
     offset: number
-    pevious: string|null
+    previous: string|null
     total: number
     items: [{
         added_at: Date

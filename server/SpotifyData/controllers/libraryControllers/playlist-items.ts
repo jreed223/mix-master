@@ -54,7 +54,7 @@ export const playlistItems = async (req: expressRequest, res: expressResponse)=>
             })
 
             if(playlistObject){
-                const playlistItems: PlaylistItem[] = playlistObject.items;
+                const playlistItems: PlaylistItem[] = playlistObject.items as PlaylistItem[];
                 console.log(playlistObject)
                 for(let i = playlistItems.length-1; i>=0; i--){
                     // console.log(`Track #${i} `, playlistItems[i].track)

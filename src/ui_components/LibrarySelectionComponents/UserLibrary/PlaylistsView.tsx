@@ -7,6 +7,7 @@ import { ViewContextType } from '../../../state_management/ViewProvider';
 import { LibraryItemCardProps } from './LibraryItemCard';
 import { LikedTracks, Playlist } from '../../../../server/types';
 import { DraftingContext, DraftingContextType } from "../../../state_management/DraftingPaneProvider";
+import { likedTracks } from "../../../../server/SpotifyData/controllers/supplementalControllers/likedTracks";
 
 
 
@@ -27,8 +28,11 @@ export const PlaylistsView: React.FC<LibraryItemsViewProps> = (props: LibraryIte
   const [libraryItems, setLibraryItems] = useState<TrackCollection[]>(null)
   const [libraryItemCards, setLibraryItemCards] = useState<React.ReactElement<LibraryItemCardProps>[]>(null)
   const [usersLikedTracks, setUsersLikedTracks] = useState<TrackCollection>(null)
+  const [savedTracksCard, setSavedTracksCard] = useState<React.ReactElement<LibraryItemCardProps>>(null)
+  
   
   const {  selectedLibraryItem, } = useContext<DraftingContextType>(DraftingContext)
+  const {user   } = useContext<ViewContextType>(ViewContext)
 
 
   // const libraryItemsContainer = useRef(null)
@@ -56,33 +60,60 @@ export const PlaylistsView: React.FC<LibraryItemsViewProps> = (props: LibraryIte
   }
 
 
-const fetchLikedTracks = async ()=>{
-  const res = await fetch("/spotify-data/liked-tracks", {
-    method: "GET"
-})
-  if(res.ok){
-    const tracks:LikedTracks = await res.json()
-    
-    setUsersLikedTracks(new TrackCollection(tracks))
-  }else{
-    
+
+
+useEffect(()=>{
+  const fetchLikedTracks = async ()=>{
+    const res = await fetch("/spotify-data/liked-tracks", {
+      method: "GET"
+  })
+    if(res.ok){
+      const tracks:LikedTracks = await res.json()
+      tracks.type = "liked tracks"
+      console.log("NEW COLLECTION!!! ",tracks)
+
+      const newCollection = new TrackCollection(tracks)
+      newCollection.owner = user
+      console.log("NEW COLLECTION!!! ",newCollection)
+      setUsersLikedTracks(newCollection)
+    }else{
+      
+    }
   }
-}
-if(!usersLikedTracks){
-  
-}
+
+  if(!usersLikedTracks){
+    fetchLikedTracks()
+  }
+}, [user, usersLikedTracks])
+
 
 
   useEffect(() => {
     if (libraryItems) {
       const cards = libraryItems.map(item =>
         <LibraryItemCard key={item.id}  libraryItem={item} ownerId={props.userId} view={props.viewName} ></LibraryItemCard>)
+        // if(libraryItemCards){
+        //   setLibraryItemCards([libraryItemCards.at(0)].concat(cards))
+        // }else{
+        //   setLibraryItemCards(cards)
+        // }
       setLibraryItemCards(cards)
       return
    
     }
     
-  }, [ selectedLibraryItem?.id, props.viewName, props.userId, libraryItems])
+  }, [ props.viewName, props.userId, libraryItems])
+
+  useEffect(()=>{
+    if(usersLikedTracks){
+      console.log(usersLikedTracks)
+      const likedTracksCard:React.ReactElement<LibraryItemCardProps>= (
+        <LibraryItemCard key={usersLikedTracks.id}  libraryItem={usersLikedTracks} ownerId={props.userId} view={props.viewName} ></LibraryItemCard>
+      )
+
+     setSavedTracksCard(likedTracksCard)
+    }
+  }, [libraryItemCards, props.userId, props.viewName, usersLikedTracks])
 
 
 
@@ -105,7 +136,8 @@ if ((libraryItems) ) {
 
   }}>
             <div className="playlist-content" style={{}} >
-              {libraryItemCards}
+              {savedTracksCard?savedTracksCard:<></>}
+              {libraryItemCards?libraryItemCards:<></>}
             </div>
           </div>
         </div>

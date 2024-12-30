@@ -29,7 +29,7 @@ export default class TrackCollection {
         this.setTracks = this.setTracks.bind(this)
         
 
-        switch (collection?.type) {
+        switch (collection.type) {
 
             case 'playlist':
                 this.name = collection.name;
@@ -61,12 +61,11 @@ export default class TrackCollection {
 
                 this.name = "Liked Tracks";
                 this.id = "UserLikedTracks";
+                this.image =  {height:0, width: 0, url:null}
                 this.owner = null
                 this.uri = null
                 this.artists = null
-                //this.image = libraryItem.images[0]
-                //this.owner = libraryItem.
-                //this.uri = libraryItem.
+                this.next = collection.next
                 this.totalTracks = collection.total
                 this.tracks = tracks
                 this.trackDataState = [{tracks:tracks, audioFeatures: false, categories: false}]
@@ -94,7 +93,7 @@ export default class TrackCollection {
     }
 
     async getNextTracks(){
-        if(this.type==="playlist" && this.next){
+        if((this.type==="playlist"||this.type==="liked tracks") && this.next){
             console.log("playlist in set tracks")
             
             const playlistItems : Tracklist = await fetch("/spotify-data/next-playlist-items", {

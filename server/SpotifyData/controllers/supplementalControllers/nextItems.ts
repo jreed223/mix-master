@@ -1,5 +1,5 @@
 import { Request as expressRequest, Response as expressResponse} from 'express';
-import { PlaylistItem, Tracklist } from '../../../types';
+import { LikedTracks, PlaylistItem, Tracklist } from '../../../types';
 // type FetchResponse = Response;  //Fetch API Response
 
 
@@ -28,7 +28,7 @@ export const nextItems = async (req: expressRequest, res: expressResponse)=>{
         })
 
         if(nextTracks){
-            const playlistItems: PlaylistItem[] = nextTracks.items;
+            const playlistItems: PlaylistItem[]|LikedTracks['items'] = nextTracks.items;
             // console.log(playlistObject)
             for(let i = playlistItems.length-1; i>=0; i--){
                 // console.log(`Track #${i} `, playlistItems[i].track)
