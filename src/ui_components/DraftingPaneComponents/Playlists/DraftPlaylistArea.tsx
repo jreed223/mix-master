@@ -29,7 +29,7 @@ const DraftPlaylistContainer: React.FC<DraftPlaylistContainerProps> = (props: Dr
     // const [displaySubmissionStatus, setDisplaySubmissionStatus] = useState(false)
 
     // const { stagingState } = useContext(ViewContext)
-    const { user, isMaxDraftView} = useContext(ViewContext)
+    const { user, isMaxDraftView, isMobile} = useContext(ViewContext)
         // const {selectedFeatures} = useContext(TracklistContext)
         const {selectedLibraryItem, stagedPlaylist, setStagedPlaylist, stagingState, stagedPlaylistState,
             setStagedPlaylistState,
@@ -270,7 +270,7 @@ useEffect(()=>{
 
 
     return (
-        <div className="playlist-draft-container new-playlist" style={stagingState === "open" ? { flex: isMaxDraftView?"1":displayFeatureMenu?"0 1 0px":"1 1 0px"  ,borderRight: "2px solid #141414", transition: "1s", display: "flex", flexDirection: 'column' } : { flex: displayFeatureMenu?"0 1 0px":isMaxDraftView?"1":"1 1 0px" , borderRight: "0px solid #141414", transition: "1s", display: "flex", flexDirection: 'column' }} id="drafting-div">
+        <div className="playlist-draft-container new-playlist" style={stagingState === "open" ? { flex: isMaxDraftView?"1":displayFeatureMenu?"0 1 0px":"1 1 0px"  , transition: "1s", display: "flex", flexDirection: 'column' } : { flex: displayFeatureMenu?"0 1 0px":isMaxDraftView?"1":"1 1 0px" , transition: "1s", display: "flex", flexDirection: 'column' }} id="drafting-div">
             
                 {
                     <div style={{
@@ -281,7 +281,7 @@ useEffect(()=>{
                         flexDirection:"column"
                     }}>
                 
-                        <div className="playlist-buttons-container" style={{margin:"auto", flex: "1"}}>
+                        <div className="playlist-buttons-container" style={isMobile?{margin:"auto", flex: "1", width: '100%', overflowX: 'auto', whiteSpace: 'nowrap'}:{margin:"auto", flex: "1"}}>
                         <dialog style={{width: "25vh", margin: "auto", backgroundColor: "#141414", color:"#757575"}} open={displayWarning}>Name your playlist before submitting!</dialog>
                             <button style={{margin:"auto 10px",  borderRadius:'15px'}} onClick={() => { deselectAllClicked() }}>Deselect All</button>
                             <button style={{margin:"auto 10px",  borderRadius:'15px'}} onClick={() => { selectAllClicked() }}>Select All</button>

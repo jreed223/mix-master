@@ -23,7 +23,7 @@ export interface TrackData {
 
 const SelectedPlaylistContainer: React.FC<SelectedPlaylistContainerProps> = () => {
 
-    const { isMaxDraftView,} = useContext(ViewContext)
+    const { isMaxDraftView, isMobile} = useContext(ViewContext)
     const {currentAudio, setCurrentAudio, } =  useContext<AudioContextType>(AudioContext)
 
     const { 
@@ -274,21 +274,23 @@ const {popularityFilter, dateRange, setSelectedArtistFilters, artistQuery, artis
                     top: 0,
                     backgroundColor: "#141414",
                     display:"flex",
-                    flexDirection:"column"
+                    flexDirection:"column",
                     
                 }}>
-                    <div style={{margin:"auto", flex: "1"}}>
-                    <button style={{margin:"auto 10px", flex: "1", borderRadius:'15px'}} onClick={() => { selectAllclicked(); }} value={"SelectAll"}>Select All</button>
-                    <button style={{margin:"auto 10px", flex: "1", borderRadius:'15px'}} onClick={() => { deselectAllClicked() }}>Deselect All</button>
-                    <button style={{margin:"auto 10px", flex: "1", borderRadius:'15px'}} onClick={() => { stageSelectedDisplayedTracks(); }}>Add Items</button>
-                    {/* {isFeatureFilterSelected && loadingState === "filtering" 
-                    ?(<p>Filtering Tracks...</p>) 
-                    : (<></>)} */}
+                    <div style={isMobile?{margin:"auto", flex: "1",width: '100%', overflowX: 'auto', whiteSpace: 'nowrap'}:{margin:"auto", flex: "1" }}>
+                        <button style={{margin:"auto 10px", flex: "1", borderRadius:'15px'}} onClick={() => { selectAllclicked(); }} value={"SelectAll"}>Select All</button>
+                        <button style={{margin:"auto 10px", flex: "1", borderRadius:'15px'}} onClick={() => { deselectAllClicked() }}>Deselect All</button>
+                        <button style={{margin:"auto 10px", flex: "1", borderRadius:'15px'}} onClick={() => { stageSelectedDisplayedTracks(); }}>Add Items</button>
+                        {/* {isFeatureFilterSelected && loadingState === "filtering" 
+                        ?(<p>Filtering Tracks...</p>) 
+                        : (<></>)} */}
                     </div>
                     {/* <h3 style={{margin:"5px 15px", textAlign:'center'}}>{selectedLibraryItem?.name}</h3> */}
                     <input disabled={true} placeholder={selectedLibraryItem?selectedLibraryItem?.name:"Select an Item from your library"} type="text" style={{textOverflow: "ellipsis", margin:"4px 15px", fontSize:"1.25em", fontWeight:"bold", border:"none", padding: "0 auto", backgroundColor: "#141414", textAlign:'center', minWidth:"50%", alignSelf:"center", width:"calc(100% - 30px)",}}></input>
 
-                </div>{loadingState==="loading"
+                </div>
+                
+                {loadingState==="loading"
                     ?<div className="search-filter-container new-playlist" id="search-filter-div" >
                         <p>loading...</p>
                     </div>
