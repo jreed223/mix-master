@@ -92,14 +92,10 @@ useEffect(()=>{
 
 if(displayedTracks&&hiddenTracks){
 
-        if(loadingState === "filtering"){
-            return(
-                <p>Filtering Tracks...</p>
-            ) 
-
-        }else{
+        
             return(
                 <>
+                {loadingState === "filtering"?<p>Filtering Tracks...</p>:<></>}
                        {
                             displayedTracks
                         }
@@ -110,7 +106,7 @@ if(displayedTracks&&hiddenTracks){
                 </>
             )
 
-        }
+        
     
 
 

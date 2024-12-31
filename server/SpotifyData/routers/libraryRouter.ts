@@ -11,6 +11,7 @@ import { albums } from '../controllers/libraryControllers/albums';
 import { likedSongs } from '../controllers/libraryControllers/liked-songs';
 import { playlists } from '../controllers/libraryControllers/playlists';
 import { playlistItems } from '../controllers/libraryControllers/playlist-items';
+import { nextPlaylists } from '../controllers/supplementalControllers/nextPlaylists';
 
 
 
@@ -25,6 +26,9 @@ export const libraryRoutes = (app: Application)=>{
     app.get("/spotify-data/playlists", refreshTokens, playlists)
 
     app.get("/spotify-data/playlist-items", refreshTokens, playlistItems)
+
+    app.post("/spotify-data/next-playlists", refreshTokens, nextPlaylists)
+    
 
 
 }

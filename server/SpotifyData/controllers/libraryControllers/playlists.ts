@@ -1,5 +1,5 @@
 import { Request as expressRequest, Response as expressResponse} from 'express';
-import { Playlist } from '../../../types';
+import { Playlist, SearchResults } from '../../../types';
 // import { Playlist } from '../../types';
 type FetchResponse = Response;  //Fetch API Response
 
@@ -34,7 +34,7 @@ export const playlists = (req: expressRequest, res: expressResponse)=>{
                 console.log("OK response from spotify-data/playlists")
                 const playlistsObject = await response.json();
                 
-                const playlistList: Playlist[] = playlistsObject["items"];
+                const playlistList: SearchResults['playlists'] = playlistsObject;
                 res.send(playlistList)
             }else{
                 const error = await response.json()

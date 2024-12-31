@@ -18,7 +18,7 @@ const LibraryItemCard: React.FC<LibraryItemCardProps> = (props: LibraryItemCardP
 
 
 
-    if(props.libraryItem.owner.id===user.id){
+    if(props.libraryItem?.owner?.id===user.id){
         return(
             <div style={{minWidth: isMobile?"calc(50vw - 75px)":"25vh"}}className={"user-playlist-card"}>
                     <div style={selectedLibraryItem?.id === props.libraryItem.id?{}:{}} className={selectedLibraryItem?.id===props.libraryItem.id?"selected-playlist-img-container":"user-playlist-img-container"}>
@@ -32,7 +32,7 @@ const LibraryItemCard: React.FC<LibraryItemCardProps> = (props: LibraryItemCardP
         )
     }else{
         return(
-            <div style={{minWidth: isMobile?"calc(50vw - 75px)":"20vh"}} className={"user-playlist-card"}>
+            <div style={{minWidth: isMobile?"calc(50vw - 75px)":"25vh"}} className={"user-playlist-card"}>
                     <div className={selectedLibraryItem?.id===props.libraryItem.id?"selected-playlist-img-container":"user-playlist-img-container"}>
                 <img  className="user-playlist-img" src={props.libraryItem.image.url} alt = "playlist cover"  ></img>
                 <div className={"user-playlist-details-container"} style={{background:selectedLibraryItem?.id === props.libraryItem.id?"rgb(20 20 20 / 91%)":" linear-gradient(-15deg, rgb(17, 10, 2), rgba(17, 10, 2, 0.392), rgba(17, 10, 2, 0))"}} onClick={()=>{displayTracks(props.libraryItem);}}>

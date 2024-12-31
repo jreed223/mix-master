@@ -157,7 +157,7 @@
   /* height: fit-content; */
 
   /* align-items: center; */
-  justify-content: space-evenly;
+  justify-content: space-between;
   /* overflow-y: auto; */
   /* justify-content: flex-start; */
   margin: 0 25px 25px 25px;
@@ -256,16 +256,16 @@
 .user-playlist-card{
   /* display: flex;
   flex-direction: column; */
-  min-width:20vh;
+  /* min-width:20vh; */
 
   background-color: rgb(25, 83, 133);
   aspect-ratio: 1 / 1;
   /* height: 100%; */
   /* min-width:180px; */
   max-height: fit-content;
-  width: calc(33% - 20px);
+  /* width: calc(33% - 20px); */
 
-  max-width: calc(calc(50vw - 40px) * 0.33);
+  width: calc(calc(50vw - 40px) * 0.33);
 
   /* overflow-y: clip; */
   /* margin-left: auto;

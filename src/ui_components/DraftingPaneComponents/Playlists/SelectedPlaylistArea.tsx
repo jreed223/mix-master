@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react"
+import React, { useCallback, useContext, useEffect, useRef, useState } from "react"
 // import PlaylistClass from "../../models/playlistClass"
 // import { LibraryItem } from '../../models/libraryItems';
 import Tracklist from "../TrackComponents/Tracklist";
@@ -183,6 +183,33 @@ const {popularityFilter, dateRange, setSelectedArtistFilters, artistQuery, artis
     //     }
     // },[allTracks, currentAudio, selectedLibraryItem, setCurrentAudio])
 
+    const scrollContainer = useRef<HTMLDivElement>(null)
+
+    const getNextItems =useCallback( () => {
+        setLoadingState("loadingNext")
+        selectedLibraryItem?.getNextTracks().then((newTracks) => { setNextTracks(newTracks); setLoadingState(null) }).catch((e)=>{console.error(e)})
+    },[selectedLibraryItem, setLoadingState])
+
+
+      useEffect(()=>{
+        const container = scrollContainer.current
+        if(selectedLibraryItem?.next && trackDataState?.length<3){
+            const handleScroll = () => {
+                const bottom = (scrollContainer.current.clientHeight + scrollContainer.current.scrollTop)  === scrollContainer.current.scrollHeight;
+                if (bottom && !loadingState) {
+                  getNextItems();
+                }
+              };
+        
+              container.addEventListener('scroll', handleScroll)
+            return ()=>{
+                container.removeEventListener('scroll', handleScroll)
+            }
+        }
+    
+      },[getNextItems, loadingState, selectedLibraryItem?.next, trackDataState?.length])
+
+
 
     useEffect(() => {
         if (nextTracks) {
@@ -265,18 +292,16 @@ const {popularityFilter, dateRange, setSelectedArtistFilters, artistQuery, artis
                     ?<div className="search-filter-container new-playlist" id="search-filter-div" >
                         <p>loading...</p>
                     </div>
-                    :<div style={{overflowY: 'auto'}}>
+                    :<div ref={scrollContainer} style={{overflowY: 'auto'}}>
                         
                         <Tracklist tracklistArea="selected-playlist" selectedLibraryItems={selectedTracks} setSelectedLibraryItems={setSelectedTracks} draftTracks={addStagedItems}></Tracklist>
                         {selectedLibraryItem?.next ?
                     <div style={{}}>
                         {
-                            loadingState === "loadingNext" ?
-                                <button disabled={true} style={{ fontSize:"16px", width: `100%`, overflowX: "hidden", padding: 0 }}>Loading...</button> :
-                                <button onClick={() => {
-                                    setLoadingState("loadingNext")
-                                    selectedLibraryItem?.getNextTracks().then((newTracks) => { setNextTracks(newTracks); setLoadingState(null) })
-                                }}
+                            loadingState === "loadingNext" 
+                            ?<button disabled={true} style={{ fontSize:"16px", width: `100%`, overflowX: "hidden", padding: 0 }}>Loading...</button>
+                            :<button onClick={() => {
+                                    getNextItems() }}
                                     style={{ fontSize:"16px", width: `100%`, overflowX: "hidden", padding: 0 }}>
                                     More
                                 </button>

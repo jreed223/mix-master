@@ -5,7 +5,7 @@ import { ViewName } from "../../../state_management/ViewProvider";
 import { ViewContext } from "../../../state_management/ViewProvider";
 import { ViewContextType } from '../../../state_management/ViewProvider';
 import { LibraryItemCardProps } from './LibraryItemCard';
-import { LikedTracks, Playlist } from '../../../../server/types';
+import { LikedTracks, Playlist, SearchResults } from '../../../../server/types';
 import { DraftingContext, DraftingContextType } from "../../../state_management/DraftingPaneProvider";
 import { likedTracks } from "../../../../server/SpotifyData/controllers/supplementalControllers/likedTracks";
 
@@ -29,6 +29,7 @@ export const PlaylistsView: React.FC<LibraryItemsViewProps> = (props: LibraryIte
   const [libraryItemCards, setLibraryItemCards] = useState<React.ReactElement<LibraryItemCardProps>[]>(null)
   const [usersLikedTracks, setUsersLikedTracks] = useState<TrackCollection>(null)
   const [savedTracksCard, setSavedTracksCard] = useState<React.ReactElement<LibraryItemCardProps>>(null)
+  const [nextPlaylistsLink, setNextPlaylistsLink] = useState(null)
   
   
   const {  selectedLibraryItem, } = useContext<DraftingContextType>(DraftingContext)
@@ -37,27 +38,49 @@ export const PlaylistsView: React.FC<LibraryItemsViewProps> = (props: LibraryIte
 
   // const libraryItemsContainer = useRef(null)
 
-  let libraryCollections: TrackCollection[];
+
+  const fetchAllPlaylists = async (reloadKey) => {
+    const playlistList = await fetch("/spotify-data/playlists")
+      .then(async res => await res.json()).then((playlists: SearchResults['playlists']) => {
+        return playlists
+      })
+
+    const fetchedPlaylists = playlistList.items.filter(playlist=>playlist&&playlist?.id).map(playlist=>new TrackCollection(playlist))
+    setLibraryItems(fetchedPlaylists)
+    setNextPlaylistsLink(playlistList.next)
+    // return playlistList
+  }
+
+  const getNextPlaylists = async () =>{
+      const playlistsList : SearchResults['playlists'] = await fetch("/spotify-data/next-playlists", {
+                    method: "POST",
+                    headers:{
+                    'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({next: nextPlaylistsLink})
+                    // headers: {"id" : `${this.id}` }
+                },
+        ).then(async (res)=>{
+                    console.log("get next playlists response: ", res)
+    
+                    const playlistsData = await res.json()
+                    console.log("itemdata: ",playlistsData)
+                    return playlistsData
+                })
+                const fetchedPlaylists = playlistsList.items.filter(playlist=>playlist&&playlist?.id).map(playlist=>new TrackCollection(playlist))
+        setLibraryItems(libraryItems.concat(fetchedPlaylists))
+        setNextPlaylistsLink(playlistsList.next)
+  }
 
 
   if (!libraryItems) {
-
-        const playlists1: Playlist[] = props.fetchedLibraryResource.read()
-        const likedPlaylists = playlists1.filter((playlistObject: Playlist) =>
-          playlistObject && playlistObject?.id 
-        )
-        
-        libraryCollections = likedPlaylists.map((playlistObject: Playlist) => {
-          const likedPlaylistCollection = new TrackCollection(playlistObject)
-
-          
-          return likedPlaylistCollection
-        })
-        setLibraryItems(libraryCollections)
-
-      
+    fetchAllPlaylists(props.reloadKey||0)
 
   }
+
+  // useEffect(()=>{
+
+  // })
 
 
 
@@ -89,7 +112,7 @@ useEffect(()=>{
 
 
   useEffect(() => {
-    if (libraryItems && !libraryItemCards) {
+    if (libraryItems) {
       const cards = libraryItems.map(item =>
         <LibraryItemCard key={item.id}  libraryItem={item} ownerId={props.userId} view={props.viewName} ></LibraryItemCard>)
         // if(libraryItemCards){
@@ -102,7 +125,7 @@ useEffect(()=>{
    
     }
     
-  }, [props.viewName, props.userId, libraryItems, libraryItemCards])
+  }, [props.viewName, props.userId, libraryItems])
 
   useEffect(()=>{
     if(usersLikedTracks && !savedTracksCard){
@@ -139,6 +162,9 @@ useEffect(()=>{
             <div className="playlist-content" style={{}} >
               {savedTracksCard?savedTracksCard:<></>}
               {libraryItemCards?libraryItemCards:<></>}
+              {nextPlaylistsLink?<div onClick={()=>{getNextPlaylists()}}style={{cursor:'pointer',display:"flex",flexGrow:1, minWidth:"25vh", width:"calc(33% - 20px)", backgroundColor:"#212121"}}>
+                <h2 style={{margin: "auto"}} >More</h2>
+              </div>:<></>}
             </div>
           </div>
         </div>
