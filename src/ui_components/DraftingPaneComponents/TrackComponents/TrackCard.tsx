@@ -174,7 +174,7 @@ useEffect(()=>{
                         <p style={{margin:"0px", color: isChecked?"rgb(135, 135, 135, 0.35)":"inherit"}} className="track-card-text">{props.trackClass.track.name}</p>
 
                         <div style={{maxWidth:"100%",marginLeft:'auto',textAlign:"right",  width: 'min-content', textWrap:'nowrap', justifyContent:'center'}}>
-                        <p onClick={(e)=>{e.stopPropagation()}} style={{cursor:'pointer', margin:"0px", color: isChecked?"rgb(135, 135, 135, 0.35)":"inherit"}} className="track-card-text artist-text">{props.trackClass.track.artists[0].name}</p>
+                        <p onClick={(e)=>{e.stopPropagation(); setStagingState(prev=>isMobile?"closed":prev); setDisplayProfile(true); setSelectedProfile({type: 'artist', profileId: props.trackClass.track.artists.at(0).id });}} style={{cursor:'pointer', margin:"0px", color: isChecked?"rgb(135, 135, 135, 0.35)":"inherit"}} className="track-card-text artist-text">{props.trackClass.track.artists[0].name}</p>
                         </div>
                         {/* </div> */}
                         </div>
