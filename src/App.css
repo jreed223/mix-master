@@ -163,7 +163,7 @@
   margin: 0 25px 25px 25px;
   /* margin:auto; */
   overflow-x: auto;
-  gap: 25px;
+  gap: 40px;
   padding: 25px;
     /* margin-top: 10px; */
   overflow-y: clip;
@@ -264,6 +264,8 @@
   /* min-width:180px; */
   max-height: fit-content;
   /* width: calc(33% - 20px); */
+  flex-grow: 1;
+  max-width: calc(50%);
 
   width: calc(calc(50vw - 40px) * 0.33);
 

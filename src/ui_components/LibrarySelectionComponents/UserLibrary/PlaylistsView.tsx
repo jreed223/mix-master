@@ -162,8 +162,8 @@ useEffect(()=>{
             <div className="playlist-content" style={{}} >
               {savedTracksCard?savedTracksCard:<></>}
               {libraryItemCards?libraryItemCards:<></>}
-              {nextPlaylistsLink?<div onClick={()=>{getNextPlaylists()}}style={{cursor:'pointer',display:"flex",flexGrow:1, minWidth:"25vh", width:"calc(33% - 20px)", backgroundColor:"#212121"}}>
-                <h2 style={{margin: "auto"}} >More</h2>
+              {nextPlaylistsLink?<div style={{display:"flex",flexGrow:2, minWidth:"25vh", width:"calc(33% - 20px)"}}>
+                <button  onClick={(e)=>{ e.preventDefault(); getNextPlaylists()}} style={{cursor:'pointer', margin: "auto", height: "100%", width: "100%", maxWidth:"75vh",minHeight: "10vh",  backgroundColor:"#212121", borderRadius: "30px"}} >More</button>
               </div>:<></>}
             </div>
           </div>
