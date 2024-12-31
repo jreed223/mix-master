@@ -52,7 +52,7 @@ const ResultCard: React.FC<ResultCardProps> = (props: ResultCardProps) => {
     const [artistAlbumsCards, setArtistAlbumsCards] = useState<React.JSX.Element[]>(null)
     const [expanded, setExpanded] = useState(false)
 
-    const { isMobile, setSelectedProfile, setDisplayProfile, user} = useContext(ViewContext)
+    const { isMobile, setSelectedProfile, setDisplayProfile, user, setIsPlaylistsView} = useContext(ViewContext)
     const {stagingState, setStagingState, selectedLibraryItem} = useContext(DraftingContext)
 
     const albumProps = props.result as AlbumResult
@@ -81,6 +81,20 @@ const ResultCard: React.FC<ResultCardProps> = (props: ResultCardProps) => {
         }
     }, [artistAlbums, artistProps.displayTracks, artistProps.draftTrack, artistProps.isDrafted])
 
+    const handleProfileSelection = (e)=>{
+        e.stopPropagation();
+
+        if(props.result.type==="album"){
+            setDisplayProfile(true)
+            setSelectedProfile(prev=>prev?.profileId===albumProps.item.artists.at(0).id?prev:{type: 'artist', profileId: albumProps.item.artists.at(0).id})
+        }else if(props.result.type==="playlist" && playlistProps.item.owner.id=== user.id){
+            setIsPlaylistsView(true);
+        }else if(props.result.type==="playlist"){
+            setDisplayProfile(true)
+            setSelectedProfile(prev=>prev?.profileId===playlistProps.item.owner.id?prev:{type:"user", profileId:playlistProps.item.owner.id} as UserProfileProps)
+        }
+    }
+
 
     if(props.result.type==="album"||props.result.type==="playlist"){
         return (
@@ -97,7 +111,7 @@ const ResultCard: React.FC<ResultCardProps> = (props: ResultCardProps) => {
                     
                     <p style={{ margin:"0", color: selectedLibraryItem?.id===props.result?.item.id?"rgb(135, 135, 135, 0.35)":"inherit" }} className={"track-card-text"}>{props.result?.item?.name||"Unknown"}</p>
                     <div style={{width: "min-content", textWrap:'nowrap', maxWidth: "100%", overflow:'hidden'}} className="">
-                    <p onClick={(e)=>{e.stopPropagation(); setDisplayProfile(true); setSelectedProfile(props.result.type==="album"?{type: 'artist', profileId: albumProps.item.artists.at(0).id}:{type:"user", profileId:playlistProps.item.owner.id, profile: playlistProps.item.owner.id=== user.id?user:null} as UserProfileProps)}} style={{cursor:'pointer', margin:"0", color: selectedLibraryItem?.id===props.result?.item.id?"rgb(135, 135, 135, 0.35)":"inherit" }} className={"track-card-text artist-text"}>{props.result.type==="album"?albumProps.item?.artists?.at(0).name||"Unknown":playlistProps?.item?.owner?.display_name}</p>
+                    <p onClick={(e)=>{handleProfileSelection(e)}} style={{cursor:'pointer', margin:"0", color: selectedLibraryItem?.id===props.result?.item.id?"rgb(135, 135, 135, 0.35)":"inherit" }} className={"track-card-text artist-text"}>{props.result.type==="album"?albumProps.item?.artists?.at(0).name||"Unknown":playlistProps?.item?.owner?.display_name}</p>
 
                     </div>
 

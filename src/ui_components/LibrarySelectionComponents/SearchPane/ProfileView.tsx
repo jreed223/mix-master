@@ -39,7 +39,7 @@ const ProfileView: React.FC<ProfileViewProps> = (props: ProfileViewProps) => {
     const [currentContentList, setCurrentContentList] = useState<Album['album'][]|Playlist[]>(null)
     const [currentProfileCard, setCurrentProfileCard] = useState< React.JSX.Element>(null)
 
-    const {  isMobile, setDisplayProfile, setSelectedProfile  } = useContext(ViewContext)
+    const {  isMobile, setDisplayProfile, setSelectedProfile, displayProfile  } = useContext(ViewContext)
     const { displayFeatureMenu, setStagingState, setDisplayFeatureMenu, stagingState, displayTracks } = useContext(DraftingContext)
 
     const  fetchFullArtist = useCallback(async ()=>{
@@ -62,7 +62,7 @@ const ProfileView: React.FC<ProfileViewProps> = (props: ProfileViewProps) => {
             return artistObject
 
         }
-    },[artistProps.profileId, props.type])
+    },[artistProps?.profileId, props?.type])
     
     const fetchAlbums = useCallback(async () => {
 
@@ -81,7 +81,7 @@ const ProfileView: React.FC<ProfileViewProps> = (props: ProfileViewProps) => {
             console.log(albumsObject)
             setCurrentContentList(albumsObject.items)
 
-    }, [artistProps.profileId])
+    }, [artistProps?.profileId])
 
     const  fetchFullUser = useCallback(async ()=>{
         if(props.type==='user'){
@@ -103,7 +103,7 @@ const ProfileView: React.FC<ProfileViewProps> = (props: ProfileViewProps) => {
             // setCurrentContent(userObject)
 
         }
-    }, [props.type, userProps.profileId])
+    }, [props?.type, userProps?.profileId])
         
     const fetchPlaylists = useCallback(async () => {
 
@@ -122,7 +122,7 @@ const ProfileView: React.FC<ProfileViewProps> = (props: ProfileViewProps) => {
             console.log(playlists)
             setCurrentContentList(playlists.items)
 
-    }, [userProps.profileId])
+    }, [userProps?.profileId])
 
 
     const profileCard = useCallback((fullProfile: Artist|UserProfile)=>(
@@ -134,7 +134,7 @@ const ProfileView: React.FC<ProfileViewProps> = (props: ProfileViewProps) => {
             <p style={{ display: 'inline', margin:'auto 7px' }} className={"track-card-text "}>{props.type==='artist'?(fullProfile as Artist).name:props.type==='user'?(fullProfile as UserProfile).display_name:"Unknown"}</p>
             <div style={{flex: 1, display: 'flex'}}>
 
-            <button onClick={() => {setDisplayProfile(false)}} style={{ minWidth: "10%", height: "30px", borderRadius: "25px", margin: 'auto', }}>Close</button>
+            <button onClick={(e) => {e.preventDefault();setDisplayProfile(false)}} style={{ minWidth: "10%", height: "30px", borderRadius: "25px", margin: 'auto', }}>Close</button>
         </div>
     </div>
 
@@ -192,7 +192,7 @@ const ProfileView: React.FC<ProfileViewProps> = (props: ProfileViewProps) => {
 
 
     return (
-        <div style={{height:"calc(100vh - 50px)",background: "#141414", transition: '1s', width: isMobile?"100%":stagingState==="open"?"calc(50%)":"calc(75%)", position:'fixed', overflowY: 'hidden', display:"flex", flexDirection:'column', zIndex:999 }}>
+        <div style={{height:"calc(100vh - 50px)",background: "#141414", transition: '1s', width: isMobile?"100%":stagingState==="open"?"calc(50%)":"calc(75%)", position:'fixed', overflowY: 'hidden', display:displayProfile?"flex":"none", flexDirection:'column', zIndex:999 }}>
         
         {currentProfileCard?currentProfileCard:<></>}
 

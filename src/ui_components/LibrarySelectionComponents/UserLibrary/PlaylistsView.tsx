@@ -32,7 +32,7 @@ export const PlaylistsView: React.FC<LibraryItemsViewProps> = (props: LibraryIte
   
   
   const {  selectedLibraryItem, } = useContext<DraftingContextType>(DraftingContext)
-  const {user   } = useContext<ViewContextType>(ViewContext)
+  const {user, isPlaylistsView  } = useContext<ViewContextType>(ViewContext)
 
 
   // const libraryItemsContainer = useRef(null)
@@ -89,7 +89,7 @@ useEffect(()=>{
 
 
   useEffect(() => {
-    if (libraryItems) {
+    if (libraryItems && !libraryItemCards) {
       const cards = libraryItems.map(item =>
         <LibraryItemCard key={item.id}  libraryItem={item} ownerId={props.userId} view={props.viewName} ></LibraryItemCard>)
         // if(libraryItemCards){
@@ -102,10 +102,10 @@ useEffect(()=>{
    
     }
     
-  }, [ props.viewName, props.userId, libraryItems])
+  }, [props.viewName, props.userId, libraryItems, libraryItemCards])
 
   useEffect(()=>{
-    if(usersLikedTracks){
+    if(usersLikedTracks && !savedTracksCard){
       console.log(usersLikedTracks)
       const likedTracksCard:React.ReactElement<LibraryItemCardProps>= (
         <LibraryItemCard key={usersLikedTracks.id}  libraryItem={usersLikedTracks} ownerId={props.userId} view={props.viewName} ></LibraryItemCard>
@@ -113,20 +113,21 @@ useEffect(()=>{
 
      setSavedTracksCard(likedTracksCard)
     }
-  }, [libraryItemCards, props.userId, props.viewName, usersLikedTracks])
+  }, [libraryItemCards, props.userId, props.viewName, savedTracksCard, usersLikedTracks])
 
 
 
 
 
 
-if ((libraryItems) ) {
+
 
     return (
       <>
         <div className="library-content-container" style={{
     width:"100%",
     transition: "1s",
+    display: isPlaylistsView?"block":"none"
   }}>
          
           <div style={{
@@ -143,5 +144,5 @@ if ((libraryItems) ) {
         </div>
       </>
     )
-  }
+  
 }
