@@ -245,22 +245,28 @@ export default function SearchAndPlaylists({children}) {
         return (
             <form style={{ height: "100%", width:"100%" }}>
 
-                <div className={"search-bar2"} style={{ height: "100%", width:"100%", overflowX: 'clip' }}>
-                    <div style={isMobile?{ width: "100%", height: "100%" }:{width: "75%", minWidth:"50vw", height: "100%", margin: "auto"}}>
-                        <div style={{ height: "50px", alignContent: "center", display: "flex"}}>
-                                <div style={{flex: 1, display:"flex", justifyContent:"center"}}><input ref={searchInputRef} style={{color:"#878787", fontSize: "1.5em",borderRadius:"25px", paddingLeft: "15px",  backgroundColor: "rgb(33 33 33)", border: "none", height:"calc(100% - 10px)", width: "75%", margin: "5px"}}type="text" placeholder="Search..." value={searchQuery} onKeyDown={(e) => { onEnter(e) }} onChange={(e) => { e.preventDefault(); setSearchQuery(e.target.value) }}></input></div>
-                                <div style={{ display: "inline-flex", alignItems: "center", flex: 1, gap: "15px", justifyContent: "center"}}>
+                <div className={"search-bar2"} style={{ height: "100%", width:"100%", overflowX: 'clip', position:'relative' }}>
+                    <div style={isMobile?{ width: "100%", height: "100%", display: "flex", flexDirection: "column"}:{display: "flex", flexDirection: "column", width: "75%", minWidth:"50vw", height: "100%", margin: "auto"}}>
+                        <div style={{ alignContent: "center", display: "flex", flexDirection: isMobile?"column": "row"}}>
+                                <div style={{flex: 1, display:"flex", justifyContent:"center"}}>
+                                    <input ref={searchInputRef} style={{minWidth:"75%", height:"40px", color:"#878787", fontSize: "1.5em",borderRadius:"25px", paddingLeft: "15px",  backgroundColor: "rgb(33 33 33)", border: "none", margin: "10px"}}type="text" placeholder="Search..." value={searchQuery} onKeyDown={(e) => { onEnter(e) }} onChange={(e) => { e.preventDefault(); setSearchQuery(e.target.value) }}></input>
+                                </div>
+                                <div style={{ display: "inline-flex", alignItems: "center", flex: 1, gap: "15px", justifyContent: "center", marginRight:"10px"}}>
+                                    <button disabled={!searchResults||isPlaylistsView} style={{ marginBottom: isMobile?"10px":"0px", borderRadius: "25px", height: searchResults?"30px":isMobile?"0px":"30px", minWidth: "10%",opacity:searchResults?1:0, transition:"1s", color:"red" }} onKeyDown={(e) => e.preventDefault()} onClick={ (e)=>{e.preventDefault(); setIsPlaylistsView(true)} }>&#x1F3E0;</button>
 
-                                    <button disabled={!searchResults} style={{ borderRadius: "25px", height: "30px", minWidth: "15%",opacity:searchResults?1:0, transition:"1s" }} onKeyDown={(e) => e.preventDefault()} onClick={ (e)=>{e.preventDefault(); setSearchView("Playlists"); setIsPlaylistsView(false)} }>Playlists</button>
-                                    <button disabled={!searchResults} style={{ borderRadius: "25px", height: "30px", minWidth: "15%",opacity:searchResults?1:0, transition:"1s" }} onKeyDown={(e) => e.preventDefault()} onClick={ (e)=>{e.preventDefault(); setSearchView("Tracks"); setIsPlaylistsView(false)} }>Tracks</button>
-                                    <button disabled={!searchResults} style={{ borderRadius: "25px", height: "30px", minWidth: "15%",opacity:searchResults?1:0, transition:"1s" }} onKeyDown={(e) => e.preventDefault()} onClick={ (e)=>{e.preventDefault(); setSearchView("Albums"); setIsPlaylistsView(false);}}>Albums</button>
-                                    <button disabled={!searchResults} style={{ borderRadius: "25px", height: "30px", minWidth: "15%",opacity:searchResults?1:0, transition:"1s" }} onKeyDown={(e) => e.preventDefault()} onClick={(e)=>{e.preventDefault();setSearchView("Artists"); setIsPlaylistsView(false)}}>Artists</button>
+                                    <button disabled={!searchResults||(searchView==="Playlists"&&!isPlaylistsView)} style={{ marginBottom: isMobile?"10px":"0px", borderRadius: "25px", height: searchResults?"30px":isMobile?"0px":"30px", minWidth: "12.5%",opacity:searchResults?1:0, transition:"1s" }} onKeyDown={(e) => e.preventDefault()} onClick={ (e)=>{e.preventDefault(); setSearchView("Playlists"); setIsPlaylistsView(false)} }>Playlists</button>
+                                    <button disabled={!searchResults||(searchView==="Tracks"&&!isPlaylistsView)} style={{ marginBottom: isMobile?"10px":"0px", borderRadius: "25px", height: searchResults?"30px":isMobile?"0px":"30px", minWidth: "12.5%",opacity:searchResults?1:0, transition:"1s" }} onKeyDown={(e) => e.preventDefault()} onClick={ (e)=>{e.preventDefault(); setSearchView("Tracks"); setIsPlaylistsView(false)} }>Tracks</button>
+                                    <button disabled={!searchResults||(searchView==="Albums"&&!isPlaylistsView)} style={{ marginBottom: isMobile?"10px":"0px", borderRadius: "25px", height: searchResults?"30px":isMobile?"0px":"30px", minWidth: "12.5%",opacity:searchResults?1:0, transition:"1s" }} onKeyDown={(e) => e.preventDefault()} onClick={ (e)=>{e.preventDefault(); setSearchView("Albums"); setIsPlaylistsView(false);}}>Albums</button>
+                                    <button disabled={!searchResults||(searchView==="Artists"&&!isPlaylistsView)} style={{ marginBottom: isMobile?"10px":"0px", borderRadius: "25px", height: searchResults?"30px":isMobile?"0px":"30px", minWidth: "12.5%",opacity:searchResults?1:0, transition:"1s" }} onKeyDown={(e) => e.preventDefault()} onClick={(e)=>{e.preventDefault();setSearchView("Artists"); setIsPlaylistsView(false)}}>Artists</button>
 
                             </div>
                         </div>
-                        <div className="search-results" style={{ height: "calc(100% - 50px)", overflowY: "auto", overflowX:'clip', position: "relative" }}>
 
-                            {displayProfile?<ProfileView type={selectedProfile.type} profileId={selectedProfile.profileId} profile={selectedProfile.profile||null}></ProfileView>:<></>}
+                        {displayProfile?<ProfileView type={selectedProfile.type} profileId={selectedProfile.profileId} profile={selectedProfile.profile||null}></ProfileView>:<></>}
+
+
+                        <div className="search-results" style={{ flex: 1, overflowY: "auto", overflowX:'clip' }}>
+
 
 
                             {isLoading?

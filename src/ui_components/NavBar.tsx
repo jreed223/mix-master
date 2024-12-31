@@ -153,7 +153,7 @@ export default function NavBar({currentUser}:navProps){
 
     return(
 
-            <div style={{overflow: 'clip'}}>
+            <>
                 <span style={{color: "rgb(135, 135, 135)", overflow:"clip"}}className="navbar">
                    
                         <div  style={{width:"calc(50% - 50px)", margin: '0px 25px', alignItems:"center", display: "flex", position: 'relative'}}>
@@ -192,14 +192,14 @@ export default function NavBar({currentUser}:navProps){
                         }
                         
                         </div>
-                    <div style={{position: "absolute", left:"50%", transform: "translateY(-50%)", top: "50%", height: "100%", alignItems: "center", width: "40%", display: "flex",  gap:"25px" }}>
-                    <button disabled={(isPlaylistsView&&stagingState==="closed")} style={{minWidth:"20%", height: "70%", borderRadius:"25px" }} onClick={isMaxDraftView?()=>{setIsMaxDraftView(false)}:(stagingState==="open"&&isPlaylistsView)?()=>{setStagingState("closed"); setIsPlaylistsView(true)}:()=>{setIsPlaylistsView(true)}}>My Playlists</button>
-                    </div>
+                    {/* <div style={{position: "absolute", left:"50%", transform: "translateY(-50%)", top: "50%", height: "100%", alignItems: "center", width: "40%", display: "flex",  gap:"25px" }}>
+                    <button disabled={(isPlaylistsView&&stagingState==="closed")} style={{minWidth:"20%", height: "70%", borderRadius:"25px", opacity: isPlaylistsView&&stagingState==="closed"?0:1, transition:"1s"}} onClick={isMobile?()=>{setStagingState('closed'); setIsPlaylistsView(true);}:isMaxDraftView?()=>{setIsMaxDraftView(false); setIsPlaylistsView(true);}:(stagingState==="open"&&isPlaylistsView)?()=>{setStagingState("closed"); setIsPlaylistsView(true)}:()=>{setIsPlaylistsView(true)}}>My Playlists</button>
+                    </div> */}
                     <p>Welcome, {currentUser.display_name}</p>
                 </span>
                 <MainContent currentUser={currentUser}></MainContent>
                 {/* <UserLibrary  currentUser={currentUser} ></UserLibrary> */}
-            </div>
+            </>
     )
 }
 

@@ -78,7 +78,7 @@ export default function DraftingProvider({ children}){
             const newStagedPlaylist = stagedPlaylist.concat(items)
             setStagedPlaylist(newStagedPlaylist)
             setStagedPlaylistState(stagedPlaylistState.concat([newStagedPlaylist]))
-            setStagingState("open")
+            // if(!isMobile)setStagingState("open");
             console.log("Added items: ",items)
             console.log("new Staged Playlist: ",newStagedPlaylist)
             console.log(stagedPlaylistState)

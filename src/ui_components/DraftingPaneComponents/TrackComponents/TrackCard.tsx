@@ -33,7 +33,7 @@ const TrackCard: React.FC<TrackCardProps> = (
 )=>{
 
     const {currentAudio, setCurrentAudio, currentAudioColor} = useContext<AudioContextType>(AudioContext)
-    const {stageTracks, stagedPlaylist} = useContext<DraftingContextType>(DraftingContext)
+    const {stageTracks, stagedPlaylist, setStagingState} = useContext<DraftingContextType>(DraftingContext)
     const {isMobile, setSelectedProfile, setDisplayProfile} = useContext(ViewContext)
 
     const [isChecked, setIsChecked]= useState(false)
@@ -205,7 +205,7 @@ useEffect(()=>{
                         </div>
 
                         {props.tracklistArea==="search-bar-card"
-                        ?<button disabled={stagedPlaylist.some(track=>track.track.id===props.trackClass.track.id)}style={{width:"40px", height: "100%", borderRadius: "10%"}} onClick={(e)=>{e.preventDefault(); stageTracks([props.trackClass]);}}>
+                        ?<button disabled={stagedPlaylist.some(track=>track.track.id===props.trackClass.track.id)}style={{width:"40px", height: "100%", borderRadius: "10%"}} onClick={(e)=>{e.preventDefault(); setStagingState(prev=>isMobile?prev:"open"); stageTracks([props.trackClass]);}}>
                             +
                         </button>
                         :<button style={{width:"40px", height: "100%", borderRadius: "10%"}} onClick={(e)=>{e.preventDefault(); stageTracks([props.trackClass]); props.deselectTrack(props.trackClass.track.id)}}>

@@ -126,7 +126,7 @@ const ProfileView: React.FC<ProfileViewProps> = (props: ProfileViewProps) => {
 
 
     const profileCard = useCallback((fullProfile: Artist|UserProfile)=>(
-        <div style={{  display: "flex", margin: 0, padding: "5px", height: isMobile?"8vh":"12vh",  minHeight:isMobile?'unset':'80px'}} className="track-card">
+        <div style={{  display: "flex", margin: 0, padding: "9px", height: isMobile?"8vh":"12vh",  minHeight:isMobile?'unset':'80px'}} className="track-card">
         <div style={{  display: "inline", position: "relative", height: "100%", aspectRatio: "1 / 1" }}>
             <img loading="lazy" style={{ borderRadius: "50%", position: "relative", height: "100%", aspectRatio: "1 / 1" }} src={props.type==='artist'?(fullProfile as Artist).images?.at(0)?.url:props.type==='user'?(fullProfile as UserProfile).images?.at(0)?.url:"Unknown"} alt={`${props.type==='artist'?(fullProfile as Artist).name.at(0):props.type==='user'?(fullProfile as UserProfile).display_name:"Unknown"} cover`}></img>
             <div  style={{ top: 0, left: 0, width: "100%", height: "100%", position: "absolute" }}></div>
@@ -192,7 +192,7 @@ const ProfileView: React.FC<ProfileViewProps> = (props: ProfileViewProps) => {
 
 
     return (
-        <div style={{height:"calc(100% - 100px)",background: "#141414", transition: '1s', width: isMobile?"100%":stagingState==="open"?"calc(50%)":"calc(75%)", position:'fixed', top:'100px', overflowY: 'hidden', display:"flex", flexDirection:'column', zIndex:999 }}>
+        <div style={{height:"calc(100vh - 50px)",background: "#141414", transition: '1s', width: isMobile?"100%":stagingState==="open"?"calc(50%)":"calc(75%)", position:'fixed', overflowY: 'hidden', display:"flex", flexDirection:'column', zIndex:999 }}>
         
         {currentProfileCard?currentProfileCard:<></>}
 
