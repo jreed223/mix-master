@@ -31,7 +31,10 @@ export const authLink = async (req: expressRequest, res: expressResponse)=>{
         const verifier = generateCodeVerifier(128);
 
     const authLink = await generateCodeChallenge(verifier).then((challenge:string)=>{
-        res.cookie("verifierKey", verifier)
+        res.cookie("verifierKey", verifier, {
+            httpOnly:true,
+            secure:process.env.ENV==='PROD'
+        })
 
         const params = new URLSearchParams();
         params.append("client_id", clientId);

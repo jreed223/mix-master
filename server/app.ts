@@ -21,12 +21,12 @@ type FetchResponse = Response;  //Fetch API Response
 
 // Initialize the express engine
 const app: express.Application = express();
-const clientId : string =  process.env.CLIENT_ID || "";
 dotenv.config();
 // Take a port 3000 for running server.
 // const PORT: number|string = process.env.PORT || 8080;
-
+const clientId : string =  process.env.CLIENT_ID || "";
 const PORT: number|string = process.env.PORT || 8080;
+const ENV:string= process.env.ENV||"DEV"
 
 
 app.listen(PORT, () => {
@@ -62,13 +62,14 @@ export async function getRefreshToken(clientId: string, refreshToken: string) : 
 export async function refreshTokens (req: expressRequest, res: expressResponse, next: NextFunction){
     const accessToken = req.cookies["access_token"]
     const refreshToken = req.cookies["refresh_token"]
+    const saveUser = req.cookies.save_user
     //console.log(accessToken)
 
     const expirationDate = new Date(req.cookies["expires"])
     const currentTime = new Date(Date.now()-60*1000*5)
     
 
-    if((currentTime> expirationDate)||typeof accessToken === "undefined" ){
+    if(((currentTime> expirationDate)||typeof accessToken === "undefined" ||!accessToken)&&(saveUser&&saveUser==='true')){
         const response = await getRefreshToken(clientId, refreshToken)
             // console.log("response from refreshTokens: ",response)
 
@@ -110,7 +111,7 @@ app.use(express.json({limit: '50mb'}));
 
 
 
-app.use(express.static(".././build"))
+// app.use(express.static(".././build"))
 
 userRoutes(app)
 // supplementalRoutes(app)

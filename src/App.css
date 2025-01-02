@@ -265,7 +265,7 @@
   max-height: fit-content;
   /* width: calc(33% - 20px); */
   flex-grow: 1;
-  max-width: calc(50%);
+  max-width: calc(25vw);
 
   width: calc(calc(50vw - 40px) * 0.33);
 

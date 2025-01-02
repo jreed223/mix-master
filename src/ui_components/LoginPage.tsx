@@ -8,6 +8,13 @@ import React from "react"
 //     window.localStorage.setItem('authorizing', 'true'); //removed from storage once the user is loaded and authorized
 //     redirectToAuthCodeFlow(clientId);
 // }
+const handleSaveUser = (e:React.ChangeEvent<HTMLInputElement>)=>{
+    if(e.target.checked){
+        document.cookie = `save_user=true;max-age=${2592000*1000}` //30 days in miliseconds
+    }else{
+        document.cookie = 'save_user=false;'
+    }
+}
 
 export default function LoginPage(){
     return(
@@ -21,7 +28,7 @@ export default function LoginPage(){
                     return authLink
                     })}}>Login</button>
                 <p><input type="checkbox" id="save-sign-in"
-                onChange={(e)=>{e.target.checked?window.localStorage.setItem('save_user', 'true'):window.localStorage.removeItem('save_user')}}>
+                onChange={(e)=>handleSaveUser(e)}>
                     </input>Stay signed in?</p>
             </header>
         </div>

@@ -52,5 +52,6 @@ export const user = (req: expressRequest, res: expressResponse)=>{
         })
     }else{
         console.error("No access token found (/spotify-data/playlists)")
+        res.sendStatus(404)
     }
 }

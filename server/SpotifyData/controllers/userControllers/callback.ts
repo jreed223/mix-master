@@ -1,4 +1,4 @@
-import { Request as expressRequest, Response as expressResponse} from 'express';
+import { CookieOptions, Request as expressRequest, Response as expressResponse} from 'express';
 type FetchResponse = Response;  //Fetch API Response
 
 export async function getAccessToken(code: string, verifier:string):Promise<FetchResponse> {
@@ -27,6 +27,7 @@ export async function getAccessToken(code: string, verifier:string):Promise<Fetc
 export const callback = (req: expressRequest, res: expressResponse)=>{
     const code = req.query.code?req.query.code as string: null;
     const verifier = req.cookies.verifierKey;
+    const saveUser = req.cookies.save_user;
     res.clearCookie('verifierKey')
 
     if(code&&verifier){
@@ -35,10 +36,26 @@ export const callback = (req: expressRequest, res: expressResponse)=>{
                 console.log("OK response from /callback")
                 const tokens  = await response.json()//If tokens are retrieved successfully, store them
                 const expiration = new Date(Date.now()+tokens.expires_in*1000)
+                
+                const cookieOptions:CookieOptions ={httpOnly:true,
+                    sameSite:'strict',
+                    secure:process.env.ENV==='PROD',}
 
-                res.cookie("access_token", tokens.access_token, {maxAge:tokens.expires_in*1000})
-                res.cookie("refresh_token", tokens.refresh_token, {maxAge:2592000*1000})
-                res.cookie("expires",expiration, {maxAge:tokens.expires_in*1000})
+                
+               if(saveUser && saveUser === 'true') {
+                res.cookie("access_token", tokens.access_token, { ...cookieOptions, 
+                    maxAge:tokens.expires_in*1000})
+                res.cookie("refresh_token", tokens.refresh_token, {...cookieOptions,
+                    maxAge:2592000*1000
+                     });
+                    res.cookie("expires",expiration, {...cookieOptions,
+                        maxAge:tokens.expires_in*1000
+                    })
+
+               }else{
+                res.cookie("access_token", tokens.access_token, { ...cookieOptions})
+               }
+               
 
                 res.redirect("/")
 

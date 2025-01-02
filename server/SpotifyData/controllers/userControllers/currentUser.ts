@@ -1,4 +1,4 @@
-import { Request as expressRequest, Response as expressResponse} from 'express';
+import { CookieOptions, Request as expressRequest, Response as expressResponse} from 'express';
 import { UserProfile } from '../../../types';
 type FetchResponse = Response;  //Fetch API Response
 
@@ -28,9 +28,12 @@ export const userProfile = (req: expressRequest, res: expressResponse)=>{
                 const user : UserProfile  = await response.json()
                 res.send(user)
             }else{
+                const options:CookieOptions = {httpOnly:true,
+                    sameSite:'strict',
+                    secure:process.env.ENV==='PROD',}
                 const error = await response.json()
-                res.clearCookie('authorizing')
-                res.clearCookie('access_token')
+                res.clearCookie('authorizing',options)
+                res.clearCookie('access_token', options)
                 console.error("Failed to retrieve user (/spotify-data/user): ", error)
             }
         })
