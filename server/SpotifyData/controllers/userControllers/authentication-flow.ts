@@ -49,6 +49,7 @@ export const authLink = async (req: expressRequest, res: expressResponse)=>{
 
     }).catch(e=>{
         console.error("Fetch operation failed (/authetication-flow):", e)
+        res.sendStatus(500)
 
     })
     //console.log("redirecting")

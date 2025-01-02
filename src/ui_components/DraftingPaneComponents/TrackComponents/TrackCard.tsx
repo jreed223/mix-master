@@ -76,7 +76,7 @@ useEffect(()=>{
         color: "#878787"}:
 
             {
-                minHeight:isMobile?'unset':'80px',
+                minHeight:isMobile?'50px':'60px',
                 height:isMobile?props.tracklistArea==="search-bar-card"?'8vh':'7vh':props.tracklistArea==="search-bar-card"?'12vh':'11vh',
                 display: 'flex',
                 alignItems: 'center',
@@ -171,10 +171,10 @@ useEffect(()=>{
                         <div onClick={()=>handleCheck()}  style={{marginRight:"7px", cursor:"pointer",position: "relative", textAlign:"right",display:"flex", flexDirection:"column", flexGrow: '1', width: "0%", textWrap:'nowrap', height:"100%", justifyContent:'center'}}>
 
                         {/* <div onClick={()=>handleCheck()} style={{cursor:"pointer", top:0, left:0,width:"100%", height:"100%", position:"absolute",  }}> */}
-                        <p style={{margin:"0px", color: isChecked?"rgb(135, 135, 135, 0.35)":"inherit"}} className="track-card-text">{props.trackClass.track.name}</p>
+                        <p style={{margin:"0px", fontSize: "1.25em",color: isChecked?"rgb(135, 135, 135, 0.35)":"inherit"}} className="track-card-text">{props.trackClass.track.name}</p>
 
                         <div style={{maxWidth:"100%",marginLeft:'auto',textAlign:"right",  width: 'min-content', textWrap:'nowrap', justifyContent:'center'}}>
-                        <p onClick={(e)=>{e.stopPropagation(); setStagingState(prev=>isMobile?"closed":prev); setDisplayProfile(true); setSelectedProfile({type: 'artist', profileId: props.trackClass.track.artists.at(0).id });}} style={{cursor:'pointer', margin:"0px", color: isChecked?"rgb(135, 135, 135, 0.35)":"inherit"}} className="track-card-text artist-text">{props.trackClass.track.artists[0].name}</p>
+                        <p onClick={(e)=>{if(!isMobile){e.stopPropagation(); setDisplayProfile(true); setSelectedProfile({type: 'artist', profileId: props.trackClass.track.artists.at(0).id });}}} style={{fontSize: "1em", cursor:'pointer', margin:"0px", color: isChecked?"rgb(135, 135, 135, 0.35)":"inherit"}} className={`track-card-text ${!isMobile?"artist-text":""}`}>{props.trackClass.track.artists[0].name}</p>
                         </div>
                         {/* </div> */}
                         </div>
@@ -192,11 +192,11 @@ useEffect(()=>{
                         <div onClick={props.tracklistArea!=="search-bar-card"?()=>handleCheck():()=>{}}  style={{marginLeft: "7px", cursor:props.tracklistArea!=="search-bar-card"?'pointer':"default", position: "relative", display:"flex", flexDirection:"column",  overflow: 'hidden', flexGrow: '1', width: "0%", height:"100%", justifyContent:'center'}}>
                         {/* <div onClick={props.tracklistArea!=="search-bar-card"?()=>handleCheck():()=>{}} style={{cursor:props.tracklistArea!=="search-bar-card"?"pointer":"default",top:0, left:0,width:"100%", height:"100%", position:"absolute",  }}> */}
 
-                        <p style={{margin:"0px", color: isChecked?"rgb(135, 135, 135, 0.35)":"inherit"}} className="track-card-text">{props.trackClass.track.name}</p>
+                        <p style={{margin:"0px",fontSize: "1.25em", color: isChecked?"rgb(135, 135, 135, 0.35)":"inherit"}} className="track-card-text">{props.trackClass.track.name}</p>
                         
                         <div style={{maxWidth:"100%",  width: 'min-content', textWrap:'nowrap', justifyContent:'center'}}>
 
-                        <p onClick={(e)=>{e.stopPropagation(); setStagingState(prev=>isMobile?"closed":prev); setDisplayProfile(true); setSelectedProfile({type: 'artist', profileId: props.trackClass.track.artists.at(0).id });}} style={{cursor:'pointer', margin:"0px", color: isChecked?"rgb(135, 135, 135, 0.35)":"inherit"}} className="track-card-text artist-text">{props.trackClass.track.artists[0].name}</p>
+                        <p onClick={(e)=>{if(!isMobile||props.tracklistArea==="search-bar-card"){e.stopPropagation(); setDisplayProfile(true); setSelectedProfile({type: 'artist', profileId: props.trackClass.track.artists.at(0).id });}}} style={{fontSize: "1em", cursor:'pointer', margin:"0px", color: isChecked?"rgb(135, 135, 135, 0.35)":"inherit"}} className={`track-card-text ${!isMobile?"artist-text":""}`}>{props.trackClass.track.artists[0].name}</p>
                         </div>
 
                         {/* </div> */}

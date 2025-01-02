@@ -1,6 +1,6 @@
 
 // Import the express in typescript file
-import express, { Request as expressRequest, Response as expressResponse, NextFunction } from 'express';
+import express, { CookieOptions, Request as expressRequest, Response as expressResponse, NextFunction } from 'express';
 import dotenv from 'dotenv';
 
 
@@ -26,7 +26,7 @@ dotenv.config();
 // const PORT: number|string = process.env.PORT || 8080;
 const clientId : string =  process.env.CLIENT_ID || "";
 const PORT: number|string = process.env.PORT || 8080;
-const ENV:string= process.env.ENV||"DEV"
+// const ENV:string= process.env.ENV||"DEV"
 
 
 app.listen(PORT, () => {
@@ -74,6 +74,9 @@ export async function refreshTokens (req: expressRequest, res: expressResponse, 
             // console.log("response from refreshTokens: ",response)
 
             if(response.ok){
+                 const cookieOptions:CookieOptions ={httpOnly:true,
+                                    sameSite:'strict',
+                                    secure:process.env.ENV==='PROD',}
                 const tokens = await response.json()
                 console.log("tokens refreshed: ", tokens)
 
@@ -81,10 +84,10 @@ export async function refreshTokens (req: expressRequest, res: expressResponse, 
                 const refresh_token = tokens.refresh_token
                 const expiration = new Date(Date.now()+tokens.expires_in*1000)
 
-                res.cookie("access_token", access_token, {maxAge:tokens.expires_in*1000})
+                res.cookie("access_token", access_token, {...cookieOptions, maxAge:tokens.expires_in*1000})
                 res.locals.access_token = access_token
-                res.cookie("refresh_token", refresh_token, {maxAge:2592000*1000})
-                res.cookie("expires",expiration, {maxAge:tokens.expires_in*1000})
+                res.cookie("refresh_token", refresh_token, {...cookieOptions, maxAge:2592000*1000})
+                res.cookie("expires",expiration, {...cookieOptions, maxAge:tokens.expires_in*1000})
 
                 // res.send(tokens)
                 next()

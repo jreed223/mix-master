@@ -42,8 +42,12 @@ export const userProfile = (req: expressRequest, res: expressResponse)=>{
             res.clearCookie('access_token')
             // res.clearCookie('refresh_token')
             console.error("Fetch operation failed (/spotify-data/user)): ", e)
+            res.sendStatus(500)
+
         })
     }else{
+        res.sendStatus(404)
+
         console.error("No access token found (/spotify-data/user)")
     }
 }

@@ -62,11 +62,14 @@ export const callback = (req: expressRequest, res: expressResponse)=>{
             }else{
                 const error = await response.json()
                 console.error("Failed to retrieve access token (/callback):", error)
+                res.sendStatus(404)
             }
 
         }).catch((e)=>{
 
             console.error("Fetch operation failed (/callback):", e)
+            res.sendStatus(500)
+
         })
     }else{
         console.error("Code||Verifier not found (callback)")

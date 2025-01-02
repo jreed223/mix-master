@@ -45,16 +45,14 @@ function App() {
   
   if(isLoading === true){   //If authorizing user, direct to loading screen until user is set
     return(
-      <div><h1>Loading Profile...</h1></div>
+      <><h1>Loading Profile...</h1></>
     )
   }else if(currentUser){
     return(
     <ViewProvider>
       <DraftingProvider>
         <AudioProvider>
-          <div>
             <NavBar currentUser={currentUser}></NavBar>
-          </div>
       </AudioProvider>
       </DraftingProvider>
     </ViewProvider>
