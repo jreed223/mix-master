@@ -39,8 +39,7 @@ const LibraryItemCard: React.FC<LibraryItemCardProps> = (props: LibraryItemCardP
                         <p className="playlist-name playlist-card-text">{props.libraryItem.name!==""?props.libraryItem.name:"Untitled"}</p>
                         {props.libraryItem.type ==="album" ? 
                             <p className = "playlist-card-text">{props.libraryItem.artists[0].name}</p>: props.libraryItem.type ==="playlist"? 
-                                <p className = "playlist-card-text">{props.libraryItem.owner.display_name}</p> :  
-                                    <p className = "playlist-card-text">unknown type</p>}
+                                <p className = "playlist-card-text">{props.libraryItem.owner.display_name}</p> :  <></>}
                         <p className = "playlist-card-text">{props.libraryItem.totalTracks} tracks</p>
                     </div>
                 </div>

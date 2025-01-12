@@ -102,10 +102,10 @@ const FilterMenu: React.FC<PlaylistMenuProps> = () => {
             <div style={{ transition: "1s", display:'flex', flex:1, flexDirection:'column', maxHeight:"100%", overflowY: "clip" }}>
             <div style={{position: "sticky", backgroundColor:"rgb(20, 20, 20)", }}><button style={{borderRadius: "15px", margin: "0 10px 10px"}}>Reset</button></div>
                 <div style={{overflowY:"auto", overflowX: 'clip'}}>
-                <PopularityFilter></PopularityFilter>
-                
                 <CalendarFilter></CalendarFilter>
                 <ArtistFilter></ArtistFilter>
+                <PopularityFilter></PopularityFilter>
+                
 
                 </div>
 

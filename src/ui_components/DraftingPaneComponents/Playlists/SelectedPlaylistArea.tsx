@@ -208,15 +208,15 @@ const {popularityFilter, dateRange, setSelectedArtistFilters, artistQuery, artis
                 if(!isThrottled){
 
             
-                const bottom = (scrollContainer.current.clientHeight  + scrollContainer.current.scrollTop) >= scrollContainer.current.scrollHeight -300;
+                const bottom = (scrollContainer.current.clientHeight  + scrollContainer.current.scrollTop) >= scrollContainer.current.scrollHeight;
                 if (bottom && !loadingState) {
-                    isThrottled = true
+                    // isThrottled = true
 
                   getNextItems();
 
-                  setTimeout(()=>{
-                    isThrottled = false
-                  }, 1000)
+                //   setTimeout(()=>{
+                //     isThrottled = false
+                //   }, 1000)
                 }
                 
             }
