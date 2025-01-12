@@ -32,7 +32,6 @@ export const playlistItems = async (req: expressRequest, res: expressResponse)=>
         //let allNamesAndArtists : string[] = []
         let offset = 0
         // console.log(playlistId)
-        while(offset<2){
 
             const playlistObject = await fetchPlaylistsItems(playlistId, offset, accessToken).then(async (response) => {
 
@@ -74,7 +73,7 @@ export const playlistItems = async (req: expressRequest, res: expressResponse)=>
                 //console.log(`Playlist items batch #${offset}: `, playlistItems)
                 if(playlistObject.next){
                     console.log("next: ",playlistObject.next)
-                    offset+=1
+                    // offset+=1
                     console.log("offset: ",offset)
                     nextItems = playlistObject.next
                 }else{
@@ -92,7 +91,6 @@ export const playlistItems = async (req: expressRequest, res: expressResponse)=>
             }else{
                 console.error("No playlist object found (/spotify-data/playlist-items)")
             }
-        }
         console.log("Total playlist items found: ", allPlaylistItems.length)
                     res.send({
                         next: nextItems,

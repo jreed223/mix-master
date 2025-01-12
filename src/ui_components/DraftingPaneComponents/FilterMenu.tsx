@@ -7,6 +7,9 @@ import { Artist } from '../../../server/types';
 
 // import { Features, PlaylistItem } from "../../../server/types";
 // import PlaylistClass from "../../models/playlistClass";
+import CalendarFilter from './CalendarFilter';
+import PopularityFilter from "./PopularityFilter";
+import ArtistFilter from "./ArtistFilter";
 interface PlaylistMenuProps {
 
 
@@ -39,15 +42,15 @@ const FilterMenu: React.FC<PlaylistMenuProps> = () => {
         { checkboxRef: useRef(null), sliderRef: useRef(null), audioFeature: "time_signature", inputType: "range", min: "3", max: "7", default: "5", tooltipText: 'An estimated time signature. The time signature (meter) is a notational convention to specify how many beats are in each bar (or measure). The time signature ranges from 3 to 7 indicating time signatures of "3/4", to "7/4".' }, //ABS
     ];
 
-    useEffect(()=>{
-        if(artistsList?.length>0 && artistQuery){
-            const filteredArtists = artistsList.filter((artist)=>artist.name.toLowerCase().startsWith(artistQuery.toLowerCase()))
-            setCurrentList(filteredArtists)
-        }else if(artistsList){
-          setCurrentList(artistsList)
+    // useEffect(()=>{
+    //     if(artistsList?.length>0 && artistQuery){
+    //         const filteredArtists = artistsList.filter((artist)=>artist.name.toLowerCase().startsWith(artistQuery.toLowerCase()))
+    //         setCurrentList(filteredArtists)
+    //     }else if(artistsList){
+    //       setCurrentList(artistsList)
 
-        }
-    },[allTracks, artistQuery, artistsList, setArtistsList])
+    //     }
+    // },[allTracks, artistQuery, artistsList, setArtistsList])
 
 
     const handleAudioFeatures = (index) => {
@@ -78,63 +81,6 @@ const FilterMenu: React.FC<PlaylistMenuProps> = () => {
 
     }
 
-    const popularityCheckbox = useRef(null)
-    const popularitySlider = useRef(null)
-    const artistSearch = useRef(null)
-
-    const handlePopularityFilter = () => {
-
-        if (popularityCheckbox.current.checked) {
-            popularitySlider.current.disabled = true
-            setPopularityFilter(null)
-
-        } else {
-            popularitySlider.current.disabled = false
-
-            const selectedPopularity = parseInt(popularitySlider.current.value)
-
-            setPopularityFilter(selectedPopularity)
-            // props.onFilterSet(currentSelection)
-
-        }
-
-    }
-
-    // const toggleSearch =()=>{
-
-
-    // }
-
-    const [calendarDisabled, setCalendarDisabled] = useState<boolean>(true)
-
-    const toggleCalendar = () => {
-        if (!calendarDisabled) {
-            setDateRange(null)
-        }
-        setCalendarDisabled(prev => !prev)
-        // console.log(calendarDisabled)
-        console.log(dateRange)
-
-
-    }
-
-    const handleDateSelection = (dates: Date | [Date, Date]) => {
-        if (Array.isArray(dates)) {
-            console.log("DATES: ", `\n Date 1: ${dates[0]} \n Date 2: ${dates[1]}`)
-            // const dateList: [] = dates
-            if(dates.at(1)===null){
-                setDateRange(null)
-            }
-            setDateRange(dates);
-        }
-    };
-
-    
-    const disableFutureDates = (date: Date) => {
-        return date > new Date();  // Disable any date in the future
-    };
-
-
 
 
     return (
@@ -153,32 +99,25 @@ const FilterMenu: React.FC<PlaylistMenuProps> = () => {
         })
 
             } */}
-            <div style={{width: isMaxDraftView?"33.3vw": isMobile?"calc(50vw - 3px)":"calc(25vw - 3px)", transition: "1s"}}>
-                <div key={"popularity-div"} style={{ width: "100%", transition: "1s" }}>
-                    <label style={{}}>Popularity</label>
-                    {/* <div className="tooltip"> ? <span className="tooltip-text">{'tooltip Text!!'}</span></div> */}
-                    <div>
-                        <input key={"popularity-checkbox"} ref={popularityCheckbox} onChange={() => handlePopularityFilter()} type="checkbox" defaultChecked={true} />
-                        <input key={"popularity-slider"} ref={popularitySlider} style={{ width: "80%", margin: 'auto' }} id={`popularity-slider`} onChange={() => handlePopularityFilter()} type={"range"} min={0} max={100} defaultValue={50} className="slider" disabled={true} />
-                    </div>
+            <div style={{ transition: "1s", display:'flex', flex:1, flexDirection:'column', maxHeight:"100%", overflowY: "clip" }}>
+            <div style={{position: "sticky", backgroundColor:"rgb(20, 20, 20)", }}><button style={{borderRadius: "15px", margin: "0 10px 10px"}}>Reset</button></div>
+                <div style={{overflowY:"auto", overflowX: 'clip'}}>
+                <PopularityFilter></PopularityFilter>
+                
+                <CalendarFilter></CalendarFilter>
+                <ArtistFilter></ArtistFilter>
+
                 </div>
-                <div key={"calendar-div"} style={{ width: "100%", transition: "1s" }}>
-                    <p style={{display: "inline-block"}}>Date Range</p>
+
+
+                {/* <div key={"artists-div"} style={{ width: "100%", transition: "1s" }}> */}
+                    {/* <p style={{display: "inline-block"}}>Artist</p> */}
                     {/* <div className="tooltip"> ? <span className="tooltip-text">{'tooltip Text!!'}</span></div> */}
-                    <input key={"calendar-checkbox"} ref={null} onChange={() => { toggleCalendar() }} type="checkbox" defaultChecked={true} />
-                    <div>
-                        <Calendar onChange={(date) => handleDateSelection(date)} value={dateRange} allowPartialRange selectRange={true}  tileDisabled={ calendarDisabled?()=>true:({ date }) => disableFutureDates(date)}></Calendar>
-                        {/* <input key={"popularity-slider"} ref={popularitySlider} style={{width: "80%", margin:'auto'}} id={`popularity-slider`} onChange={()=>handlePopularityFilter()} type={"range"} min={0} max={100} defaultValue={50} className="slider" disabled={true}/> */}
-                    </div>
-                </div>
-                <div key={"artists-div"} style={{ width: "100%", transition: "1s" }}>
-                    <p style={{display: "inline-block"}}>Artist</p>
-                    {/* <div className="tooltip"> ? <span className="tooltip-text">{'tooltip Text!!'}</span></div> */}
-                    <div>
+                    {/* <div> */}
                         {/* <input key={"artist-checkbox"} ref={null} onChange={() => handlePopularityFilter()} type="checkbox" defaultChecked={true} /> */}
-                        <input key={"artist-search"} ref={artistSearch} style={{ width: "80%", margin: 'auto' }} id={`artist-searchr`} onChange={(e) => setArtistQuery(e.target.value)} value={artistQuery} type={"search"} placeholder={"Search Artists"} className="slider" disabled={false} />
-                    </div>
-                    <>{artistsList&&artistsList.length>0?<div>
+                        {/* <input key={"artist-search"} ref={artistSearch} style={{ width: "80%", margin: 'auto' }} id={`artist-searchr`} onChange={(e) => setArtistQuery(e.target.value)} value={artistQuery} type={"search"} placeholder={"Search Artists"} className="slider" disabled={false} /> */}
+                    {/* </div> */}
+                    {/* <>{artistsList&&artistsList.length>0?<div>
                         {artistsList.map((artist:Artist)=>{
                             if(currentList?.some((item:Artist)=>item.id===artist.id)){
 
@@ -196,8 +135,8 @@ const FilterMenu: React.FC<PlaylistMenuProps> = () => {
                         })}
                     </div>:<></>
                         }
-                    </>
-                </div>
+                    </> */}
+                {/* </div> */}
             </div>
 
         </div>

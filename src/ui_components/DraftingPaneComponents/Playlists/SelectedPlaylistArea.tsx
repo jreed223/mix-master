@@ -49,6 +49,7 @@ const {popularityFilter, dateRange, setSelectedArtistFilters, artistQuery, artis
         filterFeatures, loadingState, setLoadingState, selectedArtistFilters, setArtistQuery} = useContext(TracklistContext)
 
     const [selectedTracks, setSelectedTracks] = useState<TrackClass[]>([])
+    const [displayedTracks, setDisplayedTracks] = useState<TrackClass[]>([])
     const [nextTracks, setNextTracks] = useState<TrackClass[]>(null)
     // const [loadingState, setLoadingState] = useState<String>(null)
 
@@ -70,6 +71,8 @@ const {popularityFilter, dateRange, setSelectedArtistFilters, artistQuery, artis
 
     //**Fetches selected playlists tracks if not already fetched*/
     useEffect(() => {
+
+        
         // setSelectAllChecked(false)
         setTrackDataState(null)
         setFilteredTracks([])
@@ -137,6 +140,8 @@ const {popularityFilter, dateRange, setSelectedArtistFilters, artistQuery, artis
             setLoadingState(null)
 
         }
+
+        nextRef.current  =  selectedLibraryItem?.next
     }, [selectedLibraryItem, setAllTracks, setArtistQuery, setArtistsList, setFilteredTracks, setLoadingState, setSelectedArtistFilters, setTrackDataState])
 
 
@@ -144,7 +149,7 @@ const {popularityFilter, dateRange, setSelectedArtistFilters, artistQuery, artis
 
     //** FIlters the selected playlist if the audio featrues have been set*/
     useEffect(() => {
-        if (trackDataState != null||(selectedArtistFilters||popularityFilter) ) {
+        if (trackDataState != null&&(selectedArtistFilters||popularityFilter) ) {
             setLoadingState("filtering")
             // console.log(featureFilters.at(-1))
             console.log("useEffect run for filtFeatures")
@@ -183,6 +188,8 @@ const {popularityFilter, dateRange, setSelectedArtistFilters, artistQuery, artis
     //     }
     // },[allTracks, currentAudio, selectedLibraryItem, setCurrentAudio])
 
+    const nextRef = useRef(null)
+
     const scrollContainer = useRef<HTMLDivElement>(null)
 
     const getNextItems =useCallback( () => {
@@ -193,12 +200,26 @@ const {popularityFilter, dateRange, setSelectedArtistFilters, artistQuery, artis
 
       useEffect(()=>{
         const container = scrollContainer.current
-        if(selectedLibraryItem?.next && trackDataState?.length<3){
+
+        if(selectedLibraryItem?.next   && !loadingState && trackDataState?.length < 4){
+            let isThrottled: boolean;
+
             const handleScroll = () => {
-                const bottom = (scrollContainer.current.clientHeight + scrollContainer.current.scrollTop)  === scrollContainer.current.scrollHeight;
+                if(!isThrottled){
+
+            
+                const bottom = (scrollContainer.current.clientHeight  + scrollContainer.current.scrollTop) >= scrollContainer.current.scrollHeight -300;
                 if (bottom && !loadingState) {
+                    isThrottled = true
+
                   getNextItems();
+
+                  setTimeout(()=>{
+                    isThrottled = false
+                  }, 1000)
                 }
+                
+            }
               };
         
               container.addEventListener('scroll', handleScroll)
@@ -207,7 +228,7 @@ const {popularityFilter, dateRange, setSelectedArtistFilters, artistQuery, artis
             }
         }
     
-      },[getNextItems, loadingState, selectedLibraryItem?.next, trackDataState?.length])
+      },[getNextItems, loadingState, nextTracks, selectedLibraryItem?.next, trackDataState?.length])
 
 
 
@@ -215,11 +236,22 @@ const {popularityFilter, dateRange, setSelectedArtistFilters, artistQuery, artis
         if (nextTracks) {
             const newTrackData = [{ tracks: nextTracks, audioFeatures: false, categories: false }]
             setTrackDataState(trackDataState.concat(newTrackData))
+            // sconst newTracklist = allTracks.concat(nextTracks)
             setAllTracks(allTracks.concat(nextTracks))
+            let consolidatedList : Artist[] = [...artistsList]
+            const newArtistList  =  nextTracks.flatMap((item)=>item.track.artists)
+            newArtistList.map((artist)=>{
+                if(!consolidatedList.some((item)=>item.id===artist.id)){
+                    consolidatedList.push(artist)
+                }
+                return artist
+            })
+            // console.log("completeArtistList: ", completeArtistList)
+            setArtistsList(consolidatedList)
             console.log("nextTracks: ", nextTracks)
         }
         setNextTracks(null)
-    }, [allTracks, nextTracks, setAllTracks, setTrackDataState, trackDataState])
+    }, [allTracks, artistsList, nextTracks, setAllTracks, setArtistsList, setTrackDataState, trackDataState])
 
 
     let displayedItems: TrackClass[]
@@ -266,6 +298,26 @@ const {popularityFilter, dateRange, setSelectedArtistFilters, artistQuery, artis
 
     }
 
+    const [isAllSelected, setIsAllSelected] = useState(false)
+
+    // useEffect(()=>{
+    //     const compareSelected = ()=>{
+    //         const ids1 = new Set(displayedTracks.map(track=>track.track.id))
+    //         const ids2 = new Set(selectedTracks.map(track=>track.track.id))
+    //         if (ids1.size !== ids2.size) return false;
+    
+    //   // Check if every id in ids1 exists in ids2
+    //     return [...ids1].every(id => ids2.has(id));
+    //     }
+
+    //     const selected = compareSelected()
+
+    //     setIsAllSelected(prev=>prev===selected?selected:prev)
+    // },[displayedTracks, selectedTracks])
+ 
+
+
+
 
         return (
             <div className="search-filter-container new-playlist" style={stagingState === "open" ? { borderRight: "2px solid #141414", transition: "1s", flex:1, display: 'flex', flexDirection:"column" } : { borderRight: "0px solid #141414", transition: "1s", flex:1, display: 'flex', flexDirection:"column"  }} id="search-filter-div" >
@@ -296,7 +348,7 @@ const {popularityFilter, dateRange, setSelectedArtistFilters, artistQuery, artis
                     </div>
                     :<div ref={scrollContainer} style={{overflowY: 'auto'}}>
                         
-                        <Tracklist tracklistArea="selected-playlist" selectedLibraryItems={selectedTracks} setSelectedLibraryItems={setSelectedTracks} draftTracks={addStagedItems}></Tracklist>
+                        <Tracklist setDisplayedTracks={setDisplayedTracks} tracklistArea="selected-playlist" selectedLibraryItems={selectedTracks} setSelectedLibraryItems={setSelectedTracks} draftTracks={addStagedItems}></Tracklist>
                         {selectedLibraryItem?.next ?
                     <div style={{}}>
                         {

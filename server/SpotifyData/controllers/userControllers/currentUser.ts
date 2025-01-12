@@ -35,6 +35,7 @@ export const userProfile = (req: expressRequest, res: expressResponse)=>{
                 res.clearCookie('authorizing',options)
                 res.clearCookie('access_token', options)
                 console.error("Failed to retrieve user (/spotify-data/user): ", error)
+                res.sendStatus(404)
             }
         })
         .catch((e:Error)=>{

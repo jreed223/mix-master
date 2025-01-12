@@ -8,6 +8,7 @@ import { ViewContext } from "../../../state_management/ViewProvider"
 
 interface tracklistProps{
     tracklistArea: string
+    setDisplayedTracks: React.Dispatch<React.SetStateAction<TrackClass[]>>
     // allTracks: TrackClass[]
     selectedLibraryItems: TrackClass[]
 
@@ -26,7 +27,7 @@ export default function Tracklist(props:tracklistProps){
 
 const [displayedTracks, setDisplayedTracks] = useState<ReactElement<TrackCardProps>[]>([])
 
-const [hiddenTracks, setHiddenTracks] = useState<ReactElement<TrackCardProps>[]>([])
+// const [hiddenTracks, setHiddenTracks] = useState<ReactElement<TrackCardProps>[]>([])
 
 const editSelectedItemList2 = useCallback((checked: boolean ,selectedItem: TrackClass)=>{
     if(checked){
@@ -35,8 +36,7 @@ const editSelectedItemList2 = useCallback((checked: boolean ,selectedItem: Track
         props.setSelectedLibraryItems(props.selectedLibraryItems.concat([selectedItem]))
 
     }else{
-
-        props.setSelectedLibraryItems(props.selectedLibraryItems.filter(item=>item!== selectedItem))
+        props.setSelectedLibraryItems(props.selectedLibraryItems.filter(item=>item.track.id!== selectedItem.track.id))
     }
     // console.log(selectedPlaylistItems)
 }, [props])
@@ -60,6 +60,7 @@ useEffect(()=>{
    
         let hiddenTracksList = []
         let displayedTrackList = []
+        let displayedTrackClassList = []
         allTracks.map(trackClass=>{
                         
             if(hiddenItems.some(item=>item.track.id===trackClass.track.id)){
@@ -69,7 +70,7 @@ useEffect(()=>{
                 return TrackCard
                
             }else
-      
+            displayedTrackClassList.push(trackClass)
             {
               
                 const trackCard =  <TrackCard deselectTrack={deselectTrack} tracklistArea={props.tracklistArea} key={`selected-playlist-${trackClass.track.id}`} trackClass={trackClass} onSelectedTrack={editSelectedItemList2} displayHidden={false}  selectedLibraryItems={props.selectedLibraryItems} draftTrack={stageTracks} ></TrackCard>
@@ -80,17 +81,18 @@ useEffect(()=>{
             }
 
         })
-        setHiddenTracks(hiddenTracksList)
+        // props.setDisplayedTracks(displayedTrackClassList)
+        // setHiddenTracks(hiddenTracksList)
         setDisplayedTracks(displayedTrackList)
 
 
 
     }
-}, [editSelectedItemList2, allTracks, props.selectedLibraryItems, stagedPlaylist, filteredTracks, stageTracks, props.tracklistArea, props, deselectTrack])
+}, [allTracks, deselectTrack, editSelectedItemList2, filteredTracks, props, stageTracks, stagedPlaylist])
 
 
 
-if(displayedTracks&&hiddenTracks){
+if(displayedTracks){
 
         
             return(
@@ -100,7 +102,7 @@ if(displayedTracks&&hiddenTracks){
                             displayedTracks
                         }
                         {
-                            hiddenTracks
+                            // hiddenTracks
                         }
              
                 </>
