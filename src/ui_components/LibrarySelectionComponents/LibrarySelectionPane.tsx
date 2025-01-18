@@ -1,11 +1,11 @@
 import { CircularProgress } from "@mui/material";
 import React, { Suspense, useContext, useMemo } from "react"
 import { useEffect, useState } from "react"
-import { submissionStatusState } from "../DraftingPaneComponents/Playlists/DraftPlaylistArea";
-import { ViewContext, ViewContextType } from "../../state_management/ViewProvider";
+import { submissionStatusState } from "../DraftingPaneComponents/Playlists/DraftPlaylistArea.tsx";
+import { ViewContext, ViewContextType } from "../../state_management/ViewProvider.tsx";
 // import { LibraryItemsView } from "./UserLibrary/LibraryCollectionsWindow";
-import SearchAndPlaylists from "./SearchPane/SearchAndContent";
-import { PlaylistsView } from "./UserLibrary/PlaylistsView";
+import SearchAndPlaylists from "./SearchPane/SearchAndContent.tsx";
+import { PlaylistsView } from "./UserLibrary/PlaylistsView.tsx";
 
 interface LibraryComponentsProps {
   userId: string
@@ -18,13 +18,13 @@ export const LibrarySelectionPane: React.FC<LibraryComponentsProps> = (props: Li
   
 
 
-  const fetchAllPlaylists = (reloadKey) => {
-    const playlistList = fetch("/spotify-data/playlists")
-      .then(res => res.json()).then((playlists) => {
-        return playlists
-      })
-    return playlistList
-  }
+  // const fetchAllPlaylists = (reloadKey) => {
+  //   const playlistList = fetch("/spotify-data/playlists")
+  //     .then(res => res.json()).then((playlists) => {
+  //       return playlists
+  //     })
+  //   return playlistList
+  // }
 
   const fetchLikedAlbums = () => {
     const res = fetch("/spotify-data/albums")
@@ -67,7 +67,7 @@ export const LibrarySelectionPane: React.FC<LibraryComponentsProps> = (props: Li
   }
 
 
-  const fetchedPlaylistsResource = useMemo(()=>suspensify(fetchAllPlaylists(props.reloadKey)),[props.reloadKey])
+  // const fetchedPlaylistsResource = useMemo(()=>suspensify(fetchAllPlaylists(props.reloadKey)),[props.reloadKey])
   const [displayDialog, setDisplayDialog] = useState<boolean>(false)
 
 
@@ -95,7 +95,7 @@ export const LibrarySelectionPane: React.FC<LibraryComponentsProps> = (props: Li
   const playlists = (    
 
     <Suspense fallback={<CircularProgress />}>
-      <PlaylistsView  fetchedLibraryResource={fetchedPlaylistsResource} userId={props.userId} viewName={"All Playlists"}  ></PlaylistsView>
+      <PlaylistsView userId={props.userId} viewName={"All Playlists"}  ></PlaylistsView>
     </Suspense>
   )
 

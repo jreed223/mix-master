@@ -1,12 +1,12 @@
 import React, { ReactElement, useCallback, useContext, useEffect, useState } from "react"
-import { ViewContext } from "../../../state_management/ViewProvider"
-import { DraftingContext } from "../../../state_management/DraftingPaneProvider"
-import { Album, Artist, Playlist, SearchResults, UserProfile } from '../../../../server/types';
+import { ViewContext } from "../../../state_management/ViewProvider.tsx"
+import { DraftingContext } from "../../../state_management/DraftingPaneProvider.tsx"
+import type { Album, Artist, Playlist, SearchResults, UserProfile } from '../../../../server/types.d.ts';
 // import { Features, PlaylistItem } from "../../../server/types";
 // import PlaylistClass from "../../models/playlistClass";
-import { userProfile } from '../../../../server/SpotifyData/controllers/userControllers/currentUser';
-import ResultCard, { ResultCardProps } from "./ResultCard";
-import { playlists } from '../../../../server/SpotifyData/controllers/libraryControllers/playlists';
+import { userProfile } from '../../../../server/SpotifyData/controllers/userControllers/currentUser.ts';
+import ResultCard, { ResultCardProps } from "./ResultCard.tsx";
+import { playlists } from '../../../../server/SpotifyData/controllers/libraryControllers/playlists.ts';
 export type ArtistProfileProps = {
     type: 'artist'
     profileId:string

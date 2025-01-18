@@ -1,4 +1,4 @@
-import { CategorizedPlaylist, PlaylistItem, Tag, Track, Image, Features } from "../../server/types";
+import type { CategorizedPlaylist, PlaylistItem, Tag, Track, Image, Features } from "../../server/types.d.ts";
 
 export default class PlaylistClass implements CategorizedPlaylist{
     type: string;

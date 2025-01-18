@@ -1,13 +1,13 @@
 import React, { useCallback, useContext, useEffect, useRef, useState } from "react"
 // import PlaylistClass from "../../models/playlistClass"
 // import { LibraryItem } from '../../models/libraryItems';
-import Tracklist from "../TrackComponents/Tracklist";
-import TrackClass from "../../../models/Tracks";
-import { ViewContext } from "../../../state_management/ViewProvider";
-import { DraftingContext } from "../../../state_management/DraftingPaneProvider";
-import { TracklistContext } from "../../../state_management/TracklistProvider";
-import { Artist } from "../../../../server/types";
-import { AudioContext, AudioContextType } from "../../../state_management/AudioProvider";
+import Tracklist from "../TrackComponents/Tracklist.tsx";
+import TrackClass from "../../../models/Tracks.ts";
+import { ViewContext } from "../../../state_management/ViewProvider.tsx";
+import { DraftingContext } from "../../../state_management/DraftingPaneProvider.tsx";
+import { TracklistContext } from "../../../state_management/TracklistProvider.tsx";
+import type { Artist } from "../../../../server/types.d.ts";
+import { AudioContext, AudioContextType } from "../../../state_management/AudioProvider.tsx";
 interface SelectedPlaylistContainerProps {
 
 

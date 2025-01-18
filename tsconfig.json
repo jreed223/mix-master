@@ -1,7 +1,17 @@
 {
     "compilerOptions": {
-      "target": "es2017",
-      "module": "NodeNext",
+      "target": "ESNext",
+      "module": "Node16",
+      "moduleResolution": "node16",
+      "esModuleInterop": true,           // Enable compatibility with CommonJS modules
+      // "strict": true      ,   
+      "allowSyntheticDefaultImports": true, // Allow default imports from CommonJS modules
+      // Enforce strict type checking
+      "allowImportingTsExtensions": true, // Allow importing .ts and .tsx extensions explicitly
+      "noEmit": true, // Do not emit outputs
+      "skipLibCheck": true,             // Skip type checking of declaration files
+
+
       "jsx": "react",
       "outDir": "./dist",
       "downlevelIteration": true

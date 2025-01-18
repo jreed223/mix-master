@@ -1,5 +1,5 @@
-import { CategorizedPlaylist, PlaylistItem, Tag, Track, Image, Features, Artist, Album, Playlist, Tracklist, LikedTracks } from "../../server/types";
-import TrackClass from "./Tracks";
+import type { CategorizedPlaylist, PlaylistItem, Tag, Track, Image, Features, Artist, Album, Playlist, Tracklist, LikedTracks } from "../../server/types.d.ts";
+import TrackClass from "./Tracks.ts";
 
 export type Collection = Playlist | Album["album"] | LikedTracks
 export default class TrackCollection {

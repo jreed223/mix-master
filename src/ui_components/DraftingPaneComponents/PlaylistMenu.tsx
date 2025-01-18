@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from "react"
-import { ViewContext } from "../../state_management/ViewProvider"
-import { DraftingContext } from "../../state_management/DraftingPaneProvider"
+import { ViewContext } from "../../state_management/ViewProvider.tsx"
+import { DraftingContext } from "../../state_management/DraftingPaneProvider.tsx"
 // import { Features, PlaylistItem } from "../../../server/types";
 // import PlaylistClass from "../../models/playlistClass";
 interface PlaylistMenuProps {

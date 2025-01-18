@@ -1,12 +1,12 @@
 import React, { useContext, useEffect, useRef, useState } from "react"
 // import { UserProfile } from '@spotify/web-api-ts-sdk';
-import PlaylistMenuBar from "./PlaylistMenu";
-import SelectedPlaylistContainer from "./Playlists/SelectedPlaylistArea";
-import DraftPlaylistContainer from "./Playlists/DraftPlaylistArea";
-import { ViewContext } from "../../state_management/ViewProvider";
-import { DraftingContext, DraftingContextType } from "../../state_management/DraftingPaneProvider";
-import FilterMenu from "./FilterMenu";
-import TracklistProvider from "../../state_management/TracklistProvider";
+import PlaylistMenuBar from "./PlaylistMenu.tsx";
+import SelectedPlaylistContainer from "./Playlists/SelectedPlaylistArea.tsx";
+import DraftPlaylistContainer from "./Playlists/DraftPlaylistArea.tsx";
+import { ViewContext } from "../../state_management/ViewProvider.tsx";
+import { DraftingContext, DraftingContextType } from "../../state_management/DraftingPaneProvider.tsx";
+import FilterMenu from "./FilterMenu.tsx";
+import TracklistProvider from "../../state_management/TracklistProvider.tsx";
 import Calendar from "react-calendar";
 import { minHeight } from '@mui/system';
 
@@ -55,8 +55,8 @@ export default function FilterItem(props: FilterProps){
             <p style={{display: "inline-block", margin: 0, width: "40%"}}>{props.filterName}</p>
             {/* <div className="tooltip"> ? <span className="tooltip-text">{'tooltip Text!!'}</span></div> */}
             <div style={{flex: .75, display: "flex", justifyContent:"space-between"}}>
-                <button key={`${props.filterName}-checkbox`} style={{flex: "0 0 auto"}} ref={null} onClick={(e) => { toggleFilter() }} >{props.clearFilter?"Clear":props.filterDisabled?"Enable":"Disable"}</button>
-                <button style={{display:'inline', flex: "0 0 auto"}} onClick={()=>setIsDisplayed(prev=>!prev)}>{isDisplayed?"\u2227":'\u2228'}</button>
+                <button key={`${props.filterName}-checkbox`} style={{flex: "0 0 auto", borderRadius: "15px"}} ref={null} onClick={(e) => { toggleFilter() }} >{props.clearFilter?"Clear":props.filterDisabled?"Enable":"Disable"}</button>
+                <button style={{display:'inline', flex: "0 0 auto", borderRadius: "15px"}} onClick={()=>setIsDisplayed(prev=>!prev)}>{isDisplayed?"\u2227":'\u2228'}</button>
             </div>
         </div>
 

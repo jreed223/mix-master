@@ -1,12 +1,12 @@
 import React, { useContext, useEffect, useRef } from "react"
 // import { UserProfile } from '@spotify/web-api-ts-sdk';
-import PlaylistMenuBar from "./PlaylistMenu";
-import SelectedPlaylistContainer from "./Playlists/SelectedPlaylistArea";
-import DraftPlaylistContainer from "./Playlists/DraftPlaylistArea";
-import { ViewContext } from "../../state_management/ViewProvider";
-import { DraftingContext, DraftingContextType } from "../../state_management/DraftingPaneProvider";
-import FilterMenu from "./FilterMenu";
-import TracklistProvider from "../../state_management/TracklistProvider";
+import PlaylistMenuBar from "./PlaylistMenu.tsx";
+import SelectedPlaylistContainer from "./Playlists/SelectedPlaylistArea.tsx";
+import DraftPlaylistContainer from "./Playlists/DraftPlaylistArea.tsx";
+import { ViewContext } from "../../state_management/ViewProvider.tsx";
+import { DraftingContext, DraftingContextType } from "../../state_management/DraftingPaneProvider.tsx";
+import FilterMenu from "./FilterMenu.tsx";
+import TracklistProvider from "../../state_management/TracklistProvider.tsx";
 
 
 

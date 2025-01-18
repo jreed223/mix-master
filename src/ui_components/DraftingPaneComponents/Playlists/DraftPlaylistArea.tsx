@@ -1,10 +1,11 @@
 import React, { useCallback, useContext, useEffect, useState } from "react"
-import TrackCard from "../TrackComponents/TrackCard";
-import TrackClass from "../../../models/Tracks";
-import { ViewContext } from "../../../state_management/ViewProvider";
-import { DraftingContext } from "../../../state_management/DraftingPaneProvider";
-import { Playlist } from '../../../../server/types';
-import TrackCollection from "../../../models/TrackCollection";
+import TrackCard from "../TrackComponents/TrackCard.tsx";
+import TrackClass from "../../../models/Tracks.ts";
+import { ViewContext } from "../../../state_management/ViewProvider.tsx";
+import { DraftingContext } from "../../../state_management/DraftingPaneProvider.tsx";
+import type { Playlist } from '../../../../server/types.d.ts';
+import TrackCollection from "../../../models/TrackCollection.ts";
+import { parse, stringify } from "flatted";
 
 interface DraftPlaylistContainerProps {
     setReloadKey: React.Dispatch<React.SetStateAction<number>>
@@ -49,6 +50,14 @@ const DraftPlaylistContainer: React.FC<DraftPlaylistContainerProps> = (props: Dr
 
     }, [setStagedPlaylist, setStagedPlaylistState, stagedPlaylist, stagedPlaylistState])
 
+    const cachedDraftPlaylist = localStorage.getItem("stagedPlaylist")
+
+    if(cachedDraftPlaylist){
+        const parsed : TrackClass[] = parse(cachedDraftPlaylist)
+        const draftPlaylist = parsed.map(track=>new TrackClass(track.track, track.collection))
+        setStagedPlaylist(draftPlaylist)
+    }
+    
 
     useEffect(() => {
         console.log(stagedPlaylist)
@@ -265,6 +274,14 @@ useEffect(()=>{
 
         }
     }
+
+    useEffect(() => {
+        if(stagedPlaylist&&stagedPlaylist.length>0){
+            sessionStorage.setItem("stagedPlaylist", stringify(stagedPlaylist))
+        }else{
+            sessionStorage.removeItem("stagedPlaylist")
+        }
+    },[stagedPlaylist])
 
 
 

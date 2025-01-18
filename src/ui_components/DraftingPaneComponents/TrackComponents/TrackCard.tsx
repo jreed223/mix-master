@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
-import TrackClass from '../../../models/Tracks';
-import { DraftingContext, DraftingContextType } from "../../../state_management/DraftingPaneProvider";
-import { ViewContext, ViewContextType } from "../../../state_management/ViewProvider";
-import { AudioContext, AudioContextType } from "../../../state_management/AudioProvider";
+import TrackClass from '../../../models/Tracks.ts';
+import { DraftingContext, DraftingContextType } from "../../../state_management/DraftingPaneProvider.tsx";
+import { ViewContext, ViewContextType } from "../../../state_management/ViewProvider.tsx";
+import { AudioContext, AudioContextType } from "../../../state_management/AudioProvider.tsx";
 import { minHeight } from "@mui/system";
 
 export interface TrackCardProps{
@@ -168,15 +168,14 @@ useEffect(()=>{
             <button style={{width:"40px", height: "100%", borderRadius: "10%"}} onClick={(e)=>{e.preventDefault(); props.draftTrack([props.trackClass]); props.deselectTrack(props.trackClass?.track?.id);}}>&#10006;
             </button>
 
-                        <div onClick={()=>handleCheck()}  style={{marginRight:"7px", cursor:"pointer",position: "relative", textAlign:"right",display:"flex", flexDirection:"column", flexGrow: '1', width: "0%", textWrap:'nowrap', height:"100%", justifyContent:'center'}}>
+                        <div onClick={()=>handleCheck()}  style={{marginRight:"7px", cursor:"pointer",position: "relative", textAlign:"right",display:"flex", flexDirection:"column", flexGrow: '1', width: "0%", textWrap:'nowrap', height:"100%", justifyItems:'end'}}>
 
-                        {/* <div onClick={()=>handleCheck()} style={{cursor:"pointer", top:0, left:0,width:"100%", height:"100%", position:"absolute",  }}> */}
                         <p style={{margin:"0px", fontSize: "1.25em",color: isChecked?"rgb(135, 135, 135, 0.35)":"inherit"}} className="track-card-text">{props.trackClass.track.name}</p>
 
                         <div style={{maxWidth:"100%",marginLeft:'auto',textAlign:"right",  width: 'min-content', textWrap:'nowrap', justifyContent:'center'}}>
                         <p onClick={(e)=>{if(!isMobile){e.stopPropagation(); setDisplayProfile(true); setSelectedProfile({type: 'artist', profileId: props.trackClass.track.artists.at(0).id });}}} style={{fontSize: "1em", cursor:'pointer', margin:"0px", color: isChecked?"rgb(135, 135, 135, 0.35)":"inherit"}} className={`track-card-text ${!isMobile?"artist-text":""}`}>{props.trackClass.track.artists[0].name}</p>
+                        {props.trackClass.track.album.album_type!=="single"?<p className="track-card-text" style={{margin:"0px", color: isChecked?"rgb(135, 135, 135, 0.35)":"inherit"}}>{props.trackClass.track.album.name}</p>:<></>}
                         </div>
-                        {/* </div> */}
                         </div>
                         </>
                 :<></>}
@@ -190,16 +189,16 @@ useEffect(()=>{
             {props.tracklistArea==="selected-playlist"||props.tracklistArea==="search-bar-card"?
             <>
                         <div onClick={props.tracklistArea!=="search-bar-card"?()=>handleCheck():()=>{}}  style={{marginLeft: "7px", cursor:props.tracklistArea!=="search-bar-card"?'pointer':"default", position: "relative", display:"flex", flexDirection:"column",  overflow: 'hidden', flexGrow: '1', width: "0%", height:"100%", justifyContent:'center'}}>
-                        {/* <div onClick={props.tracklistArea!=="search-bar-card"?()=>handleCheck():()=>{}} style={{cursor:props.tracklistArea!=="search-bar-card"?"pointer":"default",top:0, left:0,width:"100%", height:"100%", position:"absolute",  }}> */}
 
                         <p style={{margin:"0px",fontSize: "1.25em", color: isChecked?"rgb(135, 135, 135, 0.35)":"inherit"}} className="track-card-text">{props.trackClass.track.name}</p>
                         
                         <div style={{maxWidth:"100%",  width: 'min-content', textWrap:'nowrap', justifyContent:'center'}}>
 
                         <p onClick={(e)=>{if(!isMobile||props.tracklistArea==="search-bar-card"){e.stopPropagation(); setDisplayProfile(true); setSelectedProfile({type: 'artist', profileId: props.trackClass.track.artists.at(0).id });}}} style={{fontSize: "1em", cursor:'pointer', margin:"0px", color: isChecked?"rgb(135, 135, 135, 0.35)":"inherit"}} className={`track-card-text ${!isMobile?"artist-text":""}`}>{props.trackClass.track.artists[0].name}</p>
+                        {props.trackClass.track.album.album_type!=="single"?<p className="track-card-text" style={{fontSize:"1em", margin:"0px", color: isChecked?"rgb(135, 135, 135, 0.35)":"inherit"}}>{props.trackClass.track.album.name}</p>:<></>}
+
                         </div>
 
-                        {/* </div> */}
 
 
                         </div>

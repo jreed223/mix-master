@@ -1,13 +1,13 @@
 import { useContext, useEffect, useMemo, useState, } from "react";
 import React from "react";
-import { UserProfile } from '../../server/types';
+import type { UserProfile } from '../../server/types.d.ts';
 
-import DraftingArea from "./DraftingPaneComponents/DraftingPane";
+import DraftingArea from "./DraftingPaneComponents/DraftingPane.tsx";
 // import { LibraryComponents } from "./UserLibrary/LibraryComponents";
-import { ViewContext } from "../state_management/ViewProvider";
+import { ViewContext } from "../state_management/ViewProvider.tsx";
 // import SearchBar from "./SearchPane/SearchBar";
-import { submissionStatusState } from "./DraftingPaneComponents/Playlists/DraftPlaylistArea";
-import { LibrarySelectionPane } from "./LibrarySelectionComponents/LibrarySelectionPane";
+import { submissionStatusState } from "./DraftingPaneComponents/Playlists/DraftPlaylistArea.tsx";
+import { LibrarySelectionPane } from "./LibrarySelectionComponents/LibrarySelectionPane.tsx";
 
 
 

@@ -1,14 +1,14 @@
 import React, { useContext, useEffect, useRef, useState } from "react"
 // import { UserProfile } from '@spotify/web-api-ts-sdk';
-import PlaylistMenuBar from "./PlaylistMenu";
-import SelectedPlaylistContainer from "./Playlists/SelectedPlaylistArea";
-import DraftPlaylistContainer from "./Playlists/DraftPlaylistArea";
-import { ViewContext } from "../../state_management/ViewProvider";
-import { DraftingContext, DraftingContextType } from "../../state_management/DraftingPaneProvider";
-import FilterMenu from "./FilterMenu";
-import TracklistProvider, { TracklistContext, TracklistContextType } from "../../state_management/TracklistProvider";
+import PlaylistMenuBar from "./PlaylistMenu.tsx";
+import SelectedPlaylistContainer from "./Playlists/SelectedPlaylistArea.tsx";
+import DraftPlaylistContainer from "./Playlists/DraftPlaylistArea.tsx";
+import { ViewContext } from "../../state_management/ViewProvider.tsx";
+import { DraftingContext, DraftingContextType } from "../../state_management/DraftingPaneProvider.tsx";
+import FilterMenu from "./FilterMenu.tsx";
+import TracklistProvider, { TracklistContext, TracklistContextType } from "../../state_management/TracklistProvider.tsx";
 import Calendar from "react-calendar";
-import FilterItem from "./FilterItem";
+import FilterItem from "./FilterItem.tsx";
 
 
 
@@ -56,7 +56,7 @@ export default function PopularityFilter(){
 
     return(
        <>
-        <FilterItem filterName="Popularity" setFilterState={setPopularityFilter} children={slider} filterDisabled={filterDisabled} setFilterDisabled={setFilterDisabled}></FilterItem>
+        <FilterItem  filterName="Popularity" setFilterState={setPopularityFilter} children={slider} filterDisabled={filterDisabled} setFilterDisabled={setFilterDisabled}></FilterItem>
        </>
     )
 }

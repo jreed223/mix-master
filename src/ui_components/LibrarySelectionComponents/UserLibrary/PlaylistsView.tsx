@@ -1,22 +1,23 @@
 import React, { useEffect, useState, useRef, useContext } from "react"
-import TrackCollection from "../../../models/TrackCollection";
-import LibraryItemCard from "./LibraryItemCard";
-import { ViewName } from "../../../state_management/ViewProvider";
-import { ViewContext } from "../../../state_management/ViewProvider";
-import { ViewContextType } from '../../../state_management/ViewProvider';
-import { LibraryItemCardProps } from './LibraryItemCard';
-import { LikedTracks, Playlist, SearchResults } from '../../../../server/types';
-import { DraftingContext, DraftingContextType } from "../../../state_management/DraftingPaneProvider";
-import { likedTracks } from "../../../../server/SpotifyData/controllers/supplementalControllers/likedTracks";
+import TrackCollection from "../../../models/TrackCollection.ts";
+import LibraryItemCard from "./LibraryItemCard.tsx";
+import { ViewName } from "../../../state_management/ViewProvider.tsx";
+import { ViewContext } from "../../../state_management/ViewProvider.tsx";
+import { ViewContextType } from '../../../state_management/ViewProvider.tsx';
+import { LibraryItemCardProps } from './LibraryItemCard.tsx';
+import { LikedTracks, Playlist, SearchResults } from '../../../../server/types.tsx';
+import { DraftingContext, DraftingContextType } from "../../../state_management/DraftingPaneProvider.tsx";
+import { likedTracks } from "../../../../server/SpotifyData/controllers/supplementalControllers/likedTracks.ts";
+import { stringify, parse } from "flatted";
 
 
 
 interface LibraryItemsViewProps {
   userId: string,
   viewName: ViewName
-  fetchedLibraryResource: {
-    read(): any;
-  }
+  // fetchedLibraryResource: {
+  //   read(): any;
+  // }
   reloadKey?: number
 }
 
@@ -33,13 +34,15 @@ export const PlaylistsView: React.FC<LibraryItemsViewProps> = (props: LibraryIte
   
   
   const {  selectedLibraryItem, } = useContext<DraftingContextType>(DraftingContext)
-  const {user, isPlaylistsView  } = useContext<ViewContextType>(ViewContext)
+  const {user, isPlaylistsView, isMobile  } = useContext<ViewContextType>(ViewContext)
 
 
   // const libraryItemsContainer = useRef(null)
 
 
   const fetchAllPlaylists = async (reloadKey) => {
+
+    
     const playlistList = await fetch("/spotify-data/playlists")
       .then(async res => await res.json()).then((playlists: SearchResults['playlists']) => {
         return playlists
@@ -74,18 +77,21 @@ export const PlaylistsView: React.FC<LibraryItemsViewProps> = (props: LibraryIte
 
 
   if (!libraryItems) {
-    fetchAllPlaylists(props.reloadKey||0)
+
+    const cachedLibrary = sessionStorage.getItem("libraryItems")
+
+    if(cachedLibrary){
+      const items = parse(cachedLibrary) as TrackCollection[]
+      console.log("cached library found", items)
+
+      
+      setLibraryItems(items)
+    }else{
+      fetchAllPlaylists(props.reloadKey||0)
+    }
 
   }
 
-  // useEffect(()=>{
-
-  // })
-
-
-
-
-useEffect(()=>{
   const fetchLikedTracks = async ()=>{
     const res = await fetch("/spotify-data/liked-tracks", {
       method: "GET"
@@ -105,10 +111,28 @@ useEffect(()=>{
   }
 
   if(!usersLikedTracks){
-    fetchLikedTracks()
+    const cachedLikedTracks = sessionStorage.getItem("likedTracks")
+    if(cachedLikedTracks){
+      setUsersLikedTracks(parse(cachedLikedTracks))
+    }else{
+      fetchLikedTracks()
+    }
   }
-}, [user, usersLikedTracks])
 
+
+useEffect(()=>{
+  if(libraryItems){
+    sessionStorage.setItem("libraryItems", stringify(libraryItems))
+  }
+
+
+},[libraryItems])
+
+useEffect(()=>{
+  if(usersLikedTracks){
+    sessionStorage.setItem("likedTracks", stringify(usersLikedTracks))
+  }
+},[usersLikedTracks])
 
 
   useEffect(() => {

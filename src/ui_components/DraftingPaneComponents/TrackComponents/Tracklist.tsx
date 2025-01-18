@@ -1,9 +1,9 @@
 import React, { ReactElement, useCallback, useEffect, useState, useContext } from "react"
-import TrackCard, { TrackCardProps } from "./TrackCard"
-import TrackClass from "../../../models/Tracks"
-import { DraftingContext } from "../../../state_management/DraftingPaneProvider"
-import { TracklistContext } from "../../../state_management/TracklistProvider"
-import { ViewContext } from "../../../state_management/ViewProvider"
+import TrackCard, { TrackCardProps } from "./TrackCard.tsx"
+import TrackClass from "../../../models/Tracks.ts"
+import { DraftingContext } from "../../../state_management/DraftingPaneProvider.tsx"
+import { TracklistContext } from "../../../state_management/TracklistProvider.tsx"
+import { ViewContext } from "../../../state_management/ViewProvider.tsx"
 
 
 interface tracklistProps{

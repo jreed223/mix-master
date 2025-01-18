@@ -2,13 +2,13 @@
 import { useEffect, useState } from 'react';
 import './App.css';
 import * as React from 'react';
-import LoginPage from './ui_components/LoginPage';
+import LoginPage from './ui_components/LoginPage.tsx';
 
-import NavBar from './ui_components/NavBar';
-import { UserProfile } from '../server/types';
-import ViewProvider from './state_management/ViewProvider';
-import DraftingProvider from './state_management/DraftingPaneProvider';
-import AudioProvider from './state_management/AudioProvider';
+import NavBar from './ui_components/NavBar.tsx';
+import type { UserProfile } from '../server/types.d.ts';
+import ViewProvider from './state_management/ViewProvider.tsx';
+import DraftingProvider from './state_management/DraftingPaneProvider.tsx';
+import AudioProvider from './state_management/AudioProvider.tsx';
 
 
 

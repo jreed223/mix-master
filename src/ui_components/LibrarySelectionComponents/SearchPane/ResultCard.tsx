@@ -1,11 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Album, Artist, Playlist, SearchResults } from "../../../../server/types";
-import TrackClass from '../../../models/Tracks';
-import { ViewContext } from "../../../state_management/ViewProvider";
-import { DraftingContext } from "../../../state_management/DraftingPaneProvider";
+import type { Album, Artist, Playlist, SearchResults } from "../../../../server/types.d.ts";
+import TrackClass from '../../../models/Tracks.ts';
+import { ViewContext } from "../../../state_management/ViewProvider.tsx";
+import { DraftingContext } from "../../../state_management/DraftingPaneProvider.tsx";
 import { Hidden } from "@mui/material";
-import { ArtistProfileProps, UserProfileProps } from "./ProfileView";
-import TrackCollection from "../../../models/TrackCollection";
+import { ArtistProfileProps, UserProfileProps } from "./ProfileView.tsx";
+import TrackCollection from "../../../models/TrackCollection.ts";
 
 type TrackResult = {
     type: "track"

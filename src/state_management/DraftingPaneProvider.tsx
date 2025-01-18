@@ -1,7 +1,7 @@
 import React, { createContext, useCallback,  useMemo, useState } from "react"
-import TrackClass from "../models/Tracks";
-import TrackCollection from "../models/TrackCollection";
-import { Album, Playlist } from "../../server/types";
+import TrackClass from "../models/Tracks.ts";
+import TrackCollection from "../models/TrackCollection.ts";
+import type { Album, Playlist } from "../../server/types.d.ts";
 
 
 
