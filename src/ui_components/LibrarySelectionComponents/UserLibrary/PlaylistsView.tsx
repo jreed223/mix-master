@@ -76,21 +76,6 @@ export const PlaylistsView: React.FC<LibraryItemsViewProps> = (props: LibraryIte
   }
 
 
-  if (!libraryItems) {
-
-    const cachedLibrary = sessionStorage.getItem("libraryItems")
-
-    if(cachedLibrary){
-      const items = parse(cachedLibrary) as TrackCollection[]
-      console.log("cached library found", items)
-
-      
-      setLibraryItems(items)
-    }else{
-      fetchAllPlaylists(props.reloadKey||0)
-    }
-
-  }
 
   const fetchLikedTracks = async ()=>{
     const res = await fetch("/spotify-data/liked-tracks", {
@@ -110,6 +95,23 @@ export const PlaylistsView: React.FC<LibraryItemsViewProps> = (props: LibraryIte
     }
   }
 
+  
+  if (!libraryItems) {
+
+    const cachedLibrary = sessionStorage.getItem("libraryItems")
+
+    if(cachedLibrary){
+      const items = parse(cachedLibrary) as TrackCollection[]
+      console.log("cached library found", items)
+
+      
+      setLibraryItems(items)
+    }else{
+      fetchAllPlaylists(props.reloadKey||0)
+    }
+
+  }
+
   if(!usersLikedTracks){
     const cachedLikedTracks = sessionStorage.getItem("likedTracks")
     if(cachedLikedTracks){
@@ -120,19 +122,19 @@ export const PlaylistsView: React.FC<LibraryItemsViewProps> = (props: LibraryIte
   }
 
 
-useEffect(()=>{
-  if(libraryItems){
-    sessionStorage.setItem("libraryItems", stringify(libraryItems))
-  }
+// useEffect(()=>{
+//   if(libraryItems){
+//     sessionStorage.setItem("libraryItems", stringify(libraryItems))
+//   }
 
 
-},[libraryItems])
+// },[libraryItems])
 
-useEffect(()=>{
-  if(usersLikedTracks){
-    sessionStorage.setItem("likedTracks", stringify(usersLikedTracks))
-  }
-},[usersLikedTracks])
+// useEffect(()=>{
+//   if(usersLikedTracks){
+//     sessionStorage.setItem("likedTracks", stringify(usersLikedTracks))
+//   }
+// },[usersLikedTracks])
 
 
   useEffect(() => {
