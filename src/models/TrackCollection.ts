@@ -1,9 +1,10 @@
 import type { CategorizedPlaylist, PlaylistItem, Tag, Track, Image, Features, Artist, Album, Playlist, Tracklist, LikedTracks } from "../../server/types.d.ts";
 import TrackClass from "./Tracks.ts";
+import { album } from '../../server/SpotifyData/controllers/supplementalControllers/album.ts';
 
 export type Collection = Playlist | Album["album"] | LikedTracks
 export default class TrackCollection {
-    type: string;
+    type: "playlist"|"album"|"liked tracks";
     id: string;
     image: Image;
     name: string;
@@ -17,6 +18,7 @@ export default class TrackCollection {
     next?: string|null
     audioFeaturesSet: boolean
     trackDataState?: [{tracks:TrackClass[], audioFeatures: boolean, categories: boolean}]|null
+    albumType?: string
 
     constructor(
         collection: Collection,
@@ -52,6 +54,7 @@ export default class TrackCollection {
                 this.uri = collection.uri
                 this.totalTracks = collection.total_tracks
                 this.tracks = tracklist
+                this.albumType = collection.album_type
                 //TODO:Should this be this.tracks?
 
                 this.trackDataState = [{tracks:tracklist, audioFeatures: false, categories: false}]
