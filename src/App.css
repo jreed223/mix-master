@@ -37,6 +37,11 @@
   }
 }
 
+a {
+  color: rgb(135, 135, 135);
+  text-decoration: none;
+}
+
 .library-content{
   /* display: flex;
   flex-flow: row wrap; */
