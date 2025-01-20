@@ -338,11 +338,15 @@ const {popularityFilter, dateRange, setSelectedArtistFilters, artistQuery, artis
                         {/* {isFeatureFilterSelected && loadingState === "filtering" 
                         ?(<p>Filtering Tracks...</p>) 
                         : (<></>)} */}
-                        <div style={{maxHeight:"35px", display:"flex", alignItems:"center", justifyContent:"center",flex:1, minWidth: "140px"}}>
-                            <img src="/spotify/Primary_Logo_Green_RGB.svg" style={{maxWidth: "30px", margin: "2px"}} alt="spotify logo"/>  
-                            <p style={{ whiteSpace:"nowrap", fontSize:"1em", overflow:"hidden", margin:" 0 0 0 2px", transition: '1s'}}>Open Spotify</p>
-
-                        </div>
+                        {selectedLibraryItem?
+                        
+                        <a style={{alignItems:"center", justifyContent:"center",flex:1, minWidth: "140px"}} href={`${selectedLibraryItem.uri}`}>
+                            <div style={{maxHeight:"35px", display:"flex", alignItems:"center", justifyContent:"center",flex:1, minWidth: "140px"}}>
+                                <img src="/spotify/Primary_Logo_Green_RGB.svg" style={{maxWidth: "30px", margin: "2px"}} alt="spotify logo"/>
+                                <p style={{ whiteSpace:"nowrap", fontSize:"1em", overflow:"hidden", margin:" 0 0 0 2px", transition: '1s'}}>Open Spotify</p>
+                            </div>
+                        </a>
+                        :<></>}
                     </div>
                     {/* <h3 style={{margin:"5px 15px", textAlign:'center'}}>{selectedLibraryItem?.name}</h3> */}
                     <input disabled={true} placeholder={selectedLibraryItem?selectedLibraryItem?.name:"Select an Item from your library"} type="text" style={{textOverflow: "ellipsis", margin:"4px 15px", fontSize:"1.25em", fontWeight:"bold", border:"none", padding: "0 auto", backgroundColor: "#141414", textAlign:'center', minWidth:"50%", alignSelf:"center", width:"calc(100% - 30px)",}}></input>

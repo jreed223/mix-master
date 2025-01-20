@@ -33,11 +33,13 @@ const LibraryItemCard: React.FC<LibraryItemCardProps> = (props: LibraryItemCardP
                                                             <div style={{display: "flex", flexFlow:"row wrap", height: "100%", flex:1}}>
 
                             <p className = "playlist-card-text" style={{flex:"unset", minWidth:"50%"}}>{props.libraryItem.totalTracks}  tracks</p>
-                            <div style={{maxHeight:"35px", minWidth:"130px", display:"flex", alignItems:"center", justifyContent:"end", flex:1, opacity:selectedLibraryItem?.id===props.libraryItem.id?"1":"0", transition: '1s'}} >
-                                <img src="/spotify/Primary_Logo_Green_RGB.svg" style={{maxWidth: "35px"}} alt="spotify logo"/>  
-                                <p style={{ whiteSpace:"nowrap", fontSize:"1em", overflow:"hidden", margin:" 0 0 0 2px", transition: '1s'}}>Open Spotify</p>
-
-                            </div>
+                            
+                            <a href={`${props.libraryItem.uri}`} target="_blank" rel="noreferrer" style={{minWidth:"130px",alignItems:"center", justifyContent:"end", flex:1,}}>
+                                <div style={{cursor:'pointer', maxHeight:"35px", minWidth:"130px", display:"flex", alignItems:"center", justifyContent:"end", flex:1, opacity:selectedLibraryItem?.id===props.libraryItem.id?"1":"0", transition: '1s'}} >
+                                    <img src="/spotify/Primary_Logo_Green_RGB.svg" style={{maxWidth: "35px"}} alt="spotify logo"/>
+                                    <p style={{ whiteSpace:"nowrap", fontSize:"1em", overflow:"hidden", margin:" 0 0 0 2px", transition: '1s'}}>Open Spotify</p>
+                                </div>
+                            </a>
                         </div>
                         </div>
                         

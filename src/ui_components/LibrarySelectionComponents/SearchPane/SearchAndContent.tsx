@@ -16,7 +16,7 @@ import { searchResults } from '../../../../server/SpotifyData/controllers/supple
 
 export default function SearchAndPlaylists({ children }) {
 
-    const { setIsPlaylistsView, isPlaylistsView, } = useContext(ViewContext)
+    const { setIsPlaylistsView, isPlaylistsView, user } = useContext(ViewContext)
 
     const {
         isMobile, selectedProfile, displayProfile } = useContext(ViewContext)
@@ -305,14 +305,16 @@ export default function SearchAndPlaylists({ children }) {
                                 <button disabled={!searchResults || (searchView === "Albums" && !isPlaylistsView)} style={{ ...visibleButton }} onKeyDown={(e) => e.preventDefault()} onClick={(e) => { e.preventDefault(); setSearchView("Albums"); setIsPlaylistsView(false); }}>Albums</button>
                                 <button disabled={!searchResults || (searchView === "Artists" && !isPlaylistsView)} style={{ ...visibleButton }} onKeyDown={(e) => e.preventDefault()} onClick={(e) => { e.preventDefault(); setSearchView("Artists"); setIsPlaylistsView(false) }}>Artists</button>
                             </div>
-                            <div style={{ cursor: "pointer", flex: "1 1 auto ", margin:"5px auto", height: "100%", maxWidth:(stagingState==="open"&&searchResults)||(isMobile&&searchResults)?"45px":"177px", transition: "1s",display:"flex", justifyContent:"center", alignItems:"center" }}>
-                            <img src="/spotify/Primary_Logo_Green_RGB.svg" style={{maxWidth: "45px"}} alt="spotify logo"/><p style={{ whiteSpace:"nowrap", fontSize:"1em", overflow:"hidden", margin:" 0 0 0 2px", opacity:(stagingState==="open"&&searchResults)||(isMobile&&searchResults)?0:1, transition: '1s'}}>Open Spotify</p>
-                                {/* <div style={{ marginBottom: isMobile ? "10px" : "0px", borderRadius: "25px", height: "30px",  transition: "1s", display:"flex", alignItems:'center' }} onKeyDown={(e) => e.preventDefault()} onClick={(e) => { e.preventDefault(); }}> */}
-                                    {/* <div style={{display: "flex", alignItems:"center", maxHeight: "100%"}}> */}
-                                        {/* <img src="/spotify/Primary_Logo_Green_RGB.svg" style={{maxHeight: "100%"}} alt="spotify logo"/><p style={{ whiteSpace:"nowrap"}}>Open Spotify</p> */}
+                            <a href={searchResults?`spotify:search:${finalQuery}`:`${user?.uri}` } target="_blank" rel="noreferrer" style={{flex:"1", maxWidth:(stagingState==="open"&&searchResults)||(isMobile&&searchResults)?"45px":"177px"}}>
+                                <div style={{ cursor: "pointer", flex: "1 1 auto ", margin:"5px auto", height: "100%", maxWidth:(stagingState==="open"&&searchResults)||(isMobile&&searchResults)?"45px":"177px", transition: "1s",display:"flex", justifyContent:"center", alignItems:"center" }}>
+                                <img src="/spotify/Primary_Logo_Green_RGB.svg" style={{maxWidth: "45px"}} alt="spotify logo"/><p style={{ whiteSpace:"nowrap", fontSize:"1em", overflow:"hidden", margin:" 0 0 0 2px", opacity:(stagingState==="open"&&searchResults)||(isMobile&&searchResults)?0:1, transition: '1s'}}>Open Spotify</p>
+                                    {/* <div style={{ marginBottom: isMobile ? "10px" : "0px", borderRadius: "25px", height: "30px",  transition: "1s", display:"flex", alignItems:'center' }} onKeyDown={(e) => e.preventDefault()} onClick={(e) => { e.preventDefault(); }}> */}
+                                        {/* <div style={{display: "flex", alignItems:"center", maxHeight: "100%"}}> */}
+                                            {/* <img src="/spotify/Primary_Logo_Green_RGB.svg" style={{maxHeight: "100%"}} alt="spotify logo"/><p style={{ whiteSpace:"nowrap"}}>Open Spotify</p> */}
+                                        {/* </div> */}
                                     {/* </div> */}
-                                {/* </div> */}
-                            </div>
+                                </div>
+                            </a>
                         </div>
                         {/* <button style={{ marginBottom: isMobile?"10px":"0px", borderRadius: "25px", height:"30px", minWidth: "12%", transition:"1s" }} onKeyDown={(e) => e.preventDefault()} onClick={(e)=>{e.preventDefault();}}>Open Spotify</button> */}
 
