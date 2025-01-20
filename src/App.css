@@ -854,7 +854,7 @@ button{
   }
 }
 .main-content-area{
-  overflow-x: clip;
+  overflow: hidden;
   /* margin-top: 50px; */
   display: flex;
   height: calc(100vh - 50px);
