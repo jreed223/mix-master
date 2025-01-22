@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef } from "react"
+import React, { useContext, useEffect, useRef, useState } from "react"
 // import { UserProfile } from '@spotify/web-api-ts-sdk';
 import PlaylistMenuBar from "./PlaylistMenu.tsx";
 import SelectedPlaylistContainer from "./Playlists/SelectedPlaylistArea.tsx";
@@ -7,6 +7,7 @@ import { ViewContext } from "../../state_management/ViewProvider.tsx";
 import { DraftingContext, DraftingContextType } from "../../state_management/DraftingPaneProvider.tsx";
 import FilterMenu from "./FilterMenu.tsx";
 import TracklistProvider from "../../state_management/TracklistProvider.tsx";
+import TrackClass from "../../models/Tracks.ts";
 
 
 
@@ -16,6 +17,10 @@ export default function DraftingArea({setReloadKey, setDialogText}){
 
     const {isPlaylistsView, isMobile, isMaxDraftView, setIsMaxDraftView} = useContext(ViewContext)
     const {stagingState} = useContext<DraftingContextType>(DraftingContext)
+    const [selectedDraftTracks, setSelectedDraftTracks] = useState<TrackClass[]>([])
+    const [selectedPlaylistTracks, setSelectedPlaylistTracks] = useState<TrackClass[]>([])
+    
+
 
     useEffect(()=>{
         if(stagingState==="closed"){
@@ -30,12 +35,12 @@ export default function DraftingArea({setReloadKey, setDialogText}){
         <TracklistProvider>
         <div ref={creationContainer} className={"playlist-creation-container-hidden"}style={isMaxDraftView?{width: "100%", overflowX: "clip"}:stagingState==="open"?{width:isMobile?"100%":"50%", overflowX: "clip"}:{width:"0%", overflowX: "clip"}} id="creation-container">
         <div style={{width:isMaxDraftView||isMobile?"100vw":"50vw", height: "100%", transition: '1s', backgroundColor: "#141414"}}>
-        <PlaylistMenuBar  draftingPaneContainer={creationContainer} ></PlaylistMenuBar>
+        <PlaylistMenuBar setDialogText={setDialogText}  setSelectedPlaylistTracks={setSelectedPlaylistTracks} setSelectedDraftTracks={setSelectedDraftTracks} draftingPaneContainer={creationContainer} ></PlaylistMenuBar>
 
             <div className="playlist-items-containers" style={{position: "relative"}}>
-                <SelectedPlaylistContainer></SelectedPlaylistContainer>
+                <SelectedPlaylistContainer selectedTracks={selectedPlaylistTracks} setSelectedTracks={setSelectedPlaylistTracks}></SelectedPlaylistContainer>
                 <FilterMenu></FilterMenu>
-                <DraftPlaylistContainer setDialogText={setDialogText} setReloadKey={setReloadKey}></DraftPlaylistContainer>
+                <DraftPlaylistContainer selectedTracks={selectedDraftTracks} setSelectedTracks={setSelectedDraftTracks} setDialogText={setDialogText} setReloadKey={setReloadKey}></DraftPlaylistContainer>
             </div >
             </div>
         </div>

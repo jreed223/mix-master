@@ -9,6 +9,7 @@ import type { UserProfile } from '../server/types.d.ts';
 import ViewProvider from './state_management/ViewProvider.tsx';
 import DraftingProvider from './state_management/DraftingPaneProvider.tsx';
 import AudioProvider from './state_management/AudioProvider.tsx';
+import MainContent from './ui_components/MainContent.tsx';
 
 
 
@@ -52,7 +53,7 @@ function App() {
     <ViewProvider>
       <DraftingProvider>
         <AudioProvider>
-            <NavBar currentUser={currentUser}></NavBar>
+            <MainContent currentUser={currentUser}></MainContent>
       </AudioProvider>
       </DraftingProvider>
     </ViewProvider>

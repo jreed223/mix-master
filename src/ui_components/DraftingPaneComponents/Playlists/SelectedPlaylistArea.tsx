@@ -9,7 +9,8 @@ import { TracklistContext } from "../../../state_management/TracklistProvider.ts
 import type { Artist } from "../../../../server/types.d.ts";
 import { AudioContext, AudioContextType } from "../../../state_management/AudioProvider.tsx";
 interface SelectedPlaylistContainerProps {
-
+    selectedTracks: TrackClass[]
+    setSelectedTracks: React.Dispatch<React.SetStateAction<TrackClass[]>>
 
 }
 
@@ -21,7 +22,7 @@ export interface TrackData {
 
 }
 
-const SelectedPlaylistContainer: React.FC<SelectedPlaylistContainerProps> = () => {
+const SelectedPlaylistContainer: React.FC<SelectedPlaylistContainerProps> = (props) => {
 
     const { isMaxDraftView, isMobile} = useContext(ViewContext)
     const {currentAudio, setCurrentAudio, } =  useContext<AudioContextType>(AudioContext)
@@ -48,7 +49,7 @@ const {popularityFilter, dateRange, setSelectedArtistFilters, artistQuery, artis
         setFilteredTracks,
         filterFeatures, loadingState, setLoadingState, selectedArtistFilters, setArtistQuery} = useContext(TracklistContext)
 
-    const [selectedTracks, setSelectedTracks] = useState<TrackClass[]>([])
+    // const [selectedTracks, setSelectedTracks] = useState<TrackClass[]>([])
     const [displayedTracks, setDisplayedTracks] = useState<TrackClass[]>([])
     const [nextTracks, setNextTracks] = useState<TrackClass[]>(null)
     // const [loadingState, setLoadingState] = useState<String>(null)
@@ -76,7 +77,7 @@ const {popularityFilter, dateRange, setSelectedArtistFilters, artistQuery, artis
         // setSelectAllChecked(false)
         setTrackDataState(null)
         setFilteredTracks([])
-        setSelectedTracks([])
+        props.setSelectedTracks([])
         setLoadingState("loading")
         setArtistQuery("")
         setSelectedArtistFilters([])
@@ -265,16 +266,16 @@ const {popularityFilter, dateRange, setSelectedArtistFilters, artistQuery, artis
 
     const selectAllclicked = () => {
         const selections = displayedItems
-        const newSelections: TrackClass[] = selections.filter((selection) => !selectedTracks.some((item) => item.track.id === selection.track.id))
-        const allSelected = selectedTracks.concat(newSelections)
-        setSelectedTracks(allSelected)
+        const newSelections: TrackClass[] = selections.filter((selection) => !props.selectedTracks.some((item) => item.track.id === selection.track.id))
+        const allSelected = props.selectedTracks.concat(newSelections)
+        props.setSelectedTracks(allSelected)
     }
 
     const deselectAllClicked = () => {
         const selections: TrackClass[] = displayedItems
-        const removedSelections: TrackClass[] = selections.filter((selection) => selectedTracks.some((item) => item.track.id === selection.track.id))
-        const allDeselected = selectedTracks.filter(item => !removedSelections.some((selection) => selection.track.id === item.track.id))
-        setSelectedTracks(allDeselected)
+        const removedSelections: TrackClass[] = selections.filter((selection) => props.selectedTracks.some((item) => item.track.id === selection.track.id))
+        const allDeselected = props.selectedTracks.filter(item => !removedSelections.some((selection) => selection.track.id === item.track.id))
+        props.setSelectedTracks(allDeselected)
     }
 
 
@@ -284,15 +285,15 @@ const {popularityFilter, dateRange, setSelectedArtistFilters, artistQuery, artis
     const stageSelectedDisplayedTracks = () => {
         if (filteredTracks && filteredTracks.length > 0) {
 
-            const selectedDisplayed = (selectedTracks.filter(selectedItem => filteredTracks.some(filteredItem => selectedItem.track.id === filteredItem.track.id)))
+            const selectedDisplayed = (props.selectedTracks.filter(selectedItem => filteredTracks.some(filteredItem => selectedItem.track.id === filteredItem.track.id)))
             addStagedItems(selectedDisplayed);
 
-            const selectedHidden = (selectedTracks.filter(selectedItem => !filteredTracks.some(filteredItem => selectedItem.track.id === filteredItem.track.id)))
-            setSelectedTracks(selectedHidden)
+            const selectedHidden = (props.selectedTracks.filter(selectedItem => !filteredTracks.some(filteredItem => selectedItem.track.id === filteredItem.track.id)))
+            props.setSelectedTracks(selectedHidden)
         } else {
-            console.log("selected Library items: ", selectedTracks)
-            addStagedItems(selectedTracks);
-            setSelectedTracks([])
+            console.log("selected Library items: ", props.selectedTracks)
+            addStagedItems(props.selectedTracks);
+            props.setSelectedTracks([])
         }
 
 
@@ -332,7 +333,7 @@ const {popularityFilter, dateRange, setSelectedArtistFilters, artistQuery, artis
                     <div style={isMobile?{margin:"auto", flex: "1",width: '100%', overflowX: 'auto', whiteSpace: 'nowrap', display:"flex", flexDirection:"column"}:{margin:"auto", flex: "1", display:"flex", flexFlow:"row wrap"  }}>
                         <div style={{ justifyContent:"center", flex:1, alignContent: "center", whiteSpace:'nowrap', display: "flex"}}>
                             <button style={{margin:"auto 10px", borderRadius:'15px'}} onClick={() => { selectAllclicked(); }} value={"SelectAll"}>Select All</button>
-                            <button style={{margin:"auto 10px", borderRadius:'15px'}} onClick={() => { deselectAllClicked() }}>Deselect All</button>
+                            {!isMobile?<button style={{margin:"auto 10px", borderRadius:'15px'}} onClick={() => { deselectAllClicked() }}>Deselect All</button>:<></>}
                             <button style={{margin:"auto 10px", borderRadius:'15px'}} onClick={() => { stageSelectedDisplayedTracks(); }}>Add Items</button>
                         </div>
                         {/* {isFeatureFilterSelected && loadingState === "filtering" 
@@ -359,7 +360,7 @@ const {popularityFilter, dateRange, setSelectedArtistFilters, artistQuery, artis
                     </div>
                     :<div ref={scrollContainer} style={{overflowY: 'auto'}}>
                         
-                        <Tracklist setDisplayedTracks={setDisplayedTracks} tracklistArea="selected-playlist" selectedLibraryItems={selectedTracks} setSelectedLibraryItems={setSelectedTracks} draftTracks={addStagedItems}></Tracklist>
+                        <Tracklist setDisplayedTracks={setDisplayedTracks} tracklistArea="selected-playlist" selectedLibraryItems={props.selectedTracks} setSelectedLibraryItems={props.setSelectedTracks} draftTracks={addStagedItems}></Tracklist>
                         {selectedLibraryItem?.next ?
                     <div style={{}}>
                         {

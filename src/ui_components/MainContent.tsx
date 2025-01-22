@@ -8,6 +8,7 @@ import { ViewContext } from "../state_management/ViewProvider.tsx";
 // import SearchBar from "./SearchPane/SearchBar";
 import { submissionStatusState } from "./DraftingPaneComponents/Playlists/DraftPlaylistArea.tsx";
 import { LibrarySelectionPane } from "./LibrarySelectionComponents/LibrarySelectionPane.tsx";
+import NavBar from "./NavBar.tsx";
 
 
 
@@ -33,10 +34,14 @@ export default function MainContent(props: UserLibraryProps) {
     
     return (
         // <DraftingProvider >
+        <>
+        <NavBar currentUser={props.currentUser}></NavBar>
             <div className="main-content-area" style={{ position: "relative" }}>
+                
                 <DraftingArea setDialogText={setDialogText} setReloadKey={setReloadKey}></DraftingArea>
                 <LibrarySelectionPane dialogText={dialogText} setDialogText={setDialogText} reloadKey={reloadKey} userId={props.currentUser.id}></LibrarySelectionPane>
             </div>
+            </>
         // </DraftingProvider>
         )
 

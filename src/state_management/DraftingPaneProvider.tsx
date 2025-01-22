@@ -1,8 +1,9 @@
-import React, { createContext, useCallback,  useMemo, useState } from "react"
+import React, { createContext, useCallback,  useEffect,  useMemo, useState } from "react"
 import TrackClass from "../models/Tracks.ts";
 import TrackCollection from "../models/TrackCollection.ts";
 import type { Album, Playlist } from "../../server/types.d.ts";
 
+export type SubmissionStatusState = {status:"Pending"|"Success"|"Failed", text: string}
 
 
 export type DraftingContextType = {
@@ -18,6 +19,15 @@ export type DraftingContextType = {
         unstageTracks: (items: TrackClass[]) => void,
         stagingState: 'open'|'closed'
         setStagingState: React.Dispatch<React.SetStateAction<string>>
+        displaySubmsnProgress: boolean
+        setDisplaySubmsnProgress: React.Dispatch<React.SetStateAction<boolean>>
+        submissionState: SubmissionStatusState
+        setSubmissionState: React.Dispatch<React.SetStateAction<SubmissionStatusState>>
+        playlistName: string
+        setPlaylistName: React.Dispatch<React.SetStateAction<string>>
+        displayWarning: boolean
+        setDisplayWarning: React.Dispatch<React.SetStateAction<boolean>>
+        
 
     displayTracks: (selection: TrackCollection) => void}
     const DraftingContext = createContext<DraftingContextType>(null)
@@ -28,10 +38,22 @@ export default function DraftingProvider({ children}){
     const [stagedPlaylist, setStagedPlaylist] = useState<TrackClass[]>([])
     const [stagedPlaylistState, setStagedPlaylistState] = useState<TrackClass[][]>([[]])
     const [stagingState, setStagingState] = useState<'open'|'closed'>("closed")
+    const [displaySubmsnProgress, setDisplaySubmsnProgress] = useState(false)
+    const [submissionState, setSubmissionState] = useState<SubmissionStatusState>(null)
+    const [playlistName, setPlaylistName] = useState<string>(null)
+    const [displayWarning, setDisplayWarning] = useState(false)
         
+     
 
 
-
+    useEffect(()=>{
+        if(displayWarning){
+            setTimeout(()=>{
+                setDisplayWarning(false)
+            }, 3000)
+        }
+    },[displayWarning])
+    
     const displayTracks = useCallback(async (selection: TrackCollection | Album['album'] | Playlist) => {
         setStagingState("open")
 
@@ -102,10 +124,14 @@ export default function DraftingProvider({ children}){
         selectedLibraryItem, setSelectedLibraryItem,
         stagedPlaylist, setStagedPlaylist,
         stagedPlaylistState,
+        displaySubmsnProgress, setDisplaySubmsnProgress,
+        submissionState, setSubmissionState,
+        playlistName, setPlaylistName,    
+        displayWarning, setDisplayWarning,    
         setStagedPlaylistState,
         stageTracks,
         unstageTracks,
-        displayTracks}),[displayFeatureMenu, displayTracks, selectedLibraryItem, stageTracks, stagedPlaylist, stagedPlaylistState, stagingState, unstageTracks])
+        displayTracks}),[displayFeatureMenu, displaySubmsnProgress, displayTracks, displayWarning, playlistName, selectedLibraryItem, stageTracks, stagedPlaylist, stagedPlaylistState, stagingState, submissionState, unstageTracks])
 
     return(
         <DraftingContext.Provider

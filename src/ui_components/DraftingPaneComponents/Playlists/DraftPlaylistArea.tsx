@@ -10,6 +10,8 @@ import { parse, stringify } from "flatted";
 interface DraftPlaylistContainerProps {
     setReloadKey: React.Dispatch<React.SetStateAction<number>>
     setDialogText: React.Dispatch<React.SetStateAction<submissionStatusState>>
+    selectedTracks: TrackClass[]
+    setSelectedTracks: React.Dispatch<React.SetStateAction<TrackClass[]>>
 }
 export type submissionStatusState = {status:"Pending"|"Success"|"Failed", text: string}
 
@@ -17,16 +19,16 @@ export type submissionStatusState = {status:"Pending"|"Success"|"Failed", text: 
 const DraftPlaylistContainer: React.FC<DraftPlaylistContainerProps> = (props: DraftPlaylistContainerProps) => {
 
 
-    const [selectedTracks, setSelectedTracks] = useState<TrackClass[]>([])
+    // const [selectedDraftTracks, setSelectedDraftTracks] = useState<TrackClass[]>([])
     const [trackCards, setTrackCards] = useState<React.JSX.Element[] | null>(null)
     const [stagedHistory] = useState<TrackClass[][]>([[]])
     const [undoRedoController, setUndoRedoController] = useState<number>(null)    // const [selectAllState, setSelectAllState] =useState<boolean[]>([])
-    const [playlistName, setPlaylistName] = useState<string>(null)
-    const [submissionState, setSubmissionState] = useState<submissionStatusState>(null)
+    // const [playlistName, setPlaylistName] = useState<string>(null)
+    // const [submissionState, setSubmissionState] = useState<submissionStatusState>(null)
 
-    const [newPlaylistId, setNewplaylistId] = useState(null)
-    const [displayWarning, setDisplayWarning] = useState(false)
-    const [displaySubmsnProgress, setDisplaySubmsnProgress] = useState(false)
+    // const [newPlaylistId, setNewplaylistId] = useState(null)
+    // const [displayWarning, setDisplayWarning] = useState(false)
+    // const [displaySubmsnProgress, setDisplaySubmsnProgress] = useState(false)
     // const [displaySubmissionStatus, setDisplaySubmissionStatus] = useState(false)
 
     // const { stagingState } = useContext(ViewContext)
@@ -34,11 +36,13 @@ const DraftPlaylistContainer: React.FC<DraftPlaylistContainerProps> = (props: Dr
         // const {selectedFeatures} = useContext(TracklistContext)
         const {selectedLibraryItem, stagedPlaylist, setStagedPlaylist, stagingState, stagedPlaylistState,
             setStagedPlaylistState,
-            displayFeatureMenu,  } = useContext(DraftingContext)
+            displayFeatureMenu,
+            playlistName, setPlaylistName,
+            submissionState, setSubmissionState, displayWarning, displaySubmsnProgress, setDisplaySubmsnProgress  } = useContext(DraftingContext)
 
     const deselectTrack = useCallback((trackId: string) => {
-        setSelectedTracks(prev => prev.filter(selectedTrack => selectedTrack.track.id !== trackId))
-    }, [])
+        props.setSelectedTracks(prev => prev.filter(selectedTrack => selectedTrack.track.id !== trackId))
+    }, [props])
 
     const removeStagedItems = useCallback((items: TrackClass[]) => {
         const newStagedPlaylist = stagedPlaylist.filter(stagedItem => !items.some(removedItem => removedItem.track.id === stagedItem.track.id))
@@ -65,31 +69,25 @@ const DraftPlaylistContainer: React.FC<DraftPlaylistContainerProps> = (props: Dr
 
         const editSelectedItemList2 = (checked: boolean, selectedItem: TrackClass) => {
             if (checked) {
-                setSelectedTracks(selectedTracks.concat([selectedItem]))
+                props.setSelectedTracks(props.selectedTracks.concat([selectedItem]))
             } else {
-                setSelectedTracks(selectedTracks.filter(item => item !== selectedItem))
+                props.setSelectedTracks(props.selectedTracks.filter(item => item !== selectedItem))
             }
-            console.log(selectedTracks)
+            console.log(props.selectedTracks)
         }
 
 
         if (stagedPlaylist && stagedPlaylist.length > 0) {
             const tracks = stagedPlaylist.slice().reverse().map(trackClass =>
-                <TrackCard deselectTrack={deselectTrack} tracklistArea="draft-playlist" draftTrack={removeStagedItems} key={`drafted-playlist-${trackClass?.track?.id}`} trackClass={trackClass} onSelectedTrack={editSelectedItemList2} displayHidden={false} selectedLibraryItems={selectedTracks}></TrackCard>
+                <TrackCard deselectTrack={deselectTrack} tracklistArea="draft-playlist" draftTrack={removeStagedItems} key={`drafted-playlist-${trackClass?.track?.id}`} trackClass={trackClass} onSelectedTrack={editSelectedItemList2} displayHidden={false} selectedLibraryItems={props.selectedTracks}></TrackCard>
             )
             setTrackCards(tracks)
         } else {
             setTrackCards([])
         }
-    }, [deselectTrack, removeStagedItems, stagedPlaylist, selectedTracks])
+    }, [deselectTrack, removeStagedItems, stagedPlaylist, props.selectedTracks, props])
 
-    useEffect(()=>{
-        if(displayWarning){
-            setTimeout(()=>{
-                setDisplayWarning(false)
-            }, 3000)
-        }
-    },[displayWarning])
+
 
 
     useEffect(() => {
@@ -121,15 +119,15 @@ const DraftPlaylistContainer: React.FC<DraftPlaylistContainerProps> = (props: Dr
     }, [stagedPlaylist, stagedHistory, undoRedoController])
 
 
-useEffect(()=>{
-    if(((newPlaylistId===selectedLibraryItem?.id)&&submissionState?.status==="Success")||(stagingState==="closed" && submissionState?.status==="Success")){
-        setStagedPlaylist([])
-        setStagedPlaylistState([])
-        setPlaylistName("")
-        setSubmissionState(null)
-        setDisplaySubmsnProgress(false)
-    }
-},[newPlaylistId, selectedLibraryItem?.id, setStagedPlaylist, setStagedPlaylistState, stagingState, submissionState])
+// useEffect(()=>{
+//     if(((newPlaylistId===selectedLibraryItem?.id)&&submissionState?.status==="Success")||(stagingState==="closed" && submissionState?.status==="Success")){
+//         setStagedPlaylist([])
+//         setStagedPlaylistState([])
+//         setPlaylistName("")
+//         setSubmissionState(null)
+//         setDisplaySubmsnProgress(false)
+//     }
+// },[newPlaylistId, selectedLibraryItem?.id, setStagedPlaylist, setStagedPlaylistState, stagingState, submissionState])
 
 useEffect(()=>{
     if(submissionState?.status==="Pending"){
@@ -139,12 +137,12 @@ useEffect(()=>{
 
 
     const selectAllClicked = () => {
-        setSelectedTracks(stagedPlaylist)
+        props.setSelectedTracks(stagedPlaylist)
 
     }
 
     const deselectAllClicked = () => {
-        setSelectedTracks([])
+        props.setSelectedTracks([])
     }
 
     const undoClicked = () => {
@@ -166,114 +164,114 @@ useEffect(()=>{
 
     }
 
-    const submitDraftPlaylist = async () : Promise<boolean>=>{
-        setDisplaySubmsnProgress(true)
-        // fetch("spotify-data/create-playlist")
-        const createPlaylist = async (): Promise<TrackCollection>  => {
-            // console.log(artistProps.item.id)
+    // const submitDraftPlaylist = async () : Promise<boolean>=>{
+    //     // setDisplaySubmsnProgress(true)
+    //     // fetch("spotify-data/create-playlist")
+    //     const createPlaylist = async (): Promise<TrackCollection>  => {
+    //         // console.log(artistProps.item.id)
 
-                const newPlaylist: Playlist = await fetch("/spotify-data/create-playlist", {
-                    method: "POST",
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ playlistName:playlistName, id:user.id })
-                    // headers: {"id" : `${this.id}` }
-                }).then(async (res) => {
-                    if(res.ok){console.log(res)
-                        const playlist = await res.json()
-                        return playlist
-                    }else{
-                        return null
-                    }
+    //             const newPlaylist: Playlist = await fetch("/spotify-data/create-playlist", {
+    //                 method: "POST",
+    //                 headers: {
+    //                     'Content-Type': 'application/json'
+    //                 },
+    //                 body: JSON.stringify({ playlistName:playlistName, id:user.id })
+    //                 // headers: {"id" : `${this.id}` }
+    //             }).then(async (res) => {
+    //                 if(res.ok){console.log(res)
+    //                     const playlist = await res.json()
+    //                     return playlist
+    //                 }else{
+    //                     return null
+    //                 }
                     
-                }).catch(e=>{
-                    console.log(e)
-                })
-                console.log(newPlaylist)
+    //             }).catch(e=>{
+    //                 console.log(e)
+    //             })
+    //             console.log(newPlaylist)
                 
-                const newCollection = new TrackCollection(newPlaylist)
+    //             const newCollection = new TrackCollection(newPlaylist)
                 
-                // setUserLibraryItems([newCollection].concat(userLibraryItems))
-                return newCollection
-                // const newPlaylistCard =  <LibraryItemCard key={newCollection.id}  libraryItem={newCollection} ownerId={user.id} view={"User Playlists"} ></LibraryItemCard>
+    //             // setUserLibraryItems([newCollection].concat(userLibraryItems))
+    //             return newCollection
+    //             // const newPlaylistCard =  <LibraryItemCard key={newCollection.id}  libraryItem={newCollection} ownerId={user.id} view={"User Playlists"} ></LibraryItemCard>
 
-        }
+    //     }
 
-        const addItems = async (playlistId: string) : Promise<boolean>=>{
-            const uriList = stagedPlaylist.reverse().map(track=>track.track?.uri)
+    //     const addItems = async (playlistId: string) : Promise<boolean>=>{
+    //         const uriList = stagedPlaylist.reverse().map(track=>track.track?.uri)
 
-            const itemSubmission = await fetch("/spotify-data/add-tracks", {
-                method: "POST",
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ uriList:uriList, id: playlistId })
-                // headers: {"id" : `${this.id}` }
-            }).then(async (res) => {
-                if(res.ok){
-                    return true
-                    // const playlist = await res.json()
-                    // return playlist
-                }else{
-                    return false
-                }
+    //         const itemSubmission = await fetch("/spotify-data/add-tracks", {
+    //             method: "POST",
+    //             headers: {
+    //                 'Content-Type': 'application/json'
+    //             },
+    //             body: JSON.stringify({ uriList:uriList, id: playlistId })
+    //             // headers: {"id" : `${this.id}` }
+    //         }).then(async (res) => {
+    //             if(res.ok){
+    //                 return true
+    //                 // const playlist = await res.json()
+    //                 // return playlist
+    //             }else{
+    //                 return false
+    //             }
                 
-            }).catch(e=>{
-                console.log(e)
-                return false
-            })
+    //         }).catch(e=>{
+    //             console.log(e)
+    //             return false
+    //         })
 
-            return itemSubmission
+    //         return itemSubmission
 
-        }
+    //     }
 
-        if(!playlistName||playlistName.length===0){
-            setDisplayWarning(true)
-        }else{
-            const pending : submissionStatusState = {status: "Pending", text: "Your playlist is being created."}
-            setSubmissionState(pending)
-            setDisplaySubmsnProgress(true)
+    //     if(!playlistName||playlistName.length===0){
+    //         setDisplayWarning(true)
+    //     }else{
+    //         const pending : submissionStatusState = {status: "Pending", text: "Your playlist is being created."}
+    //         setSubmissionState(pending)
+    //         setDisplaySubmsnProgress(true)
 
-        const newPlaylist = await createPlaylist()
-        setNewplaylistId(newPlaylist.id)
+    //     const newPlaylist = await createPlaylist()
+    //     // setNewplaylistId(newPlaylist.id)
 
-        if(!newPlaylist){
-            // setSubmissionState(prev=>prev.concat(["fail"]))
-            const failed: submissionStatusState = {status: "Failed", text: "Failed to create a new playlist."}
-            setSubmissionState(failed)
-            props.setDialogText(failed)
-            console.log('Failed to create playlist')
-            return false
-        }else{
-            // setSubmissionState(prev=>prev.concat(["submitted"]))
-            const isPlaylistSubmitted = await addItems(newPlaylist.id)
-            if(isPlaylistSubmitted){
-                // setSubmissionState(prev=>prev?prev.concat(["success"]):["success"])
-                const success:submissionStatusState = {status: "Success", text: "Your playlist has been created!"}
-                setSubmissionState(success)
-                props.setDialogText(success)
+    //     if(!newPlaylist){
+    //         // setSubmissionState(prev=>prev.concat(["fail"]))
+    //         const failed: submissionStatusState = {status: "Failed", text: "Failed to create a new playlist."}
+    //         setSubmissionState(failed)
+    //         props.setDialogText(failed)
+    //         console.log('Failed to create playlist')
+    //         return false
+    //     }else{
+    //         // setSubmissionState(prev=>prev.concat(["submitted"]))
+    //         const isPlaylistSubmitted = await addItems(newPlaylist.id)
+    //         if(isPlaylistSubmitted){
+    //             // setSubmissionState(prev=>prev?prev.concat(["success"]):["success"])
+    //             const success:submissionStatusState = {status: "Success", text: "Your playlist has been created!"}
+    //             setSubmissionState(success)
+    //             props.setDialogText(success)
 
-                console.log("Items have been added")
+    //             console.log("Items have been added")
    
                 
-                // setUserLibraryItems(null)
-                props.setReloadKey(prev=>prev+1)
-            }else{
-                // setSubmissionState(prev=>prev?prev.concat(["fail"]):["fail"])
-                const failed: submissionStatusState = {status: "Failed", text: "Your playlist has been created. Failed to add all items."}
-                setSubmissionState(failed)
-                props.setDialogText(failed)
+    //             // setUserLibraryItems(null)
+    //             props.setReloadKey(prev=>prev+1)
+    //         }else{
+    //             // setSubmissionState(prev=>prev?prev.concat(["fail"]):["fail"])
+    //             const failed: submissionStatusState = {status: "Failed", text: "Your playlist has been created. Failed to add all items."}
+    //             setSubmissionState(failed)
+    //             props.setDialogText(failed)
 
 
-                console.log("Failed to submit items")
-            }
-            return isPlaylistSubmitted
+    //             console.log("Failed to submit items")
+    //         }
+    //         return isPlaylistSubmitted
 
-        }
+    //     }
 
-        }
-    }
+    //     }
+    // }
 
     useEffect(() => {
         if(stagedPlaylist&&stagedPlaylist.length>0){
@@ -301,18 +299,18 @@ useEffect(()=>{
                     
                             <div className="playlist-buttons-container" style={isMobile?{margin:"auto", flex: "1", width: '100%', overflowX: 'auto', whiteSpace: 'nowrap'}:{margin:"auto", flex: "1"}}>
                             <dialog style={{width: "25vh", margin: "auto", backgroundColor: "#141414", color:"#757575"}} open={displayWarning}>Name your playlist before submitting!</dialog>
-                                <button style={{margin:"auto 10px",  borderRadius:'15px'}} onClick={() => { deselectAllClicked() }}>Deselect All</button>
+                                {!isMobile?<button style={{margin:"auto 10px",  borderRadius:'15px'}} onClick={() => { deselectAllClicked() }}>Deselect All</button>:<></>}
                                 <button style={{margin:"auto 10px",  borderRadius:'15px'}} onClick={() => { selectAllClicked() }}>Select All</button>
-                                <button style={{margin:"auto 10px",  borderRadius:'15px'}} onClick={() => { removeStagedItems(selectedTracks); setSelectedTracks([]) }}>Remove Items</button>
+                                <button style={{margin:"auto 10px",  borderRadius:'15px'}} onClick={() => { removeStagedItems(props.selectedTracks); props.setSelectedTracks([]) }}>Remove Items</button>
                                 {stagedPlaylistState.length > 0 &&!submissionState ?
                                 <>
                                     {undoRedoController !== 1 && stagedHistory.length > 1 ? <button style={{margin:"auto 10px",  borderRadius:'15px'}} onClick={()=>{undoClicked()}}>Undo</button> : <></>}
                                     {undoRedoController ? <button style={{margin:"auto 10px", borderRadius:'15px'}} onClick={() => { redoClicked() }}>Redo</button> : <></>}
                                 </>
                                 : <></>}
-                                    {stagedPlaylist.length>0 &&!submissionState
-                                    ?<button style={{margin:"auto 10px", borderRadius:'15px'}} onClick={()=>submitDraftPlaylist()}>Submit Playlist</button>
-                                    :<></>}
+                                    {/* {stagedPlaylist.length>0 &&!submissionState
+                                    ?<button style={{margin:"auto 10px", borderRadius:'15px'}} onClick={()=>{}}>Submit Playlist</button>
+                                    :<></>} */}
                                 </div>
                             <input placeholder="Playlist Draft..." type="text" onChange={(e)=>setPlaylistName(e.target.value)} value={playlistName} style={{color:"#757575", textOverflow: "ellipsis", margin:"4px 15px", fontSize:"1.25em", fontWeight:"bold", border:"none", padding: "0 auto", backgroundColor: "#141414", textAlign:'center', minWidth:"50%", alignSelf:"center", width:"calc(100% - 30px)",}}></input>
                         </div>

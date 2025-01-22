@@ -174,7 +174,7 @@ useEffect(()=>{
 
                         <div style={{maxWidth:"100%",marginLeft:'auto',textAlign:"right",  width: 'min-content', textWrap:'nowrap', justifyContent:'center'}}>
                         <p onClick={(e)=>{if(!isMobile){e.stopPropagation(); setDisplayProfile(true); setSelectedProfile({type: 'artist', profileId: props.trackClass.track.artists.at(0).id });}}} style={{fontSize: "1em", cursor:'pointer', margin:"0px", color: isChecked?"rgb(135, 135, 135, 0.35)":"inherit"}} className={`track-card-text ${!isMobile?"artist-text":""}`}>{props.trackClass.track.artists[0].name}</p>
-                        {props.trackClass.collection.type==="album"&&props.trackClass.collection.albumType!=="single"?<p className="track-card-text" style={{margin:"0px", color: isChecked?"rgb(135, 135, 135, 0.35)":"inherit"}}>{props.trackClass.track.album.name}</p>:<></>}
+                        {props.trackClass.collection.type==="album"&&props.trackClass.collection.albumType!=="single"?<p className="track-card-text" style={{margin:"0px", color: isChecked?"rgb(135, 135, 135, 0.35)":"inherit"}}>{props.trackClass.collection.name}</p>:<></>}
                         </div>
                         </div>
                         </>

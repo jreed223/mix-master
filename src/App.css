@@ -62,6 +62,15 @@ a {
   
 }
 
+.spotify-button{
+ min-width: 35px; 
+ width: 35px;
+}
+
+.spotify-button:hover{
+  min-width: 130px; 
+ }
+
   /* Custom styles for the selected date range */
   .react-calendar__tile--active {
     background-color: #3b82f6; /* Blue background for selected date */

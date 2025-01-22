@@ -10,7 +10,9 @@ import type { Artist } from '../../../server/types.d.ts';
 import CalendarFilter from './CalendarFilter.tsx';
 import PopularityFilter from "./PopularityFilter.tsx";
 import ArtistFilter from "./ArtistFilter.tsx";
+import TrackClass from "../../models/Tracks.ts";
 interface PlaylistMenuProps {
+   
 
 
     // draftingPaneContainer: React.MutableRefObject<any>

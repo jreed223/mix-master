@@ -1,11 +1,11 @@
 import React, { useCallback, useContext, useEffect, useState } from "react"
 // import { UserProfile } from '@spotify/web-api-ts-sdk';
-import { UserProfile } from "../../server/types";
-import { ViewContext } from "../state_management/ViewProvider";
-import TrackClass from "../models/Tracks";
-import MainContent from "./MainContent";
-import { DraftingContext } from "../state_management/DraftingPaneProvider";
-import { AudioContext, AudioContextType } from "../state_management/AudioProvider";
+import type { UserProfile } from "../../server/types.d.ts";
+import { ViewContext } from "../state_management/ViewProvider.tsx";
+import TrackClass from "../models/Tracks.ts";
+import MainContent from "./MainContent.tsx";
+import { DraftingContext } from "../state_management/DraftingPaneProvider.tsx";
+import { AudioContext, AudioContextType } from "../state_management/AudioProvider.tsx";
 // import { Button } from "@mui/material";
 
 interface navProps{
@@ -157,6 +157,7 @@ export default function NavBar({currentUser}:navProps){
                 <span style={{color: "rgb(135, 135, 135)", overflow:"clip"}}className="navbar">
                    
                         <div  style={{width:"calc(50% - 50px)", margin: '0px 25px', alignItems:"center", display: "flex", position: 'relative'}}>
+                            {/* <img src="record-disk-centered-and-displayed-vertically-with.png" alt="Mix Master Logo" width="40px"></img> */}
                         <h2 style={{margin: 0, cursor: "pointer"}} onClick={()=>{mixMasterButton()}} >Mix Master</h2>
                         {/* <div></div> */}
                         {currentAudio
@@ -197,7 +198,7 @@ export default function NavBar({currentUser}:navProps){
                     </div> */}
                     <p>Welcome, {currentUser.display_name}</p>
                 </span>
-                <MainContent currentUser={currentUser}></MainContent>
+                {/* <MainContent currentUser={currentUser}></MainContent> */}
                 {/* <UserLibrary  currentUser={currentUser} ></UserLibrary> */}
             </>
     )
