@@ -292,7 +292,7 @@ export default function SearchAndPlaylists({ children }) {
 
             <div className={"search-bar2"} style={{ height: "100%", width: "100%", overflowX: 'clip', position: 'relative' }}>
                 <div style={isMobile ? { width: "100%", height: "100%", display: "flex", flexDirection: "column" } : { display: "flex", flexDirection: "column", width: "75%", minWidth: "50vw", height: "100%", margin: "auto" }}>
-                    <div style={{ alignContent: "center", display: "flex", flexDirection: isMobile ? "column" : "row", margin: "auto 10px", height: isMobile?"20%":"10%", maxHeight:"100px" }}>
+                    <div style={{ alignContent: "center", display: "flex", flexDirection: isMobile ? "column" : "row", margin: "auto 10px",  }}>
                         <div style={{ width: isMobile?"100%":"45%", display: "flex", justifyContent: "center", alignItems:"center" }}>
                             <input ref={searchInputRef} style={{ minWidth: "90%", maxHeight: "45px", height: "100%", color: "#878787", fontSize: "1.5em", borderRadius: "25px", paddingLeft: "15px", backgroundColor: "rgb(33 33 33)", border: "none", margin: "10px" }} type="search" placeholder="Search..." value={searchQuery} onKeyDown={(e) => { onEnter(e) }} onChange={(e) => { e.preventDefault(); setSearchQuery(e.target.value) }}></input>
                         </div>
