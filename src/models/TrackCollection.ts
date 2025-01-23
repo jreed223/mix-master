@@ -64,7 +64,7 @@ export default class TrackCollection {
 
                 this.name = "Liked Tracks";
                 this.id = "UserLikedTracks";
-                this.image =  {height:0, width: 0, url:"liked-songs-img.png"}
+                this.image =  {height:0, width: 0, url:"liked-songs-img.svg"}
                 this.owner = null
                 this.uri = null
                 this.artists = null
