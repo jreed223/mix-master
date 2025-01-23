@@ -2,7 +2,7 @@ import React, { useCallback, useContext, useEffect, useRef, useState } from "rea
 // import PlaylistClass from "../../models/playlistClass"
 // import { LibraryItem } from '../../models/libraryItems';
 import Tracklist from "../TrackComponents/Tracklist.tsx";
-import TrackClass from "../../../models/Tracks.ts";
+import TrackClass from "../../../models/TrackClass.ts";
 import { ViewContext } from "../../../state_management/ViewProvider.tsx";
 import { DraftingContext } from "../../../state_management/DraftingPaneProvider.tsx";
 import { TracklistContext } from "../../../state_management/TracklistProvider.tsx";

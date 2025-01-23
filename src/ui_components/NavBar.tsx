@@ -2,7 +2,7 @@ import React, { useCallback, useContext, useEffect, useState } from "react"
 // import { UserProfile } from '@spotify/web-api-ts-sdk';
 import type { UserProfile } from "../../server/types.d.ts";
 import { ViewContext } from "../state_management/ViewProvider.tsx";
-import TrackClass from "../models/Tracks.ts";
+import TrackClass from "../models/TrackClass.ts";
 import MainContent from "./MainContent.tsx";
 import { DraftingContext } from "../state_management/DraftingPaneProvider.tsx";
 import { AudioContext, AudioContextType } from "../state_management/AudioProvider.tsx";

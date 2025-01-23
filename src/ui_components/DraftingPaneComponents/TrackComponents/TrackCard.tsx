@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import TrackClass from '../../../models/Tracks.ts';
+import TrackClass from '../../../models/TrackClass.ts';
 import { DraftingContext, DraftingContextType } from "../../../state_management/DraftingPaneProvider.tsx";
 import { ViewContext, ViewContextType } from "../../../state_management/ViewProvider.tsx";
 import { AudioContext, AudioContextType } from "../../../state_management/AudioProvider.tsx";

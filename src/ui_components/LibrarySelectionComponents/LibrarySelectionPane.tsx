@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { submissionStatusState } from "../DraftingPaneComponents/Playlists/DraftPlaylistArea.tsx";
 import { ViewContext, ViewContextType } from "../../state_management/ViewProvider.tsx";
 // import { LibraryItemsView } from "./UserLibrary/LibraryCollectionsWindow";
-import SearchAndPlaylists from "./SearchPane/SearchAndContent.tsx";
+import SearchAndPlaylists from "./SearchAndContent.tsx";
 import { PlaylistsView } from "./UserLibrary/PlaylistsView.tsx";
 
 interface LibraryComponentsProps {

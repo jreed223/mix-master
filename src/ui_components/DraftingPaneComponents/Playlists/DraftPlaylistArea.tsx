@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useEffect, useState } from "react"
 import TrackCard from "../TrackComponents/TrackCard.tsx";
-import TrackClass from "../../../models/Tracks.ts";
+import TrackClass from "../../../models/TrackClass.ts";
 import { ViewContext } from "../../../state_management/ViewProvider.tsx";
 import { DraftingContext } from "../../../state_management/DraftingPaneProvider.tsx";
 import type { Playlist } from '../../../../server/types.d.ts';

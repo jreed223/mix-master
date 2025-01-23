@@ -1,12 +1,12 @@
 import React, { useContext, useEffect, useState } from "react"
 import { ViewContext } from "../../state_management/ViewProvider.tsx"
 import { DraftingContext } from "../../state_management/DraftingPaneProvider.tsx"
-import TrackClass from "../../models/Tracks.ts"
+import TrackClass from "../../models/TrackClass.ts"
 import TrackCollection from "../../models/TrackCollection.ts"
 import { Playlist } from "../../../server/types.js"
 // import { Features, PlaylistItem } from "../../../server/types";
 // import PlaylistClass from "../../models/playlistClass";
-interface PlaylistMenuProps {
+interface DraftingMenuProps {
     setSelectedPlaylistTracks: React.Dispatch<React.SetStateAction<TrackClass[]>>
     setSelectedDraftTracks: React.Dispatch<React.SetStateAction<TrackClass[]>>
     setDialogText: React.Dispatch<React.SetStateAction<submissionStatusState>>
@@ -18,7 +18,7 @@ interface PlaylistMenuProps {
 }
 export type submissionStatusState = {status:"Pending"|"Success"|"Failed", text: string}
 
-const PlaylistMenuBar: React.FC<PlaylistMenuProps> = (props: PlaylistMenuProps) => {
+const DraftingMenuBar: React.FC<DraftingMenuProps> = (props: DraftingMenuProps) => {
     const {  isMobile, isMaxDraftView, setIsMaxDraftView, user } = useContext(ViewContext)
     const { displayFeatureMenu, setStagingState, setDisplayFeatureMenu, setDisplaySubmsnProgress, setSubmissionState, playlistName, stagedPlaylist, setDisplayWarning, setStagedPlaylistState,  setStagedPlaylist, stagedPlaylistState} = useContext(DraftingContext)
     const [displaySubmsnProgress, setDisplaySubmsnProgress1] = useState(false)
@@ -191,4 +191,4 @@ const PlaylistMenuBar: React.FC<PlaylistMenuProps> = (props: PlaylistMenuProps) 
 
 }
 
-export default PlaylistMenuBar
+export default DraftingMenuBar

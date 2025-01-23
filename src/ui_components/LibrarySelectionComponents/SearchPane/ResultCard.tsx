@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import type { Album, Artist, Playlist, SearchResults } from "../../../../server/types.d.ts";
-import TrackClass from '../../../models/Tracks.ts';
+import TrackClass from '../../../models/TrackClass.ts';
 import { ViewContext } from "../../../state_management/ViewProvider.tsx";
 import { DraftingContext } from "../../../state_management/DraftingPaneProvider.tsx";
 import { Hidden } from "@mui/material";

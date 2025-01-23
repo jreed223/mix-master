@@ -1,4 +1,4 @@
-import type { Album, Artist, Features, Image, Track, Playlist } from '../../server/types.d.ts';
+import type { Album, Artist, Features, Image, Track, Playlist } from '../../server/types.js';
 import { audioFeatures } from '../../server/SpotifyData/controllers/supplementalControllers/audioFeatures.ts';
 import TrackCollection, { Collection } from './TrackCollection.ts';
 

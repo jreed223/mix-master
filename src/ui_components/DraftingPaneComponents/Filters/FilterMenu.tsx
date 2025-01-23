@@ -1,16 +1,16 @@
 import React, { useContext, useEffect, useRef, useState } from "react"
-import { ViewContext } from "../../state_management/ViewProvider.tsx"
-import { DraftingContext } from "../../state_management/DraftingPaneProvider.tsx"
-import { TracklistContext } from "../../state_management/TracklistProvider.tsx"
+import { ViewContext } from "../../../state_management/ViewProvider.tsx"
+import { DraftingContext } from "../../../state_management/DraftingPaneProvider.tsx"
+import { TracklistContext } from "../../../state_management/TracklistProvider.tsx"
 import Calendar from 'react-calendar';
-import type { Artist } from '../../../server/types.d.ts';
+import type { Artist } from '../../../../server/types.js';
 
 // import { Features, PlaylistItem } from "../../../server/types";
 // import PlaylistClass from "../../models/playlistClass";
 import CalendarFilter from './CalendarFilter.tsx';
 import PopularityFilter from "./PopularityFilter.tsx";
 import ArtistFilter from "./ArtistFilter.tsx";
-import TrackClass from "../../models/Tracks.ts";
+import TrackClass from "../../../models/TrackClass.ts";
 interface PlaylistMenuProps {
    
 

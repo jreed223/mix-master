@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useMemo, useState } from "react"
-import TrackClass from "../models/Tracks.ts"
+import TrackClass from "../models/TrackClass.ts"
 import { TrackData } from "../ui_components/DraftingPaneComponents/Playlists/SelectedPlaylistArea.tsx"
 import type { Artist, Features } from "../../server/types.d.ts"
 // import { UserProfile } from '@spotify/web-api-ts-sdk';

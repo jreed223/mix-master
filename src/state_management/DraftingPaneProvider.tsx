@@ -1,5 +1,5 @@
 import React, { createContext, useCallback,  useEffect,  useMemo, useState } from "react"
-import TrackClass from "../models/Tracks.ts";
+import TrackClass from "../models/TrackClass.ts";
 import TrackCollection from "../models/TrackCollection.ts";
 import type { Album, Playlist } from "../../server/types.d.ts";
 

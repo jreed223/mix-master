@@ -1,5 +1,5 @@
 import type { CategorizedPlaylist, PlaylistItem, Tag, Track, Image, Features, Artist, Album, Playlist, Tracklist, LikedTracks } from "../../server/types.d.ts";
-import TrackClass from "./Tracks.ts";
+import TrackClass from "./TrackClass.ts";
 import { album } from '../../server/SpotifyData/controllers/supplementalControllers/album.ts';
 
 export type Collection = Playlist | Album["album"] | LikedTracks

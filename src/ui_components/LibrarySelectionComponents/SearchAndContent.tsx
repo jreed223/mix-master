@@ -1,15 +1,15 @@
 import { useContext, useEffect, useRef, useState } from "react"
-import { ViewContext } from "../../../state_management/ViewProvider.tsx"
-import TrackClass from "../../../models/Tracks.ts"
-import type { Album, Playlist, SearchResults } from "../../../../server/types.d.ts"
-import TrackCollection from "../../../models/TrackCollection.ts"
-import ResultCard from "./ResultCard.tsx"
+import { ViewContext } from "../../state_management/ViewProvider.tsx"
+import TrackClass from "../../models/TrackClass.ts"
+import type { Album, Playlist, SearchResults } from "../../../server/types.js"
+import TrackCollection from "../../models/TrackCollection.ts"
+import ResultCard from "./SearchPane/ResultCard.tsx"
 import React from "react"
-import TrackCard from "../../DraftingPaneComponents/TrackComponents/TrackCard.tsx"
-import { DraftingContext } from "../../../state_management/DraftingPaneProvider.tsx"
-import ProfileView, { ArtistProfileProps, UserProfileProps } from "./ProfileView.tsx"
+import TrackCard from "../DraftingPaneComponents/TrackComponents/TrackCard.tsx"
+import { DraftingContext } from "../../state_management/DraftingPaneProvider.tsx"
+import ProfileView, { ArtistProfileProps, UserProfileProps } from "./SearchPane/ProfileView.tsx"
 import { border, minWidth, padding } from "@mui/system"
-import { searchResults } from '../../../../server/SpotifyData/controllers/supplementalControllers/searchResults.ts';
+import { searchResults } from '../../../server/SpotifyData/controllers/supplementalControllers/searchResults.ts';
 
 
 
