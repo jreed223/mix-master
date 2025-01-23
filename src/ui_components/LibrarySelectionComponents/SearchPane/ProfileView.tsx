@@ -128,7 +128,7 @@ const ProfileView: React.FC<ProfileViewProps> = (props: ProfileViewProps) => {
     const profileCard = useCallback((fullProfile: Artist|UserProfile)=>(
         <div style={{  display: "flex", margin: 0, padding: "9px", height: isMobile?"8vh":"12vh",  minHeight:isMobile?'unset':'80px'}} className="track-card">
         <div style={{  display: "inline", position: "relative", height: "100%", aspectRatio: "1 / 1" }}>
-            <img loading="lazy" style={{ borderRadius: "50%", position: "relative", height: "100%", aspectRatio: "1 / 1" }} src={props.type==='artist'?(fullProfile as Artist).images?.at(0)?.url:props.type==='user'?(fullProfile as UserProfile).images?.at(0)?.url:"Unknown"} alt={`${props.type==='artist'?(fullProfile as Artist).name.at(0):props.type==='user'?(fullProfile as UserProfile).display_name:"Unknown"} cover`}></img>
+            <img loading="lazy" style={{ borderRadius: "50%", position: "relative", height: "100%", aspectRatio: "1 / 1" }} src={props.type==='artist'?(fullProfile as Artist).images?.at(0)?.url||"default-artist-img.png":props.type==='user'?(fullProfile as UserProfile).images?.at(0)?.url||"default-artist-img.png":"default-artist-img.png"} alt={`${props.type==='artist'?(fullProfile as Artist).name.at(0):props.type==='user'?(fullProfile as UserProfile).display_name:"Unknown"} cover`}></img>
             <div  style={{ top: 0, left: 0, width: "100%", height: "100%", position: "absolute" }}></div>
         </div>
             <p style={{ display: 'inline', margin:'auto 7px' }} className={"track-card-text "}>{props.type==='artist'?(fullProfile as Artist).name:props.type==='user'?(fullProfile as UserProfile).display_name:"Unknown"}</p>
@@ -196,7 +196,7 @@ const ProfileView: React.FC<ProfileViewProps> = (props: ProfileViewProps) => {
         
         {currentProfileCard?currentProfileCard:<></>}
 
-        <div style={{ alignContent:'baseline',justifyContent: 'center', flexFlow:"row wrap", display: "flex", width:"100%", flex:'1' ,   background: "rgb(33 33 33)", overflowY:'auto', transition:"1s" }}>
+        <div style={{ alignContent:'baseline', flexFlow:"row wrap", display: "flex", width:"100%", flex:'1' ,   background: "rgb(33 33 33)", overflowY:'auto', transition:"1s" }}>
        {currentContentCards?currentContentCards:<></>}
         </div>
 

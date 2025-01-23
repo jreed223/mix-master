@@ -127,7 +127,7 @@ const ResultCard: React.FC<ResultCardProps> = (props: ResultCardProps) => {
             <div style={{height:"calc(100% - 100px)",background: "#141414", transition: expanded?'width 1s':"none", width: isMobile?"100%":"50%", overflowY: 'hidden', display:"flex", flexDirection:'column' }}>
                 <div onClick={() => {setDisplayProfile(true); setSelectedProfile({type: 'artist', profileId: artistProps.item.id, profile: artistProps.item} as ArtistProfileProps)}} style={{ cursor: "pointer", display: "flex", margin: 0, padding: "5px", height: isMobile?"8vh":"12vh",  minHeight:isMobile?'unset':'80px'}} className="track-card">
                     <div style={{  display: "inline-flex", position: "relative", height: "100%", aspectRatio: "1 / 1" }}>
-                        <img loading="lazy" style={{ borderRadius: "50%", position: "relative", height: "100%", aspectRatio: "1 / 1" }} src={props.result.item?.images[0]?.url} alt={`${props.result.item?.name||"Unknown"} cover`}></img>
+                        <img loading="lazy" style={{ borderRadius: "50%", position: "relative", height: "100%", aspectRatio: "1 / 1" }} src={props.result.item?.images[0]?.url||"default-artist-img.png"} alt={`${props.result.item?.name||"Unknown"} cover`}></img>
                         <div  style={{ top: 0, left: 0, width: "100%", height: "100%", position: "absolute" }}></div>
                     </div>
                     <p style={{ display: 'inline', margin:'auto 7px' }} className={"track-card-text "}>{props.result?.item?.name||"Unknown"}</p>

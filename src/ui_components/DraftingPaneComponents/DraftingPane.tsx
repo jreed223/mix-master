@@ -34,7 +34,7 @@ export default function DraftingArea({setReloadKey, setDialogText}){
     return(
         <TracklistProvider>
         <div ref={creationContainer} className={"playlist-creation-container-hidden"}style={isMaxDraftView?{width: "100%", overflowX: "clip"}:stagingState==="open"?{width:isMobile?"100%":"50%", overflowX: "clip"}:{width:"0%", overflowX: "clip"}} id="creation-container">
-        <div style={{width:isMaxDraftView||isMobile?"100vw":"50vw", height: "100%", transition: '1s', backgroundColor: "#141414"}}>
+        <div style={{width:isMaxDraftView||isMobile?"100vw":"50vw", height: "100%", transition: '1s', backgroundColor: "#141414", display:'flex', flexDirection:"column"}}>
         <PlaylistMenuBar setDialogText={setDialogText}  setSelectedPlaylistTracks={setSelectedPlaylistTracks} setSelectedDraftTracks={setSelectedDraftTracks} draftingPaneContainer={creationContainer} ></PlaylistMenuBar>
 
             <div className="playlist-items-containers" style={{position: "relative"}}>

@@ -297,15 +297,17 @@ useEffect(()=>{
                             flexDirection:"column"
                         }}>
                     
-                            <div className="playlist-buttons-container" style={isMobile?{margin:"auto", flex: "1", width: '100%', overflowX: 'auto', whiteSpace: 'nowrap'}:{margin:"auto", flex: "1"}}>
+                            <div className="playlist-buttons-container" style={isMobile?{margin:"auto", flex: "1", width: '100%', whiteSpace: 'nowrap', display:"flex", flexFlow:"row wrap", alignItems:"center", justifyContent:"center"}:{margin:"auto", flex: "1", display:"flex", alignItems:"center", justifyContent:"center"}}>
                             <dialog style={{width: "25vh", margin: "auto", backgroundColor: "#141414", color:"#757575"}} open={displayWarning}>Name your playlist before submitting!</dialog>
-                                {!isMobile?<button style={{margin:"auto 10px",  borderRadius:'15px'}} onClick={() => { deselectAllClicked() }}>Deselect All</button>:<></>}
-                                <button style={{margin:"auto 10px",  borderRadius:'15px'}} onClick={() => { selectAllClicked() }}>Select All</button>
-                                <button style={{margin:"auto 10px",  borderRadius:'15px'}} onClick={() => { removeStagedItems(props.selectedTracks); props.setSelectedTracks([]) }}>Remove Items</button>
+                            <img src="select-all-icon-grey.png" height="25px" style={{margin:"auto 10px", cursor:"pointer"}} alt="select all" onClick={()=>selectAllClicked()}></img>
+                            <img src="deselect-all-icon-grey.png" height="25px" style={{margin:"auto 10px", cursor:"pointer"}} alt="select all" onClick={()=>deselectAllClicked()}></img>
+                                {/* {!isMobile?<button style={{margin:"auto 10px",  borderRadius:'15px'}} onClick={() => { deselectAllClicked() }}>Deselect All</button>:<></>}
+                                <button style={{margin:"auto 10px",  borderRadius:'15px'}} onClick={() => { selectAllClicked() }}>Select All</button> */}
+                                <button style={{margin:"5px 10px",  borderRadius:'15px'}} onClick={() => { removeStagedItems(props.selectedTracks); props.setSelectedTracks([]) }}>Remove Items</button>
                                 {stagedPlaylistState.length > 0 &&!submissionState ?
                                 <>
-                                    {undoRedoController !== 1 && stagedHistory.length > 1 ? <button style={{margin:"auto 10px",  borderRadius:'15px'}} onClick={()=>{undoClicked()}}>Undo</button> : <></>}
-                                    {undoRedoController ? <button style={{margin:"auto 10px", borderRadius:'15px'}} onClick={() => { redoClicked() }}>Redo</button> : <></>}
+                                    {undoRedoController !== 1 && stagedHistory.length > 1 ? <button style={{margin:"5px 10px",  borderRadius:'15px'}} onClick={()=>{undoClicked()}}>Undo</button> : <></>}
+                                    {undoRedoController ? <button style={{margin:"5px 10px", borderRadius:'15px'}} onClick={() => { redoClicked() }}>Redo</button> : <></>}
                                 </>
                                 : <></>}
                                     {/* {stagedPlaylist.length>0 &&!submissionState

@@ -670,19 +670,19 @@ button{
   background-color: #141414;
   top:50px;
   width : calc(100% - 10px);
-  height: 40px;
+  min-height: 40px;
   transition: width 1s;
   overflow-x: hidden;
   display: flex;
   flex-wrap: wrap;
-  gap: 25px;
+  gap: 2%;
   padding-left: 10px;
   /* justify-content: center; */
 
 }
 
 .draft-pane-button{
-  min-width: 80px;
+  min-width: 60px;
   height: 80%;
   border-radius: 15px;
 }
@@ -701,9 +701,10 @@ button{
 
 .playlist-items-containers{
   width: 100%;
-  height: calc(100% - 40px);
+  /* height: calc(100% - 40px); */
     flex:1;
   display: inline-flex;
+  overflow-y: hidden;
 
 }
 ::-webkit-scrollbar {

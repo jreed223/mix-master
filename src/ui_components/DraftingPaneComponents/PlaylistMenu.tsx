@@ -20,7 +20,7 @@ export type submissionStatusState = {status:"Pending"|"Success"|"Failed", text: 
 
 const PlaylistMenuBar: React.FC<PlaylistMenuProps> = (props: PlaylistMenuProps) => {
     const {  isMobile, isMaxDraftView, setIsMaxDraftView, user } = useContext(ViewContext)
-    const { displayFeatureMenu, setStagingState, setDisplayFeatureMenu, setDisplaySubmsnProgress, setSubmissionState, playlistName, stagedPlaylist, setDisplayWarning, setStagedPlaylistState,  setStagedPlaylist} = useContext(DraftingContext)
+    const { displayFeatureMenu, setStagingState, setDisplayFeatureMenu, setDisplaySubmsnProgress, setSubmissionState, playlistName, stagedPlaylist, setDisplayWarning, setStagedPlaylistState,  setStagedPlaylist, stagedPlaylistState} = useContext(DraftingContext)
     const [displaySubmsnProgress, setDisplaySubmsnProgress1] = useState(false)
     const [submissionState, setSubmissionState1] = useState<submissionStatusState>(null)
     const [playlistName1, setPlaylistName] = useState<string>(null)
@@ -178,11 +178,11 @@ const PlaylistMenuBar: React.FC<PlaylistMenuProps> = (props: PlaylistMenuProps) 
         <div className="playlist-creation-menu-bar" >
             <button className='draft-pane-button' onClick={() => closeCreationContainer()}>Close</button>
             <button className='draft-pane-button' onClick={() => { toggleFeatures() }}>Filter</button>
-            {isMobile?<button className='draft-pane-button' onClick={() => { clearSelections() }}>Clear Selections</button>:<></>}
-            <button className='draft-pane-button' onClick={() => { clearDraft() }}>Clear Draft</button>
+            {/* {isMobile?<button className='draft-pane-button' onClick={() => { clearSelections() }}>Clear Selections</button>:<></>} */}
+            <button disabled={stagedPlaylist.length===0&&stagedPlaylistState.length===0}className='draft-pane-button' onClick={() => { clearDraft() }}>Clear Draft</button>
             <button disabled={(stagedPlaylist.length===0 || submissionState)?true:false}className='draft-pane-button' onClick={stagedPlaylist.length>0 && !submissionState?()=> submitDraftPlaylist():()=>{} }>Submit Draft</button>
 
-            <button disabled={isMobile} className='draft-pane-button' style={{opacity:isMobile?0:1, transition:'1s'}} onClick={() => toggleFullScreen()}>Full Screen</button>
+            {!isMobile?<button disabled={isMobile} className='draft-pane-button' style={{ transition:'1s'}} onClick={() => toggleFullScreen()}>Full Screen</button>:<></>}
 
         </div>
     )

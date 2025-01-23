@@ -331,10 +331,13 @@ const {popularityFilter, dateRange, setSelectedArtistFilters, artistQuery, artis
                     
                 }}>
                     <div style={isMobile?{margin:"auto", flex: "1",width: '100%', overflowX: 'auto', whiteSpace: 'nowrap', display:"flex", flexDirection:"column"}:{margin:"auto", flex: "1", display:"flex", flexFlow:"row wrap"  }}>
-                        <div style={{ justifyContent:"center", flex:1, alignContent: "center", whiteSpace:'nowrap', display: "flex"}}>
-                            <button style={{margin:"auto 10px", borderRadius:'15px'}} onClick={() => { selectAllclicked(); }} value={"SelectAll"}>Select All</button>
-                            {!isMobile?<button style={{margin:"auto 10px", borderRadius:'15px'}} onClick={() => { deselectAllClicked() }}>Deselect All</button>:<></>}
-                            <button style={{margin:"auto 10px", borderRadius:'15px'}} onClick={() => { stageSelectedDisplayedTracks(); }}>Add Items</button>
+                        <div style={{ justifyContent:"center", flex:1, alignContent: "center", whiteSpace:'nowrap', display: "flex", flexFlow:"row wrap"}}>
+                            <img src="select-all-icon-grey.png" height="25px" style={{margin:"auto 10px", cursor:"pointer"}} alt="select all" onClick={()=>selectAllclicked()}></img>
+                            <img src="deselect-all-icon-grey.png" height="25px" style={{margin:"auto 10px", cursor:"pointer"}} alt="select all" onClick={()=>deselectAllClicked()}></img>
+
+                            {/* <button style={{margin:"auto 10px", borderRadius:'15px'}} onClick={() => { selectAllclicked(); }} value={"SelectAll"}>Select All</button>
+                            {!isMobile?<button style={{margin:"auto 10px", borderRadius:'15px'}} onClick={() => { deselectAllClicked() }}>Deselect All</button>:<></>} */}
+                            <button style={{margin:"5px 10px", borderRadius:'15px'}} onClick={() => { stageSelectedDisplayedTracks(); }}>Add Items</button>
                         </div>
                         {/* {isFeatureFilterSelected && loadingState === "filtering" 
                         ?(<p>Filtering Tracks...</p>) 

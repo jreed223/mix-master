@@ -156,7 +156,7 @@ export default function NavBar({currentUser}:navProps){
             <>
                 <span style={{color: "rgb(135, 135, 135)", overflow:"clip"}}className="navbar">
                    
-                        <div  style={{width:"calc(50% - 50px)", margin: '0px 25px', alignItems:"center", display: "flex", position: 'relative'}}>
+                        <div  style={{ margin: '0px 25px', alignItems:"center", display: "flex", position: 'relative'}}>
                             {/* <img src="record-disk-centered-and-displayed-vertically-with.png" alt="Mix Master Logo" width="40px"></img> */}
                         <h2 style={{margin: 0, cursor: "pointer"}} onClick={()=>{mixMasterButton()}} >Mix Master</h2>
                         {/* <div></div> */}

@@ -45,7 +45,7 @@ export default function CalendarFilter(){
     }
 
 
-    const calendar = (<Calendar onChange={(date) => handleDateSelection(date)} value={dateRange} allowPartialRange selectRange={true}  tileDisabled={ filterDisabled?()=>true:({ date }) => disableFutureDates(date)}/>
+    const calendar = (<Calendar onChange={(date) => handleDateSelection(date)} value={dateRange} allowPartialRange maxDetail="year" selectRange={true}  tileDisabled={ filterDisabled?()=>true:({ date }) => disableFutureDates(date)}/>
     )
 
 
