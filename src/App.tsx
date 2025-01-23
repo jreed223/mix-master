@@ -4,7 +4,7 @@ import './App.css';
 import * as React from 'react';
 import LoginPage from './ui_components/LoginPage.tsx';
 
-import NavBar from './ui_components/NavBar.tsx';
+// import NavBar from './ui_components/NavBar.tsx';
 import type { UserProfile } from '../server/types.d.ts';
 import ViewProvider from './state_management/ViewProvider.tsx';
 import DraftingProvider from './state_management/DraftingPaneProvider.tsx';
@@ -20,6 +20,7 @@ function App() {
     const [isLoading, setLoading] = useState<boolean>(true)
 
     useEffect(()=>{
+      // document.title = "Mix Master: Playlist Drafting"
       // console.log("Use effect block running")
         console.log("attempting to load user")
       fetch("/spotify-data/current-user").then(async user=>{
