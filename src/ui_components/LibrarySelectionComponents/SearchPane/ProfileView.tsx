@@ -40,7 +40,7 @@ const ProfileView: React.FC<ProfileViewProps> = (props: ProfileViewProps) => {
     const [currentProfileCard, setCurrentProfileCard] = useState< React.JSX.Element>(null)
 
     const {  isMobile, setDisplayProfile, setSelectedProfile, displayProfile  } = useContext(ViewContext)
-    const { displayFeatureMenu, setStagingState, setDisplayFeatureMenu, stagingState, displayTracks } = useContext(DraftingContext)
+    const { displayFilterMenu, setStagingState, setDisplayFilterMenu, stagingState, displayTracks } = useContext(DraftingContext)
 
     const  fetchFullArtist = useCallback(async ()=>{
         if(props.type==="artist"){

@@ -9,6 +9,7 @@ import FilterMenu from "./FilterMenu.tsx";
 import TracklistProvider, { TracklistContext, TracklistContextType } from "../../../state_management/TracklistProvider.tsx";
 import Calendar from "react-calendar";
 import FilterItem from "./FilterItem.tsx";
+import { FilterContext } from "../../../state_management/FilterProvider.tsx";
 
 
 
@@ -18,7 +19,7 @@ export default function CalendarFilter(){
 
     const {isPlaylistsView, isMobile, isMaxDraftView, setIsMaxDraftView} = useContext(ViewContext)
     const {stagingState} = useContext<DraftingContextType>(DraftingContext)
-    const {setDateRange, dateRange} = useContext<TracklistContextType>(TracklistContext)
+    const {setDateRange, dateRange} = useContext(FilterContext)
 
     const [filterDisabled, setFilterDisabled] = useState<boolean>(false)
 

@@ -135,13 +135,13 @@ export default function SearchAndPlaylists({ children }) {
 
             })
             setPlaylistCards(playlistCards)
-            console.log(searchResults.tracks)
+            // console.log(searchResults.tracks)
 
 
             const trackCards = searchResults.tracks.items.filter(track => track && track.id).map((track) => {
                 const collection = new TrackCollection(track.album)
                 const trackClass = new TrackClass(track, collection)
-                trackClass.track.name === "Good Life" ? (console.log("GOOD LIFE: ", track)) : console.log("...")
+                // trackClass.track.name === "Good Life" ? (console.log("GOOD LIFE: ", track)) : console.log("...")
 
                 return <TrackCard key={track?.id} tracklistArea={"search-bar-card"} onSelectedTrack={() => { }} trackClass={trackClass} displayHidden={false} selectedLibraryItems={[]} draftTrack={stageTracks} deselectTrack={() => { }}></TrackCard>
             })
@@ -187,7 +187,7 @@ export default function SearchAndPlaylists({ children }) {
                 // headers: {"id" : `${this.id}` }
             })
             const newResults = await results.json()
-            console.log(newResults)
+            // console.log(newResults)
             setSearchresults(newResults)
             setIsLoading(false)
         }
@@ -290,9 +290,10 @@ export default function SearchAndPlaylists({ children }) {
     return (
         <form style={{ height: "100%", width: "100%", minWidth: isMobile ? "calc(100vw  - 115px)" : "calc(50vw - 115px)" }}>
 
-            <div className={"search-bar2"} style={{ height: "100%", width: "100%", overflowX: 'clip', position: 'relative' }}>
+            <div className={"search-bar2"} style={{ height: "100%", width: "100%", overflowX: 'clip', position: 'relative', minWidth: isMobile ? "calc(100vw  - 115px)" : "calc(50vw - 115px)"  }}>
                 <div style={isMobile ? { width: "100%", height: "100%", display: "flex", flexDirection: "column" } : { display: "flex", flexDirection: "column", width: "75%", minWidth: "50vw", height: "100%", margin: "auto" }}>
                     <div style={{ alignContent: "center", display: "flex", flexDirection: isMobile ? "column" : "row", margin: "auto 10px",  }}>
+                        
                         <div style={{ width: isMobile?"100%":"45%", display: "flex", justifyContent: "center", alignItems:"center" }}>
                             <input ref={searchInputRef} style={{ minWidth: "90%", maxHeight: "45px", height: "100%", color: "#878787", fontSize: "1.5em", borderRadius: "25px", paddingLeft: "15px", backgroundColor: "rgb(33 33 33)", border: "none", margin: "10px" }} type="search" placeholder="Search..." value={searchQuery} onKeyDown={(e) => { onEnter(e) }} onChange={(e) => { e.preventDefault(); setSearchQuery(e.target.value) }}></input>
                         </div>

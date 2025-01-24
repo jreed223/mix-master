@@ -52,7 +52,7 @@ export default function FilterProvider({children}){
     const [artistQuery, setArtistQuery] = useState<string>("")
     const [selectedArtistFilters, setSelectedArtistFilters] = useState<Artist[]>([])
 
-    const tracklistCtxtState = useContext<TracklistContextType>(TracklistContext)
+    const {allTracks} = useContext<TracklistContextType>(TracklistContext)
 
     // const setAudioFeatures = async (trackClassList: TrackClass[]) => {
     //     const response = await fetch("/spotify-data/audio-features", {
@@ -78,17 +78,6 @@ export default function FilterProvider({children}){
        
     // }
 
-    // const filterArtistSearch = (tracklist: TrackClass[] )=>{
-    //     const artistsInTracklist = Array.from(new Set (tracklist.flatMap((item)=>item.track.artists.flatMap((artist)=>artist.name))))
-    //     // setArtistsList(artistsInTracklist)
-
-    //     if(artistQuery && artistQuery.length>0 && artistsList.length>0){
-    //         // const filteredArtists = artistsInTracklist.filter((artistName)=>artistName.startsWith(artistQuery))
-
-    //     }
-
-
-    // }
 
     // const audioFeatureFilter = (tracklist: TrackClass[])=>{
                 // if (!trackDataState) {
@@ -212,8 +201,8 @@ export default function FilterProvider({children}){
 
         let filterPlaylist: TrackClass[] = [];
         console.log("FILTER FEATURES")
-        if(tracklistCtxtState.allTracks){
-            filterPlaylist = filterByPopularity(tracklistCtxtState.allTracks)
+        if(allTracks){
+            filterPlaylist = filterByPopularity(allTracks)
             console.log("POPULAR PLAYLISTS: ", filterPlaylist)
     
             
@@ -235,7 +224,7 @@ export default function FilterProvider({children}){
         console.log("filtered playlist", filterPlaylist)
         
 
-    }, [tracklistCtxtState.allTracks, filterByArtist, filterByDate, filterByPopularity]);
+    }, [allTracks, filterByArtist, filterByDate, filterByPopularity]);
 
 const context = useMemo(()=>({selectedArtistFilters, setSelectedArtistFilters, artistsList, setArtistsList, artistQuery, setArtistQuery, dateRange, setDateRange, popularityFilter, setPopularityFilter, selectedFeatures, setSelecetedFeatures, filteredTracks, setFilteredTracks, filterFeatures, }),[selectedArtistFilters, setSelectedArtistFilters, artistsList, setArtistsList, artistQuery, setArtistQuery, dateRange, popularityFilter, selectedFeatures, filteredTracks, filterFeatures])
 

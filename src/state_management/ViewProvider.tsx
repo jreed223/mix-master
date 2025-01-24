@@ -56,6 +56,7 @@ export default function ViewProvider({children}){
           window.removeEventListener('resize', setViewStyle);
         };
     },[])
+    
     useEffect(()=>{
         if((windowSize.width<900)||((windowSize.width/2)-125 < windowSize.height/4)){
             setIsMobile(true)

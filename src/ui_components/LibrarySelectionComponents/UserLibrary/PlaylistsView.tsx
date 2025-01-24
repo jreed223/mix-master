@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useContext } from "react"
+import React, { useEffect, useState, useRef, useContext, useCallback } from "react"
 import TrackCollection from "../../../models/TrackCollection.ts";
 import LibraryItemCard from "./LibraryItemCard.tsx";
 import { ViewName } from "../../../state_management/ViewProvider.tsx";
@@ -15,10 +15,14 @@ import { stringify, parse } from "flatted";
 interface LibraryItemsViewProps {
   userId: string,
   viewName: ViewName
+  libraryItems: TrackCollection[]
+  savedTracks:TrackCollection
+  nextLink:string|null
+  setLibraryItems: React.Dispatch<React.SetStateAction<TrackCollection[]>>
   // fetchedLibraryResource: {
   //   read(): any;
   // }
-  reloadKey?: number
+  // reloadKey?: number
 }
 
 
@@ -26,9 +30,9 @@ interface LibraryItemsViewProps {
 
 
 export const PlaylistsView: React.FC<LibraryItemsViewProps> = (props: LibraryItemsViewProps) => {
-  const [libraryItems, setLibraryItems] = useState<TrackCollection[]>(null)
+  // const [libraryItems, setLibraryItems] = useState<TrackCollection[]>(null)
   const [libraryItemCards, setLibraryItemCards] = useState<React.ReactElement<LibraryItemCardProps>[]>(null)
-  const [usersLikedTracks, setUsersLikedTracks] = useState<TrackCollection>(null)
+  // const [usersLikedTracks, setUsersLikedTracks] = useState<TrackCollection>(null)
   const [savedTracksCard, setSavedTracksCard] = useState<React.ReactElement<LibraryItemCardProps>>(null)
   const [nextPlaylistsLink, setNextPlaylistsLink] = useState(null)
   
@@ -37,22 +41,9 @@ export const PlaylistsView: React.FC<LibraryItemsViewProps> = (props: LibraryIte
   const {user, isPlaylistsView, isMobile  } = useContext<ViewContextType>(ViewContext)
 
 
-  // const libraryItemsContainer = useRef(null)
 
 
-  const fetchAllPlaylists = async (reloadKey) => {
 
-    
-    const playlistList = await fetch("/spotify-data/playlists")
-      .then(async res => await res.json()).then((playlists: SearchResults['playlists']) => {
-        return playlists
-      })
-
-    const fetchedPlaylists = playlistList.items.filter(playlist=>playlist&&playlist?.id).map(playlist=>new TrackCollection(playlist))
-    setLibraryItems(fetchedPlaylists)
-    setNextPlaylistsLink(playlistList.next)
-    // return playlistList
-  }
 
   const getNextPlaylists = async () =>{
       const playlistsList : SearchResults['playlists'] = await fetch("/spotify-data/next-playlists", {
@@ -71,98 +62,43 @@ export const PlaylistsView: React.FC<LibraryItemsViewProps> = (props: LibraryIte
                     return playlistsData
                 })
                 const fetchedPlaylists = playlistsList.items.filter(playlist=>playlist&&playlist?.id).map(playlist=>new TrackCollection(playlist))
-        setLibraryItems(libraryItems.concat(fetchedPlaylists))
+        props.setLibraryItems(props.libraryItems.concat(fetchedPlaylists))
         setNextPlaylistsLink(playlistsList.next)
   }
 
 
 
-  const fetchLikedTracks = async ()=>{
-    const res = await fetch("/spotify-data/liked-tracks", {
-      method: "GET"
-  })
-    if(res.ok){
-      const tracks:LikedTracks = await res.json()
-      tracks.type = "liked tracks"
-      console.log("NEW COLLECTION!!! ",tracks)
 
-      const newCollection = new TrackCollection(tracks)
-      newCollection.owner = user
-      console.log("NEW COLLECTION!!! ",newCollection)
-      setUsersLikedTracks(newCollection)
-    }else{
-      
-    }
+
+useEffect(()=>{
+  if(props.nextLink){
+    setNextPlaylistsLink(props.nextLink)
   }
-
-  
-  if (!libraryItems) {
-
-    const cachedLibrary = sessionStorage.getItem("libraryItems")
-
-    if(cachedLibrary){
-      const items = parse(cachedLibrary) as TrackCollection[]
-      console.log("cached library found", items)
-
-      
-      setLibraryItems(items)
-    }else{
-      fetchAllPlaylists(props.reloadKey||0)
-    }
-
-  }
-
-  if(!usersLikedTracks){
-    const cachedLikedTracks = sessionStorage.getItem("likedTracks")
-    if(cachedLikedTracks){
-      setUsersLikedTracks(parse(cachedLikedTracks))
-    }else{
-      fetchLikedTracks()
-    }
-  }
-
-
-// useEffect(()=>{
-//   if(libraryItems){
-//     sessionStorage.setItem("libraryItems", stringify(libraryItems))
-//   }
-
-
-// },[libraryItems])
-
-// useEffect(()=>{
-//   if(usersLikedTracks){
-//     sessionStorage.setItem("likedTracks", stringify(usersLikedTracks))
-//   }
-// },[usersLikedTracks])
+},[props.nextLink])
 
 
   useEffect(() => {
-    if (libraryItems) {
-      const cards = libraryItems.map(item =>
+    if (props.libraryItems) {
+      const cards = props.libraryItems.map(item =>
         <LibraryItemCard key={item.id}  libraryItem={item} ownerId={props.userId} view={props.viewName} ></LibraryItemCard>)
-        // if(libraryItemCards){
-        //   setLibraryItemCards([libraryItemCards.at(0)].concat(cards))
-        // }else{
-        //   setLibraryItemCards(cards)
-        // }
+
       setLibraryItemCards(cards)
       return
    
     }
     
-  }, [props.viewName, props.userId, libraryItems])
+  }, [props.viewName, props.userId, props.libraryItems])
 
   useEffect(()=>{
-    if(usersLikedTracks && !savedTracksCard){
-      console.log(usersLikedTracks)
+    if(props.savedTracks){
+      console.log("saved tracks",props.savedTracks)
       const likedTracksCard:React.ReactElement<LibraryItemCardProps>= (
-        <LibraryItemCard key={usersLikedTracks.id}  libraryItem={usersLikedTracks} ownerId={props.userId} view={props.viewName} ></LibraryItemCard>
+        <LibraryItemCard key={props.savedTracks.id}  libraryItem={props.savedTracks} ownerId={props.userId} view={props.viewName} ></LibraryItemCard>
       )
 
      setSavedTracksCard(likedTracksCard)
     }
-  }, [libraryItemCards, props.userId, props.viewName, savedTracksCard, usersLikedTracks])
+  }, [props.userId, props.viewName, props.savedTracks])
 
 
 

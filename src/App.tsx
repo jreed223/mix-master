@@ -53,6 +53,7 @@ function App() {
     return(
     <ViewProvider>
       <DraftingProvider>
+        
         <AudioProvider>
             <MainContent currentUser={currentUser}></MainContent>
       </AudioProvider>

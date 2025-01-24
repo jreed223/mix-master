@@ -25,8 +25,8 @@ interface FilterProps  {
 export default function FilterItem(props: FilterProps){
 
 
-    const {isPlaylistsView, isMobile, isMaxDraftView, setIsMaxDraftView} = useContext(ViewContext)
-    const {stagingState} = useContext<DraftingContextType>(DraftingContext)
+    // const {isPlaylistsView, isMobile, isMaxDraftView, setIsMaxDraftView} = useContext(ViewContext)
+    // const {stagingState} = useContext<DraftingContextType>(DraftingContext)
 
     const [isDisplayed, setIsDisplayed] = useState(false)
 

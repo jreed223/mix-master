@@ -4,7 +4,7 @@ import { album } from '../../server/SpotifyData/controllers/supplementalControll
 
 export type Collection = Playlist | Album["album"] | LikedTracks
 export default class TrackCollection {
-    type: "playlist"|"album"|"liked tracks";
+    type: "playlist"|"album"|"liked tracks"
     id: string;
     image: Image;
     name: string;
@@ -25,6 +25,8 @@ export default class TrackCollection {
         
 
     ){
+
+
         // console.log("Library Item type in constructor: ",collection)
         this.audioFeaturesSet = false;
         this.type = collection?.type||null
@@ -74,6 +76,7 @@ export default class TrackCollection {
                 this.trackDataState = [{tracks:tracks, audioFeatures: false, categories: false}]
 
               break;
+
             default:
               throw new Error('Invalid Library Item type');
     }

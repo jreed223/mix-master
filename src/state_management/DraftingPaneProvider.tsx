@@ -7,8 +7,8 @@ export type SubmissionStatusState = {status:"Pending"|"Success"|"Failed", text: 
 
 
 export type DraftingContextType = {
-        displayFeatureMenu: boolean, 
-        setDisplayFeatureMenu: React.Dispatch<React.SetStateAction<boolean>>,
+        displayFilterMenu: boolean, 
+        setDisplayFilterMenu: React.Dispatch<React.SetStateAction<boolean>>,
         selectedLibraryItem: TrackCollection, 
         setSelectedLibraryItem:React.Dispatch<React.SetStateAction<TrackCollection>>,
         stagedPlaylist: TrackClass[], 
@@ -29,11 +29,12 @@ export type DraftingContextType = {
         setDisplayWarning: React.Dispatch<React.SetStateAction<boolean>>
         
 
-    displayTracks: (selection: TrackCollection) => void}
+        displayTracks: (selection: TrackCollection) => void
+}
     const DraftingContext = createContext<DraftingContextType>(null)
 
 export default function DraftingProvider({ children}){
-    const [displayFeatureMenu, setDisplayFeatureMenu] = useState(false)
+    const [displayFilterMenu, setDisplayFilterMenu] = useState(false)
     const [selectedLibraryItem, setSelectedLibraryItem] = useState<TrackCollection | null>(null)
     const [stagedPlaylist, setStagedPlaylist] = useState<TrackClass[]>([])
     const [stagedPlaylistState, setStagedPlaylistState] = useState<TrackClass[][]>([[]])
@@ -120,7 +121,7 @@ export default function DraftingProvider({ children}){
 
     const context = useMemo(()=>({
         stagingState, setStagingState,
-        displayFeatureMenu, setDisplayFeatureMenu,
+        displayFilterMenu, setDisplayFilterMenu,
         selectedLibraryItem, setSelectedLibraryItem,
         stagedPlaylist, setStagedPlaylist,
         stagedPlaylistState,
@@ -131,7 +132,7 @@ export default function DraftingProvider({ children}){
         setStagedPlaylistState,
         stageTracks,
         unstageTracks,
-        displayTracks}),[displayFeatureMenu, displaySubmsnProgress, displayTracks, displayWarning, playlistName, selectedLibraryItem, stageTracks, stagedPlaylist, stagedPlaylistState, stagingState, submissionState, unstageTracks])
+        displayTracks}),[displayFilterMenu, displaySubmsnProgress, displayTracks, displayWarning, playlistName, selectedLibraryItem, stageTracks, stagedPlaylist, stagedPlaylistState, stagingState, submissionState, unstageTracks])
 
     return(
         <DraftingContext.Provider

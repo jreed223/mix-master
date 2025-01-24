@@ -8,7 +8,7 @@ import { ViewContext } from "../../../state_management/ViewProvider.tsx"
 
 interface tracklistProps{
     tracklistArea: string
-    setDisplayedTracks: React.Dispatch<React.SetStateAction<TrackClass[]>>
+    // setDisplayedTracks: React.Dispatch<React.SetStateAction<TrackClass[]>>
     // allTracks: TrackClass[]
     selectedLibraryItems: TrackClass[]
 

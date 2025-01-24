@@ -10,6 +10,7 @@ import TracklistProvider, { TracklistContext, TracklistContextType } from "../..
 import Calendar from "react-calendar";
 import FilterItem from "./FilterItem.tsx";
 import type { Artist } from "../../../../server/types.js";
+import { FilterContext } from "../../../state_management/FilterProvider.tsx";
 
 
 
@@ -19,7 +20,7 @@ export default function ArtistFilter(){
 
     const {isPlaylistsView, isMobile, isMaxDraftView, setIsMaxDraftView} = useContext(ViewContext)
     const {stagingState} = useContext<DraftingContextType>(DraftingContext)
-    const {artistsList, artistQuery, setSelectedArtistFilters, selectedArtistFilters, setArtistQuery} = useContext<TracklistContextType>(TracklistContext)
+    const {artistsList, artistQuery, setSelectedArtistFilters, selectedArtistFilters, setArtistQuery} = useContext(FilterContext)
 
     const [filterDisabled, setFilterDisabled] = useState<boolean>(false)
     const [currentList, setCurrentList] = useState<Artist[]>(null)

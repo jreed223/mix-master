@@ -11,6 +11,7 @@ import CalendarFilter from './CalendarFilter.tsx';
 import PopularityFilter from "./PopularityFilter.tsx";
 import ArtistFilter from "./ArtistFilter.tsx";
 import TrackClass from "../../../models/TrackClass.ts";
+import { FilterContext } from "../../../state_management/FilterProvider.tsx";
 interface PlaylistMenuProps {
    
 
@@ -22,10 +23,10 @@ interface PlaylistMenuProps {
 }
 const FilterMenu: React.FC<PlaylistMenuProps> = () => {
     const {isMobile, isMaxDraftView}= useContext(ViewContext)
-    const {
-        displayFeatureMenu  } = useContext(DraftingContext)
+    const {displayFilterMenu
+          } = useContext(DraftingContext)
         // const {allTracks}= useContext
-    const {allTracks, selectedFeatures, setSelecetedFeatures, setPopularityFilter, popularityFilter, dateRange, setDateRange, artistQuery, setArtistQuery, artistsList, setArtistsList, setSelectedArtistFilters, selectedArtistFilters } = useContext(TracklistContext)
+    const { selectedFeatures, setSelecetedFeatures, setPopularityFilter, popularityFilter, dateRange, setDateRange, artistQuery, setArtistQuery, artistsList, setArtistsList, setSelectedArtistFilters, selectedArtistFilters } = useContext(FilterContext)
     const [currentList, setCurrentList] = useState<Artist[]>(null)
 
 
@@ -86,7 +87,7 @@ const FilterMenu: React.FC<PlaylistMenuProps> = () => {
 
 
     return (
-        <div style={{ display: "flex", overflowX: "hidden", flexDirection: "column", flex: isMaxDraftView&&displayFeatureMenu?"1":displayFeatureMenu?"1":"0"  }} className="new-playlist">
+        <div style={{ display: "flex", overflowX: "hidden", flexDirection: "column", flex: isMaxDraftView&&displayFilterMenu?"1":displayFilterMenu?"1":"0"  }} className="new-playlist">
             {
             //TODO: Uncomment the below code when application is given a production license, this will allow filetring using audio features endpoint
             /* {inputControls.map((inputControl, index)=>{

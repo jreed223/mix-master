@@ -4,6 +4,7 @@ import { DraftingContext } from "../../state_management/DraftingPaneProvider.tsx
 import TrackClass from "../../models/TrackClass.ts"
 import TrackCollection from "../../models/TrackCollection.ts"
 import { Playlist } from "../../../server/types.js"
+import { FilterContext } from "../../state_management/FilterProvider.tsx"
 // import { Features, PlaylistItem } from "../../../server/types";
 // import PlaylistClass from "../../models/playlistClass";
 interface DraftingMenuProps {
@@ -20,11 +21,11 @@ export type submissionStatusState = {status:"Pending"|"Success"|"Failed", text: 
 
 const DraftingMenuBar: React.FC<DraftingMenuProps> = (props: DraftingMenuProps) => {
     const {  isMobile, isMaxDraftView, setIsMaxDraftView, user } = useContext(ViewContext)
-    const { displayFeatureMenu, setStagingState, setDisplayFeatureMenu, setDisplaySubmsnProgress, setSubmissionState, playlistName, stagedPlaylist, setDisplayWarning, setStagedPlaylistState,  setStagedPlaylist, stagedPlaylistState} = useContext(DraftingContext)
+    const {  displayFilterMenu, setStagingState, setDisplayFilterMenu, setDisplaySubmsnProgress, setSubmissionState, playlistName, stagedPlaylist, setDisplayWarning, setStagedPlaylistState,  setStagedPlaylist, stagedPlaylistState} = useContext(DraftingContext)
     const [displaySubmsnProgress, setDisplaySubmsnProgress1] = useState(false)
     const [submissionState, setSubmissionState1] = useState<submissionStatusState>(null)
     const [playlistName1, setPlaylistName] = useState<string>(null)
-    
+    const {}= useContext(FilterContext)
 
     const closeCreationContainer = () => {
         setStagingState("closed")
@@ -42,7 +43,7 @@ const DraftingMenuBar: React.FC<DraftingMenuProps> = (props: DraftingMenuProps) 
     }
 
     const toggleFeatures = () => {
-        setDisplayFeatureMenu(prev => !prev)
+        setDisplayFilterMenu(prev => !prev)
     }
 
     const clearSelections = () => {
