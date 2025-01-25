@@ -44,7 +44,6 @@ export default function FilterProvider({children}){
     // const [allTracks, setAllTracks] = useState<TrackClass[]>(null)
     // const [trackDataState, setTrackDataState] = useState<TrackData[]>(null) //{batch1: {Tracks = [], audioFeatures: false, categories: false}}
     const [selectedFeatures, setSelecetedFeatures] = useState<Record<string, number>>({})
-    const [filteredTracks, setFilteredTracks] = useState<TrackClass[] | null>([])
     // const [loadingState, setLoadingState] = useState<string>(null)
     const [popularityFilter, setPopularityFilter] = useState<number>(null)
     const [dateRange, setDateRange] = useState<[Date, Date]>(null);
@@ -52,7 +51,7 @@ export default function FilterProvider({children}){
     const [artistQuery, setArtistQuery] = useState<string>("")
     const [selectedArtistFilters, setSelectedArtistFilters] = useState<Artist[]>([])
 
-    const {allTracks} = useContext<TracklistContextType>(TracklistContext)
+    const {allTracks, setFilteredTracks} = useContext<TracklistContextType>(TracklistContext)
 
     // const setAudioFeatures = async (trackClassList: TrackClass[]) => {
     //     const response = await fetch("/spotify-data/audio-features", {
@@ -224,9 +223,9 @@ export default function FilterProvider({children}){
         console.log("filtered playlist", filterPlaylist)
         
 
-    }, [allTracks, filterByArtist, filterByDate, filterByPopularity]);
+    }, [allTracks, filterByArtist, filterByDate, filterByPopularity, setFilteredTracks]);
 
-const context = useMemo(()=>({selectedArtistFilters, setSelectedArtistFilters, artistsList, setArtistsList, artistQuery, setArtistQuery, dateRange, setDateRange, popularityFilter, setPopularityFilter, selectedFeatures, setSelecetedFeatures, filteredTracks, setFilteredTracks, filterFeatures, }),[selectedArtistFilters, setSelectedArtistFilters, artistsList, setArtistsList, artistQuery, setArtistQuery, dateRange, popularityFilter, selectedFeatures, filteredTracks, filterFeatures])
+const context = useMemo(()=>({selectedArtistFilters, setSelectedArtistFilters, artistsList, setArtistsList, artistQuery, setArtistQuery, dateRange, setDateRange, popularityFilter, setPopularityFilter, selectedFeatures, setSelecetedFeatures, filterFeatures, }),[selectedArtistFilters, setSelectedArtistFilters, artistsList, setArtistsList, artistQuery, setArtistQuery, dateRange, popularityFilter, selectedFeatures, filterFeatures])
 
 
 

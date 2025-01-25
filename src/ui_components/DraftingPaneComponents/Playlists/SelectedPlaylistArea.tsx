@@ -147,7 +147,7 @@ const {popularityFilter, dateRange, setSelectedArtistFilters,  artistsList, setA
 
     //** FIlters the selected playlist if the audio featrues have been set*/
     useEffect(() => {
-        if (trackDataState != null&&(selectedArtistFilters.length>0||popularityFilter||(dateRange?.at(0)!==null && dateRange?.at(1)!=null)) ) {
+        if (trackDataState?.length>0&&(selectedArtistFilters.length>0||popularityFilter||(dateRange?.at(0)!==null && dateRange?.at(1)!=null)) ){
             setLoadingState("filtering")
             // console.log(featureFilters.at(-1))
             console.log("useEffect run for filtFeatures")

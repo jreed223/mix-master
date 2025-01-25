@@ -16,7 +16,7 @@ interface DraftPlaylistContainerProps {
 export type submissionStatusState = {status:"Pending"|"Success"|"Failed", text: string}
 
 
-const DraftPlaylistContainer: React.FC<DraftPlaylistContainerProps> = (props: DraftPlaylistContainerProps) => {
+const DraftPlaylistContainer: React.FC<DraftPlaylistContainerProps> = ({ setReloadKey, setDialogText, selectedTracks, setSelectedTracks }: DraftPlaylistContainerProps) => {
 
 
     // const [selectedDraftTracks, setSelectedDraftTracks] = useState<TrackClass[]>([])
@@ -41,8 +41,8 @@ const DraftPlaylistContainer: React.FC<DraftPlaylistContainerProps> = (props: Dr
             submissionState, setSubmissionState, displayWarning, displaySubmsnProgress, setDisplaySubmsnProgress  } = useContext(DraftingContext)
 
     const deselectTrack = useCallback((trackId: string) => {
-        props.setSelectedTracks(prev => prev.filter(selectedTrack => selectedTrack.track.id !== trackId))
-    }, [props])
+        setSelectedTracks(prev => prev.filter(selectedTrack => selectedTrack.track.id !== trackId))
+    }, [setSelectedTracks])
 
     const removeStagedItems = useCallback((items: TrackClass[]) => {
         const newStagedPlaylist = stagedPlaylist.filter(stagedItem => !items.some(removedItem => removedItem.track.id === stagedItem.track.id))
@@ -64,28 +64,28 @@ const DraftPlaylistContainer: React.FC<DraftPlaylistContainerProps> = (props: Dr
     
 
     useEffect(() => {
-        console.log(stagedPlaylist)
-        console.log(stagedPlaylist)
+        // console.log(stagedPlaylist)
+        // console.log(stagedPlaylist)
 
         const editSelectedItemList2 = (checked: boolean, selectedItem: TrackClass) => {
             if (checked) {
-                props.setSelectedTracks(props.selectedTracks.concat([selectedItem]))
+                setSelectedTracks(selectedTracks.concat([selectedItem]))
             } else {
-                props.setSelectedTracks(props.selectedTracks.filter(item => item !== selectedItem))
+                setSelectedTracks(selectedTracks.filter(item => item !== selectedItem))
             }
-            console.log(props.selectedTracks)
+            console.log(selectedTracks)
         }
 
 
         if (stagedPlaylist && stagedPlaylist.length > 0) {
             const tracks = stagedPlaylist.slice().reverse().map(trackClass =>
-                <TrackCard deselectTrack={deselectTrack} tracklistArea="draft-playlist" draftTrack={removeStagedItems} key={`drafted-playlist-${trackClass?.track?.id}`} trackClass={trackClass} onSelectedTrack={editSelectedItemList2} displayHidden={false} selectedLibraryItems={props.selectedTracks}></TrackCard>
+                <TrackCard deselectTrack={deselectTrack} tracklistArea="draft-playlist" draftTrack={removeStagedItems} key={`drafted-playlist-${trackClass?.track?.id}`} trackClass={trackClass} onSelectedTrack={editSelectedItemList2} displayHidden={false} selectedLibraryItems={selectedTracks}></TrackCard>
             )
             setTrackCards(tracks)
         } else {
             setTrackCards([])
         }
-    }, [deselectTrack, removeStagedItems, stagedPlaylist, props.selectedTracks, props])
+    }, [deselectTrack, removeStagedItems, stagedPlaylist, selectedTracks, setSelectedTracks])
 
 
 
@@ -133,16 +133,16 @@ useEffect(()=>{
     if(submissionState?.status==="Pending"){
         setDisplaySubmsnProgress(true)
     }
-},[submissionState?.status])
+},[setDisplaySubmsnProgress, submissionState?.status])
 
 
     const selectAllClicked = () => {
-        props.setSelectedTracks(stagedPlaylist)
+        setSelectedTracks(stagedPlaylist)
 
     }
 
     const deselectAllClicked = () => {
-        props.setSelectedTracks([])
+        setSelectedTracks([])
     }
 
     const undoClicked = () => {
@@ -168,7 +168,7 @@ useEffect(()=>{
     //     // setDisplaySubmsnProgress(true)
     //     // fetch("spotify-data/create-playlist")
     //     const createPlaylist = async (): Promise<TrackCollection>  => {
-    //         // console.log(artistProps.item.id)
+    //         // console.log(artistitem.id)
 
     //             const newPlaylist: Playlist = await fetch("/spotify-data/create-playlist", {
     //                 method: "POST",
@@ -240,7 +240,7 @@ useEffect(()=>{
     //         // setSubmissionState(prev=>prev.concat(["fail"]))
     //         const failed: submissionStatusState = {status: "Failed", text: "Failed to create a new playlist."}
     //         setSubmissionState(failed)
-    //         props.setDialogText(failed)
+    //         setDialogText(failed)
     //         console.log('Failed to create playlist')
     //         return false
     //     }else{
@@ -250,18 +250,18 @@ useEffect(()=>{
     //             // setSubmissionState(prev=>prev?prev.concat(["success"]):["success"])
     //             const success:submissionStatusState = {status: "Success", text: "Your playlist has been created!"}
     //             setSubmissionState(success)
-    //             props.setDialogText(success)
+    //             setDialogText(success)
 
     //             console.log("Items have been added")
    
                 
     //             // setUserLibraryItems(null)
-    //             props.setReloadKey(prev=>prev+1)
+    //             setReloadKey(prev=>prev+1)
     //         }else{
     //             // setSubmissionState(prev=>prev?prev.concat(["fail"]):["fail"])
     //             const failed: submissionStatusState = {status: "Failed", text: "Your playlist has been created. Failed to add all items."}
     //             setSubmissionState(failed)
-    //             props.setDialogText(failed)
+    //             setDialogText(failed)
 
 
     //             console.log("Failed to submit items")
@@ -303,7 +303,7 @@ useEffect(()=>{
                             <img src="deselect-all-icon-grey.png" height="25px" style={{margin:"auto 10px", cursor:"pointer"}} alt="select all" onClick={()=>deselectAllClicked()}></img>
                                 {/* {!isMobile?<button style={{margin:"auto 10px",  borderRadius:'15px'}} onClick={() => { deselectAllClicked() }}>Deselect All</button>:<></>}
                                 <button style={{margin:"auto 10px",  borderRadius:'15px'}} onClick={() => { selectAllClicked() }}>Select All</button> */}
-                                <button style={{margin:"5px 10px",  borderRadius:'15px', whiteSpace:"nowrap"}} onClick={() => { removeStagedItems(props.selectedTracks); props.setSelectedTracks([]) }}>Remove Items</button>
+                                <button style={{margin:"5px 10px",  borderRadius:'15px', whiteSpace:"nowrap"}} onClick={() => { removeStagedItems(selectedTracks); setSelectedTracks([]) }}>Remove Items</button>
                                 {stagedPlaylistState.length > 0 &&!submissionState ?
                                 <>
                                     {undoRedoController !== 1 && stagedHistory.length > 1 ? <button style={{margin:"5px 10px",  borderRadius:'15px', whiteSpace:"nowrap"}} onClick={()=>{undoClicked()}}>Undo</button> : <></>}

@@ -51,10 +51,10 @@ export default function FilterItem(props: FilterProps){
 
     return(
         <div key={`${props.filterName}-div`} style={{justifyItems: "center", padding: "10px",borderRadius: "25px", transition: "height 1s", display:'flex', flexFlow:'column', flex: '0 1 auto', flexBasis:isDisplayed?"auto": "65px", overflow: "hidden", whiteSpace:'nowrap', backgroundColor:"#141414", margin: "7px"  }}>
-        <div style={{display: "flex",  alignItems: "baseline"}}>
-            <p style={{display: "inline-block", margin: 0, width: "40%"}}>{props.filterName}</p>
+        <div style={{display: "flex",  alignItems: "baseline", flexFlow:"wrap", justifyContent:'center'}}>
+            <p style={{display: "inline-block", margin: 0, minWidth: "40%"}}>{props.filterName}</p>
             {/* <div className="tooltip"> ? <span className="tooltip-text">{'tooltip Text!!'}</span></div> */}
-            <div style={{flex: .75, display: "flex", justifyContent:"space-between"}}>
+            <div style={{flex: 1, display: "flex", justifyContent:"space-between"}}>
                 <button key={`${props.filterName}-checkbox`} style={{flex: "0 0 auto", borderRadius: "15px"}} ref={null} onClick={(e) => { toggleFilter() }} >{props.clearFilter?"Clear":props.filterDisabled?"Enable":"Disable"}</button>
                 <button style={{display:'inline', flex: "0 0 auto", borderRadius: "15px"}} onClick={()=>setIsDisplayed(prev=>!prev)}>{isDisplayed?"\u2227":'\u2228'}</button>
             </div>

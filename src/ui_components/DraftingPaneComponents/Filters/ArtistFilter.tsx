@@ -60,19 +60,19 @@ export default function ArtistFilter(){
                             {/* <input key={"artist-checkbox"} ref={null} onChange={() => handlePopularityFilter()} type="checkbox" defaultChecked={true} /> */}
                             <input key={"artist-search"} ref={artistSearch} style={{ width: "80%", margin: 'auto' }} id={`artist-searchr`} onChange={(e) => setArtistQuery(e.target.value)} value={artistQuery} type={"search"} placeholder={"Search Artists"} className="slider" disabled={false} />
                         </div>
-                        {  <>{artistsList&&artistsList.length>0?<div style={{ maxHeight: "33vh", overflowY: 'auto'}}>
+                        {  <>{artistsList&&artistsList.length>0?<div style={{ maxHeight: "33vh", overflowY: 'auto', overflowX: 'hidden', width:"100%" }}>
                         {artistsList.map((artist:Artist)=>{
                             if(currentList?.some((item:Artist)=>item.id===artist.id)){
 
                             
-                           return (<div>
+                           return (<div style={{maxWidth:"100%", overflow:"hidden", display:"flex", justifyContent:"flex-start", alignItems:"center"}}>
                                         <input key={`${artist.name}-checkbox`} name={`${artist.name}-checkbox`} id={`${artist.name}-checkbox`} onChange={(e) => e.target.checked?setSelectedArtistFilters(prev=>prev.concat([artist])):setSelectedArtistFilters(selectedArtistFilters?.length>0?selectedArtistFilters.filter(filterArtist=>filterArtist.name!==artist.name):[])} type="checkbox" defaultChecked={false} />
-                                                <label htmlFor={`${artist.name}-checkbox`} style={{}}>{artist.name}</label>
+                                                <label htmlFor={`${artist.name}-checkbox`} style={{textOverflow:"ellipsis", overflowX:'hidden', textWrap:'nowrap', flex:1}}>{artist.name}</label>
                             </div>)
                             }else{
-                                return (<div style={{display:"none"}}>
+                                return (<div style={{display:"none", maxWidth:"100%", overflow:"hidden", justifyContent:"flex-start", alignItems:"center"}}>
                                     <input key={`${artist.name}-checkbox`} name={`${artist.name}-checkbox`} id={`${artist.name}-checkbox`} onChange={(e) => e.target.checked?setSelectedArtistFilters(prev=>prev.concat([artist])):setSelectedArtistFilters(selectedArtistFilters?.length>0?selectedArtistFilters.filter(filterArtist=>filterArtist.name!==artist.name):[])} type="checkbox" defaultChecked={false} />
-                                            <label htmlFor={`${artist.name}-checkbox`} style={{}}>{artist.name}</label>
+                                            <label htmlFor={`${artist.name}-checkbox`} style={{textOverflow:"ellipsis", overflowX:'hidden', textWrap:'nowrap', flex:1}}>{artist.name}</label>
                         </div>)
                             }
                         })}
