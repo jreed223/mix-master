@@ -287,7 +287,7 @@ useEffect(()=>{
     return (
         <div className="playlist-draft-container new-playlist" style={stagingState === "open" ? { flex: isMaxDraftView?"1":displayFilterMenu?"0 1 0px":"1 1 0px"  , transition: "1s", display: "flex", flexDirection: 'column' } : { flex: displayFilterMenu?"0 1 0px":isMaxDraftView?"1":"1 1 0px" , transition: "1s", display: "flex", flexDirection: 'column' }} id="drafting-div">
             
-                <div style={{width:(isMobile?"calc(50vw - 2px)":isMaxDraftView&&displayFilterMenu?"calc(33.3vw - 1px)":isMaxDraftView?"calc(50vw - 1px)":"calc(25vw - 1px)"), transition:"1s",}}>
+                <div style={{width:(isMobile?"calc(50vw - 2px)":isMaxDraftView&&displayFilterMenu?"calc(33.3vw - 1px)":isMaxDraftView?"calc(50vw - 1px)":"calc(25vw - 1px)"), transition:"1s",display:"flex", flexDirection:"column", height: '100%', overflowY:'hidden'}}>
                     {
                         <div style={{
                             position: "sticky",
