@@ -6,7 +6,7 @@ type FetchResponse = Response;  //Fetch API Response
 export async function fetchLikedTracks(accessToken:string): Promise<FetchResponse> {
 
 
-    const playlistItemEndpoint = "https://api.spotify.com/v1/me/tracks"
+    const playlistItemEndpoint = "https://api.spotify.com/v1/me/tracks?limit=50"
 
     const res = await fetch(playlistItemEndpoint, {
         method: "GET", headers: { Authorization: `Bearer ${accessToken}` }

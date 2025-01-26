@@ -8,7 +8,7 @@ export async function fetchLikedTracks(accessToken:string): Promise<FetchRespons
 
 try{
     
-    const res = await fetch("https://api.spotify.com/v1/me/tracks", {
+    const res = await fetch("https://api.spotify.com/v1/me/tracks?limit=50", {
         method: "GET", headers: { Authorization: `Bearer ${accessToken}` }
     });
     //console.log(res.headers)
