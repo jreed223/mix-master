@@ -11,10 +11,12 @@ import Calendar from "react-calendar";
 import FilterItem from "./FilterItem.tsx";
 import { FilterContext } from "../../../state_management/FilterProvider.tsx";
 
+export interface CalendarProps {
+    clearDates: ()=>void
+}
 
 
-
-export default function CalendarFilter(){
+export default function CalendarFilter(props: CalendarProps){
 
 
     const {isPlaylistsView, isMobile, isMaxDraftView, setIsMaxDraftView} = useContext(ViewContext)
@@ -28,12 +30,14 @@ export default function CalendarFilter(){
         if (Array.isArray(dates)) {
             console.log("DATES: ", `\n Date 1: ${dates[0]} \n Date 2: ${dates[1]}`)
             // const dateList: [] = dates
-            if(dates.at(1)===null){
-                setDateRange(null)
-            }else{
-                setDateRange(dates);
+            setDateRange(dates);
 
-            }
+            // if(dates.at(1)===null){
+            //     setDateRange(null)
+            // }else{
+            //     setDateRange(dates);
+
+            // }
         }
     };
 
@@ -41,9 +45,9 @@ export default function CalendarFilter(){
         return date > new Date();  // Disable any date in the future
     };
 
-    const clearSelection = ()=>{
-        setDateRange(null)
-    }
+    // const clearSelection = ()=>{
+    //     setDateRange([null,null])
+    // }
 
 
     const calendar = (<Calendar onChange={(date) => handleDateSelection(date)} value={dateRange} allowPartialRange maxDetail="year" minDetail="decade"selectRange={true}  tileDisabled={ filterDisabled?()=>true:({ date }) => disableFutureDates(date)}/>
@@ -53,7 +57,7 @@ export default function CalendarFilter(){
 
     return(
        <>
-        <FilterItem filterName="Date Range" clearFilter={clearSelection} setFilterState={setDateRange} children={calendar} filterDisabled={filterDisabled} setFilterDisabled={setFilterDisabled}></FilterItem>
+        <FilterItem filterName="Date Range" clearFilter={props.clearDates} setFilterState={setDateRange} children={calendar} filterDisabled={filterDisabled} setFilterDisabled={setFilterDisabled}></FilterItem>
        </>
     )
 }

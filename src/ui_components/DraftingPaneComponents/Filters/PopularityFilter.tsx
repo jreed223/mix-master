@@ -11,21 +11,24 @@ import Calendar from "react-calendar";
 import FilterItem from "./FilterItem.tsx";
 import { FilterContext } from "../../../state_management/FilterProvider.tsx";
 
+export interface PopularityFilterProps {
+    filterDisabled: boolean
+    setFilterDisabled: React.Dispatch<React.SetStateAction<boolean>>
+}
 
 
-
-export default function PopularityFilter(){
+export default function PopularityFilter(props: PopularityFilterProps){
 
 
     const {isPlaylistsView, isMobile, isMaxDraftView, setIsMaxDraftView} = useContext(ViewContext)
     const {stagingState} = useContext<DraftingContextType>(DraftingContext)
     const { setPopularityFilter} = useContext(FilterContext)
 
-    const [filterDisabled, setFilterDisabled] = useState<boolean>(true)
+    // const [filterDisabled, setFilterDisabled] = useState<boolean>(true)
         const popularitySlider = useRef(null)
 
         useEffect(()=>{
-            if(filterDisabled){
+            if(props.filterDisabled){
                 popularitySlider.current.disabled = true
                 setPopularityFilter(null)
 
@@ -57,7 +60,7 @@ export default function PopularityFilter(){
 
     return(
        <>
-        <FilterItem  filterName="Popularity" setFilterState={setPopularityFilter} children={slider} filterDisabled={filterDisabled} setFilterDisabled={setFilterDisabled}></FilterItem>
+        <FilterItem  filterName="Popularity" setFilterState={setPopularityFilter} children={slider} filterDisabled={props.filterDisabled} setFilterDisabled={props.setFilterDisabled}></FilterItem>
        </>
     )
 }

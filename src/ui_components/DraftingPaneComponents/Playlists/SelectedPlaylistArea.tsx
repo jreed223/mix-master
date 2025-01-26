@@ -327,7 +327,7 @@ const {popularityFilter, dateRange, setSelectedArtistFilters,  artistsList, setA
                     flexDirection:"column",
                     
                 }}>
-                    <div style={isMobile?{ flex: "1",width: '100%', overflowX: 'auto', whiteSpace: 'nowrap', display:"flex", flexDirection:"column"}:{ flex: "1", display:"flex", flexFlow:"row wrap"  }}>
+                    <div style={isMobile?{ flex: "1",width: '100%', overflowX: 'auto', whiteSpace: 'nowrap', display:"flex", flexDirection:"column", alignItems:'center'}:{alignItems:'center', flex: "1", display:"flex", flexFlow:"row wrap"  }}>
                         <div style={{ justifyContent:"center", flex:1, alignContent: "center", whiteSpace:'nowrap', display: "flex", flexFlow:"row wrap"}}>
                             <img src="select-all-icon-grey.png" height="25px" style={{margin:"auto 10px", cursor:"pointer"}} alt="select all" onClick={()=>selectAllclicked()}></img>
                             <img src="deselect-all-icon-grey.png" height="25px" style={{margin:"auto 10px", cursor:"pointer"}} alt="select all" onClick={()=>deselectAllClicked()}></img>

@@ -28,7 +28,7 @@ const FilterMenu: React.FC<PlaylistMenuProps> = () => {
         // const {allTracks}= useContext
     const { selectedFeatures, setSelecetedFeatures, setPopularityFilter, popularityFilter, dateRange, setDateRange, artistQuery, setArtistQuery, artistsList, setArtistsList, setSelectedArtistFilters, selectedArtistFilters } = useContext(FilterContext)
     const [currentList, setCurrentList] = useState<Artist[]>(null)
-
+    const [isPopFilterDisabled, setIsPopFilterDisabled] = useState(true)
 
     const inputControls = [
         { checkboxRef: useRef(null), sliderRef: useRef(null), audioFeature: "danceability", inputType: "range", min: "0", max: "100", default: "50", tooltipText: 'Danceability describes how suitable a track is for dancing based on a combination of musical elements including tempo, rhythm stability, beat strength, and overall regularity. A value of 0.0 is least danceable and 1.0 is most danceable.' },
@@ -84,6 +84,26 @@ const FilterMenu: React.FC<PlaylistMenuProps> = () => {
 
     }
 
+    const clearArtistSelections =()=>{
+        for(let artist of selectedArtistFilters){
+            const name = artist.name+'-checkbox'
+            const artistCheckbox :HTMLInputElement = document.querySelector(`input[name="${name}"]`)
+
+            if(artistCheckbox){
+                artistCheckbox.checked = false
+            }
+        }
+        setSelectedArtistFilters([])
+        setArtistQuery("")
+    }
+
+    const clearFilters = ()=>{
+        clearArtistSelections()
+        setDateRange([null, null])
+        setPopularityFilter(null)
+        setIsPopFilterDisabled(true)
+    }
+
 
 
     return (
@@ -105,44 +125,16 @@ const FilterMenu: React.FC<PlaylistMenuProps> = () => {
             <div style={{ transition: "1s", display:'flex', flex:1, flexDirection:'column', maxHeight:"100%", overflowY: "clip" }}>
 
             <div style={{width:(isMobile?"50vw":isMaxDraftView?"33.3vw":"25vw"), transition: "1s", display: 'flex', flexDirection:'column', maxHeight:'100%'}}>
-                <div style={{position: "sticky", backgroundColor:"rgb(20, 20, 20)", }}><button style={{borderRadius: "15px", margin: "0 10px 10px"}}>Reset</button></div>
+                <div style={{position: "sticky", backgroundColor:"rgb(20, 20, 20)", }}><button style={{borderRadius: "15px", margin: "0 10px 10px"}} onClick={clearFilters}>Reset Filter</button></div>
                     <div style={{overflowY:"auto", overflowX: 'clip'}}>
-                    {<CalendarFilter></CalendarFilter>}
-                    <ArtistFilter></ArtistFilter>
-                    <PopularityFilter></PopularityFilter>
+                    {<CalendarFilter clearDates={()=>{setDateRange([null, null])}}></CalendarFilter>}
+                    <ArtistFilter clearArtists={clearArtistSelections}></ArtistFilter>
+                    <PopularityFilter filterDisabled={isPopFilterDisabled} setFilterDisabled={setIsPopFilterDisabled}></PopularityFilter>
             </div>
                 
 
                 </div>
 
-
-                {/* <div key={"artists-div"} style={{ width: "100%", transition: "1s" }}> */}
-                    {/* <p style={{display: "inline-block"}}>Artist</p> */}
-                    {/* <div className="tooltip"> ? <span className="tooltip-text">{'tooltip Text!!'}</span></div> */}
-                    {/* <div> */}
-                        {/* <input key={"artist-checkbox"} ref={null} onChange={() => handlePopularityFilter()} type="checkbox" defaultChecked={true} /> */}
-                        {/* <input key={"artist-search"} ref={artistSearch} style={{ width: "80%", margin: 'auto' }} id={`artist-searchr`} onChange={(e) => setArtistQuery(e.target.value)} value={artistQuery} type={"search"} placeholder={"Search Artists"} className="slider" disabled={false} /> */}
-                    {/* </div> */}
-                    {/* <>{artistsList&&artistsList.length>0?<div>
-                        {artistsList.map((artist:Artist)=>{
-                            if(currentList?.some((item:Artist)=>item.id===artist.id)){
-
-                            
-                           return (<div>
-                                        <input key={"artist-checkbox"} ref={null} onChange={(e) => e.target.checked?setSelectedArtistFilters(prev=>prev.concat([artist])):setSelectedArtistFilters(selectedArtistFilters?.length>0?selectedArtistFilters.filter(filterArtist=>filterArtist.name!==artist.name):[])} type="checkbox" defaultChecked={false} />
-                                                <label style={{}}>{artist.name}</label>
-                            </div>)
-                            }else{
-                                return (<div style={{display:"none"}}>
-                                    <input key={"artist-checkbox"} ref={null} onChange={(e) => e.target.checked?setSelectedArtistFilters(prev=>prev.concat([artist])):setSelectedArtistFilters(selectedArtistFilters?.length>0?selectedArtistFilters.filter(filterArtist=>filterArtist.name!==artist.name):[])} type="checkbox" defaultChecked={false} />
-                                            <label style={{}}>{artist.name}</label>
-                        </div>)
-                            }
-                        })}
-                    </div>:<></>
-                        }
-                    </> */}
-                {/* </div> */}
             </div>
 
         </div>

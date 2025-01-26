@@ -12,10 +12,13 @@ import FilterItem from "./FilterItem.tsx";
 import type { Artist } from "../../../../server/types.js";
 import { FilterContext } from "../../../state_management/FilterProvider.tsx";
 
+export interface ArtistFilterProps {
+    clearArtists: ()=>void
+}
 
 
 
-export default function ArtistFilter(){
+export default function ArtistFilter(props: ArtistFilterProps){
 
 
     const {isPlaylistsView, isMobile, isMaxDraftView, setIsMaxDraftView} = useContext(ViewContext)
@@ -39,18 +42,6 @@ export default function ArtistFilter(){
             }
         },[artistQuery, artistsList, selectedArtistFilters, setSelectedArtistFilters])
 
-    const clearFilter =()=>{
-        for(let artist of selectedArtistFilters){
-            const name = artist.name+'-checkbox'
-            const artistCheckbox :HTMLInputElement = document.querySelector(`input[name="${name}"]`)
-
-            if(artistCheckbox){
-                artistCheckbox.checked = false
-            }
-        }
-        setSelectedArtistFilters([])
-        setArtistQuery("")
-    }
 
 
 
@@ -87,7 +78,7 @@ export default function ArtistFilter(){
 
     return(
        <>
-        <FilterItem filterName="Artists" clearFilter={clearFilter} setFilterState={setSelectedArtistFilters} children={artistFilter} filterDisabled={filterDisabled} setFilterDisabled={setFilterDisabled}></FilterItem>
+        <FilterItem filterName="Artists" clearFilter={props.clearArtists} setFilterState={setSelectedArtistFilters} children={artistFilter} filterDisabled={filterDisabled} setFilterDisabled={setFilterDisabled}></FilterItem>
        </>
     )
 }
