@@ -7,6 +7,7 @@ import type { Album, Artist, Playlist, SearchResults, UserProfile } from '../../
 import { userProfile } from '../../../../server/SpotifyData/controllers/userControllers/currentUser.ts';
 import ResultCard, { ResultCardProps } from "./ResultCard.tsx";
 import { playlists } from '../../../../server/SpotifyData/controllers/libraryControllers/playlists.ts';
+import openSpotify from "../../OpenSpotifyButton.tsx";
 export type ArtistProfileProps = {
     type: 'artist'
     profileId:string
@@ -132,9 +133,10 @@ const ProfileView: React.FC<ProfileViewProps> = (props: ProfileViewProps) => {
             <div  style={{ top: 0, left: 0, width: "100%", height: "100%", position: "absolute" }}></div>
         </div>
             <p style={{ display: 'inline', margin:'auto 7px' }} className={"track-card-text "}>{props.type==='artist'?(fullProfile as Artist).name:props.type==='user'?(fullProfile as UserProfile).display_name:"Unknown"}</p>
-            <div style={{flex: 1, display: 'flex'}}>
+            <div style={{flex: 1, display: 'flex', alignItems:'center', justifyContent:'space-evenly', margin: 'auto 15px'}}>
+                {openSpotify((props.type==='artist'?(fullProfile as Artist).uri:(fullProfile as UserProfile).uri))}
 
-            <button onClick={(e) => {e.preventDefault();setDisplayProfile(false)}} style={{ minWidth: "10%", height: "30px", borderRadius: "25px", margin: 'auto', }}>Close</button>
+            <button onClick={(e) => {e.preventDefault();setDisplayProfile(false)}} style={{ minWidth: "10%", height: "30px", borderRadius: "25px",  }}>Close</button>
         </div>
     </div>
 

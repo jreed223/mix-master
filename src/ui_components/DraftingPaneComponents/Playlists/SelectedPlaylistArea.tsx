@@ -25,7 +25,7 @@ export interface TrackData {
 
 const SelectedPlaylistContainer: React.FC<SelectedPlaylistContainerProps> = ({ selectedTracks, setSelectedTracks }) => {
 
-    const {isMobile} = useContext(ViewContext)
+    const {isMobile, user} = useContext(ViewContext)
 
     const { 
         stagingState,
@@ -341,7 +341,7 @@ const {popularityFilter, dateRange, setSelectedArtistFilters,  artistsList, setA
                         : (<></>)} */}
                         {selectedLibraryItem?
                         
-                        <a style={{alignItems:"center", justifyContent:"center",flex:1, minWidth: "140px"}} href={`${selectedLibraryItem.uri}`}>
+                        <a style={{alignItems:"center", justifyContent:"center",flex:1, minWidth: "140px"}} href={selectedLibraryItem.type==="liked tracks"?`spotify:user:${user.display_name}:collection`:`${selectedLibraryItem.uri}`}>
                             <div style={{maxHeight:"35px", display:"flex", alignItems:"center", justifyContent:"center",flex:1, minWidth: "140px"}}>
                                 <img src="/spotify/Primary_Logo_Green_RGB.svg" style={{maxWidth: "30px", margin: "2px"}} alt="spotify logo"/>
                                 <p style={{ whiteSpace:"nowrap", fontSize:"1em", overflow:"hidden", margin:" 0 0 0 2px", transition: '1s'}}>Open Spotify</p>

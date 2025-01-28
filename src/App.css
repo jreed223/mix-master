@@ -92,7 +92,7 @@ a {
   .react-calendar__tile--rangeEnd {
     border: none;
     background-color: #1ED760; /* Darker blue for start and end of range */
-    color: white;
+    color: #212121;
   }
 
 

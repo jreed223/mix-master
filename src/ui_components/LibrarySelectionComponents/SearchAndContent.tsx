@@ -1,7 +1,7 @@
 import { useContext, useEffect, useRef, useState } from "react"
 import { ViewContext } from "../../state_management/ViewProvider.tsx"
 import TrackClass from "../../models/TrackClass.ts"
-import type { Album, Playlist, SearchResults } from "../../../server/types.js"
+import type { Album, Playlist, SearchResults, UserProfile } from "../../../server/types.js"
 import TrackCollection from "../../models/TrackCollection.ts"
 import ResultCard from "./SearchPane/ResultCard.tsx"
 import React from "react"
@@ -10,6 +10,7 @@ import { DraftingContext } from "../../state_management/DraftingPaneProvider.tsx
 import ProfileView, { ArtistProfileProps, UserProfileProps } from "./SearchPane/ProfileView.tsx"
 import { border, minWidth, padding } from "@mui/system"
 import { searchResults } from '../../../server/SpotifyData/controllers/supplementalControllers/searchResults.ts';
+import openSpotify from "../OpenSpotifyButton.tsx"
 
 
 
@@ -287,6 +288,9 @@ export default function SearchAndPlaylists({ children }) {
     }
 
 
+    
+
+
     return (
         <form style={{ height: "100%", width: "100%", minWidth: isMobile ? "calc(100vw  - 115px)" : "calc(50vw - 115px)" }}>
 
@@ -306,16 +310,7 @@ export default function SearchAndPlaylists({ children }) {
                                 <button disabled={!searchResults || (searchView === "Albums" && !isPlaylistsView)} style={{ ...visibleButton }} onKeyDown={(e) => e.preventDefault()} onClick={(e) => { e.preventDefault(); setSearchView("Albums"); setIsPlaylistsView(false); }}>Albums</button>
                                 <button disabled={!searchResults || (searchView === "Artists" && !isPlaylistsView)} style={{ ...visibleButton }} onKeyDown={(e) => e.preventDefault()} onClick={(e) => { e.preventDefault(); setSearchView("Artists"); setIsPlaylistsView(false) }}>Artists</button>
                             </div>
-                            <a href={searchResults?`spotify:search:${finalQuery}`:`${user?.uri}` } target="_blank" rel="noreferrer" style={{flex:"1", maxWidth:(stagingState==="open"&&searchResults)||(isMobile&&searchResults)?"45px":"177px", transition:"1s"}}>
-                                <div style={{ cursor: "pointer", flex: "1 1 auto ", margin:"5px auto", height: "100%", maxWidth:(stagingState==="open"&&searchResults)||(isMobile&&searchResults)?"45px":"177px", transition: "1s",display:"flex", justifyContent:"center", alignItems:"center" }}>
-                                <img src="/spotify/Primary_Logo_Green_RGB.svg" style={{maxWidth: "45px"}} alt="spotify logo"/><p style={{ whiteSpace:"nowrap", fontSize:"1em", overflow:"hidden", margin:" 0 0 0 2px", opacity:(stagingState==="open"&&searchResults)||(isMobile&&searchResults)?0:1, transition: '1s'}}>Open Spotify</p>
-                                    {/* <div style={{ marginBottom: isMobile ? "10px" : "0px", borderRadius: "25px", height: "30px",  transition: "1s", display:"flex", alignItems:'center' }} onKeyDown={(e) => e.preventDefault()} onClick={(e) => { e.preventDefault(); }}> */}
-                                        {/* <div style={{display: "flex", alignItems:"center", maxHeight: "100%"}}> */}
-                                            {/* <img src="/spotify/Primary_Logo_Green_RGB.svg" style={{maxHeight: "100%"}} alt="spotify logo"/><p style={{ whiteSpace:"nowrap"}}>Open Spotify</p> */}
-                                        {/* </div> */}
-                                    {/* </div> */}
-                                </div>
-                            </a>
+                            {openSpotify((searchResults ? `spotify:search:${finalQuery}` : `${user?.uri}`), ((stagingState === "open" && searchResults) || (isMobile && searchResults)))}
                         </div>
                         {/* <button style={{ marginBottom: isMobile?"10px":"0px", borderRadius: "25px", height:"30px", minWidth: "12%", transition:"1s" }} onKeyDown={(e) => e.preventDefault()} onClick={(e)=>{e.preventDefault();}}>Open Spotify</button> */}
 
@@ -350,3 +345,4 @@ export default function SearchAndPlaylists({ children }) {
     )
 
 }
+

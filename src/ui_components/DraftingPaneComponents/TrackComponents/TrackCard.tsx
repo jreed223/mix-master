@@ -77,10 +77,10 @@ useEffect(()=>{
 
             {
                 minHeight:isMobile?'50px':'60px',
-                height:isMobile?props.tracklistArea==="search-bar-card"?'8vh':'7vh':props.tracklistArea==="search-bar-card"?'12vh':'11vh',
+                height:isMobile?props.tracklistArea==="search-bar-card"?'20vw':'15vw':props.tracklistArea==="search-bar-card"?'12vh':'11vh',
                 display: 'flex',
                 alignItems: 'center',
-                width: props.tracklistArea==="search-bar-card"?"calc(50% - 10px)":"unset",
+                width: props.tracklistArea==="search-bar-card"?isMobile?"calc(100% - 10px)":"calc(50% - 10px)":"unset",
                 backgroundColor: isChecked?"#00000061":"inherit",
                 borderBottomLeftRadius: props.tracklistArea!=="draft-playlist"? "7px": "0",
                 borderTopLeftRadius: props.tracklistArea!=="draft-playlist"? "7px": "0",

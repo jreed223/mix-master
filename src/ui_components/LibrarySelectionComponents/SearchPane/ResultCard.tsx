@@ -98,7 +98,7 @@ const ResultCard: React.FC<ResultCardProps> = (props: ResultCardProps) => {
 
     if (props.result.type === "album" || props.result.type === "playlist") {
         return (
-            <div style={{ position: "relative", display: "flex", width: "calc(50% - 20px)", height: isMobile ? "8vh" : "12vh", minHeight: isMobile ? 'unset' : '80px', }} className="track-card">
+            <div style={{ position: "relative", display: "flex", width: isMobile?"calc(100% - 20px)":"calc(50% - 20px)", height: isMobile ? "8vh" : "12vh", minHeight: isMobile ? 'unset' : '80px', }} className="track-card">
                 <div style={{ display: "inline-flex", position: "relative", height: "100%", aspectRatio: "1 / 1" }}>
                     <img onClick={selectedLibraryItem?.id !== props.result?.item.id ? () => { props.result.type === "album" ? albumProps.displayTracks(albumProps.item) : playlistProps.displayTracks(playlistProps.item) } : stagingState === "closed" ? () => { setStagingState("open") } : () => { }} loading="lazy" style={{ cursor: (selectedLibraryItem?.id !== props.result?.item.id || stagingState === 'closed') ? 'pointer' : 'default', position: "relative", height: "100%", aspectRatio: "1 / 1" }} src={props.result.item?.images?.at(0)?.url} alt={`${props.result.item?.name || "Unknown"} cover`}></img>
                 </div>
