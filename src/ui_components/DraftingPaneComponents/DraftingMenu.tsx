@@ -21,7 +21,7 @@ export type submissionStatusState = {status:"Pending"|"Success"|"Failed", text: 
 
 const DraftingMenuBar: React.FC<DraftingMenuProps> = (props: DraftingMenuProps) => {
     const {  isMobile, isMaxDraftView, setIsMaxDraftView, user } = useContext(ViewContext)
-    const {  displayFilterMenu, setStagingState, setDisplayFilterMenu, setDisplaySubmsnProgress, setSubmissionState, playlistName, stagedPlaylist, setDisplayWarning, setStagedPlaylistState,  setStagedPlaylist, stagedPlaylistState} = useContext(DraftingContext)
+    const {  displayFilterMenu, setStagingState, setDisplayFilterMenu, setDisplaySubmsnProgress, setSubmissionState, playlistName, stagedPlaylist, setDisplayWarning, setStagedPlaylistState,  setStagedPlaylist, stagedPlaylistState, draftingView} = useContext(DraftingContext)
     const [displaySubmsnProgress, setDisplaySubmsnProgress1] = useState(false)
     const [submissionState, setSubmissionState1] = useState<submissionStatusState>(null)
     const [playlistName1, setPlaylistName] = useState<string>(null)
@@ -178,10 +178,10 @@ const DraftingMenuBar: React.FC<DraftingMenuProps> = (props: DraftingMenuProps) 
     return (
         <div className="playlist-creation-menu-bar" >
             <button className='draft-pane-button' onClick={() => closeCreationContainer()}>Close</button>
-            <button className='draft-pane-button' onClick={() => { toggleFeatures() }}>Filter</button>
+            <button disabled={draftingView==='draft playlist'?true:false} style={{cursor: draftingView==='draft playlist'?'default':"pointer"}} className='draft-pane-button' onClick={() => { toggleFeatures() }}>Filter</button>
             {/* {isMobile?<button className='draft-pane-button' onClick={() => { clearSelections() }}>Clear Selections</button>:<></>} */}
-            <button disabled={stagedPlaylist.length===0&&stagedPlaylistState.length===0}className='draft-pane-button' onClick={() => { clearDraft() }}>Clear Draft</button>
-            <button disabled={(stagedPlaylist.length===0 || submissionState)?true:false}className='draft-pane-button' onClick={stagedPlaylist.length>0 && !submissionState?()=> submitDraftPlaylist():()=>{} }>Submit Draft</button>
+            <button disabled={stagedPlaylist.length===0&&stagedPlaylistState.length===0}className='draft-pane-button' style={{cursor:stagedPlaylist.length===0&&stagedPlaylistState.length===0?'default':'pointer'} }onClick={() => { clearDraft() }}>Clear Draft</button>
+            <button disabled={(stagedPlaylist.length===0 || submissionState)?true:false}className='draft-pane-button' style={{cursor: (stagedPlaylist.length===0 || submissionState)?'default':"pointer"}} onClick={stagedPlaylist.length>0 && !submissionState?()=> submitDraftPlaylist():()=>{} }>Submit Draft</button>
 
             {!isMobile?<button disabled={isMobile} className='draft-pane-button' style={{ transition:'1s'}} onClick={() => toggleFullScreen()}>Full Screen</button>:<></>}
 

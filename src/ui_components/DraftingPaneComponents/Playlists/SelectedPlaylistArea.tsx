@@ -25,38 +25,41 @@ export interface TrackData {
 
 const SelectedPlaylistContainer: React.FC<SelectedPlaylistContainerProps> = ({ selectedTracks, setSelectedTracks }) => {
 
-    const {isMobile, user} = useContext(ViewContext)
+    const { isMobile, user } = useContext(ViewContext)
 
-    const { 
+    const {
         stagingState,
         selectedLibraryItem, stagedPlaylist, setStagedPlaylist, stagedPlaylistState,
-    setStagedPlaylistState,
-} = useContext(DraftingContext)
+        setStagedPlaylistState,
+        draftingView,
+        setDraftingView,
+        displayFilterMenu
+    } = useContext(DraftingContext)
 
-const {popularityFilter, dateRange, setSelectedArtistFilters,  artistsList, setArtistsList, setArtistQuery, selectedFeatures, selectedArtistFilters, filterFeatures} = useContext(FilterContext)
+    const { popularityFilter, dateRange, setSelectedArtistFilters, artistsList, setArtistsList, setArtistQuery, selectedFeatures, selectedArtistFilters, filterFeatures } = useContext(FilterContext)
 
-// const [artistsList, setArtistsList] = useState<Artist[]>(null)
-// const [artistQuery, setArtistQuery] = useState<string>(null)
+    // const [artistsList, setArtistsList] = useState<Artist[]>(null)
+    // const [artistQuery, setArtistQuery] = useState<string>(null)
 
 
-    const {allTracks,
+    const { allTracks,
         setAllTracks,
         trackDataState,
         setTrackDataState,
         filteredTracks,
-        setFilteredTracks, loadingState, setLoadingState,  } = useContext(TracklistContext)
+        setFilteredTracks, loadingState, setLoadingState, } = useContext(TracklistContext)
 
     // const [selectedTracks, setSelectedTracks] = useState<TrackClass[]>([])
     const [displayedTracks, setDisplayedTracks] = useState<TrackClass[]>([])
     const [nextTracks, setNextTracks] = useState<TrackClass[]>(null)
     // const [loadingState, setLoadingState] = useState<String>(null)
 
-    const addStagedItems =(items:TrackClass[])=>{
+    const addStagedItems = (items: TrackClass[]) => {
         const newStagedPlaylist = stagedPlaylist.concat(items)
         setStagedPlaylist(newStagedPlaylist)
         setStagedPlaylistState(stagedPlaylistState.concat([newStagedPlaylist]))
-        console.log("Added items: ",items)
-        console.log("new Staged Playlist: ",newStagedPlaylist)
+        console.log("Added items: ", items)
+        console.log("new Staged Playlist: ", newStagedPlaylist)
         console.log(stagedPlaylistState)
 
 
@@ -70,7 +73,7 @@ const {popularityFilter, dateRange, setSelectedArtistFilters,  artistsList, setA
     //**Fetches selected playlists tracks if not already fetched*/
     useEffect(() => {
 
-        
+
         // setSelectAllChecked(false)
         setTrackDataState(null)
         setFilteredTracks([])
@@ -82,10 +85,10 @@ const {popularityFilter, dateRange, setSelectedArtistFilters,  artistsList, setA
         // setAllTracks([])
 
         let allTracks: TrackClass[] = []
-        
+
 
         // console.log("ITEMMMM: ",selectedLibraryItem)
-        
+
 
         if (selectedLibraryItem && !selectedLibraryItem?.trackDataState) {
             console.log("setcurrent tracks block 1: ", selectedLibraryItem.tracks)
@@ -94,10 +97,10 @@ const {popularityFilter, dateRange, setSelectedArtistFilters,  artistsList, setA
                 setTrackDataState(selectedLibraryItem.trackDataState)
                 allTracks = selectedLibraryItem.trackDataState.flatMap(trackData => trackData.tracks)
                 setAllTracks(allTracks)
-                let consolidatedList : Artist[] = []
-                const completeArtistList  =  allTracks.flatMap((item)=>item.track.artists)
-                completeArtistList.map((artist)=>{
-                    if(!consolidatedList.some((item)=>item.id===artist.id)){
+                let consolidatedList: Artist[] = []
+                const completeArtistList = allTracks.flatMap((item) => item.track.artists)
+                completeArtistList.map((artist) => {
+                    if (!consolidatedList.some((item) => item.id === artist.id)) {
                         consolidatedList.push(artist)
                     }
                     return artist
@@ -108,7 +111,7 @@ const {popularityFilter, dateRange, setSelectedArtistFilters,  artistsList, setA
                 // setArtistsList(artistsInTracklist)
                 setLoadingState(null)
 
-            }).catch((e)=>{
+            }).catch((e) => {
                 //TODO: Error Handling
                 // setLoadingState("loading")
             })
@@ -119,22 +122,22 @@ const {popularityFilter, dateRange, setSelectedArtistFilters,  artistsList, setA
             setTrackDataState(selectedLibraryItem.trackDataState)
             allTracks = selectedLibraryItem.trackDataState.flatMap(track => track.tracks)
             setAllTracks(allTracks)
-            let consolidatedList : Artist[] = []
+            let consolidatedList: Artist[] = []
 
-            const completeArtistList  =  allTracks.flatMap((item)=>item.track.artists)
-                completeArtistList.map((artist)=>{
-                    if(!consolidatedList.some((item)=>item.id===artist.id)){
-                        consolidatedList.push(artist)
-                    }
-                    return artist
-                })
-                console.log("completeArtistList: ", completeArtistList)
-                setArtistsList(consolidatedList)
-                // const artistsInTracklist = Array.from(new Set (allTracks.flatMap((item)=>item.track.artists)))
-                // setArtistsList(artistsInTracklist)
-                setLoadingState(null)
+            const completeArtistList = allTracks.flatMap((item) => item.track.artists)
+            completeArtistList.map((artist) => {
+                if (!consolidatedList.some((item) => item.id === artist.id)) {
+                    consolidatedList.push(artist)
+                }
+                return artist
+            })
+            console.log("completeArtistList: ", completeArtistList)
+            setArtistsList(consolidatedList)
+            // const artistsInTracklist = Array.from(new Set (allTracks.flatMap((item)=>item.track.artists)))
+            // setArtistsList(artistsInTracklist)
+            setLoadingState(null)
 
-        }else{
+        } else {
             setLoadingState(null)
 
         }
@@ -143,11 +146,11 @@ const {popularityFilter, dateRange, setSelectedArtistFilters,  artistsList, setA
     }, [selectedLibraryItem, setSelectedTracks, setAllTracks, setArtistQuery, setArtistsList, setFilteredTracks, setLoadingState, setSelectedArtistFilters, setTrackDataState])
 
 
-    let isFeatureFilterSelected = Object.values(selectedFeatures).some(featureVal => typeof featureVal === "number")||popularityFilter
+    let isFeatureFilterSelected = Object.values(selectedFeatures).some(featureVal => typeof featureVal === "number") || popularityFilter
 
     //** FIlters the selected playlist if the audio featrues have been set*/
     useEffect(() => {
-        if (trackDataState?.length>0&&(selectedArtistFilters.length>0||popularityFilter||(dateRange?.at(0)!==null && dateRange?.at(1)!=null)) ){
+        if (trackDataState?.length > 0 && (selectedArtistFilters.length > 0 || popularityFilter || (dateRange?.at(0) !== null && dateRange?.at(1) != null))) {
             setLoadingState("filtering")
             // console.log(featureFilters.at(-1))
             console.log("useEffect run for filtFeatures")
@@ -158,7 +161,7 @@ const {popularityFilter, dateRange, setSelectedArtistFilters,  artistsList, setA
         } else {
             setFilteredTracks(allTracks)
         }
-        
+
 
 
 
@@ -166,8 +169,8 @@ const {popularityFilter, dateRange, setSelectedArtistFilters,  artistsList, setA
 
 
 
-    
-// TODO: The below use effect can be used when a production license is assigned to the application. It will enable preview audio in the application
+
+    // TODO: The below use effect can be used when a production license is assigned to the application. It will enable preview audio in the application
     // useEffect(()=>{
     //     if(allTracks&&!currentAudio){
     //         const audio = new Audio(selectedLibraryItem?.tracks?.at(0).track.preview_url)
@@ -179,7 +182,7 @@ const {popularityFilter, dateRange, setSelectedArtistFilters,  artistsList, setA
     //                 artist: selectedLibraryItem?.tracks?.at(0).track.artists[0].name,
     //                 title: selectedLibraryItem?.tracks?.at(0).track.name,
     //                 track: selectedLibraryItem?.tracks.at(0)
-    
+
     //             }
     //         }
     //         setCurrentAudio(initAudioState)
@@ -190,43 +193,43 @@ const {popularityFilter, dateRange, setSelectedArtistFilters,  artistsList, setA
 
     const scrollContainer = useRef<HTMLDivElement>(null)
 
-    const getNextItems =useCallback( () => {
+    const getNextItems = useCallback(() => {
         setLoadingState("loadingNext")
-        selectedLibraryItem?.getNextTracks().then((newTracks) => { setNextTracks(newTracks); setLoadingState(null) }).catch((e)=>{console.error(e)})
-    },[selectedLibraryItem, setLoadingState])
+        selectedLibraryItem?.getNextTracks().then((newTracks) => { setNextTracks(newTracks); setLoadingState(null) }).catch((e) => { console.error(e) })
+    }, [selectedLibraryItem, setLoadingState])
 
 
-      useEffect(()=>{
+    useEffect(() => {
         const container = scrollContainer.current
 
-        if(selectedLibraryItem?.next   && !loadingState && trackDataState?.length < 4){
+        if (selectedLibraryItem?.next && !loadingState && trackDataState?.length < 4) {
             let isThrottled: boolean;
 
             const handleScroll = () => {
-                if(!isThrottled){
+                if (!isThrottled) {
 
-            
-                const bottom = (scrollContainer.current.clientHeight  + scrollContainer.current.scrollTop) >= scrollContainer.current.scrollHeight;
-                if (bottom && !loadingState) {
-                    // isThrottled = true
 
-                  getNextItems();
+                    const bottom = (scrollContainer.current.clientHeight + scrollContainer.current.scrollTop) >= scrollContainer.current.scrollHeight;
+                    if (bottom && !loadingState) {
+                        // isThrottled = true
 
-                //   setTimeout(()=>{
-                //     isThrottled = false
-                //   }, 1000)
+                        getNextItems();
+
+                        //   setTimeout(()=>{
+                        //     isThrottled = false
+                        //   }, 1000)
+                    }
+
                 }
-                
-            }
-              };
-        
-              container.addEventListener('scroll', handleScroll)
-            return ()=>{
+            };
+
+            container.addEventListener('scroll', handleScroll)
+            return () => {
                 container.removeEventListener('scroll', handleScroll)
             }
         }
-    
-      },[getNextItems, loadingState, nextTracks, selectedLibraryItem?.next, trackDataState?.length])
+
+    }, [getNextItems, loadingState, nextTracks, selectedLibraryItem?.next, trackDataState?.length])
 
 
 
@@ -236,10 +239,10 @@ const {popularityFilter, dateRange, setSelectedArtistFilters,  artistsList, setA
             setTrackDataState(trackDataState.concat(newTrackData))
             // sconst newTracklist = allTracks.concat(nextTracks)
             setAllTracks(allTracks.concat(nextTracks))
-            let consolidatedList : Artist[] = [...artistsList]
-            const newArtistList  =  nextTracks.flatMap((item)=>item.track.artists)
-            newArtistList.map((artist)=>{
-                if(!consolidatedList.some((item)=>item.id===artist.id)){
+            let consolidatedList: Artist[] = [...artistsList]
+            const newArtistList = nextTracks.flatMap((item) => item.track.artists)
+            newArtistList.map((artist) => {
+                if (!consolidatedList.some((item) => item.id === artist.id)) {
                     consolidatedList.push(artist)
                 }
                 return artist
@@ -303,7 +306,7 @@ const {popularityFilter, dateRange, setSelectedArtistFilters,  artistsList, setA
     //         const ids1 = new Set(displayedTracks.map(track=>track.track.id))
     //         const ids2 = new Set(selectedTracks.map(track=>track.track.id))
     //         if (ids1.size !== ids2.size) return false;
-    
+
     //   // Check if every id in ids1 exists in ids2
     //     return [...ids1].every(id => ids2.has(id));
     //     }
@@ -312,72 +315,81 @@ const {popularityFilter, dateRange, setSelectedArtistFilters,  artistsList, setA
 
     //     setIsAllSelected(prev=>prev===selected?selected:prev)
     // },[displayedTracks, selectedTracks])
- 
 
 
 
 
-        return (
-            <div className="search-filter-container new-playlist" style={stagingState === "open" ? { borderRight: "2px solid #141414", transition: "1s", flex:1, display: 'flex', flexDirection:"column" } : { borderRight: "2px solid #141414", transition: "1s", flex:1, display: 'flex', flexDirection:"column"  }} id="search-filter-div" >
-                <div style={{
-                    position: "sticky",
-                    top: 0,
-                    backgroundColor: "#141414",
-                    display:"flex",
-                    flexDirection:"column",
-                    
-                }}>
-                    <div style={isMobile?{ flex: "1",width: '100%', overflowX: 'auto', whiteSpace: 'nowrap', display:"flex", flexDirection:"column", alignItems:'center'}:{alignItems:'center', flex: "1", display:"flex", flexFlow:"row wrap"  }}>
-                        <div style={{ justifyContent:"center", flex:1, alignContent: "center", whiteSpace:'nowrap', display: "flex", flexFlow:"row wrap"}}>
-                            <img src="select-all-icon-grey.png" height="25px" style={{margin:"auto 10px", cursor:"pointer"}} alt="select all" onClick={()=>selectAllclicked()}></img>
-                            <img src="deselect-all-icon-grey.png" height="25px" style={{margin:"auto 10px", cursor:"pointer"}} alt="select all" onClick={()=>deselectAllClicked()}></img>
 
+    return (
+        <div className="search-filter-container new-playlist" style={stagingState === "open" ? { borderRight: isMobile ? "0px" : "2px solid #141414", transition: "1s", flex: draftingView==='draft playlist'?0:1, display: 'flex', flexDirection: "column" } : { borderRight: isMobile ? "0px" : "2px solid #141414", transition: "1s", flex: draftingView==='draft playlist'?0:1, display: 'flex', flexDirection: "column" }} id="search-filter-div" >
+            <div style={{
+                position: "sticky",
+                top: 0,
+                backgroundColor: "#141414",
+                display: "flex",
+                flexDirection: "column",
+
+            }}>
+                <div style={isMobile ? { flex: "1", width: '100%', whiteSpace: 'nowrap', display: "flex", alignItems: 'center' } : { alignItems: 'center', flex: "1", display: "flex", flexFlow: "row wrap", }}>
+                    <div style={{ justifyContent: "center", flex: 1, alignContent: "center", whiteSpace: 'nowrap', display: "flex", flexFlow: "row wrap", width: "100%" }}>
+                        <div style={{ whiteSpace: 'nowrap', display: "inline-flex", flexFlow: "row wrap", alignItems: "center", justifyContent: "center", width: "calc(100% - 45px)" }}>
+                            <img src="select-all-icon-grey.png" height="25px" style={{ margin: "auto 10px", cursor: "pointer", transform: "translateX(22.5px)" }} alt="select all" onClick={() => selectAllclicked()}></img>
+                            <img src="deselect-all-icon-grey.png" height="25px" style={{ margin: "auto 10px", cursor: "pointer", transform: "translateX(22.5px)" }} alt="select all" onClick={() => deselectAllClicked()}></img>
                             {/* <button style={{margin:"auto 10px", borderRadius:'15px'}} onClick={() => { selectAllclicked(); }} value={"SelectAll"}>Select All</button>
-                            {!isMobile?<button style={{margin:"auto 10px", borderRadius:'15px'}} onClick={() => { deselectAllClicked() }}>Deselect All</button>:<></>} */}
-                            <button style={{margin:"5px 10px", borderRadius:'15px'}} onClick={() => { stageSelectedDisplayedTracks(); }}>Add Items</button>
+                                {!isMobile?<button style={{margin:"auto 10px", borderRadius:'15px'}} onClick={() => { deselectAllClicked() }}>Deselect All</button>:<></>} */}
+                            <button style={{ margin: "5px 10px", borderRadius: '15px', transform: "translateX(22.5px)" }} onClick={() => { stageSelectedDisplayedTracks(); }}>Add Items</button>
+
+
                         </div>
                         {/* {isFeatureFilterSelected && loadingState === "filtering" 
                         ?(<p>Filtering Tracks...</p>) 
                         : (<></>)} */}
-                        {selectedLibraryItem?
-                        
-                        <a style={{alignItems:"center", justifyContent:"center",flex:1, minWidth: "140px"}} href={selectedLibraryItem.type==="liked tracks"?`spotify:user:${user.display_name}:collection`:`${selectedLibraryItem.uri}`}>
-                            <div style={{maxHeight:"35px", display:"flex", alignItems:"center", justifyContent:"center",flex:1, minWidth: "140px"}}>
-                                <img src="/spotify/Primary_Logo_Green_RGB.svg" style={{maxWidth: "30px", margin: "2px"}} alt="spotify logo"/>
-                                <p style={{ whiteSpace:"nowrap", fontSize:"1em", overflow:"hidden", margin:" 0 0 0 2px", transition: '1s'}}>Open Spotify</p>
-                            </div>
-                        </a>
-                        :<></>}
+                        {selectedLibraryItem ?
+
+                            <a style={{ alignItems: "center", justifyContent: "center", flex: 1, minWidth: "140px" }} href={selectedLibraryItem.type === "liked tracks" ? `spotify:user:${user.display_name}:collection` : `${selectedLibraryItem.uri}`}>
+                                <div style={{ maxHeight: "35px", display: "flex", alignItems: "center", justifyContent: "center", flex: 1, minWidth: "140px", transform: "translateX(22.5px)" }}>
+                                    <img src="/spotify/Primary_Logo_Green_RGB.svg" style={{ maxWidth: "30px", margin: "2px" }} alt="spotify logo" />
+                                    <p style={{ whiteSpace: "nowrap", fontSize: "1em", overflow: "hidden", margin: " 0 0 0 2px", transition: '1s' }}>Open Spotify</p>
+                                </div>
+                            </a>
+                            : <></>}
                     </div>
-                    {/* <h3 style={{margin:"5px 15px", textAlign:'center'}}>{selectedLibraryItem?.name}</h3> */}
-                    <input disabled={true} placeholder={selectedLibraryItem?selectedLibraryItem?.name:"Select an Item from your library"} type="text" style={{textOverflow: "ellipsis", margin:"4px 15px", fontSize:"1.25em", fontWeight:"bold", border:"none", padding: "0 auto", backgroundColor: "#141414", textAlign:'center', minWidth:"50%", alignSelf:"center", width:"calc(100% - 30px)",}}></input>
+
+                    {draftingView!=='selected playlist'?
+                    <img src="expand.png" height="25px" style={{ margin: "auto 10px", cursor: "pointer", opacity: displayFilterMenu?0:1, transition:'1s'  }} alt="select all" onClick={() => {setDraftingView('selected playlist')}}></img>
+                    :<img src="minimize.png" height="25px" style={{ margin: "auto 10px", cursor: "pointer", opacity: displayFilterMenu?0:1, transition:'1s' }} alt="select all" onClick={() => {setDraftingView(null)}}></img>}
 
                 </div>
-                
-                {loadingState==="loading"
-                    ?<div className="search-filter-container new-playlist" id="search-filter-div" >
-                        <p>loading...</p>
-                    </div>
-                    :<div ref={scrollContainer} style={{overflowY: 'auto'}}>
-                        
-                        <Tracklist tracklistArea="selected-playlist" selectedLibraryItems={selectedTracks} setSelectedLibraryItems={setSelectedTracks} draftTracks={addStagedItems}></Tracklist>
-                        {selectedLibraryItem?.next ?
-                    <div style={{}}>
-                        {
-                            loadingState === "loadingNext" 
-                            ?<button disabled={true} style={{ fontSize:"16px", width: `100%`, overflowX: "hidden", padding: 0 }}>Loading...</button>
-                            :<button onClick={() => {
-                                    getNextItems() }}
-                                    style={{ fontSize:"16px", width: `100%`, overflowX: "hidden", padding: 0 }}>
-                                    More
-                                </button>
-                        }
-                    </div> :
-                    <></>}
-                    </div>}
-               
+                {/* <h3 style={{margin:"5px 15px", textAlign:'center'}}>{selectedLibraryItem?.name}</h3> */}
+                <input disabled={true} placeholder={selectedLibraryItem ? selectedLibraryItem?.name : "Select an Item from your library"} type="text" style={{ textOverflow: "ellipsis", margin: "4px 15px", fontSize: "1.25em", fontWeight: "bold", border: "none", padding: "0 auto", backgroundColor: "#141414", textAlign: 'center', minWidth: "50%", alignSelf: "center", width: "calc(100% - 30px)", }}></input>
+
             </div>
-        )
+
+            {loadingState === "loading"
+                ? <div className="search-filter-container new-playlist" id="search-filter-div" >
+                    <p>loading...</p>
+                </div>
+                : <div ref={scrollContainer} style={{ overflowY: 'auto' }}>
+
+                    <Tracklist tracklistArea="selected-playlist" selectedLibraryItems={selectedTracks} setSelectedLibraryItems={setSelectedTracks} draftTracks={addStagedItems}></Tracklist>
+                    {selectedLibraryItem?.next ?
+                        <div style={{}}>
+                            {
+                                loadingState === "loadingNext"
+                                    ? <button disabled={true} style={{ fontSize: "16px", width: `100%`, overflowX: "hidden", padding: 0 }}>Loading...</button>
+                                    : <button onClick={() => {
+                                        getNextItems()
+                                    }}
+                                        style={{ fontSize: "16px", width: `100%`, overflowX: "hidden", padding: 0 }}>
+                                        More
+                                    </button>
+                            }
+                        </div> :
+                        <></>}
+                </div>}
+
+        </div>
+    )
 
 
 }

@@ -57,12 +57,12 @@ export default function ArtistFilter(props: ArtistFilterProps){
 
                             
                            return (<div style={{maxWidth:"100%", overflow:"hidden", display:"flex", justifyContent:"flex-start", alignItems:"center"}}>
-                                        <input key={`${artist.name}-checkbox`} name={`${artist.name}-checkbox`} id={`${artist.name}-checkbox`} onChange={(e) => e.target.checked?setSelectedArtistFilters(prev=>prev.concat([artist])):setSelectedArtistFilters(selectedArtistFilters?.length>0?selectedArtistFilters.filter(filterArtist=>filterArtist.name!==artist.name):[])} type="checkbox" defaultChecked={false} />
+                                        <input key={`${artist.id}-checkbox`} name={`${artist.name}-checkbox`} id={`${artist.name}-checkbox`} onChange={(e) => e.target.checked?setSelectedArtistFilters(prev=>prev.concat([artist])):setSelectedArtistFilters(selectedArtistFilters?.length>0?selectedArtistFilters.filter(filterArtist=>filterArtist.id!==artist.id):[])} type="checkbox" defaultChecked={false} />
                                                 <label htmlFor={`${artist.name}-checkbox`} style={{textOverflow:"ellipsis", overflowX:'hidden', textWrap:'nowrap', flex:1}}>{artist.name}</label>
                             </div>)
                             }else{
                                 return (<div style={{display:"none", maxWidth:"100%", overflow:"hidden", justifyContent:"flex-start", alignItems:"center"}}>
-                                    <input key={`${artist.name}-checkbox`} name={`${artist.name}-checkbox`} id={`${artist.name}-checkbox`} onChange={(e) => e.target.checked?setSelectedArtistFilters(prev=>prev.concat([artist])):setSelectedArtistFilters(selectedArtistFilters?.length>0?selectedArtistFilters.filter(filterArtist=>filterArtist.name!==artist.name):[])} type="checkbox" defaultChecked={false} />
+                                    <input key={`${artist.id}-checkbox`} name={`${artist.name}-checkbox`} id={`${artist.name}-checkbox`} onChange={(e) => e.target.checked?setSelectedArtistFilters(prev=>prev.concat([artist])):setSelectedArtistFilters(selectedArtistFilters?.length>0?selectedArtistFilters.filter(filterArtist=>filterArtist.id!==artist.id):[])} type="checkbox" defaultChecked={false} />
                                             <label htmlFor={`${artist.name}-checkbox`} style={{textOverflow:"ellipsis", overflowX:'hidden', textWrap:'nowrap', flex:1}}>{artist.name}</label>
                         </div>)
                             }

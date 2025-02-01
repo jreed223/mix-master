@@ -27,6 +27,8 @@ export type DraftingContextType = {
         setPlaylistName: React.Dispatch<React.SetStateAction<string>>
         displayWarning: boolean
         setDisplayWarning: React.Dispatch<React.SetStateAction<boolean>>
+        draftingView: "selected playlist" | "draft playlist"
+        setDraftingView: React.Dispatch<React.SetStateAction<"selected playlist" | "draft playlist">>
         
 
         displayTracks: (selection: TrackCollection) => void
@@ -43,6 +45,7 @@ export default function DraftingProvider({ children}){
     const [submissionState, setSubmissionState] = useState<SubmissionStatusState>(null)
     const [playlistName, setPlaylistName] = useState<string>(null)
     const [displayWarning, setDisplayWarning] = useState(false)
+    const [draftingView, setDraftingView] = useState<'selected playlist'|'draft playlist'>(null)
         
      
 
@@ -128,11 +131,12 @@ export default function DraftingProvider({ children}){
         displaySubmsnProgress, setDisplaySubmsnProgress,
         submissionState, setSubmissionState,
         playlistName, setPlaylistName,    
-        displayWarning, setDisplayWarning,    
+        displayWarning, setDisplayWarning,
+        draftingView, setDraftingView,
         setStagedPlaylistState,
         stageTracks,
         unstageTracks,
-        displayTracks}),[displayFilterMenu, displaySubmsnProgress, displayTracks, displayWarning, playlistName, selectedLibraryItem, stageTracks, stagedPlaylist, stagedPlaylistState, stagingState, submissionState, unstageTracks])
+        displayTracks}),[displayFilterMenu, displaySubmsnProgress, displayTracks, displayWarning, draftingView, playlistName, selectedLibraryItem, stageTracks, stagedPlaylist, stagedPlaylistState, stagingState, submissionState, unstageTracks])
 
     return(
         <DraftingContext.Provider

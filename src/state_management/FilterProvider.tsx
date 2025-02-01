@@ -210,7 +210,7 @@ export default function FilterProvider({children}){
     
             filterPlaylist = filterByArtist(filterPlaylist)
             console.log("Artist PLAYLISTS: ", filterPlaylist)
-            setFilteredTracks(filterPlaylist)
+            setFilteredTracks([...filterPlaylist])
         }
         
 

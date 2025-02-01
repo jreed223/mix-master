@@ -32,13 +32,13 @@ const DraftPlaylistContainer: React.FC<DraftPlaylistContainerProps> = ({ setRelo
     // const [displaySubmissionStatus, setDisplaySubmissionStatus] = useState(false)
 
     // const { stagingState } = useContext(ViewContext)
-    const { user, isMaxDraftView, isMobile} = useContext(ViewContext)
+    const { user, isMaxDraftView, isMobile,} = useContext(ViewContext)
         // const {selectedFeatures} = useContext(TracklistContext)
         const {selectedLibraryItem, stagedPlaylist, setStagedPlaylist, stagingState, stagedPlaylistState,
             setStagedPlaylistState,
              displayFilterMenu,
             playlistName, setPlaylistName,
-            submissionState, setSubmissionState, displayWarning, displaySubmsnProgress, setDisplaySubmsnProgress  } = useContext(DraftingContext)
+            submissionState, setSubmissionState, displayWarning, displaySubmsnProgress, setDisplaySubmsnProgress, draftingView, setDraftingView  } = useContext(DraftingContext)
 
     const deselectTrack = useCallback((trackId: string) => {
         setSelectedTracks(prev => prev.filter(selectedTrack => selectedTrack.track.id !== trackId))
@@ -164,114 +164,6 @@ useEffect(()=>{
 
     }
 
-    // const submitDraftPlaylist = async () : Promise<boolean>=>{
-    //     // setDisplaySubmsnProgress(true)
-    //     // fetch("spotify-data/create-playlist")
-    //     const createPlaylist = async (): Promise<TrackCollection>  => {
-    //         // console.log(artistitem.id)
-
-    //             const newPlaylist: Playlist = await fetch("/spotify-data/create-playlist", {
-    //                 method: "POST",
-    //                 headers: {
-    //                     'Content-Type': 'application/json'
-    //                 },
-    //                 body: JSON.stringify({ playlistName:playlistName, id:user.id })
-    //                 // headers: {"id" : `${this.id}` }
-    //             }).then(async (res) => {
-    //                 if(res.ok){console.log(res)
-    //                     const playlist = await res.json()
-    //                     return playlist
-    //                 }else{
-    //                     return null
-    //                 }
-                    
-    //             }).catch(e=>{
-    //                 console.log(e)
-    //             })
-    //             console.log(newPlaylist)
-                
-    //             const newCollection = new TrackCollection(newPlaylist)
-                
-    //             // setUserLibraryItems([newCollection].concat(userLibraryItems))
-    //             return newCollection
-    //             // const newPlaylistCard =  <LibraryItemCard key={newCollection.id}  libraryItem={newCollection} ownerId={user.id} view={"User Playlists"} ></LibraryItemCard>
-
-    //     }
-
-    //     const addItems = async (playlistId: string) : Promise<boolean>=>{
-    //         const uriList = stagedPlaylist.reverse().map(track=>track.track?.uri)
-
-    //         const itemSubmission = await fetch("/spotify-data/add-tracks", {
-    //             method: "POST",
-    //             headers: {
-    //                 'Content-Type': 'application/json'
-    //             },
-    //             body: JSON.stringify({ uriList:uriList, id: playlistId })
-    //             // headers: {"id" : `${this.id}` }
-    //         }).then(async (res) => {
-    //             if(res.ok){
-    //                 return true
-    //                 // const playlist = await res.json()
-    //                 // return playlist
-    //             }else{
-    //                 return false
-    //             }
-                
-    //         }).catch(e=>{
-    //             console.log(e)
-    //             return false
-    //         })
-
-    //         return itemSubmission
-
-    //     }
-
-    //     if(!playlistName||playlistName.length===0){
-    //         setDisplayWarning(true)
-    //     }else{
-    //         const pending : submissionStatusState = {status: "Pending", text: "Your playlist is being created."}
-    //         setSubmissionState(pending)
-    //         setDisplaySubmsnProgress(true)
-
-    //     const newPlaylist = await createPlaylist()
-    //     // setNewplaylistId(newPlaylist.id)
-
-    //     if(!newPlaylist){
-    //         // setSubmissionState(prev=>prev.concat(["fail"]))
-    //         const failed: submissionStatusState = {status: "Failed", text: "Failed to create a new playlist."}
-    //         setSubmissionState(failed)
-    //         setDialogText(failed)
-    //         console.log('Failed to create playlist')
-    //         return false
-    //     }else{
-    //         // setSubmissionState(prev=>prev.concat(["submitted"]))
-    //         const isPlaylistSubmitted = await addItems(newPlaylist.id)
-    //         if(isPlaylistSubmitted){
-    //             // setSubmissionState(prev=>prev?prev.concat(["success"]):["success"])
-    //             const success:submissionStatusState = {status: "Success", text: "Your playlist has been created!"}
-    //             setSubmissionState(success)
-    //             setDialogText(success)
-
-    //             console.log("Items have been added")
-   
-                
-    //             // setUserLibraryItems(null)
-    //             setReloadKey(prev=>prev+1)
-    //         }else{
-    //             // setSubmissionState(prev=>prev?prev.concat(["fail"]):["fail"])
-    //             const failed: submissionStatusState = {status: "Failed", text: "Your playlist has been created. Failed to add all items."}
-    //             setSubmissionState(failed)
-    //             setDialogText(failed)
-
-
-    //             console.log("Failed to submit items")
-    //         }
-    //         return isPlaylistSubmitted
-
-    //     }
-
-    //     }
-    // }
 
     useEffect(() => {
         if(stagedPlaylist&&stagedPlaylist.length>0){
@@ -285,9 +177,9 @@ useEffect(()=>{
 
 
     return (
-        <div className="playlist-draft-container new-playlist" style={stagingState === "open" ? { flex: isMaxDraftView?"1":displayFilterMenu?"0 1 0px":"1 1 0px"  , transition: "1s", display: "flex", flexDirection: 'column' } : { flex: displayFilterMenu?"0 1 0px":isMaxDraftView?"1":"1 1 0px" , transition: "1s", display: "flex", flexDirection: 'column' }} id="drafting-div">
+        <div className="playlist-draft-container new-playlist" style={stagingState === "open" ? { flex: draftingView==='selected playlist'?0:isMaxDraftView?"1":displayFilterMenu?"0 1 0px":"1 1 0px"  , transition: "1s", display: "flex", flexDirection: 'column' } : { flex: displayFilterMenu?"0 1 0px":isMaxDraftView?"1":"1 1 0px" , transition: "1s", display: "flex", flexDirection: 'column' }} id="drafting-div">
             
-                <div style={{width:(isMobile?"calc(50vw - 2px)":isMaxDraftView&&displayFilterMenu?"calc(33.3vw - 1px)":isMaxDraftView?"calc(50vw - 1px)":"calc(25vw - 1px)"), transition:"1s",display:"flex", flexDirection:"column", height: '100%', overflowY:'hidden'}}>
+                <div style={{width:(isMobile?"100vw":isMaxDraftView&&displayFilterMenu?draftingView==='draft playlist'?"calc(100vw - 1px)":"calc(33.3vw - 1px)":isMaxDraftView?draftingView==="draft playlist"?'calc(100vw - 1px)':"calc(50vw - 1px)":draftingView==='draft playlist'?'calc(50vw - 1px)':"calc(25vw - 1px)"), transition:"1s",display:"flex", flexDirection:"column", height: '100%', overflowY:'hidden'}}>
                     {
                         <div style={{
                             position: "sticky",
@@ -297,19 +189,27 @@ useEffect(()=>{
                             flexDirection:"column"
                         }}>
                     
-                            <div className="playlist-buttons-container" style={isMobile?{margin:"auto", flex: "1", width: '100%', whiteSpace: 'nowrap', display:"flex", flexFlow:"row wrap", alignItems:"center", justifyContent:"center"}:{margin:"auto", flex: "1", display:"flex", flexFlow:'wrap', alignItems:"center", justifyContent:"center"}}>
+                            <div className="playlist-buttons-container" style={isMobile?{ flex: "1", width: '100%', whiteSpace: 'nowrap', display:"flex", flexFlow:"row wrap", alignItems:"center", justifyContent:"center"}:{ flex: "1", display:"flex", flexFlow:'wrap', alignItems:"center", justifyContent:"center"}}>
                             <dialog style={{width: "25vh", margin: "auto", backgroundColor: "#141414", color:"#757575"}} open={displayWarning}>Name your playlist before submitting!</dialog>
-                            <img src="select-all-icon-grey.png" height="25px" style={{margin:"auto 10px", cursor:"pointer"}} alt="select all" onClick={()=>selectAllClicked()}></img>
-                            <img src="deselect-all-icon-grey.png" height="25px" style={{margin:"auto 10px", cursor:"pointer"}} alt="select all" onClick={()=>deselectAllClicked()}></img>
-                                {/* {!isMobile?<button style={{margin:"auto 10px",  borderRadius:'15px'}} onClick={() => { deselectAllClicked() }}>Deselect All</button>:<></>}
-                                <button style={{margin:"auto 10px",  borderRadius:'15px'}} onClick={() => { selectAllClicked() }}>Select All</button> */}
-                                <button style={{margin:"5px 10px",  borderRadius:'15px', whiteSpace:"nowrap"}} onClick={() => { removeStagedItems(selectedTracks); setSelectedTracks([]) }}>Remove Items</button>
-                                {stagedPlaylistState.length > 0 &&!submissionState ?
+                            <div style={{ whiteSpace: 'nowrap', display:"inline-flex", flexFlow:"row wrap", alignItems:"center", justifyContent:"center", width: "calc(100% - 45px)"}}>
+                                <img src="select-all-icon-grey.png" height="25px" style={{margin:"auto 10px", cursor:"pointer", transform:"translateX(22.5px)"}} alt="select all" onClick={()=>selectAllClicked()}></img>
+                                <img src="deselect-all-icon-grey.png" height="25px" style={{margin:"auto 10px", cursor:"pointer", transform:"translateX(22.5px)"}} alt="select all" onClick={()=>deselectAllClicked()}></img>
+                                    {/* {!isMobile?<button style={{margin:"auto 10px",  borderRadius:'15px'}} onClick={() => { deselectAllClicked() }}>Deselect All</button>:<></>}
+                                    <button style={{margin:"auto 10px",  borderRadius:'15px'}} onClick={() => { selectAllClicked() }}>Select All</button> */}
+                                    <button style={{margin:"5px 10px",  borderRadius:'15px', whiteSpace:"nowrap", transform:"translateX(22.5px)"}} onClick={() => { removeStagedItems(selectedTracks); setSelectedTracks([]) }}>Remove Items</button>
+                           
+                                    {stagedPlaylistState.length > 0 &&!submissionState ?
                                 <>
-                                    {undoRedoController !== 1 && stagedHistory.length > 1 ? <button style={{margin:"5px 10px",  borderRadius:'15px', whiteSpace:"nowrap"}} onClick={()=>{undoClicked()}}>Undo</button> : <></>}
-                                    {undoRedoController ? <button style={{margin:"5px 10px", borderRadius:'15px', whiteSpace:"nowrap"}} onClick={() => { redoClicked() }}>Redo</button> : <></>}
+                                    {undoRedoController !== 1 && stagedHistory.length > 1 ? <button style={{margin:"5px 10px",  borderRadius:'15px', whiteSpace:"nowrap", transform:"translateX(22.5px)"}} onClick={()=>{undoClicked()}}>Undo</button> : <></>}
+                                    {undoRedoController ? <button style={{margin:"5px 10px", borderRadius:'15px', whiteSpace:"nowrap", transform:"translateX(22.5px)"}} onClick={() => { redoClicked() }}>Redo</button> : <></>}
                                 </>
                                 : <></>}
+                            </div>
+
+                            {draftingView!=='draft playlist'?
+                            <img src="expand.png" height="25px" style={{margin:"auto 10px", cursor:"pointer"}} alt="select all" onClick={()=>{setDraftingView('draft playlist')}}></img>
+                            :<img src="minimize.png" height="25px" style={{margin:"auto 10px", cursor:"pointer"}} alt="select all" onClick={()=>{setDraftingView(null)}}></img>}
+
                                     {/* {stagedPlaylist.length>0 &&!submissionState
                                     ?<button style={{margin:"auto 10px", borderRadius:'15px'}} onClick={()=>{}}>Submit Playlist</button>
                                     :<></>} */}

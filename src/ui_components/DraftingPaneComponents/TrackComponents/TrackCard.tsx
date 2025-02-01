@@ -163,7 +163,7 @@ useEffect(()=>{
         <div className={`${props.tracklistArea} track-card`}  id={props.trackClass?.track?.id} style={displayStyle}>
             
             {/* <input readOnly checked={isChecked} key={`checkbox-${track.id}`} type="checkbox" onClick={(e)=>handleCheck()}/> */}
-            {props.tracklistArea==="draft-playlist"?
+            {props.tracklistArea==="draft-playlist" && !isMobile?
             <>
             <button style={{width:"40px", height: "100%", borderRadius: "10%"}} onClick={(e)=>{e.preventDefault(); props.draftTrack([props.trackClass]); props.deselectTrack(props.trackClass?.track?.id);}}>&#10006;
             </button>
@@ -186,7 +186,7 @@ useEffect(()=>{
                 :<></>
             }
             </div>
-            {props.tracklistArea==="selected-playlist"||props.tracklistArea==="search-bar-card"?
+            {props.tracklistArea==="selected-playlist"||props.tracklistArea==="search-bar-card"||isMobile?
             <>
                         <div onClick={props.tracklistArea!=="search-bar-card"?()=>handleCheck():()=>{}}  style={{marginLeft: "7px", cursor:props.tracklistArea!=="search-bar-card"?'pointer':"default", position: "relative", display:"flex", flexDirection:"column",  overflow: 'hidden', flexGrow: '1', width: "0%", height:"100%", justifyContent:'center'}}>
 
@@ -207,7 +207,11 @@ useEffect(()=>{
                         ?<button disabled={stagedPlaylist.some(track=>track.track.id===props.trackClass.track.id)}style={{width:"40px", height: "100%", borderRadius: "10%"}} onClick={(e)=>{e.preventDefault(); setStagingState(prev=>isMobile?prev:"open"); stageTracks([props.trackClass]);}}>
                             +
                         </button>
-                        :<button style={{width:"40px", height: "100%", borderRadius: "10%"}} onClick={(e)=>{e.preventDefault(); stageTracks([props.trackClass]); props.deselectTrack(props.trackClass.track.id)}}>
+                        :isMobile && props.tracklistArea==="draft-playlist"?
+                        <button style={{width:"40px", height: "100%", borderRadius: "10%"}} onClick={(e)=>{e.preventDefault(); props.draftTrack([props.trackClass]); props.deselectTrack(props.trackClass?.track?.id);}}>
+                        &#10006;
+                        </button>:
+                    <button style={{width:"40px", height: "100%", borderRadius: "10%"}} onClick={(e)=>{e.preventDefault(); stageTracks([props.trackClass]); props.deselectTrack(props.trackClass.track.id)}}>
                             +
                         </button>
                         }
