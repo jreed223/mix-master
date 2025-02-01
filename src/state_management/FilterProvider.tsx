@@ -146,6 +146,14 @@ export default function FilterProvider({children}){
 
 
     },[selectedArtistFilters])
+
+    const artistFilter = useCallback( (item: TrackClass)=>{
+        if(selectedArtistFilters&& selectedArtistFilters.length>0){
+            return selectedArtistFilters.some((selectedArtist)=>item.track.artists.some(trackArtist=>trackArtist.id===selectedArtist.id))
+        }else{
+            return true
+        }
+    },[selectedArtistFilters])
     
 
     const filterByPopularity = useCallback((tracklist: TrackClass[])=>{
@@ -158,6 +166,14 @@ export default function FilterProvider({children}){
 
 
     }, [popularityFilter])
+
+    const popFilter = useCallback((item: TrackClass)=>{
+        if(popularityFilter){
+            return item.track.popularity >= popularityFilter -2.5 && item.track.popularity <= popularityFilter + 2.5
+        }else{
+            return true
+        }
+    },[popularityFilter])
 
 
     const filterByDate = useCallback((tracklist: TrackClass[]): TrackClass[] =>{
@@ -192,27 +208,63 @@ export default function FilterProvider({children}){
         }
     },[dateRange])
 
+    const dateFilter = useCallback((item: TrackClass)=>{
+        if(dateRange && dateRange.length===2){
+        let max = dateRange[1];
+        let min = dateRange[0];
+        
+        if(dateRange[0]>dateRange[1]){
+            max = dateRange[0]
+            min = dateRange[1]
+        }
+
+        if(item.track.album.release_date_precision === "day"){
+            const itemReleaseDate = new Date(item.track.album.release_date)
+            return ((itemReleaseDate >= min) && (itemReleaseDate <= max)) ;
+        }else if(item.track.album.release_date_precision==="month"){
+            const itemReleaseDate = new Date(`${item.track.album.release_date}-01`)
+            return ((itemReleaseDate >= min) && (itemReleaseDate <= max)) ;
+        }else if(item.track.album.release_date_precision==="year"){
+            const itemReleaseDate = new Date(`${item.track.album.release_date}-01-01`)
+            return ((itemReleaseDate >= min) && (itemReleaseDate <= max)) ;
+        }else{
+            return false
+        }
+    }else{
+        return true
+    }
+
+    
+    },[dateRange])
 
 
     const filterFeatures = useCallback(async () => {
 
 
 
-        let filterPlaylist: TrackClass[] = [];
+        // let filterPlaylist: TrackClass[] = [];
         console.log("FILTER FEATURES")
-        if(allTracks){
-            filterPlaylist = filterByPopularity(allTracks)
-            console.log("POPULAR PLAYLISTS: ", filterPlaylist)
+        // if(allTracks){
+        //     filterPlaylist = filterByPopularity(allTracks)
+        //     console.log("POPULAR PLAYLISTS: ", filterPlaylist)
     
             
-            filterPlaylist = filterByDate(filterPlaylist)
-            console.log("DATE PLAYLISTS: ", filterPlaylist)
+        //     filterPlaylist = filterByDate(filterPlaylist)
+        //     console.log("DATE PLAYLISTS: ", filterPlaylist)
     
-            filterPlaylist = filterByArtist(filterPlaylist)
-            console.log("Artist PLAYLISTS: ", filterPlaylist)
-            setFilteredTracks([...filterPlaylist])
+        //     filterPlaylist = filterByArtist(filterPlaylist)
+        //     console.log("Artist PLAYLISTS: ", filterPlaylist)
+        //     setFilteredTracks([...filterPlaylist])
+        // }
+        
+        if(allTracks){
+            const filteredList = allTracks.filter(
+                (item)=>
+                popFilter(item)&&
+                dateFilter(item)&&
+                artistFilter(item))
+            setFilteredTracks([...filteredList])
         }
-        
 
 
 
@@ -220,10 +272,10 @@ export default function FilterProvider({children}){
 
         
 
-        console.log("filtered playlist", filterPlaylist)
+        // console.log("filtered playlist", filterPlaylist)
         
 
-    }, [allTracks, filterByArtist, filterByDate, filterByPopularity, setFilteredTracks]);
+    }, [allTracks, artistFilter, dateFilter, popFilter, setFilteredTracks]);
 
 const context = useMemo(()=>({selectedArtistFilters, setSelectedArtistFilters, artistsList, setArtistsList, artistQuery, setArtistQuery, dateRange, setDateRange, popularityFilter, setPopularityFilter, selectedFeatures, setSelecetedFeatures, filterFeatures, }),[selectedArtistFilters, setSelectedArtistFilters, artistsList, setArtistsList, artistQuery, setArtistQuery, dateRange, popularityFilter, selectedFeatures, filterFeatures])
 
