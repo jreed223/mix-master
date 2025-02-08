@@ -206,9 +206,9 @@ useEffect(()=>{
                                 : <></>}
                             </div>
 
-                            {draftingView!=='draft playlist'?
-                            <img src="expand.png" height="25px" style={{margin:"auto 10px", cursor:"pointer"}} alt="select all" onClick={()=>{setDraftingView('draft playlist')}}></img>
-                            :<img src="minimize.png" height="25px" style={{margin:"auto 10px", cursor:"pointer"}} alt="select all" onClick={()=>{setDraftingView(null)}}></img>}
+                            
+                            <img src="expand.png" height="25px" style={{display:draftingView!=='draft playlist'?"unset":"none",margin:"auto 10px", cursor:"pointer"}} alt="select all" onClick={()=>{setDraftingView('draft playlist')}}></img>
+                            <img src="minimize.png" height="25px" style={{display:draftingView==='draft playlist'?"unset":"none", margin:"auto 10px", cursor:"pointer"}} alt="select all" onClick={()=>{setDraftingView(null)}}></img>
 
                                     {/* {stagedPlaylist.length>0 &&!submissionState
                                     ?<button style={{margin:"auto 10px", borderRadius:'15px'}} onClick={()=>{}}>Submit Playlist</button>

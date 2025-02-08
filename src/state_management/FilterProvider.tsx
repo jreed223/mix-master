@@ -275,7 +275,7 @@ export default function FilterProvider({children}){
         // console.log("filtered playlist", filterPlaylist)
         
 
-    }, [allTracks, artistFilter, dateFilter, popFilter, setFilteredTracks]);
+    }, [allTracks, setFilteredTracks, popFilter, dateFilter, artistFilter]);
 
 const context = useMemo(()=>({selectedArtistFilters, setSelectedArtistFilters, artistsList, setArtistsList, artistQuery, setArtistQuery, dateRange, setDateRange, popularityFilter, setPopularityFilter, selectedFeatures, setSelecetedFeatures, filterFeatures, }),[selectedArtistFilters, setSelectedArtistFilters, artistsList, setArtistsList, artistQuery, setArtistQuery, dateRange, popularityFilter, selectedFeatures, filterFeatures])
 

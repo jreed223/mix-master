@@ -199,37 +199,37 @@ const SelectedPlaylistContainer: React.FC<SelectedPlaylistContainerProps> = ({ s
     }, [selectedLibraryItem, setLoadingState])
 
 
-    useEffect(() => {
-        const container = scrollContainer.current
+    // useEffect(() => {
+    //     const container = scrollContainer.current
 
-        if (selectedLibraryItem?.next && !loadingState && trackDataState?.length < 4) {
-            let isThrottled: boolean;
+    //     if (selectedLibraryItem?.next && !loadingState && trackDataState?.length < 4) {
+    //         let isThrottled: boolean;
 
-            const handleScroll = () => {
-                if (!isThrottled) {
+    //         const handleScroll = () => {
+    //             if (!isThrottled) {
 
 
-                    const bottom = (scrollContainer.current.clientHeight + scrollContainer.current.scrollTop) >= scrollContainer.current.scrollHeight;
-                    if (bottom && !loadingState) {
-                        // isThrottled = true
+    //                 const bottom = (scrollContainer.current.clientHeight + scrollContainer.current.scrollTop) >= scrollContainer.current.scrollHeight;
+    //                 if (bottom && !loadingState) {
+    //                     // isThrottled = true
 
-                        getNextItems();
+    //                     getNextItems();
 
-                        //   setTimeout(()=>{
-                        //     isThrottled = false
-                        //   }, 1000)
-                    }
+    //                     //   setTimeout(()=>{
+    //                     //     isThrottled = false
+    //                     //   }, 1000)
+    //                 }
 
-                }
-            };
+    //             }
+    //         };
 
-            container.addEventListener('scroll', handleScroll)
-            return () => {
-                container.removeEventListener('scroll', handleScroll)
-            }
-        }
+    //         container.addEventListener('scroll', handleScroll)
+    //         return () => {
+    //             container.removeEventListener('scroll', handleScroll)
+    //         }
+    //     }
 
-    }, [getNextItems, loadingState, nextTracks, selectedLibraryItem?.next, trackDataState?.length])
+    // }, [getNextItems, loadingState, nextTracks, selectedLibraryItem?.next, trackDataState?.length])
 
 
 
@@ -331,13 +331,13 @@ const SelectedPlaylistContainer: React.FC<SelectedPlaylistContainerProps> = ({ s
 
             }}>
                 <div style={isMobile ? { flex: "1", width: '100%', whiteSpace: 'nowrap', display: "flex", alignItems: 'center' } : { alignItems: 'center', flex: "1", display: "flex", flexFlow: "row wrap", }}>
-                    <div style={{ justifyContent: "center", flex: 1, alignContent: "center", whiteSpace: 'nowrap', display: "flex", flexFlow: "row wrap", width: "100%" }}>
-                        <div style={{ whiteSpace: 'nowrap', display: "inline-flex", flexFlow: "row wrap", alignItems: "center", justifyContent: "center", width: "calc(100% - 45px)" }}>
-                            <img src="select-all-icon-grey.png" height="25px" style={{ margin: "auto 10px", cursor: "pointer", transform: "translateX(22.5px)" }} alt="select all" onClick={() => selectAllclicked()}></img>
-                            <img src="deselect-all-icon-grey.png" height="25px" style={{ margin: "auto 10px", cursor: "pointer", transform: "translateX(22.5px)" }} alt="select all" onClick={() => deselectAllClicked()}></img>
+                    <div style={{ justifyContent: "center", flex: 1, alignItems: "center", whiteSpace: 'nowrap', display: "flex", flexFlow: "row wrap", width: "100%" }}>
+                        <div style={{ whiteSpace: 'nowrap', display: "inline-flex", flexFlow: "row wrap", alignItems: "center", justifyContent: "center", }}>
+                            <img src="select-all-icon-grey.png" height="25px" style={{ margin: "auto 10px", cursor: "pointer", }} alt="select all" onClick={() => selectAllclicked()}></img>
+                            <img src="deselect-all-icon-grey.png" height="25px" style={{ margin: "auto 10px", cursor: "pointer", }} alt="select all" onClick={() => deselectAllClicked()}></img>
                             {/* <button style={{margin:"auto 10px", borderRadius:'15px'}} onClick={() => { selectAllclicked(); }} value={"SelectAll"}>Select All</button>
                                 {!isMobile?<button style={{margin:"auto 10px", borderRadius:'15px'}} onClick={() => { deselectAllClicked() }}>Deselect All</button>:<></>} */}
-                            <button style={{ margin: "5px 10px", borderRadius: '15px', transform: "translateX(22.5px)" }} onClick={() => { stageSelectedDisplayedTracks(); }}>Add Items</button>
+                            <button style={{ margin: "5px 10px", borderRadius: '15px', }} onClick={() => { stageSelectedDisplayedTracks(); }}>Add Items</button>
 
 
                         </div>
@@ -346,8 +346,8 @@ const SelectedPlaylistContainer: React.FC<SelectedPlaylistContainerProps> = ({ s
                         : (<></>)} */}
                         {selectedLibraryItem ?
 
-                            <a style={{ alignItems: "center", justifyContent: "center", flex: 1, minWidth: "140px" }} href={selectedLibraryItem.type === "liked tracks" ? `spotify:user:${user.display_name}:collection` : `${selectedLibraryItem.uri}`}>
-                                <div style={{ maxHeight: "35px", display: "flex", alignItems: "center", justifyContent: "center", flex: 1, minWidth: "140px", transform: "translateX(22.5px)" }}>
+                            <a style={{ alignItems: "center", justifyContent: "center", width: "140px" }} href={selectedLibraryItem.type === "liked tracks" ? `spotify:user:${user.display_name}:collection` : `${selectedLibraryItem.uri}`}>
+                                <div style={{ maxHeight: "35px", display: "flex", alignItems: "center", justifyContent: "center", flex: 1, minWidth: "140px",  }}>
                                     <img src="/spotify/Primary_Logo_Green_RGB.svg" style={{ maxWidth: "30px", margin: "2px" }} alt="spotify logo" />
                                     <p style={{ whiteSpace: "nowrap", fontSize: "1em", overflow: "hidden", margin: " 0 0 0 2px", transition: '1s' }}>Open Spotify</p>
                                 </div>
@@ -355,9 +355,8 @@ const SelectedPlaylistContainer: React.FC<SelectedPlaylistContainerProps> = ({ s
                             : <></>}
                     </div>
 
-                    {draftingView!=='selected playlist'?
-                    <img src="expand.png" height="25px" style={{ margin: "auto 10px", cursor: "pointer", opacity: displayFilterMenu?0:1, transition:'1s'  }} alt="select all" onClick={() => {setDraftingView('selected playlist')}}></img>
-                    :<img src="minimize.png" height="25px" style={{ margin: "auto 10px", cursor: "pointer", opacity: displayFilterMenu?0:1, transition:'1s' }} alt="select all" onClick={() => {setDraftingView(null)}}></img>}
+                    <img src="expand.png" height="25px" style={{ display:draftingView!=='selected playlist'?'unset':'none',margin: "auto 10px", cursor: "pointer", opacity: displayFilterMenu?0:1, transition:'1s'  }} alt="select all" onClick={() => {setDraftingView('selected playlist')}}></img>
+                    <img src="minimize.png" height="25px" style={{ display:draftingView==='selected playlist'?'unset':'none',margin: "auto 10px", cursor: "pointer", opacity: displayFilterMenu?0:1, transition:'1s' }} alt="select all" onClick={() => {setDraftingView(null)}}></img>
 
                 </div>
                 {/* <h3 style={{margin:"5px 15px", textAlign:'center'}}>{selectedLibraryItem?.name}</h3> */}

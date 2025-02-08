@@ -13,72 +13,71 @@ import type { Artist } from "../../../../server/types.js";
 import { FilterContext } from "../../../state_management/FilterProvider.tsx";
 
 export interface ArtistFilterProps {
-    clearArtists: ()=>void
+    clearArtists: () => void
 }
 
 
 
-export default function ArtistFilter(props: ArtistFilterProps){
+export default function ArtistFilter(props: ArtistFilterProps) {
 
 
-    const {isPlaylistsView, isMobile, isMaxDraftView, setIsMaxDraftView} = useContext(ViewContext)
-    const {stagingState} = useContext<DraftingContextType>(DraftingContext)
-    const {artistsList, artistQuery, setSelectedArtistFilters, selectedArtistFilters, setArtistQuery} = useContext(FilterContext)
+    const { isPlaylistsView, isMobile, isMaxDraftView, setIsMaxDraftView } = useContext(ViewContext)
+    const { stagingState } = useContext<DraftingContextType>(DraftingContext)
+    const { artistsList, artistQuery, setSelectedArtistFilters, selectedArtistFilters, setArtistQuery } = useContext(FilterContext)
 
     const [filterDisabled, setFilterDisabled] = useState<boolean>(false)
     const [currentList, setCurrentList] = useState<Artist[]>(null)
-        const artistSearch = useRef(null)
-    
+    const artistSearch = useRef(null)
 
-      useEffect(()=>{
-            if(artistsList?.length>0 && artistQuery){
-                const filteredArtists = artistsList.filter((artist)=>artist.name.toLowerCase().startsWith(artistQuery.toLowerCase()))
-                setCurrentList(filteredArtists)
 
-            }else if(artistsList){
-              setCurrentList(artistsList)
+    useEffect(() => {
+        if (artistsList?.length > 0 && artistQuery) {
+            const filteredArtists = artistsList.filter((artist) => artist.name.toLowerCase().startsWith(artistQuery.toLowerCase()))
+            setCurrentList(filteredArtists)
 
-              
-            }
-        },[artistQuery, artistsList, selectedArtistFilters, setSelectedArtistFilters])
+        } else if (artistsList) {
+            setCurrentList(artistsList)
+
+
+        }
+    }, [artistQuery, artistsList, selectedArtistFilters, setSelectedArtistFilters])
 
 
 
 
     const artistFilter = (
-    <>
-                        <div style={{height: "30px", alignContent: "center"}}>
-                            {/* <input key={"artist-checkbox"} ref={null} onChange={() => handlePopularityFilter()} type="checkbox" defaultChecked={true} /> */}
-                            <input key={"artist-search"} ref={artistSearch} style={{ width: "80%", margin: 'auto' }} id={`artist-searchr`} onChange={(e) => setArtistQuery(e.target.value)} value={artistQuery} type={"search"} placeholder={"Search Artists"} className="slider" disabled={false} />
-                        </div>
-                        {  <>{artistsList&&artistsList.length>0?<div style={{ maxHeight: "33vh", overflowY: 'auto', overflowX: 'hidden', width:"100%" }}>
-                        {artistsList.map((artist:Artist)=>{
-                            if(currentList?.some((item:Artist)=>item.id===artist.id)){
+        <>
+            <div style={{ height: "30px", alignContent: "center" }}>
+                <input key={"artist-search"} ref={artistSearch} style={{ width: "80%", margin: 'auto' }} id={`artist-searchr`} onChange={(e) => setArtistQuery(e.target.value)} value={artistQuery} type={"search"} placeholder={"Search Artists"} className="slider" disabled={false} />
+            </div>
+            {<>{artistsList && artistsList.length > 0 ? <div style={{ maxHeight: isMobile ? "15vh" : "33vh", overflowY: 'auto', overflowX: 'hidden', width: "100%" }}>
+                {artistsList.map((artist: Artist) => {
+                    if (currentList?.some((item: Artist) => item.id === artist.id)) {
 
-                            
-                           return (<div style={{maxWidth:"100%", overflow:"hidden", display:"flex", justifyContent:"flex-start", alignItems:"center"}}>
-                                        <input key={`${artist.id}-checkbox`} name={`${artist.name}-checkbox`} id={`${artist.name}-checkbox`} onChange={(e) => e.target.checked?setSelectedArtistFilters(prev=>prev.concat([artist])):setSelectedArtistFilters(selectedArtistFilters?.length>0?selectedArtistFilters.filter(filterArtist=>filterArtist.id!==artist.id):[])} type="checkbox" defaultChecked={false} />
-                                                <label htmlFor={`${artist.name}-checkbox`} style={{textOverflow:"ellipsis", overflowX:'hidden', textWrap:'nowrap', flex:1}}>{artist.name}</label>
-                            </div>)
-                            }else{
-                                return (<div style={{display:"none", maxWidth:"100%", overflow:"hidden", justifyContent:"flex-start", alignItems:"center"}}>
-                                    <input key={`${artist.id}-checkbox`} name={`${artist.name}-checkbox`} id={`${artist.name}-checkbox`} onChange={(e) => e.target.checked?setSelectedArtistFilters(prev=>prev.concat([artist])):setSelectedArtistFilters(selectedArtistFilters?.length>0?selectedArtistFilters.filter(filterArtist=>filterArtist.id!==artist.id):[])} type="checkbox" defaultChecked={false} />
-                                            <label htmlFor={`${artist.name}-checkbox`} style={{textOverflow:"ellipsis", overflowX:'hidden', textWrap:'nowrap', flex:1}}>{artist.name}</label>
+
+                        return (<div style={{ maxWidth: "100%", overflow: "hidden", display: "flex", justifyContent: "flex-start", alignItems: "center" }}>
+                            <input key={`${artist.id}-checkbox`} name={`${artist.name}-checkbox`} id={`${artist.name}-checkbox`} onChange={(e) => e.target.checked ? setSelectedArtistFilters(prev => prev.concat([artist])) : setSelectedArtistFilters(selectedArtistFilters?.length > 0 ? selectedArtistFilters.filter(filterArtist => filterArtist.id !== artist.id) : [])} type="checkbox" defaultChecked={false} />
+                            <label htmlFor={`${artist.name}-checkbox`} style={{ textOverflow: "ellipsis", overflowX: 'hidden', textWrap: 'nowrap', flex: 1 }}>{artist.name}</label>
                         </div>)
-                            }
-                        })}
-                    </div>:<></>
-                        }
-                    </>}
+                    } else {
+                        return (<div style={{ display: "none", maxWidth: "100%", overflow: "hidden", justifyContent: "flex-start", alignItems: "center" }}>
+                            <input key={`${artist.id}-checkbox`} name={`${artist.name}-checkbox`} id={`${artist.name}-checkbox`} onChange={(e) => e.target.checked ? setSelectedArtistFilters(prev => prev.concat([artist])) : setSelectedArtistFilters(selectedArtistFilters?.length > 0 ? selectedArtistFilters.filter(filterArtist => filterArtist.id !== artist.id) : [])} type="checkbox" defaultChecked={false} />
+                            <label htmlFor={`${artist.name}-checkbox`} style={{ textOverflow: "ellipsis", overflowX: 'hidden', textWrap: 'nowrap', maxWidth: '100%' }}>{artist.name}</label>
+                        </div>)
+                    }
+                })}
+            </div> : <></>
+            }
+            </>}
 
-    </>    
+        </>
     )
 
 
 
-    return(
-       <>
-        <FilterItem filterName="Artists" clearFilter={props.clearArtists} setFilterState={setSelectedArtistFilters} children={artistFilter} filterDisabled={filterDisabled} setFilterDisabled={setFilterDisabled}></FilterItem>
-       </>
+    return (
+        <>
+            <FilterItem filterName="Artists" clearFilter={props.clearArtists} setFilterState={setSelectedArtistFilters} children={artistFilter} filterDisabled={filterDisabled} setFilterDisabled={setFilterDisabled}></FilterItem>
+        </>
     )
 }

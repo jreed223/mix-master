@@ -25,7 +25,7 @@ interface FilterProps  {
 export default function FilterItem(props: FilterProps){
 
 
-    // const {isPlaylistsView, isMobile, isMaxDraftView, setIsMaxDraftView} = useContext(ViewContext)
+    const {isPlaylistsView, isMobile, isMaxDraftView, setIsMaxDraftView} = useContext(ViewContext)
     // const {stagingState} = useContext<DraftingContextType>(DraftingContext)
 
     const [isDisplayed, setIsDisplayed] = useState(false)
@@ -60,7 +60,7 @@ export default function FilterItem(props: FilterProps){
             </div>
         </div>
 
-        <div style={{ margin:isDisplayed?"7px 0px":"0px 0px", flex:isDisplayed?"1 1 auto":"0 1 auto", flexBasis:isDisplayed?"100%":"0", maxHeight:isDisplayed?"50vh":"0vh", transition:'.5s',overflow:'hidden'}}>
+        <div style={{ margin:isDisplayed?"7px 0px":"0px 0px", flex:isDisplayed?"1 1 auto":"0 1 auto", flexBasis:isDisplayed?"100%":"0", maxHeight:isDisplayed?isMobile?"20vh":"50vh":"0vh", transition:'.5s',overflow:'hidden'}}>
             {props.children}
             {/* <input key={"popularity-slider"} ref={popularitySlider} style={{width: "80%", margin:'auto'}} id={`popularity-slider`} onChange={()=>handlePopularityFilter()} type={"range"} min={0} max={100} defaultValue={50} className="slider" disabled={true}/> */}
         </div>

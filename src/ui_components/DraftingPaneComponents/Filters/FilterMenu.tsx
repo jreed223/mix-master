@@ -122,7 +122,7 @@ const FilterMenu: React.FC<PlaylistMenuProps> = () => {
         })
 
             } */}
-            <div style={{ transition: "1s", display:'flex', flex:1, flexDirection:'column', maxHeight:"100%", overflowY: "clip" }}>
+            <div style={{ transition: "1s", display:'flex', flex:isMobile?.5:1, flexDirection:'column', maxHeight:"100%", overflowY: "clip" }}>
 
             <div style={{width:(isMobile?"100vw":isMaxDraftView?"33.3vw":"25vw"), transition: "1s", display: 'flex', flexDirection:'column', maxHeight:'100%'}}>
                 <div style={{position: "sticky", backgroundColor:"rgb(20, 20, 20)", }}><button style={{borderRadius: "15px", margin: "0 10px 10px"}} onClick={clearFilters}>Reset Filter</button></div>
